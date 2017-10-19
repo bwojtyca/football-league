@@ -1,0 +1,14 @@
+<mat-accordion class="headers-align">
+  <mat-expansion-panel *ngFor="let game of games">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{gameType(game)}}
+      </mat-panel-title>
+      <mat-panel-title>
+        {{teamName(game.teams[0])}}
+        {{scoreSummary(game)}}
+        {{teamName(game.teams[1])}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+  </mat-expansion-panel>
+</mat-accordion>

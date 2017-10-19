@@ -1,0 +1,23 @@
+.new-game {
+  display: flex;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+}
+.team--red .team-color {
+  color: red;
+}
+.team--blue .team-color {
+  color: blue;
+}
+.team-color {
+  text-align: center;
+  text-transform: uppercase;
+  padding-bottom: 20px;
+}
+.team-position .team-position__position-name {
+  font-weight: bold;
+}

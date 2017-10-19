@@ -1,0 +1,64 @@
+<div class="new-game">
+  <div class="team team--red">
+    <div class="team-color">
+      <strong>red</strong>
+    </div>
+    <div class="team-position">
+      <div class="team-position__position-name">Defence</div>
+      <div class="team-position__player">
+        <mat-form-field>
+          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let player of players">
+              <span>{{ player.name }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="team-position">
+      <div class="team-position__position-name">Offence</div>
+      <div class="team-position__player">
+        <mat-form-field>
+          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let player of players">
+              <span>{{ player.name }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="team team--blue">
+    <div class="team-color">
+      <strong>blue</strong>
+    </div>
+    <div class="team-position">
+      <div class="team-position__position-name">Defence</div>
+      <div class="team-position__player">
+        <mat-form-field>
+          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let player of players">
+              <span>{{ player.name }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="team-position">
+      <div class="team-position__position-name">Offence</div>
+      <div class="team-position__player">
+        <mat-form-field>
+          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let player of players">
+              <span>{{ player.name }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>

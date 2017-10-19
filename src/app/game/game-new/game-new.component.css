@@ -1,0 +1,10 @@
+.create-new-game {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  transition: transform 280ms cubic-bezier(.4,0,.2,1);
+  transform: scale(1);
+}
+.create-new-game.opened {
+  transform: scale(0);
+}

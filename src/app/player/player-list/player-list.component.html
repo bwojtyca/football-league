@@ -1,0 +1,62 @@
+<div class="player-list">
+  <h2 class="player-list__headline">
+    Players list
+    <button mat-button (click)="addNew = true">Add new player</button>
+  </h2>
+  <div class="player-list__loader" *ngIf="loading && !addNew">
+    <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
+  </div>
+  <mat-accordion class="headers-align">
+    <mat-expansion-panel [expanded]="addNew" class="add-player">
+      <h3 class="add-player__headline">Add new player</h3>
+      <mat-form-field>
+        <input matInput type="string" min="1" placeholder="Player name" [formControl]="newPlayerName" required>
+        <mat-error *ngIf="newPlayerName.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+      <mat-action-row>
+        <button mat-button (click)="addNew = false">Cancel</button>
+        <button mat-raised-button color="primary" (click)="addPlayer()">Add player</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngFor="let player of players" (opened)="addNew = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <strong class="player-name"><img src="https://api.adorable.io/avatars/40/{{player.id}}" width="27" alt="{{player.name}}" /> {{player.name}}</strong>
+        </mat-panel-title>
+        <mat-panel-description>
+          played {{player.games}} {{player.games > 1 ? 'games' : 'game'}} ({{player.winRatio}}% wins)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <h3 mat-subheader>Summary</h3>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <mat-icon mat-list-icon>games</mat-icon>
+            <h4 mat-line>{{player.games}}</h4>
+            <p mat-line>games in total</p>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon mat-list-icon>thumbs_up_down</mat-icon>
+            <h4 mat-line>{{player.winRatio}}%</h4>
+            <p mat-line>of win games</p>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <mat-icon mat-list-icon>thumb_up</mat-icon>
+            <h4 mat-line>{{player.wins}}</h4>
+            <p mat-line>wins</p>
+          </mat-list-item>
+          <mat-list-item>
+            <mat-icon mat-list-icon>thumb_down</mat-icon>
+            <h4 mat-line>{{player.loses}}</h4>
+            <p mat-line>loses</p>
+          </mat-list-item>
+        </div>
+        <mat-divider></mat-divider>
+        <h3 mat-subheader>Games history</h3>
+        <fl-game-list [playerId]="player.id"></fl-game-list>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
