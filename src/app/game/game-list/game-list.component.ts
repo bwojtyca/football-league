@@ -9,7 +9,7 @@ import {GameService} from '../game.service';
   styleUrls: ['./game-list.component.css']
 })
 export class GameListComponent implements OnInit {
-  @Input() public playerId?: number;
+  @Input() public playerId?: string;
   public games: Game[];
 
   constructor(private _playerService: PlayerService,
@@ -17,7 +17,7 @@ export class GameListComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this._gameService.getGames(this.playerId).subscribe((games) => {
+    this._gameService.getPlayerGames(this.playerId).subscribe((games) => {
       this.games = games;
     });
   }
@@ -27,7 +27,7 @@ export class GameListComponent implements OnInit {
     if (team.defence.player !== team.offence.player) {
       players.push(this._playerService.getPlayerName(team.offence.player));
     }
-    return `${players.join(' $ ')}`;
+    return `${players.join(' & ')}`;
   }
 
   public scoreSummary(game) {
@@ -46,7 +46,7 @@ export class GameListComponent implements OnInit {
   }
 
   public gameType(game) {
-    let type: string = '-';
+    let type = '-';
 
     switch (game.players.length) {
       case 2:

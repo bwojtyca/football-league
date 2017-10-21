@@ -1,12 +1,16 @@
 <div class="player-list">
+
   <h2 class="player-list__headline">
     Players list
     <button mat-button (click)="addNew = true">Add new player</button>
   </h2>
+
   <div class="player-list__loader" *ngIf="loading && !addNew">
     <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
   </div>
+
   <mat-accordion class="headers-align">
+    <!-- add new player -->
     <mat-expansion-panel [expanded]="addNew" class="add-player">
       <h3 class="add-player__headline">Add new player</h3>
       <mat-form-field>
@@ -18,6 +22,8 @@
         <button mat-raised-button color="primary" (click)="addPlayer()">Add player</button>
       </mat-action-row>
     </mat-expansion-panel>
+
+    <!-- list of players -->
     <mat-expansion-panel *ngFor="let player of players" (opened)="addNew = false">
       <mat-expansion-panel-header>
         <mat-panel-title>

@@ -10,5 +10,9 @@
         {{teamName(game.teams[1])}}
       </mat-panel-title>
     </mat-expansion-panel-header>
+    <div>
+      {{ !game.end ? 'unfinished' : 'finished - ' + game.win + ' team win'}}
+      <a mat-button routerLink="/game/{{game.id}}">See details</a>
+    </div>
   </mat-expansion-panel>
 </mat-accordion>

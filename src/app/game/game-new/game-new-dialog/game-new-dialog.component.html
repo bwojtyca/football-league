@@ -1,60 +1,81 @@
-<div class="new-game">
-  <div class="team team--red">
+<h2 class="header">
+  <strong>Create new Game!</strong>
+  <small *ngIf="!teamRed.controls.singlePlayer.value && !teamBlue.controls.singlePlayer.value">2 vs 2</small>
+  <small *ngIf="teamRed.controls.singlePlayer.value && !teamBlue.controls.singlePlayer.value">Stress test on {{teamRed.controls.defence.value?.name || '...'}}</small>
+  <small *ngIf="!teamRed.controls.singlePlayer.value && teamBlue.controls.singlePlayer.value">Stress test on {{teamBlue.controls.defence.value?.name || '...'}}</small>
+  <small *ngIf="teamRed.controls.singlePlayer.value && teamBlue.controls.singlePlayer.value">1 vs 1</small>
+</h2>
+<div class="new-game" *ngIf="players; else loading">
+  <div class="team team--red" [formGroup]="teamRed">
     <div class="team-color">
       <strong>red</strong>
     </div>
+    <div class="team-players">
+      <mat-checkbox formControlName="singlePlayer" color="primary">One player in team</mat-checkbox>
+    </div>
     <div class="team-position">
-      <div class="team-position__position-name">Defence</div>
       <div class="team-position__player">
         <mat-form-field>
-          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let player of players">
-              <span>{{ player.name }}</span>
+          <input matInput placeholder="Select red team defender" [matAutocomplete]="redDefender"
+                  formControlName="defence" required>
+          <mat-autocomplete #redDefender="matAutocomplete" [displayWith]="autocompleteDisplay">
+            <mat-option *ngFor="let player of filteredPlayers.red.def | async" [disabled]="selected[player.id]" [value]="player">
+              <img src="https://api.adorable.io/avatars/40/{{player.id}}" alt="{{ player.name }}"
+                    style="width: 30px; height: 30px; vertical-align: middle; margin: 9px 9px 9px -6px;"/>
+              <span [innerHTML]="player.name | highlight:teamRed.controls.defence.value"></span>
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
       </div>
     </div>
-    <div class="team-position">
-      <div class="team-position__position-name">Offence</div>
+    <div class="team-position" *ngIf="!teamRed.controls.singlePlayer.value">
       <div class="team-position__player">
         <mat-form-field>
-          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let player of players">
-              <span>{{ player.name }}</span>
+          <input matInput placeholder="Select red team attacker" [matAutocomplete]="redAttacker"
+                  formControlName="offence" required>
+          <mat-autocomplete #redAttacker="matAutocomplete" [displayWith]="autocompleteDisplay">
+            <mat-option *ngFor="let player of filteredPlayers.red.off | async" [disabled]="selected[player.id]" [value]="player">
+              <img src="https://api.adorable.io/avatars/40/{{player.id}}" alt="{{ player.name }}"
+                    style="width: 30px; height: 30px; vertical-align: middle; margin: 9px 9px 9px -6px;"/>
+              <span [innerHTML]="player.name | highlight:teamRed.controls.offence.value"></span>
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
       </div>
     </div>
   </div>
-  <div class="team team--blue">
+  <div class="team team--blue" [formGroup]="teamBlue">
     <div class="team-color">
       <strong>blue</strong>
     </div>
+    <div class="team-players">
+      <mat-checkbox formControlName="singlePlayer" color="primary">One player in team</mat-checkbox>
+    </div>
     <div class="team-position">
-      <div class="team-position__position-name">Defence</div>
       <div class="team-position__player">
         <mat-form-field>
-          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let player of players">
-              <span>{{ player.name }}</span>
+          <input matInput placeholder="Select blue team defender" [matAutocomplete]="blueDefender"
+                  formControlName="defence" required>
+          <mat-autocomplete #blueDefender="matAutocomplete" [displayWith]="autocompleteDisplay">
+            <mat-option *ngFor="let player of filteredPlayers.blue.def | async" [disabled]="selected[player.id]" [value]="player">
+              <img src="https://api.adorable.io/avatars/40/{{player.id}}" alt="{{ player.name }}"
+                    style="width: 30px; height: 30px; vertical-align: middle; margin: 9px 9px 9px -6px;"/>
+              <span [innerHTML]="player.name | highlight:teamBlue.controls.defence.value"></span>
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
       </div>
     </div>
-    <div class="team-position">
-      <div class="team-position__position-name">Offence</div>
+    <div class="team-position" *ngIf="!teamBlue.controls.singlePlayer.value">
       <div class="team-position__player">
         <mat-form-field>
-          <input matInput placeholder="Select player" aria-label="State" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let player of players">
-              <span>{{ player.name }}</span>
+          <input matInput placeholder="Select blue team attacker" [matAutocomplete]="blueAttacker"
+                  formControlName="offence" required>
+          <mat-autocomplete #blueAttacker="matAutocomplete" [displayWith]="autocompleteDisplay">
+            <mat-option *ngFor="let player of filteredPlayers.blue.off | async" [disabled]="selected[player.id]" [value]="player">
+              <img src="https://api.adorable.io/avatars/40/{{player.id}}" alt="{{ player.name }}"
+                    style="width: 30px; height: 30px; vertical-align: middle; margin: 9px 9px 9px -6px;"/>
+              <span [innerHTML]="player.name | highlight:teamBlue.controls.offence.value"></span>
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
@@ -62,3 +83,12 @@
     </div>
   </div>
 </div>
+<ng-template #loading>
+  <div class="loader">
+    <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
+  </div>
+</ng-template>
+<mat-action-row>
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="startGame()" [disabled]="!players">Start new game!</button>
+</mat-action-row>

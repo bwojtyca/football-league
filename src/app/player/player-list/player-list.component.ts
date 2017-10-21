@@ -48,7 +48,9 @@ export class PlayerListComponent implements OnInit {
 
   private _sortPlayers() {
     this.players.sort((a, b) => {
-      return a.winRatio > b.winRatio ? -1 : 1;
+      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    }).sort((a, b) => {
+      return a.winRatio > b.winRatio ? -1 : a.winRatio <  b.winRatio ? 1 : 0;
     });
   }
 }

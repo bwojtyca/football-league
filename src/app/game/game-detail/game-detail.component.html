@@ -1,3 +1,42 @@
-<p>
-  game-detail works!
-</p>
+<button routerLink="/" mat-mini-fab color="accent" class="go-back">
+  <mat-icon>arrow_back</mat-icon>
+</button>
+
+<div class="game-screen" *ngIf="game">
+  <div class="game-screen-summary">
+    <h2>
+      Red {{scoreSummary.red}} : {{scoreSummary.blue}} Blue
+      <small>{{gameTime}}</small>
+    </h2>
+  </div>
+  <div class="game-screen-teams">
+    <div class="team" *ngFor="let team of game.teams" [ngClass]="'team--'+team.color">
+      <mat-card class="player player--offence">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img src="https://api.adorable.io/avatars/40/{{team.offence.player}}" />
+          </div>
+          <mat-card-title>{{players[team.offence.player]?.name}}</mat-card-title>
+          <mat-card-subtitle>Attacker</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="player-goals"><button mat-raised-button (click)="goal(team, 'offence')" color="primary">{{team.offence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(team, 'offence')">-{{team.offence.ownGoals}}</button></div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="player player--defence">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img src="https://api.adorable.io/avatars/40/{{team.defence.player}}" />
+          </div>
+          <mat-card-title>{{players[team.defence.player]?.name}}</mat-card-title>
+          <mat-card-subtitle>Defender</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="player-goals"><button mat-raised-button (click)="goal(team, 'defence')" color="primary">{{team.defence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(team, 'defence')">-{{team.defence.ownGoals}}</button></div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

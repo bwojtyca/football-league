@@ -1,23 +1,61 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px 24px;
+  margin: -24px -24px 16px -24px;
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+  text-align: center
+}
+
+.header small {
+  display: block;
+  color: rgba(0,0,0,.54);
+  font-size: 0.66em;
+  font-weight: 200;
+}
+
 .new-game {
   display: flex;
+  margin: 0 -10px;
 }
 
 .team {
+  margin: 0 10px;
   display: flex;
   flex-direction: column;
   min-width: 280px;
 }
+
 .team--red .team-color {
   color: red;
 }
+
 .team--blue .team-color {
   color: blue;
 }
+
 .team-color {
   text-align: center;
   text-transform: uppercase;
   padding-bottom: 20px;
 }
-.team-position .team-position__position-name {
-  font-weight: bold;
+
+.team-players {
+  margin-bottom: 10px;
+}
+
+.team-position__player .mat-form-field {
+  width: 100%;
+  display: block;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-action-row {
+  margin: 10px -24px -24px;
+  padding-right: 24px;
 }
