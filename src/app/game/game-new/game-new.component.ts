@@ -18,10 +18,7 @@ export class GameNewComponent implements OnInit {
 
   public openDialog() {
     this.opened = true;
-    const dialogRef = this._dialog.open(GameNewDialogComponent, {
-      // width: '250px',
-      // data: { name: this.name, animal: this.animal }
-    });
+    const dialogRef = this._dialog.open(GameNewDialogComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       this.opened = false;

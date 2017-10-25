@@ -4,17 +4,18 @@ export interface Game {
   start: string;
   end?: string;
   win?: string;
-  teams: Array<{
-    color: string;
-    offence: {
-      player: string;
-      goals: number;
-      ownGoals: number;
-    };
-    defence: {
-      player: string;
-      goals: number;
-      ownGoals: number;
-    };
-  }>;
+  teams: {
+    [color: string]: {
+      offence: {
+        player: string;
+        goals: number;
+        ownGoals: number;
+      };
+      defence: {
+        player: string;
+        goals: number;
+        ownGoals: number;
+      };
+    }
+  };
 }

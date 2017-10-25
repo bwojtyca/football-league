@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { GameService } from './../../game.service';
 import { PlayerService } from '../../../player/player.service';
 import { Player } from '../../../player/player';
@@ -7,10 +7,11 @@ import { FormControl, FormGroup } from '@angular/forms';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/startWith';
 import { Router } from '@angular/router';
+import { Game } from '../../game';
 @Component({
   selector: 'fl-game-new-dialog',
   templateUrl: './game-new-dialog.component.html',
-  styleUrls: ['./game-new-dialog.component.css']
+  styleUrls: ['./game-new-dialog.component.scss']
 })
 export class GameNewDialogComponent implements OnInit {
   public players: Player[];
@@ -25,6 +26,7 @@ export class GameNewDialogComponent implements OnInit {
     private _gameService: GameService,
     private _router: Router,
     private _dialogRef: MatDialogRef<GameNewDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) private _dialogData: any
   ) {
     this.teamRed = new FormGroup({
       singlePlayer: new FormControl(false),
@@ -49,6 +51,30 @@ export class GameNewDialogComponent implements OnInit {
 
   public close() {
     this._dialogRef.close();
+    this._router.navigate(['/']);
+  }
+
+  public switchTeams(): void {
+    const teamValues = JSON.parse(JSON.stringify({
+      red: {
+        singlePlayer: !!this.teamRed.controls.singlePlayer.value,
+        defence: this.teamRed.controls.defence.value,
+        offence: this.teamRed.controls.offence.value
+      },
+      blue: {
+        singlePlayer: !!this.teamBlue.controls.singlePlayer.value,
+        defence: this.teamBlue.controls.defence.value,
+        offence: this.teamBlue.controls.offence.value
+      }
+    }));
+
+    this.teamRed.controls.singlePlayer.setValue(teamValues.blue.singlePlayer);
+    this.teamRed.controls.defence.setValue(teamValues.blue.defence);
+    this.teamRed.controls.offence.setValue(teamValues.blue.offence);
+
+    this.teamBlue.controls.singlePlayer.setValue(teamValues.red.singlePlayer);
+    this.teamBlue.controls.defence.setValue(teamValues.red.defence);
+    this.teamBlue.controls.offence.setValue(teamValues.red.offence);
   }
 
   private _handlePlayers(players) {
@@ -112,6 +138,27 @@ export class GameNewDialogComponent implements OnInit {
     this.teamBlue.controls.offence.valueChanges.subscribe((player) => {
       this._updateSelected('teamBlue', 'offence', player);
     });
+
+    if (this._dialogData && this._dialogData.previousGame) {
+      const prevGame: Game = this._dialogData.previousGame;
+      this.teamRed.controls.defence.setValue(this._getPlayer(prevGame.teams.red.defence.player));
+      if (prevGame.teams.red.defence.player !== prevGame.teams.red.offence.player) {
+        this.teamRed.controls.offence.setValue(this._getPlayer(prevGame.teams.red.offence.player));
+      } else {
+        this.teamRed.controls.singlePlayer.setValue(true);
+      }
+
+      this.teamBlue.controls.defence.setValue(this._getPlayer(prevGame.teams.blue.defence.player));
+      if (prevGame.teams.blue.defence.player !== prevGame.teams.blue.offence.player) {
+        this.teamBlue.controls.offence.setValue(this._getPlayer(prevGame.teams.blue.offence.player));
+      } else {
+        this.teamBlue.controls.singlePlayer.setValue(true);
+      }
+    }
+  }
+
+  private _getPlayer(playerId: string): Player {
+    return this.players.find((player) => player.id === playerId);
   }
 
   private _validatePlayer(c: FormControl) {
@@ -149,7 +196,7 @@ export class GameNewDialogComponent implements OnInit {
 
       this._gameService.createGame(teamRed, teamBlue).subscribe((results) => {
         this._router.navigate(['/game', results.id]);
-        this.close();
+        this._dialogRef.close();
       });
     } else {
       this.teamRed.controls.defence.markAsTouched();

@@ -4,26 +4,29 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Game } from '../game';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/interval';
 import { Player } from '../../player/player';
+import 'rxjs/add/observable/interval';
+import { GameNewDialogComponent } from '../game-new/game-new-dialog/game-new-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'fl-game-detail',
   templateUrl: './game-detail.component.html',
-  styleUrls: ['./game-detail.component.css']
+  styleUrls: ['./game-detail.component.scss']
 })
 export class GameDetailComponent implements OnInit {
   public game: Game;
   public scoreSummary: any;
   public gameTime: string;
-  public players: {[playerId: string]: Player};
+  public players: { [playerId: string]: Player };
   private _targetScore = 8;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
     private _gameService: GameService,
     private _playerService: PlayerService,
-    private _router: Router
+    private _router: Router,
+    private _dialog: MatDialog
   ) { }
 
   public ngOnInit() {
@@ -31,20 +34,24 @@ export class GameDetailComponent implements OnInit {
     this._activatedRoute.params.subscribe((params) => {
       this._clearGame();
       this._gameService.getGame(params.gameId).subscribe((game) => {
-        this.game = game;
-        this._calculateScore();
-        this._calculateTime();
+        if (game) {
+          this.game = game;
+          this._calculateScore();
+          this._calculateTime();
 
-        if (!this.game.end) {
-          Observable.interval(1000).subscribe((time) => {
-            this._calculateTime();
+          if (!this.game.end) {
+            Observable.interval(1000).subscribe((time) => {
+              this._calculateTime();
+            });
+          }
+          this.game.players.forEach((playerId) => {
+            this._playerService.getPlayer(playerId).subscribe((player) => {
+              this.players[playerId] = player;
+            });
           });
+        } else {
+          this.game = null;
         }
-        this.game.players.forEach((playerId) => {
-          this._playerService.getPlayer(playerId).subscribe((player) => {
-            this.players[playerId] = player;
-          });
-        });
       });
     });
   }
@@ -53,7 +60,7 @@ export class GameDetailComponent implements OnInit {
     if (!this.game || this.game.end) {
       return;
     }
-    ++team[position].goals;
+    team[position].goals++;
     this._gameService.updateGame(this.game);
     this._calculateScore(true);
   }
@@ -62,9 +69,18 @@ export class GameDetailComponent implements OnInit {
     if (!this.game || this.game.end) {
       return;
     }
-    ++team[position].ownGoals;
+    team[position].ownGoals++;
     this._gameService.updateGame(this.game);
     this._calculateScore(true);
+  }
+
+  public remove() {
+    if (this.game && !this.game.win) {
+      const gameCopy = JSON.parse(JSON.stringify(this.game));
+      this._gameService.deleteGame(this.game).subscribe((results) => {
+        this._newGame(gameCopy);
+      });
+    }
   }
 
   private _clearGame() {
@@ -84,15 +100,15 @@ export class GameDetailComponent implements OnInit {
     if (!this.game) {
       return;
     }
-    const redScore = this.game.teams[0].defence.goals +
-      this.game.teams[0].offence.goals +
-      this.game.teams[1].defence.ownGoals +
-      this.game.teams[1].offence.ownGoals;
+    const redScore = this.game.teams.red.defence.goals +
+      this.game.teams.red.offence.goals +
+      this.game.teams.blue.defence.ownGoals +
+      this.game.teams.blue.offence.ownGoals;
 
-    const blueScore = this.game.teams[1].defence.goals +
-      this.game.teams[1].offence.goals +
-      this.game.teams[0].defence.ownGoals +
-      this.game.teams[0].offence.ownGoals;
+    const blueScore = this.game.teams.blue.defence.goals +
+      this.game.teams.blue.offence.goals +
+      this.game.teams.red.defence.ownGoals +
+      this.game.teams.red.offence.ownGoals;
 
     this.scoreSummary = {
       red: redScore,
@@ -101,18 +117,18 @@ export class GameDetailComponent implements OnInit {
 
     if (checkResults && !this.game.end) {
       if (redScore >= this._targetScore) {
-        this._handleWin(0);
+        this._handleWin('red');
       }
       if (blueScore >= this._targetScore) {
-        this._handleWin(1);
+        this._handleWin('blue');
       }
     }
   }
 
   private _handleWin(winIndex) {
-    const lostIndex = winIndex === 0 ? 1 : 0;
+    const lostIndex = winIndex === 'red' ? 'blue' : 'red';
     this.game.end = new Date().toISOString();
-    this.game.win = this.game.teams[winIndex].color;
+    this.game.win = winIndex;
     this._gameService.updateGame(this.game);
 
     this.players[this.game.teams[winIndex].defence.player].wins++;
@@ -132,7 +148,7 @@ export class GameDetailComponent implements OnInit {
     }
 
     alert(`team ${this.game.win} wins!`);
-    this._router.navigate(['/']);
+    this._newGame();
   }
 
   private _calculateTime() {
@@ -145,5 +161,14 @@ export class GameDetailComponent implements OnInit {
     const seconds = time % 60;
     const minutes = (time - seconds) / 60;
     this.gameTime = `${minutes === 0 ? '00' : minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  }
+
+  private _newGame(gameObj?: Game) {
+    const dialogRef = this._dialog.open(GameNewDialogComponent, { data: { previousGame: gameObj || this.game } });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!!result) {
+        this._router.navigate(['/']);
+      }
+    });
   }
 }

@@ -1,8 +1,11 @@
 <button routerLink="/" mat-mini-fab color="accent" class="go-back">
   <mat-icon>arrow_back</mat-icon>
 </button>
+<button *ngIf="!!game && !game.win" (click)="remove()" mat-mini-fab color="accent" class="remove">
+  <mat-icon>close</mat-icon>
+</button>
 
-<div class="game-screen" *ngIf="game">
+<div class="game-screen" *ngIf="game; else loading">
   <div class="game-screen-summary">
     <h2>
       Red {{scoreSummary.red}} : {{scoreSummary.blue}} Blue
@@ -10,33 +13,70 @@
     </h2>
   </div>
   <div class="game-screen-teams">
-    <div class="team" *ngFor="let team of game.teams" [ngClass]="'team--'+team.color">
+
+    <div class="team team--red">
       <mat-card class="player player--offence">
         <mat-card-header>
           <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{team.offence.player}}" />
+            <img src="https://api.adorable.io/avatars/40/{{game.teams.red.offence.player}}" />
           </div>
-          <mat-card-title>{{players[team.offence.player]?.name}}</mat-card-title>
+          <mat-card-title><strong>{{players[game.teams.red.offence.player]?.name}}</strong></mat-card-title>
           <mat-card-subtitle>Attacker</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(team, 'offence')" color="primary">{{team.offence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(team, 'offence')">-{{team.offence.ownGoals}}</button></div>
+          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.red, 'offence')" color="primary">{{game.teams.red.offence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.red, 'offence')">-{{game.teams.red.offence.ownGoals}}</button></div>
         </mat-card-content>
       </mat-card>
       <mat-card class="player player--defence">
         <mat-card-header>
           <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{team.defence.player}}" />
+            <img src="https://api.adorable.io/avatars/40/{{game.teams.red.defence.player}}" />
           </div>
-          <mat-card-title>{{players[team.defence.player]?.name}}</mat-card-title>
+          <mat-card-title><strong>{{players[game.teams.red.defence.player]?.name}}</strong></mat-card-title>
           <mat-card-subtitle>Defender</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(team, 'defence')" color="primary">{{team.defence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(team, 'defence')">-{{team.defence.ownGoals}}</button></div>
+          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.red, 'defence')" color="primary">{{game.teams.red.defence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.red, 'defence')">-{{game.teams.red.defence.ownGoals}}</button></div>
         </mat-card-content>
       </mat-card>
     </div>
+
+    <div class="team team--blue">
+      <mat-card class="player player--offence">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img src="https://api.adorable.io/avatars/40/{{game.teams.blue.offence.player}}" />
+          </div>
+          <mat-card-title><strong>{{players[game.teams.blue.offence.player]?.name}}</strong></mat-card-title>
+          <mat-card-subtitle>Attacker</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.blue, 'offence')" color="primary">{{game.teams.blue.offence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.blue, 'offence')">-{{game.teams.blue.offence.ownGoals}}</button></div>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="player player--defence">
+        <mat-card-header>
+          <div mat-card-avatar class="example-header-image">
+            <img src="https://api.adorable.io/avatars/40/{{game.teams.blue.defence.player}}" />
+          </div>
+          <mat-card-title><strong>{{players[game.teams.blue.defence.player]?.name}}</strong></mat-card-title>
+          <mat-card-subtitle>Defender</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.blue, 'defence')" color="primary">{{game.teams.blue.defence.goals}}</button></div>
+          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.blue, 'defence')">-{{game.teams.blue.defence.ownGoals}}</button></div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
   </div>
 </div>
+
+<ng-template #loading>
+  <div class="loader">
+    <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
+  </div>
+</ng-template>

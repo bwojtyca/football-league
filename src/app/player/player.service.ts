@@ -41,4 +41,8 @@ export class PlayerService {
   public updatePlayer(player: Player): Observable<any> {
     return Observable.fromPromise(this._db.doc(`players/${player.id}`).update(player));
   }
+
+  public deletePlayer(player: Player): Observable<any> {
+    return Observable.fromPromise(this._db.doc(`players/${player.id}`).delete());
+  }
 }

@@ -36,31 +36,32 @@ export class GameService {
     const game = {
       players: [teamRed.defence.id, teamBlue.defence.id],
       start: new Date().toISOString(),
-      teams: [{
-        color: 'red',
-        defence: {
-          player: teamRed.defence.id,
-          goals: 0,
-          ownGoals: 0
+      teams: {
+        red: {
+          defence: {
+            player: teamRed.defence.id,
+            goals: 0,
+            ownGoals: 0
+          },
+          offence: {
+            player: teamRed.offence.id,
+            goals: 0,
+            ownGoals: 0
+          }
         },
-        offence: {
-          player: teamRed.offence.id,
-          goals: 0,
-          ownGoals: 0
+        blue: {
+          defence: {
+            player: teamBlue.defence.id,
+            goals: 0,
+            ownGoals: 0
+          },
+          offence: {
+            player: teamBlue.offence.id,
+            goals: 0,
+            ownGoals: 0
+          }
         }
-      }, {
-        color: 'blue',
-        defence: {
-          player: teamBlue.defence.id,
-          goals: 0,
-          ownGoals: 0
-        },
-        offence: {
-          player: teamBlue.offence.id,
-          goals: 0,
-          ownGoals: 0
-        }
-      }]
+      }
     };
 
     if (teamRed.defence.id !== teamRed.offence.id) {
@@ -78,4 +79,7 @@ export class GameService {
     return Observable.fromPromise(this._db.doc(`games/${game.id}`).update(game));
   }
 
+  public deleteGame(game: Game): Observable<any> {
+    return Observable.fromPromise(this._db.doc(`games/${game.id}`).delete());
+  }
 }

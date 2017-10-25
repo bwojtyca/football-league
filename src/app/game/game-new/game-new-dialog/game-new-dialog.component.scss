@@ -1,3 +1,5 @@
+@import '~@angular/material/theming';
+
 .header {
   display: flex;
   flex-direction: column;
@@ -18,21 +20,32 @@
 .new-game {
   display: flex;
   margin: 0 -10px;
+  flex-direction: column;
 }
 
 .team {
   margin: 0 10px;
   display: flex;
   flex-direction: column;
-  min-width: 280px;
+  min-width: 260px;
+  box-sizing: border-box;
+
+  &-switch {
+    width: 40px;
+    height: 40px;
+    display: block;
+    text-align: center;
+    margin: 10px;
+    min-width: 40px;
+  }
 }
 
 .team--red .team-color {
-  color: red;
+  color: map_get($mat-red, 500);
 }
 
 .team--blue .team-color {
-  color: blue;
+  color: map_get($mat-indigo, 500);
 }
 
 .team-color {
@@ -56,6 +69,16 @@
 }
 
 .mat-action-row {
-  margin: 10px -24px -24px;
-  padding-right: 24px;
+  display: block;
+  text-align: right;
+  padding: 16px 24px;
+  margin: 16px -24px -24px -24px;
+  border-top: 1px solid rgba(0, 0, 0, .12);
+}
+
+
+@media (min-width: 768px) {
+  .new-game {
+    flex-direction: row;
+  }
 }

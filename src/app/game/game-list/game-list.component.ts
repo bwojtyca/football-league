@@ -18,7 +18,11 @@ export class GameListComponent implements OnInit {
 
   public ngOnInit() {
     this._gameService.getPlayerGames(this.playerId).subscribe((games) => {
-      this.games = games;
+      this.games = games.sort((game1: Game, game2: Game) => {
+        const start1 = new Date(game1.start).getTime();
+        const start2 = new Date(game2.start).getTime();
+        return start1 > start2 ? -1 : start1 <  start2 ? 1 : 0;
+      });
     });
   }
 
@@ -32,15 +36,15 @@ export class GameListComponent implements OnInit {
 
   public scoreSummary(game) {
     const teamRedScore =
-      game.teams[0].defence.goals +
-      game.teams[0].offence.goals +
-      game.teams[1].defence.ownGoals +
-      game.teams[1].offence.ownGoals;
+      game.teams.red.defence.goals +
+      game.teams.red.offence.goals +
+      game.teams.blue.defence.ownGoals +
+      game.teams.blue.offence.ownGoals;
     const teamBlueScore =
-      game.teams[1].defence.goals +
-      game.teams[1].offence.goals +
-      game.teams[0].defence.ownGoals +
-      game.teams[0].offence.ownGoals;
+      game.teams.blue.defence.goals +
+      game.teams.blue.offence.goals +
+      game.teams.red.defence.ownGoals +
+      game.teams.red.offence.ownGoals;
 
     return `${teamRedScore}:${teamBlueScore}`;
   }
