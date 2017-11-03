@@ -1,0 +1,30 @@
+.game-summary {
+  display: flex;
+}
+.game-summary .col {
+  padding: 0 5px;
+}
+.game-summary .col.team-name {
+  width: 100%;
+}
+.game-summary .col.team-name:first-child {
+  text-align: right;
+}
+/* .mat-list-icon.thumb_up {
+  color: green;
+}
+.mat-list-icon.thumb_down {
+  color: darkred;
+} */
+
+a.mat-line {
+  color: rgba(0,0,0,.87);
+  text-decoration: none;
+}
+
+.game-row.win a.mat-line {
+  color: green;
+}
+.game-row.lost a.mat-line {
+  color: darkred;
+}

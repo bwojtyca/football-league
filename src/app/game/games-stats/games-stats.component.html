@@ -1,0 +1,160 @@
+<mat-accordion class="headers-align" *ngIf="!!games">
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-description>
+                Goals summary
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list>
+            <mat-list-item>
+                <h4 mat-line><strong>{{goals.total}}</strong> ({{goals.total / games.total | number}}
+                    per game)</h4>
+                <p mat-line>goals</p>
+            </mat-list-item>
+            <mat-list-item>
+                <h4 mat-line><strong>{{goals.own}}</strong> ({{goals.own / games.total | number}}
+                    per game)</h4>
+                <p mat-line>own</p>
+            </mat-list-item>
+            <mat-list-item>
+                <h4 mat-line><strong>{{goals.total + goals.own}}</strong> ({{(goals.total + goals.own)
+                    / games.total | number}} per game)</h4>
+                <p mat-line>total</p>
+            </mat-list-item>
+        </mat-list>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-description>
+                Positions summary
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.defender.games}}</strong></h4>
+                    <p mat-line>defender games</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.attacker.games}}</strong></h4>
+                    <p mat-line>attacker games</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.defender.wins}}</strong> ({{(positions.defender.wins
+                        / positions.defender.games)*100 | number}} %)</h4>
+                    <p mat-line>defender wins</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.attacker.wins}}</strong> ({{(positions.attacker.wins
+                        / positions.attacker.games)*100 | number}} %)</h4>
+                    <p mat-line>attacker wins</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.defender.loses}}</strong> ({{(positions.defender.loses
+                        / positions.defender.games)*100 | number}} %)</h4>
+                    <p mat-line>defender loses</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.attacker.loses}}</strong> ({{(positions.attacker.loses
+                        / positions.attacker.games)*100 | number}} %)</h4>
+                    <p mat-line>attacker loses</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.defender.goals}}</strong> ({{positions.defender.goals
+                        / positions.defender.games | number}} per game)</h4>
+                    <p mat-line>defender goals</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.attacker.goals}}</strong> ({{positions.attacker.goals
+                        / positions.attacker.games | number}} per game)</h4>
+                    <p mat-line>attacker goals</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.defender.own}}</strong> ({{positions.defender.own
+                        / positions.defender.games | number}} per game)</h4>
+                    <p mat-line>defender own goals</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{positions.attacker.own}}</strong> ({{positions.attacker.own
+                        / positions.attacker.games | number}} per game)</h4>
+                    <p mat-line>attacker own goals</p>
+                </mat-list-item>
+            </div>
+        </mat-list>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-description>
+                Colors summary
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.red.games}}</strong></h4>
+                    <p mat-line>red games</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.blue.games}}</strong></h4>
+                    <p mat-line>blue games</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.red.wins}}</strong> ({{(colors.red.wins
+                        / colors.red.games)*100 | number}} %)</h4>
+                    <p mat-line>red wins</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.blue.wins}}</strong> ({{(colors.blue.wins
+                        / colors.blue.games)*100 | number}} %)</h4>
+                    <p mat-line>blue wins</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.red.loses}}</strong> ({{(colors.red.loses
+                        / colors.red.games)*100 | number}} %)</h4>
+                    <p mat-line>red loses</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.blue.loses}}</strong> ({{(colors.blue.loses
+                        / colors.blue.games)*100 | number}} %)</h4>
+                    <p mat-line>blue loses</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.red.goals}}</strong> ({{colors.red.goals
+                        / colors.red.games | number}} per game)</h4>
+                    <p mat-line>red goals</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.blue.goals}}</strong> ({{colors.blue.goals
+                        / colors.blue.games | number}} per game)</h4>
+                    <p mat-line>blue goals</p>
+                </mat-list-item>
+            </div>
+            <div class="mat-list-group">
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.red.own}}</strong> ({{colors.red.own
+                        / colors.red.games | number}} per game)</h4>
+                    <p mat-line>red own goals</p>
+                </mat-list-item>
+                <mat-list-item>
+                    <h4 mat-line><strong>{{colors.blue.own}}</strong> ({{colors.blue.own
+                        / colors.blue.games | number}} per game)</h4>
+                    <p mat-line>blue own goals</p>
+                </mat-list-item>
+            </div>
+        </mat-list>
+    </mat-expansion-panel>
+</mat-accordion>

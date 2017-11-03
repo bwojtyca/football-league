@@ -1,18 +1,11 @@
-<mat-accordion class="headers-align">
-  <mat-expansion-panel *ngFor="let game of games">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        {{gameType(game)}}
-      </mat-panel-title>
-      <mat-panel-title>
-        {{teamName(game.teams.red)}}
-        {{scoreSummary(game)}}
-        {{teamName(game.teams.blue)}}
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <div>
-      {{ !game.end ? 'unfinished' : 'finished - ' + game.win + ' team win'}}
-      <a mat-button routerLink="/game/{{game.id}}">See details</a>
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
+<mat-list>
+  <mat-list-item *ngFor="let game of games" class="game-row" [ngClass]="getClass(game)">
+    <a routerLink="/game/{{game.id}}" mat-line>
+      <span class="game-summary">
+        <span class="col team-name" [innerHtml]="teamName(game.teams.red)"></span>
+        <span class="col">{{scoreSummary(game)}}</span>
+        <span class="col team-name" [innerHtml]="teamName(game.teams.blue)"></span>
+      </span>
+    </a>
+  </mat-list-item>
+</mat-list>

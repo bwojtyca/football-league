@@ -60,6 +60,9 @@
           </mat-list-item>
         </div>
         <mat-divider></mat-divider>
+        <h3 mat-subheader>Games stats</h3>
+        <fl-games-stats [playerId]="player.id"></fl-games-stats>
+        <mat-divider></mat-divider>
         <h3 mat-subheader>Games history</h3>
         <fl-game-list [playerId]="player.id"></fl-game-list>
       </mat-list>

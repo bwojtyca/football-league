@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Game} from '../game';
-import {PlayerService} from '../../player/player.service';
-import {GameService} from '../game.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { Game } from '../game';
+import { PlayerService } from '../../player/player.service';
+import { GameService } from '../game.service';
 
 @Component({
   selector: 'fl-game-list',
@@ -13,7 +13,7 @@ export class GameListComponent implements OnInit {
   public games: Game[];
 
   constructor(private _playerService: PlayerService,
-              private _gameService: GameService) {
+    private _gameService: GameService) {
   }
 
   public ngOnInit() {
@@ -21,15 +21,20 @@ export class GameListComponent implements OnInit {
       this.games = games.sort((game1: Game, game2: Game) => {
         const start1 = new Date(game1.start).getTime();
         const start2 = new Date(game2.start).getTime();
-        return start1 > start2 ? -1 : start1 <  start2 ? 1 : 0;
+        return start1 > start2 ? -1 : start1 < start2 ? 1 : 0;
       });
     });
   }
 
+  private getPlayerName(playerId) {
+    return playerId === this.playerId ?
+      `<strong>${this._playerService.getPlayerName(playerId)}</strong>` : this._playerService.getPlayerName(playerId);
+  }
+
   public teamName(team) {
-    const players = [this._playerService.getPlayerName(team.defence.player)];
+    const players = [this.getPlayerName(team.defence.player)];
     if (team.defence.player !== team.offence.player) {
-      players.push(this._playerService.getPlayerName(team.offence.player));
+      players.push(this.getPlayerName(team.offence.player));
     }
     return `${players.join(' & ')}`;
   }
@@ -47,6 +52,30 @@ export class GameListComponent implements OnInit {
       game.teams.red.offence.ownGoals;
 
     return `${teamRedScore}:${teamBlueScore}`;
+  }
+
+  public getIcon(game) {
+    if (!game.win) {
+      return 'games';
+    } else if ((game.win === 'blue' &&
+      (game.teams.blue.defence.player === this.playerId || game.teams.blue.offence.player === this.playerId)) ||
+      (game.win === 'red' && (game.teams.red.defence.player === this.playerId || game.teams.red.offence.player === this.playerId))
+    ) {
+      return 'thumb_up';
+    }
+    return 'thumb_down';
+  }
+
+  public getClass(game) {
+    if (!game.win) {
+      return 'in-progress';
+    } else if ((game.win === 'blue' &&
+      (game.teams.blue.defence.player === this.playerId || game.teams.blue.offence.player === this.playerId)) ||
+      (game.win === 'red' && (game.teams.red.defence.player === this.playerId || game.teams.red.offence.player === this.playerId))
+    ) {
+      return 'win';
+    }
+    return 'lost';
   }
 
   public gameType(game) {

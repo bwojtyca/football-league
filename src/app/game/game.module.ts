@@ -12,6 +12,7 @@ import { GameDetailComponent } from './game-detail/game-detail.component';
 import { GameNewComponent } from './game-new/game-new.component';
 import { GameNewDialogComponent } from './game-new/game-new-dialog/game-new-dialog.component';
 import { HighlightPipe } from './highlight.pipe';
+import { GamesStatsComponent } from './games-stats/games-stats.component';
 
 @NgModule({
   imports: [
@@ -36,14 +37,16 @@ import { HighlightPipe } from './highlight.pipe';
   ],
   exports: [
     GameListComponent,
-    GameNewComponent
+    GameNewComponent,
+    GamesStatsComponent
   ],
   declarations: [
     GameListComponent,
     GameDetailComponent,
     GameNewComponent,
     GameNewDialogComponent,
-    HighlightPipe
+    HighlightPipe,
+    GamesStatsComponent
   ],
   providers: [
     GameService
