@@ -11,6 +11,7 @@ export class GamesStatsComponent implements OnInit {
   @Input() public playerId?: string;
 
   public goals;
+  public time;
   public games;
   public positions;
   public colors;
@@ -26,6 +27,11 @@ export class GamesStatsComponent implements OnInit {
       this.goals = {
         total: 0,
         own: 0
+      };
+      this.time = {
+        total: 0,
+        wins: 0,
+        loses: 0
       };
       this.games = {
         total: 0,
@@ -75,6 +81,9 @@ export class GamesStatsComponent implements OnInit {
           (game.teams.red.offence.player === this.playerId) ? 'red' : 'blue';
         const isDefender = game.teams[playerTeam].defence.player === this.playerId;
         const isAttacker = game.teams[playerTeam].offence.player === this.playerId;
+        const time = (new Date(game.end).getTime() - new Date(game.start).getTime()) / 1000;
+
+        this.time.total += time;
 
         // calculate games
         ++this.games.total;
@@ -83,9 +92,11 @@ export class GamesStatsComponent implements OnInit {
         if (playerTeam === game.win) {
           ++this.games.wins;
           ++this.colors[playerTeam].wins;
+          this.time.wins += time;
         } else {
           ++this.games.loses;
           ++this.colors[playerTeam].loses;
+          this.time.loses += time;
         }
 
         // calculate goals
