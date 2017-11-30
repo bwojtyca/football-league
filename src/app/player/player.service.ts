@@ -28,7 +28,7 @@ export class PlayerService {
   }
 
   public getPlayerName(playerId: string): string {
-    if (!this._players) {
+    if (!this._players || !this._players.find((player) => player.id === playerId)) {
       return `User id: ${playerId}`;
     }
     return this._players.find((player) => player.id === playerId).name;

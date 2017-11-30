@@ -30,42 +30,48 @@
           <strong class="player-name"><img src="https://api.adorable.io/avatars/40/{{player.id}}" width="27" alt="{{player.name}}" /> {{player.name}}</strong>
         </mat-panel-title>
         <mat-panel-description>
-          played {{player.games}} {{player.games > 1 ? 'games' : 'game'}} ({{player.winRatio}}% wins)
+          {{player.winRatio}}% wins<ng-container *ngIf="showStats"> (played {{player.games}} {{player.games > 1 ? 'games' : 'game'}} )</ng-container>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <mat-list>
-        <h3 mat-subheader>Summary</h3>
-        <div class="mat-list-group">
-          <mat-list-item>
-            <mat-icon mat-list-icon>games</mat-icon>
-            <h4 mat-line>{{player.games}}</h4>
-            <p mat-line>games in total</p>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon mat-list-icon>thumbs_up_down</mat-icon>
-            <h4 mat-line>{{player.winRatio}}%</h4>
-            <p mat-line>of win games</p>
-          </mat-list-item>
-        </div>
-        <div class="mat-list-group">
-          <mat-list-item>
-            <mat-icon mat-list-icon>thumb_up</mat-icon>
-            <h4 mat-line>{{player.wins}}</h4>
-            <p mat-line>wins</p>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon mat-list-icon>thumb_down</mat-icon>
-            <h4 mat-line>{{player.loses}}</h4>
-            <p mat-line>loses</p>
-          </mat-list-item>
-        </div>
-        <mat-divider></mat-divider>
-        <h3 mat-subheader>Games stats</h3>
-        <fl-games-stats [playerId]="player.id"></fl-games-stats>
+        <ng-container *ngIf="showStats">
+          <h3 mat-subheader>Summary</h3>
+          <div class="mat-list-group">
+            <mat-list-item>
+              <mat-icon mat-list-icon>games</mat-icon>
+              <h4 mat-line>{{player.games}}</h4>
+              <p mat-line>games in total</p>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon mat-list-icon>thumbs_up_down</mat-icon>
+              <h4 mat-line>{{player.winRatio}}%</h4>
+              <p mat-line>of win games</p>
+            </mat-list-item>
+          </div>
+          <div class="mat-list-group">
+            <mat-list-item>
+              <mat-icon mat-list-icon>thumb_up</mat-icon>
+              <h4 mat-line>{{player.wins}}</h4>
+              <p mat-line>wins</p>
+            </mat-list-item>
+            <mat-list-item>
+              <mat-icon mat-list-icon>thumb_down</mat-icon>
+              <h4 mat-line>{{player.loses}}</h4>
+              <p mat-line>loses</p>
+            </mat-list-item>
+          </div>
+          <mat-divider></mat-divider>
+          <h3 mat-subheader>Games stats</h3>
+          <fl-games-stats [playerId]="player.id"></fl-games-stats>
+        </ng-container>
         <mat-divider></mat-divider>
         <h3 mat-subheader>Games history</h3>
-        <fl-game-list [playerId]="player.id"></fl-game-list>
+        <fl-game-list [playerId]="player.id" [limit]="!showStats"></fl-game-list>
       </mat-list>
     </mat-expansion-panel>
   </mat-accordion>
+
+  <div class="actions">
+    <button mat-button (click)="toggleStats()">Toggle stats</button>
+  </div>
 </div>

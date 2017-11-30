@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import { Game } from '../game';
 import { PlayerService } from '../../player/player.service';
 import { GameService } from '../game.service';
@@ -8,8 +8,10 @@ import { GameService } from '../game.service';
   templateUrl: './game-list.component.html',
   styleUrls: ['./game-list.component.css']
 })
-export class GameListComponent implements OnInit {
+export class GameListComponent implements OnInit, OnChanges {
   @Input() public playerId?: string;
+  @Input() public limit?: string;
+  private allGames: Game[];
   public games: Game[];
 
   constructor(private _playerService: PlayerService,
@@ -18,12 +20,20 @@ export class GameListComponent implements OnInit {
 
   public ngOnInit() {
     this._gameService.getPlayerGames(this.playerId).subscribe((games) => {
-      this.games = games.sort((game1: Game, game2: Game) => {
+      this.allGames = games.sort((game1: Game, game2: Game) => {
         const start1 = new Date(game1.start).getTime();
         const start2 = new Date(game2.start).getTime();
         return start1 > start2 ? -1 : start1 < start2 ? 1 : 0;
       });
+
+      this.games = this.limit ? this.allGames.slice(0, 10) : this.allGames.slice(0, this.allGames.length - 1);
     });
+  }
+
+  public ngOnChanges(changes) {
+    if (changes.limit && this.allGames) {
+      this.games = this.limit ? this.allGames.slice(0, 10) : this.allGames.slice(0, this.allGames.length - 1);
+    }
   }
 
   private getPlayerName(playerId) {

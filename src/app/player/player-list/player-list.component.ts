@@ -13,6 +13,7 @@ export class PlayerListComponent implements OnInit {
   public addNew: boolean;
   public newPlayerName: FormControl;
   public loading: boolean;
+  public showStats: boolean;
 
   constructor(private _playerService: PlayerService) {
     this.addNew = false;
@@ -21,6 +22,7 @@ export class PlayerListComponent implements OnInit {
 
   public ngOnInit() {
     this.loading = true;
+    this.showStats = false;
     this._playerService.getPlayers().subscribe((players) => {
       this.players = players;
       this._calculatePlayers();
@@ -37,6 +39,10 @@ export class PlayerListComponent implements OnInit {
 
   public getErrorMessage() {
     return this.newPlayerName.hasError('required') ? 'You must enter a value' : null;
+  }
+
+  public toggleStats() {
+    this.showStats = window.prompt('Show stats?') === 'JacekLoser'
   }
 
   private _calculatePlayers() {

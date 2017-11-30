@@ -1,3 +1,4 @@
+import { PlayerService } from './../../player/player.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { GameService } from '../game.service';
 import { Game } from '../game';
@@ -15,10 +16,13 @@ export class GamesStatsComponent implements OnInit {
   public games;
   public positions;
   public colors;
+  public allies;
+  public enemies;
   private playerdGames: Game[];
 
   constructor(
-    private gameService: GameService
+    private gameService: GameService,
+    private playerService: PlayerService
   ) { }
 
   ngOnInit() {
@@ -70,6 +74,8 @@ export class GamesStatsComponent implements OnInit {
           own: 0,
         }
       };
+      this.allies = [];
+      this.enemies = [];
       this.calculateStats();
     });
   }
@@ -134,7 +140,71 @@ export class GamesStatsComponent implements OnInit {
             ++this.positions.attacker.loses;
           }
         }
+
+        if (isDefender && !isAttacker || !isDefender && isAttacker) {
+          const allie = this.playerService.getPlayerName(
+            isDefender ? game.teams[playerTeam].offence.player : game.teams[playerTeam].defence.player
+          );
+          let allieStats = this.allies.find((all) => all.name === allie);
+
+          if (!allieStats) {
+            allieStats = {
+              name: allie,
+              games: 0,
+              wins: 0,
+              loses: 0,
+              timePlayed: 0
+            };
+            this.allies.push(allieStats);
+          }
+
+          ++allieStats.games;
+          allieStats.timePlayed += time;
+          if (playerTeam === game.win) {
+            ++allieStats.wins;
+          } else {
+            ++allieStats.loses;
+          }
+        }
+
+        const enemies = [];
+        enemies.push(game.teams[(playerTeam === 'red' ? 'blue' : 'red')].defence.player);
+        if (game.teams[(playerTeam === 'red' ? 'blue' : 'red')].defence.player
+          !== game.teams[(playerTeam === 'red' ? 'blue' : 'red')].offence.player) {
+          enemies.push(game.teams[(playerTeam === 'red' ? 'blue' : 'red')].offence.player);
+        }
+
+        enemies.forEach((enemy) => {
+          const enemyName = this.playerService.getPlayerName(enemy);
+          let enemyStats = this.enemies.find((ene) => ene.name === enemyName);
+
+          if (!enemyStats) {
+            enemyStats = {
+              name: enemyName,
+              games: 0,
+              wins: 0,
+              loses: 0,
+              timePlayed: 0
+            };
+            this.enemies.push(enemyStats);
+          }
+
+          ++enemyStats.games;
+          enemyStats.timePlayed += time;
+          if (playerTeam === game.win) {
+            ++enemyStats.wins;
+          } else {
+            ++enemyStats.loses;
+          }
+        });
       }
+    });
+
+    this.allies.sort((a, b) => {
+      return a.wins / a.games > b.wins / b.games ? -1 : 1;
+    });
+    this.enemies.sort((a, b) => {
+      return a.wins / a.games > b.wins / b.games ? -1 : 1;
     });
   }
 
