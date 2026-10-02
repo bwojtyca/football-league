@@ -50,13 +50,20 @@ service cloud.firestore {
         && request.resource.data.players.size() <= 100
         && request.resource.data.get('archived', false) is bool;
 
-      // A league can be renamed, archived and gain players; nobody is removed from it.
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived'])
+      // A league can be renamed, locked for new games (`archived`), given a minimum number of
+      // games to appear in its ranking, deleted and restored (`deleted`, nothing is erased) and
+      // gain players; nobody is removed from it.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted'])
         && leagueName(request.resource.data.name)
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
         && request.resource.data.players.hasAll(resource.data.players)
-        && request.resource.data.get('archived', false) is bool;
+        && request.resource.data.get('archived', false) is bool
+        && request.resource.data.get('deleted', false) is bool
+        && (!('minGames' in request.resource.data)
+          || (request.resource.data.minGames is int
+            && request.resource.data.minGames >= 0
+            && request.resource.data.minGames <= 100));
 
       function leagueName(name) {
         return name is string && name.size() > 0 && name.size() <= 60;
@@ -138,8 +145,11 @@ service cloud.firestore {
       allow update: if !('end' in resource.data)
         && (scored() || swapped() || undone() || closed() || scoredAndClosed());
 
-      // Only games that are still being played can be removed.
+      // Only games that are still being played can be removed. Any game can be marked as
+      // deleted (hidden from rankings and stats) and restored; nothing else changes with it.
       allow delete: if !('win' in resource.data);
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted'])
+        && request.resource.data.deleted is bool;
 
       function before() {
         return resource.data;
