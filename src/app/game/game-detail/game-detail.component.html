@@ -14,15 +14,26 @@
           } @else {
             {{ clock().time }}
           }
-          @if (modeLabel(); as label) {
-            · {{ label.key | transloco: { target: label.target } }}
+          @if (mode(); as mode) {
+            · <fl-mode-label [mode]="mode" />
           }
         </small>
       </div>
-      @if (!game.win) {
-        <button matIconButton (click)="remove()" [attr.aria-label]="'game.remove' | transloco">
-          <mat-icon>delete_outline</mat-icon>
-        </button>
+      @if (!game.end) {
+        @if (game.paused) {
+          <button matIconButton (click)="resume()" [attr.aria-label]="'game.resume' | transloco">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+        } @else {
+          <button
+            matIconButton
+            (click)="pause()"
+            [disabled]="!!winner"
+            [attr.aria-label]="'game.pause' | transloco"
+          >
+            <mat-icon>pause</mat-icon>
+          </button>
+        }
       } @else if (game.deleted) {
         <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
       } @else if (game.tournament) {
@@ -36,7 +47,7 @@
       } @else {
         <span class="spacer"></span>
       }
-      @if (game.end && !game.deleted) {
+      @if (!game.deleted) {
         <button
           matIconButton
           class="more"
@@ -46,7 +57,7 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #gameMenu="matMenu">
-          <button mat-menu-item (click)="deleteFinished()">
+          <button mat-menu-item (click)="game.end ? deleteFinished() : remove()">
             <mat-icon>delete_outline</mat-icon>{{ 'game.remove' | transloco }}
           </button>
         </mat-menu>
@@ -70,7 +81,10 @@
       </p>
     }
 
-    <div class="teams">
+    <div class="teams" [class.paused]="!!game.paused">
+      @if (game.paused) {
+        <fl-pause-overlay (resume)="resume()" />
+      }
       @for (color of colors; track color) {
         <section class="team team--{{ color }}" [class.won]="game.win === color">
           <div class="team-head">
@@ -118,44 +132,52 @@
       }
     </div>
 
-    @if (game.end && game.events?.length) {
+    @if (winner && !game.end) {
+      <fl-finish-panel
+        [class]="winner"
+        [winner]="winner"
+        [score]="score()"
+        [names]="winners()"
+        [canUndo]="!!game.events?.length"
+        (undo)="undo()"
+        (next)="next()"
+      />
+    } @else if (game.end && game.events?.length) {
       <footer class="bar">
         <span class="text">{{ 'timeline.prompt' | transloco }}</span>
         <button matButton (click)="showTimeline()">
           <mat-icon>timeline</mat-icon>{{ 'timeline.title' | transloco }}
         </button>
       </footer>
-    } @else if (winner) {
-      <footer class="bar bar--decided" role="status">
-        <b class="text">{{ 'game.wins' | transloco: { team: (teamNames[winner] | transloco) } }}</b>
-        @if (game.events?.length) {
-          <button matButton="filled" (click)="undo()">
-            <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
-          </button>
-        }
-      </footer>
-    } @else if (lastEvent(); as last) {
+    } @else if (!game.end && game.events) {
+      @let last = lastEvent();
       <footer class="bar" role="status">
-        <span class="text">
-          @switch (last.type) {
-            @case ('swap') {
-              {{ 'game.lastSwap' | transloco: { team: (teamNames[last.team] | transloco) } }}
+        <span class="text" [class.placeholder]="!last">
+          @if (last) {
+            @switch (last.type) {
+              @case ('swap') {
+                {{ 'game.event.swap' | transloco: { team: (teamNames[last.team] | transloco) } }}
+              }
+              @default {
+                {{
+                  (last.type === 'own' ? 'game.event.own' : 'game.event.goal')
+                    | transloco
+                      : {
+                          name: playerService.getPlayerName($any(last).player),
+                          from:
+                            ($any(last).position === 'defence'
+                              ? 'position.fromDefence'
+                              : 'position.fromOffence'
+                            ) | transloco,
+                        }
+                }}
+              }
             }
-            @case ('own') {
-              {{
-                'game.lastOwnGoal'
-                  | transloco: { name: playerService.getPlayerName($any(last).player) }
-              }}
-            }
-            @default {
-              {{
-                'game.lastGoal'
-                  | transloco: { name: playerService.getPlayerName($any(last).player) }
-              }}
-            }
+          } @else {
+            {{ 'game.event.none' | transloco }}
           }
         </span>
-        <button matButton (click)="undo()">
+        <button matButton (click)="undo()" [disabled]="!last">
           <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
         </button>
       </footer>

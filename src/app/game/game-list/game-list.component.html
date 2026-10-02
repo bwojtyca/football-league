@@ -23,7 +23,7 @@
                 : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
           }}
           @if (game.mode; as mode) {
-            <span>{{ mode.key | transloco: { target: mode.target } }}</span>
+            <fl-mode-label [mode]="mode" />
           }
           @if (game.tournament; as tournament) {
             <span>{{ tournament }}</span>

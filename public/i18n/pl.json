@@ -21,7 +21,9 @@
   },
   "position": {
     "offence": "Atak",
-    "defence": "Obrona"
+    "defence": "Obrona",
+    "fromDefence": "z obrony",
+    "fromOffence": "z ataku"
   },
   "result": {
     "win": "wygrana",
@@ -120,7 +122,8 @@
     "needPlayers": "W tej lidze potrzeba co najmniej dwóch graczy.",
     "chance": "Szansa wygranej",
     "evenest": "Najrówniej: {red} vs {blue} ({chance})",
-    "useSuggestion": "Ustaw"
+    "useSuggestion": "Ustaw",
+    "rules": "Zasady"
   },
   "game": {
     "ownGoal": "samobój",
@@ -133,24 +136,34 @@
     "rematch": "Rewanż",
     "swap": "Zamień pozycje",
     "undo": "Cofnij",
-    "lastGoal": "Gol: {name}",
-    "lastOwnGoal": "Samobój: {name}",
-    "lastSwap": "{team}: zamiana pozycji",
     "goldenGoal": "Złoty gol",
     "deleteConfirm": "Usunąć ten mecz? Zniknie z rankingów i statystyk, ale można go przywrócić.",
     "deleted": "Mecz usunięty",
-    "deletedNote": "Ten mecz jest usunięty: nie liczy się do rankingów ani statystyk."
+    "deletedNote": "Ten mecz jest usunięty: nie liczy się do rankingów ani statystyk.",
+    "pause": "Pauza",
+    "resume": "Wznów",
+    "pausedTitle": "Pauza",
+    "pausedHint": "Zegar stoi. Mecz możesz dokończyć teraz albo później.",
+    "undoLast": "Cofnij ostatni gol",
+    "next": "Dalej",
+    "event": {
+      "goal": "{name} strzela gola {from}",
+      "own": "{name} strzela samobója {from}",
+      "swap": "{team} zamieniają pozycje",
+      "none": "Tu pojawi się każdy gol. Pomyłkę cofniesz jednym tapnięciem."
+    }
   },
   "modes": {
     "title": "Tryb",
-    "to5": "Do 5",
-    "to8": "Do 8",
-    "to10": "Do 10",
-    "winBy2": "Przewaga 2",
-    "timed": "5 minut",
-    "custom": "Do {target}",
-    "winBy2Hint": "Do 8 goli, ale trzeba prowadzić dwoma. Kto pierwszy strzeli 11, wygrywa.",
-    "timedHint": "5 minut gry, potem wygrywa prowadzący, a przy remisie złoty gol. 8 goli kończy mecz wcześniej."
+    "target": "Do ilu goli",
+    "to": "Do {target}",
+    "winBy2": "przewaga 2",
+    "winBy2Max": "przewaga 2, max {max}",
+    "minutes": "{n} min",
+    "winBy2Label": "Przewaga 2 goli",
+    "winBy2Hint": "Od {tie}:{tie} gra toczy się, aż ktoś prowadzi dwoma golami, choćby 90:88.",
+    "timedLabel": "Na czas",
+    "timedHint": "{n} min gry, potem wygrywa prowadzący, a przy remisie złoty gol. {target} goli kończy mecz wcześniej."
   },
   "series": {
     "title": "Seria",
@@ -285,6 +298,7 @@
     "newTournament": "Nie udało się utworzyć turnieju. Sprawdź połączenie i spróbuj ponownie.",
     "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie.",
     "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę.",
-    "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie."
+    "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie.",
+    "pause": "Nie udało się zatrzymać ani wznowić meczu. Sprawdź połączenie i spróbuj ponownie."
   }
 }

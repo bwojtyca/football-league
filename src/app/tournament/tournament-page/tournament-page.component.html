@@ -15,7 +15,7 @@
   } @else {
     <p class="meta">
       {{ 'tournament.format.' + current.format | transloco }} ·
-      {{ modeKey() | transloco: { target: current.mode.target } }} ·
+      <fl-mode-label [mode]="current.mode" /> ·
       {{ (current.teamSize === 2 ? 'newGame.mode2v2' : 'newGame.mode1v1') | transloco }}
     </p>
 

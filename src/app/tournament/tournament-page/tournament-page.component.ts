@@ -19,16 +19,9 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { GameListComponent } from '../../game/game-list/game-list.component';
-import {
-  Game,
-  Lineup,
-  lineupOf,
-  lineupPlayers,
-  modeName,
-  TeamColor,
-  teamScore,
-} from '../../game/game';
+import { Game, Lineup, lineupOf, lineupPlayers, TeamColor, teamScore } from '../../game/game';
 import { GameService } from '../../game/game.service';
+import { ModeLabelComponent } from '../../game/mode/mode-label.component';
 import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
@@ -59,6 +52,7 @@ import { TournamentService } from '../tournament.service';
     RouterLink,
     AvatarComponent,
     GameListComponent,
+    ModeLabelComponent,
     TopBarComponent,
     TranslocoPipe,
   ],
@@ -91,12 +85,6 @@ export class TournamentPageComponent {
   });
 
   protected readonly running = computed(() => this.games()?.find((game) => !game.end));
-
-  protected readonly modeKey = computed(() => {
-    const mode = this.tournament()?.mode;
-    const name = mode && modeName(mode);
-    return name ? `modes.${name}` : 'modes.custom';
-  });
 
   protected readonly king = computed(() => {
     const tournament = this.tournament();

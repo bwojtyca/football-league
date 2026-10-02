@@ -49,8 +49,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. A game without `league`
   belongs to the league `legacy` (`leagueOf()` in `league/league.ts`). Games started since
   stage 2 also have:
-  - `mode` = `{ target, winBy?, max?, minutes? }` (no mode = to 8; ready-made modes in
-    `MODES` in `game/game.ts`);
+  - `mode` = `{ target, winBy?, max?, minutes? }` (no mode = to 8). The picker combines a
+    target (5/8/10), win by 2 without a cap and a time limit (3/5/7/10 min); `max` only
+    exists in stage 2 games;
   - `events` = list of `{ at, type: 'goal' | 'own', team, position, player }` and
     `{ at, type: 'swap', team }`, `at` in ms since the start. The goal totals in `teams` stay
     and change together with the log, so old views and the 2017 games need no log;
@@ -58,7 +59,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
     from game to game, the series score is counted from the games;
   - `tournament?` = id of the tournament the game belongs to;
   - `deleted?`: hidden from rankings and stats, restorable (any game can be marked; only running
-    games are erased for good).
+    games are erased for good);
+  - `paused?` (ISO time the clock stopped) and `pausedFor?` (ms of earlier pauses): the clock,
+    time limits and event times count play time only (`playTime()`).
 - `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin' | 'cup'`),
   `created`, `groups?` (cup: 0 or 2),
   `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
@@ -101,7 +104,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 - `game/timeline.ts` tells how a logged game went (score after each goal, longest run, biggest
   leads, comeback); the finished game screen opens it in a bottom sheet with a step chart.
 - The new game dialog suggests the most even split of four players (Elo) when it is clearly
-  more even than the chosen one.
+  more even than the chosen one. `game/mode/` has the shared rules picker and label.
+- Game screen: a decided game shows `FinishPanelComponent` for 8 s (`FINISH_AFTER_MS`), then
+  any device records the result; the scoring device (or whoever taps "Next") moves on.
 - `TournamentService` lists tournaments; `tournament/tournament.ts` holds the pure logic: king
   of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the
@@ -159,18 +164,9 @@ Owner feedback, to do at the end (after the planned stages):
   Świata" there.)
 - A global ranking and a global player profile across all leagues, next to the per-league ones.
 - (Done: games and leagues are deleted softly, with undo and restore, by anyone until sign-in.)
-- Win by two: a toggle that combines with any target (and the timed mode), not a mode of its
-  own. Rule: at (target - 1):(target - 1) the game needs a two-goal lead and has no cap, so
-  7:7 at "to 8" goes on to 9:7, or 8:8, 9:9... until e.g. 90:88. (Stage 2 shipped it as a
-  separate mode "to 8, lead by 2, max 11"; old games keep their stored `mode`.)
-- Timed games: let people set the time (today fixed at 5 minutes).
-- Pause a game and come back to it later to finish it.
-- New game dialog: drop the "2 vs 2" subtitle at the top. Under all the settings show a summary
-  instead: the rules, who plays with whom and what the game is called, laid out together with
-  the win chance.
-- The undo bar on the game screen is always shown: a placeholder before the first event, then
-  the last event described precisely, e.g. "Jerzy scores from defence", "Bartek scores an own
-  goal from attack".
+- (Done: win by 2 as a toggle without a cap, any target; timed games with a chosen length;
+  pause and resume; the new game dialog's summary of rules, lineups, kind and win chance; an
+  always-visible undo bar with precise event texts.)
 - More rankings: win % next to Elo, and a configurable minimum number of games to appear in a
   ranking (hide players with fewer than X games).
 - A fun "yolo" ranking (working name) about who is the "ziemniak" (potato: the one who loses
@@ -178,10 +174,8 @@ Owner feedback, to do at the end (after the planned stages):
   mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
   proposal: losing to the current potato costs a lot of points (not necessarily the potato
   title at once).
-- End of a game: instead of the small bottom bar, a large summary panel with a victory
-  animation, a "Next" button with a countdown spinner (moves on by itself after 5-10 s) and a
-  clear "Undo last event" button. It shows better that the game is over, makes undo obvious
-  and gets people into the rematch (or the next game of a tournament) faster.
+- (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
+  fills up and moves on by itself after 8 s.)
 - Best of 3/5 feel like tournaments rather than games. Possible levels: game (played to a win)
   -> series (several games, an overall winner, or loser for the "yolo" ranking) ->
   tournament. The owner leans towards modelling everything as tournaments: best-of-N as a

@@ -14,7 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { Lineup, lineupPlayers, MODES, ModeName } from '../../game/game';
+import { GameMode, Lineup, lineupPlayers } from '../../game/game';
+import { ModePickerComponent } from '../../game/mode/mode-picker.component';
 import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
 import { compareNames } from '../../player/player';
@@ -43,6 +44,7 @@ export function openTournamentNewDialog(dialog: MatDialog, data: TournamentNewDi
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    ModePickerComponent,
     TranslocoPipe,
   ],
   templateUrl: './tournament-new-dialog.component.html',
@@ -59,12 +61,11 @@ export class TournamentNewDialogComponent {
   private readonly _router = inject(Router);
 
   protected readonly formats = FORMATS;
-  protected readonly modes = Object.keys(MODES) as ModeName[];
 
   protected readonly format = signal<TournamentFormat>('king');
   protected readonly name = signal('');
-  /** Ready-made mode; king of the table plays short games by default. */
-  protected readonly modeName = signal<ModeName>('to5');
+  /** How the games are played; king of the table plays short games by default. */
+  protected readonly mode = signal<GameMode>({ target: 5 });
   private _modeChosen = false;
   protected readonly teamSize = signal(2);
   /** Cup: groups before the knockout stage (0 or 2). */
@@ -128,13 +129,13 @@ export class TournamentNewDialogComponent {
   protected setFormat(format: TournamentFormat): void {
     this.format.set(format);
     if (!this._modeChosen) {
-      this.modeName.set(format === 'king' ? 'to5' : 'to8');
+      this.mode.set({ target: format === 'king' ? 5 : 8 });
     }
   }
 
-  protected setMode(name: ModeName): void {
+  protected setMode(mode: GameMode): void {
     this._modeChosen = true;
-    this.modeName.set(name);
+    this.mode.set(mode);
   }
 
   protected toggle(playerId: string, selected: boolean): void {
@@ -184,7 +185,7 @@ export class TournamentNewDialogComponent {
       league: this._data.leagueId,
       name,
       format,
-      mode: { ...MODES[this.modeName()] },
+      mode: this.mode(),
       teamSize: this.size(),
       entries: this.fixedTeams() ? [] : players.map((player) => ({ player, at: now })),
       ...(this.fixedTeams() && { teams: this.teams() }),

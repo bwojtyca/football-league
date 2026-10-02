@@ -49,16 +49,7 @@
 
   <div class="section">
     <h3>{{ 'modes.title' | transloco }}</h3>
-    <mat-chip-listbox [attr.aria-label]="'modes.title' | transloco" hideSingleSelectionIndicator>
-      @for (name of modes; track name) {
-        <mat-chip-option
-          [selected]="modeName() === name"
-          [selectable]="modeName() !== name"
-          (selectionChange)="$event.isUserInput && $event.selected && setMode(name)"
-          >{{ 'modes.' + name | transloco }}</mat-chip-option
-        >
-      }
-    </mat-chip-listbox>
+    <fl-mode-picker [mode]="mode()" (modeChange)="setMode($event)" />
     @if (format() !== 'dyp') {
       <mat-chip-listbox
         [attr.aria-label]="'tournament.teamSize' | transloco"

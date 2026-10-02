@@ -7,13 +7,21 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 import { PlayerService } from '../../player/player.service';
 import { TournamentService } from '../../tournament/tournament.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
-import { Game, modeName, modeOf, Team, teamOf, teamPlayers, teamScore } from '../game';
+import { Game, isDefaultMode, modeOf, Team, teamOf, teamPlayers, teamScore } from '../game';
+import { ModeLabelComponent } from '../mode/mode-label.component';
 import { GameService } from '../game.service';
 
 /** Games of a league, or of one player in it, newest first. */
 @Component({
   selector: 'fl-game-list',
-  imports: [MatButtonModule, RouterLink, RatingChangeComponent, TranslocoDatePipe, TranslocoPipe],
+  imports: [
+    MatButtonModule,
+    RouterLink,
+    ModeLabelComponent,
+    RatingChangeComponent,
+    TranslocoDatePipe,
+    TranslocoPipe,
+  ],
   templateUrl: './game-list.component.html',
   styleUrl: './game-list.component.css',
 })
@@ -58,7 +66,7 @@ export class GameListComponent {
         blueScore: teamScore(game, 'blue'),
         win: game.win,
         change: playerId ? changes?.get(game.id)?.get(playerId) : undefined,
-        mode: this._modeLabel(game),
+        mode: isDefaultMode(modeOf(game)) ? null : modeOf(game),
         seriesGame: game.series?.game,
         tournament:
           game.tournament && !this.tournamentId()
@@ -66,16 +74,6 @@ export class GameListComponent {
             : undefined,
       }));
   });
-
-  /** Translation key of the mode, unless it is the usual game to 8. */
-  private _modeLabel(game: Game): { key: string; target: number } | undefined {
-    const mode = modeOf(game);
-    const name = modeName(mode);
-    if (name === 'to8') {
-      return undefined;
-    }
-    return { key: name ? `modes.${name}` : 'modes.custom', target: mode.target };
-  }
 
   protected showMore(): void {
     this._pages.update((pages) => pages + 1);

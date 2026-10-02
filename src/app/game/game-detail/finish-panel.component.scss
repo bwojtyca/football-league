@@ -1,0 +1,112 @@
+/* The big finish panel over the bottom of the screen. */
+:host {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 24px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  border-radius: 28px 28px 0 0;
+  background: var(--mat-sys-surface-container-high);
+  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.25);
+  text-align: center;
+  animation: rise 280ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.trophy {
+  width: 72px;
+  height: 72px;
+  font-size: 72px;
+  color: var(--fl-gold);
+  animation: pop 700ms cubic-bezier(0.3, 1.6, 0.5, 1) 120ms both;
+}
+
+h2 {
+  margin: 0;
+  font: 700 2rem/1.1 var(--fl-display);
+}
+
+:host(.red) h2 {
+  color: var(--fl-red-text);
+}
+
+:host(.blue) h2 {
+  color: var(--fl-blue-text);
+}
+
+.final {
+  margin: 0;
+  font: 700 3rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.final .r {
+  color: var(--fl-red-text);
+}
+
+.final .b {
+  color: var(--fl-blue-text);
+}
+
+.names {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.finish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.finish-actions button {
+  min-height: 48px;
+  padding: 0 20px;
+}
+
+/* "Next" fills up over the time the panel waits before moving on by itself. */
+.countdown {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  transform: rotate(-90deg);
+}
+
+.countdown circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-dasharray: 50.3;
+  stroke-dashoffset: 50.3;
+  animation: countdown 8s linear forwards;
+}
+
+@keyframes countdown {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .trophy {
+    animation: none;
+  }
+}

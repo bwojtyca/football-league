@@ -2,7 +2,6 @@ import {
   decidedWinner,
   formatDuration,
   Game,
-  MODES,
   seriesScore,
   teamOf,
   teamPlayers,
@@ -81,19 +80,24 @@ describe('modes', () => {
     expect(winnerOf(score(8, 7))).toBe('red');
   });
 
-  it('needs a two-goal lead up to the cap', () => {
-    expect(winnerOf(score(8, 7, MODES.winBy2))).toBeUndefined();
-    expect(winnerOf(score(9, 7, MODES.winBy2))).toBe('red');
-    expect(winnerOf(score(10, 11, MODES.winBy2))).toBe('blue');
+  it('needs a two-goal lead, with no cap unless one is set', () => {
+    const winBy2 = { target: 8, winBy: 2 };
+    expect(winnerOf(score(8, 6, winBy2))).toBe('red');
+    expect(winnerOf(score(8, 7, winBy2))).toBeUndefined();
+    expect(winnerOf(score(9, 7, winBy2))).toBe('red');
+    expect(winnerOf(score(90, 89, winBy2))).toBeUndefined();
+    expect(winnerOf(score(88, 90, winBy2))).toBe('blue');
+    // Stage 2 games capped at 11.
+    expect(winnerOf(score(10, 11, { ...winBy2, max: 11 }))).toBe('blue');
   });
 
   it('ends a timed game with the team ahead, or waits for a golden goal', () => {
     const start = Date.parse('2017-11-03T10:00:00.000Z');
     const afterTime = start + 5 * 60_000 + 1;
-    expect(decidedWinner(score(2, 1, MODES.timed), start + 60_000)).toBeUndefined();
-    expect(decidedWinner(score(2, 1, MODES.timed), afterTime)).toBe('red');
-    expect(decidedWinner(score(2, 2, MODES.timed), afterTime)).toBeUndefined();
-    expect(timeLeft(score(0, 0, MODES.timed), start + 60_000)).toBe(240);
+    expect(decidedWinner(score(2, 1, { target: 8, minutes: 5 }), start + 60_000)).toBeUndefined();
+    expect(decidedWinner(score(2, 1, { target: 8, minutes: 5 }), afterTime)).toBe('red');
+    expect(decidedWinner(score(2, 2, { target: 8, minutes: 5 }), afterTime)).toBeUndefined();
+    expect(timeLeft(score(0, 0, { target: 8, minutes: 5 }), start + 60_000)).toBe(240);
   });
 
   it('counts series wins by players, whatever their colour', () => {

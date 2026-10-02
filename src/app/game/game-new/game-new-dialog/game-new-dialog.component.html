@@ -1,38 +1,6 @@
-<h2 mat-dialog-title class="header">
-  {{ 'newGame.title' | transloco }}
-  <small>{{ kind().key | transloco: { name: kind().name } }}</small>
-</h2>
+<h2 mat-dialog-title>{{ 'newGame.title' | transloco }}</h2>
 
 <mat-dialog-content>
-  <div class="choices">
-    <mat-chip-listbox [attr.aria-label]="'modes.title' | transloco" hideSingleSelectionIndicator>
-      @for (name of modes; track name) {
-        <mat-chip-option
-          [selected]="modeName() === name"
-          [selectable]="modeName() !== name"
-          (selectionChange)="$event.isUserInput && $event.selected && modeName.set(name)"
-          >{{ 'modes.' + name | transloco }}</mat-chip-option
-        >
-      }
-    </mat-chip-listbox>
-    <mat-chip-listbox [attr.aria-label]="'series.title' | transloco" hideSingleSelectionIndicator>
-      @for (length of seriesLengths; track length) {
-        <mat-chip-option
-          [selected]="bestOf() === length"
-          [selectable]="bestOf() !== length"
-          (selectionChange)="$event.isUserInput && $event.selected && bestOf.set(length)"
-          >{{ 'series.bestOf' + length | transloco }}</mat-chip-option
-        >
-      }
-    </mat-chip-listbox>
-    @if (modeName() === 'winBy2' || modeName() === 'timed') {
-      <p class="hint">{{ 'modes.' + modeName() + 'Hint' | transloco }}</p>
-    }
-    @if (bestOf() > 1) {
-      <p class="hint">{{ 'series.hint' | transloco }}</p>
-    }
-  </div>
-
   @if (players(); as players) {
     @if (players.length < 2) {
       <p class="empty">{{ 'newGame.needPlayers' | transloco }}</p>
@@ -101,34 +69,52 @@
           }
         }
       </div>
-      @let red = redChance();
-      @if (red !== null) {
-        <div class="chance">
-          <div class="chance-row">
-            <span>{{ 'newGame.chance' | transloco }}</span>
-            <span class="num">{{ red }}% : {{ 100 - red }}%</span>
-          </div>
-          <div class="chance-bar" aria-hidden="true">
-            <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
-          </div>
+      <section class="rules">
+        <h3>{{ 'newGame.rules' | transloco }}</h3>
+        <fl-mode-picker [(mode)]="mode" />
+      </section>
+
+      <section class="summary" aria-live="polite">
+        <div class="summary-head">
+          <b>{{ kind().key | transloco: { name: kind().name } }}</b>
+          <fl-mode-label [mode]="mode()" />
         </div>
-      }
-      @if (suggestion(); as even) {
-        <div class="suggestion">
-          <span>{{
-            'newGame.evenest'
-              | transloco
-                : {
-                    red: teamLabel(even.red),
-                    blue: teamLabel(even.blue),
-                    chance: even.chance + '% : ' + (100 - even.chance) + '%',
-                  }
-          }}</span>
-          <button matButton (click)="useSuggestion(even)">
-            {{ 'newGame.useSuggestion' | transloco }}
-          </button>
-        </div>
-      }
+        @if (lineupNames(); as names) {
+          <div class="matchup">
+            <span class="r">{{ names.red }}</span>
+            <span class="vs">vs</span>
+            <span class="b">{{ names.blue }}</span>
+          </div>
+        }
+        @let red = redChance();
+        @if (red !== null) {
+          <div class="chance">
+            <div class="chance-row">
+              <span>{{ 'newGame.chance' | transloco }}</span>
+              <span class="num">{{ red }}% : {{ 100 - red }}%</span>
+            </div>
+            <div class="chance-bar" aria-hidden="true">
+              <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
+            </div>
+          </div>
+        }
+        @if (suggestion(); as even) {
+          <div class="suggestion">
+            <span>{{
+              'newGame.evenest'
+                | transloco
+                  : {
+                      red: teamLabel(even.red),
+                      blue: teamLabel(even.blue),
+                      chance: even.chance + '% : ' + (100 - even.chance) + '%',
+                    }
+            }}</span>
+            <button matButton (click)="useSuggestion(even)">
+              {{ 'newGame.useSuggestion' | transloco }}
+            </button>
+          </div>
+        }
+      </section>
     }
   } @else {
     <div class="loader"><mat-spinner [diameter]="40" /></div>

@@ -21,7 +21,9 @@
   },
   "position": {
     "offence": "Attack",
-    "defence": "Defence"
+    "defence": "Defence",
+    "fromDefence": "from defence",
+    "fromOffence": "from attack"
   },
   "result": {
     "win": "won",
@@ -120,7 +122,8 @@
     "needPlayers": "This league needs at least two players.",
     "chance": "Win chance",
     "evenest": "Most even: {red} vs {blue} ({chance})",
-    "useSuggestion": "Use"
+    "useSuggestion": "Use",
+    "rules": "Rules"
   },
   "game": {
     "ownGoal": "own goal",
@@ -133,24 +136,34 @@
     "rematch": "Rematch",
     "swap": "Swap positions",
     "undo": "Undo",
-    "lastGoal": "Goal: {name}",
-    "lastOwnGoal": "Own goal: {name}",
-    "lastSwap": "{team} swapped positions",
     "goldenGoal": "Golden goal",
     "deleteConfirm": "Delete this game? It disappears from rankings and stats, but can be restored.",
     "deleted": "Game deleted",
-    "deletedNote": "This game is deleted: it does not count for rankings or stats."
+    "deletedNote": "This game is deleted: it does not count for rankings or stats.",
+    "pause": "Pause",
+    "resume": "Resume",
+    "pausedTitle": "Paused",
+    "pausedHint": "The clock is stopped. Finish the game now or later.",
+    "undoLast": "Undo last goal",
+    "next": "Next",
+    "event": {
+      "goal": "{name} scores {from}",
+      "own": "{name} scores an own goal {from}",
+      "swap": "{team} swap positions",
+      "none": "Every goal shows up here. Undo a mistake with one tap."
+    }
   },
   "modes": {
     "title": "Mode",
-    "to5": "To 5",
-    "to8": "To 8",
-    "to10": "To 10",
-    "winBy2": "Win by 2",
-    "timed": "5 minutes",
-    "custom": "To {target}",
-    "winBy2Hint": "To 8, but you need a two-goal lead. First to 11 wins anyway.",
-    "timedHint": "5 minutes, then the team ahead wins; on a tie the next goal wins. Reaching 8 ends the game earlier."
+    "target": "Goals to win",
+    "to": "To {target}",
+    "winBy2": "win by 2",
+    "winBy2Max": "win by 2, max {max}",
+    "minutes": "{n} min",
+    "winBy2Label": "Win by 2",
+    "winBy2Hint": "From {tie}:{tie} the game goes on until someone leads by two, even 90:88.",
+    "timedLabel": "Timed",
+    "timedHint": "{n} min of play, then the team ahead wins; on a tie the next goal wins. Reaching {target} ends the game earlier."
   },
   "series": {
     "title": "Series",
@@ -285,6 +298,7 @@
     "newTournament": "Could not create the tournament. Check your connection and try again.",
     "tournament": "Could not save the change to the tournament. Check your connection and try again.",
     "bracket": "Could not draw the bracket. Check your connection and reload the page.",
-    "league": "Could not save the league settings. Check your connection and try again."
+    "league": "Could not save the league settings. Check your connection and try again.",
+    "pause": "Could not pause or resume the game. Check your connection and try again."
   }
 }

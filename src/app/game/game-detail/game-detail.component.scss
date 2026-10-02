@@ -271,3 +271,18 @@
   color: var(--mat-sys-on-error-container);
   font-size: 0.9rem;
 }
+
+.teams {
+  position: relative;
+}
+
+.teams.paused .team {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.bar .text.placeholder {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.85rem;
+  white-space: normal;
+}

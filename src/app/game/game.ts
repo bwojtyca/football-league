@@ -8,7 +8,8 @@ export const TARGET_SCORE = 8;
 /**
  * How a game is won. Games without a mode (all games from 2017) are played to 8.
  * - `target`: goals that win the game;
- * - `winBy: 2`: the winner needs a two-goal lead, but reaching `max` wins anyway;
+ * - `winBy: 2`: the winner needs a two-goal lead, so from (target - 1) all square the game
+ *   goes on until someone leads by two (stage 2 games may also have a cap, `max`);
  * - `minutes`: time limit; when it runs out the team ahead wins, on a tie the next goal does.
  */
 export interface GameMode {
@@ -18,16 +19,16 @@ export interface GameMode {
   minutes?: number;
 }
 
-/** Ready-made modes offered when starting a game. */
-export const MODES = {
-  to8: { target: 8 },
-  to5: { target: 5 },
-  to10: { target: 10 },
-  winBy2: { target: 8, winBy: 2, max: 11 },
-  timed: { target: 8, minutes: 5 },
-} as const satisfies Record<string, GameMode>;
+/** The usual game: to 8, no lead needed, no clock. */
+export const DEFAULT_MODE: GameMode = { target: TARGET_SCORE };
 
-export type ModeName = keyof typeof MODES;
+/** Targets and time limits offered when starting a game. */
+export const TARGETS = [5, 8, 10] as const;
+export const MINUTES = [3, 5, 7, 10] as const;
+
+export function isDefaultMode(mode: GameMode): boolean {
+  return mode.target === TARGET_SCORE && (mode.winBy ?? 1) === 1 && !mode.minutes;
+}
 
 /** A best-of series between the same two teams, which swap colours after each game. */
 export interface Series {
@@ -75,6 +76,10 @@ export interface Game {
   tournament?: string;
   /** Deleted games are left out everywhere; nothing is erased and they can be restored. */
   deleted?: boolean;
+  /** When the running game was paused (ISO time); absent while it is played. */
+  paused?: string;
+  /** Milliseconds spent in earlier pauses. */
+  pausedFor?: number;
 }
 
 export function opponent(color: TeamColor): TeamColor {
@@ -89,17 +94,7 @@ export function teamScore(game: Pick<Game, 'teams'>, color: TeamColor): number {
 }
 
 export function modeOf(game: Pick<Game, 'mode'>): GameMode {
-  return game.mode ?? MODES.to8;
-}
-
-/** Name of a ready-made mode, or `undefined` for any other mode. */
-export function modeName(mode: GameMode): ModeName | undefined {
-  const same = (a: GameMode, b: GameMode) =>
-    a.target === b.target &&
-    (a.winBy ?? 1) === (b.winBy ?? 1) &&
-    a.max === b.max &&
-    a.minutes === b.minutes;
-  return (Object.keys(MODES) as ModeName[]).find((name) => same(MODES[name], mode));
+  return game.mode ?? DEFAULT_MODE;
 }
 
 /** The team that has won on goals: the target with the needed lead, or the cap. */
@@ -119,15 +114,24 @@ export function leaderOf(game: Pick<Game, 'teams'>): TeamColor | undefined {
   return red > blue ? 'red' : blue > red ? 'blue' : undefined;
 }
 
+/** Milliseconds of play: since the start, without pauses. */
+export function playTime(game: Pick<Game, 'start' | 'paused' | 'pausedFor'>, now: number): number {
+  const until = game.paused ? Date.parse(game.paused) : now;
+  return Math.max(0, until - Date.parse(game.start) - (game.pausedFor ?? 0));
+}
+
 /** Seconds left in a timed game (negative once over), `undefined` without a time limit. */
-export function timeLeft(game: Pick<Game, 'mode' | 'start'>, now: number): number | undefined {
+export function timeLeft(
+  game: Pick<Game, 'mode' | 'start' | 'paused' | 'pausedFor'>,
+  now: number,
+): number | undefined {
   const minutes = modeOf(game).minutes;
-  return minutes === undefined ? undefined : minutes * 60 - (now - Date.parse(game.start)) / 1000;
+  return minutes === undefined ? undefined : minutes * 60 - playTime(game, now) / 1000;
 }
 
 /** The team that has won: on goals, or by leading when the time is up. */
 export function decidedWinner(
-  game: Pick<Game, 'teams' | 'mode' | 'start'>,
+  game: Pick<Game, 'teams' | 'mode' | 'start' | 'paused' | 'pausedFor'>,
   now: number,
 ): TeamColor | undefined {
   const left = timeLeft(game, now);

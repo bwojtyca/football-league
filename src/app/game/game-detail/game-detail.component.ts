@@ -16,15 +16,18 @@ import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
+import { cssColor } from '../../shared/css-color';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { keepScreenOn } from '../../shared/wake-lock';
 import {
   decidedWinner,
   formatDuration,
   Game,
+  isDefaultMode,
   lineupOf,
-  modeName,
+  lineupPlayers,
   modeOf,
+  playTime,
   POSITIONS,
   Position,
   seriesScore,
@@ -36,9 +39,12 @@ import {
 import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
+import { ModeLabelComponent } from '../mode/mode-label.component';
+import { FinishPanelComponent } from './finish-panel.component';
+import { PauseOverlayComponent } from './pause-overlay.component';
 
-/** A decided game waits this long for an undo before its result is recorded. */
-const UNDO_WINDOW_MS = 5000;
+/** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
+const FINISH_AFTER_MS = 8000;
 
 @Component({
   selector: 'fl-game-detail',
@@ -49,6 +55,9 @@ const UNDO_WINDOW_MS = 5000;
     MatProgressSpinnerModule,
     RouterLink,
     AvatarComponent,
+    FinishPanelComponent,
+    ModeLabelComponent,
+    PauseOverlayComponent,
     RatingChangeComponent,
     TranslocoPipe,
   ],
@@ -70,6 +79,8 @@ export class GameDetailComponent {
   private _closing?: string;
   /** Game scored on this device: when it ends, this device offers the rematch. */
   private _scoredHere?: string;
+  /** Game whose win was already celebrated on this device. */
+  private _celebrated?: string;
 
   protected readonly colors = TEAM_COLORS;
   protected readonly positions = POSITIONS;
@@ -140,22 +151,16 @@ export class GameDetailComponent {
     const now = game.end ? Date.parse(game.end) : this._now();
     const left = game.end ? undefined : timeLeft(game, now);
     if (left === undefined) {
-      return { time: formatDuration((now - Date.parse(game.start)) / 1000), golden: false };
+      return { time: formatDuration(playTime(game, now) / 1000), golden: false };
     }
     return { time: formatDuration(Math.ceil(left)), golden: left <= 0 };
   });
 
-  /** Mode shown next to the clock; nothing for the usual game to 8. */
-  protected readonly modeLabel = computed(() => {
+  /** Rules shown next to the clock; nothing for the usual game to 8. */
+  protected readonly mode = computed(() => {
     const game = this.game();
-    const mode = game ? modeOf(game) : null;
-    const name = mode && modeName(mode);
-    if (!mode || name === 'to8') {
-      return null;
-    }
-    return name
-      ? { key: `modes.${name}`, target: mode.target }
-      : { key: 'modes.custom', target: mode.target };
+    const mode = game && modeOf(game);
+    return mode && !isDefaultMode(mode) ? mode : null;
   });
 
   protected readonly series = computed(() => {
@@ -177,14 +182,38 @@ export class GameDetailComponent {
     return game && !game.end ? game.events?.at(-1) : undefined;
   });
 
+  /** Names of the winning team (decided or finished). */
+  protected readonly winners = computed(() => {
+    const game = this.game();
+    const winner = this.decided() ?? game?.win;
+    return game && winner
+      ? lineupPlayers(lineupOf(game.teams[winner]))
+          .map((player) => this.playerService.getPlayerName(player))
+          .join(' & ')
+      : '';
+  });
+
   constructor() {
-    // A decided game gives everyone a few seconds to undo the last goal; then any device
-    // showing it records the result.
+    // A decided game shows the finish panel for a few seconds (time to undo the last goal or
+    // tap "Next"); then any device showing it records the result, and the device used for
+    // scoring moves on.
     effect((onCleanup) => {
       const game = this.game();
       if (game && this.decided() && this._closing !== game.id) {
-        const timer = setTimeout(() => this._closeDecided(game.id), UNDO_WINDOW_MS);
+        const timer = setTimeout(
+          () => this._closeDecided(game.id, this._scoredHere === game.id),
+          FINISH_AFTER_MS,
+        );
         onCleanup(() => clearTimeout(timer));
+      }
+    });
+    // Confetti in the winners' colour, once per decided game.
+    effect(() => {
+      const game = this.game();
+      const winner = this.decided();
+      if (game && winner && this._celebrated !== game.id) {
+        this._celebrated = game.id;
+        this._celebrate(winner);
       }
     });
     keepScreenOn(() => {
@@ -205,9 +234,31 @@ export class GameDetailComponent {
     );
   }
 
+  /** "Next" on the finish panel: record the result now and move on. */
+  protected next(): void {
+    const game = this.game();
+    if (game && this.decided()) {
+      this._closeDecided(game.id, true);
+    }
+  }
+
+  protected pause(): void {
+    const game = this.game();
+    if (game && !game.end && !game.paused) {
+      this._gameService.pause(game).catch((error) => this._notifier.error('error.pause', error));
+    }
+  }
+
+  protected resume(): void {
+    const game = this.game();
+    if (game?.paused) {
+      this._gameService.resume(game).catch((error) => this._notifier.error('error.pause', error));
+    }
+  }
+
   protected goal(color: TeamColor, position: Position, ownGoal = false): void {
     const game = this.game();
-    if (!game || game.end || this.decided()) {
+    if (!game || game.end || game.paused || this.decided()) {
       return;
     }
     this._scoredHere = game.id;
@@ -309,6 +360,17 @@ export class GameDetailComponent {
     }
   }
 
+  private async _celebrate(winner: TeamColor): Promise<void> {
+    const { default: confetti } = await import('canvas-confetti');
+    confetti({
+      particleCount: 140,
+      spread: 80,
+      origin: { y: 0.65 },
+      colors: [cssColor(winner === 'red' ? '--fl-red' : '--fl-blue'), cssColor('--fl-gold')],
+      disableForReducedMotion: true,
+    });
+  }
+
   private _setDeleted(gameId: string, deleted: boolean): void {
     this._gameService
       .setDeleted(gameId, deleted)
@@ -316,11 +378,11 @@ export class GameDetailComponent {
   }
 
   /**
-   * Records the result once every goal from this device has reached the server. The device
-   * used for scoring then goes back to the tournament, or offers a rematch unless a series
-   * goes on.
+   * Records the result once every goal from this device has reached the server. With
+   * `moveOn` (the device used for scoring, or someone tapped "Next") it then goes back to the
+   * tournament, or offers a rematch unless a series goes on.
    */
-  private async _closeDecided(gameId: string): Promise<void> {
+  private async _closeDecided(gameId: string, moveOn: boolean): Promise<void> {
     await this._gameService.whenSaved();
     const game = this.game();
     if (
@@ -337,7 +399,7 @@ export class GameDetailComponent {
       this._notifier.error('error.result', error);
       return undefined;
     });
-    if (!winner || this._scoredHere !== gameId) {
+    if (!winner || !moveOn) {
       return;
     }
     // In a tournament the next game is set up on the tournament page.

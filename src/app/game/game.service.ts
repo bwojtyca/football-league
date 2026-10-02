@@ -5,6 +5,7 @@ import {
   arrayUnion,
   collection,
   deleteDoc,
+  deleteField,
   doc,
   getDocFromServer,
   increment,
@@ -22,6 +23,7 @@ import { computeRatings, Ratings } from '../player/rating';
 import {
   decidedWinner,
   Game,
+  playTime,
   GameEvent,
   GameMode,
   Lineup,
@@ -33,9 +35,9 @@ import {
   teamPlayers,
 } from './game';
 
-/** Milliseconds since the game started, as logged with each event. */
-function elapsed(game: Pick<Game, 'start'>): number {
-  return Math.max(0, Date.now() - Date.parse(game.start));
+/** Milliseconds of play so far (pauses left out), as logged with each event. */
+function elapsed(game: Pick<Game, 'start' | 'paused' | 'pausedFor'>): number {
+  return playTime(game, Date.now());
 }
 
 @Injectable({ providedIn: 'root' })
@@ -200,6 +202,22 @@ export class GameService {
               increment(-1),
           };
     return updateDoc(doc(this._games, game.id), { ...revert, events: arrayRemove(last) });
+  }
+
+  /** Stops the clock; the game can be finished later. */
+  public pause(game: Game): Promise<void> {
+    return updateDoc(doc(this._games, game.id), { paused: new Date().toISOString() });
+  }
+
+  public resume(game: Game): Promise<void> {
+    if (!game.paused) {
+      return Promise.resolve();
+    }
+    const pause = Math.max(0, Date.now() - Date.parse(game.paused));
+    return updateDoc(doc(this._games, game.id), {
+      paused: deleteField(),
+      pausedFor: Math.round((game.pausedFor ?? 0) + pause),
+    });
   }
 
   /** Settles when every write made on this device so far has reached the server. */

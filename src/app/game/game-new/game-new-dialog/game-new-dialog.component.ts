@@ -10,7 +10,6 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -31,18 +30,11 @@ import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
 import { START_RATING, winChance } from '../../../player/rating';
-import {
-  Game,
-  Lineup,
-  MODES,
-  ModeName,
-  modeName,
-  modeOf,
-  TEAM_COLORS,
-  TeamColor,
-} from '../../game';
+import { Game, GameMode, Lineup, modeOf, TEAM_COLORS, TeamColor } from '../../game';
 import { GameService } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
+import { ModeLabelComponent } from '../../mode/mode-label.component';
+import { ModePickerComponent } from '../../mode/mode-picker.component';
 
 export interface GameNewDialogData {
   leagueId: string;
@@ -101,7 +93,6 @@ export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
     MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -109,6 +100,8 @@ export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
     MatProgressSpinnerModule,
     AvatarComponent,
     HighlightPipe,
+    ModeLabelComponent,
+    ModePickerComponent,
     TranslocoPipe,
   ],
   templateUrl: './game-new-dialog.component.html',
@@ -127,14 +120,20 @@ export class GameNewDialogComponent {
   protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
   protected readonly teams = { red: createTeam(), blue: createTeam() };
 
-  protected readonly modes = Object.keys(MODES) as ModeName[];
-  protected readonly seriesLengths = [1, 3, 5];
-  /** Ready-made mode; a rematch keeps the mode of the previous game. */
-  protected readonly modeName = signal<ModeName>(
-    modeName(modeOf(this._data.previousGame ?? {})) ?? 'to8',
-  );
-  /** 1 for a single game, otherwise best of 3 or 5. */
-  protected readonly bestOf = signal(this._data.previousGame?.series?.bestOf ?? 1);
+  /** How the game is played; a rematch keeps the rules of the previous game. */
+  protected readonly mode = signal<GameMode>({ ...modeOf(this._data.previousGame ?? {}) });
+
+  /** Who plays with whom, once both teams are picked. */
+  protected readonly lineupNames = computed(() => {
+    const names = (color: TeamColor) => {
+      const { singlePlayer, defence, offence } = this.teams[color];
+      const players = singlePlayer() ? [defence()] : [defence(), offence()];
+      return players.every(isPlayer) ? players.map((p) => (p as Player).name).join(' & ') : null;
+    };
+    const red = names('red');
+    const blue = names('blue');
+    return red && blue ? { red, blue } : null;
+  });
 
   /** Players of the league, by name. */
   protected readonly players = computed(() => {
@@ -295,14 +294,7 @@ export class GameNewDialogComponent {
       return;
     }
 
-    const bestOf = this.bestOf();
-    const { id, saved } = this._gameService.createGame(
-      this._data.leagueId,
-      red,
-      blue,
-      MODES[this.modeName()],
-      bestOf > 1 ? { series: { bestOf, game: 1 } } : {},
-    );
+    const { id, saved } = this._gameService.createGame(this._data.leagueId, red, blue, this.mode());
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);

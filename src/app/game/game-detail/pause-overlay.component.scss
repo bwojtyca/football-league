@@ -1,0 +1,26 @@
+:host {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+mat-icon {
+  width: 64px;
+  height: 64px;
+  font-size: 64px;
+  color: var(--mat-sys-primary);
+}
+
+b {
+  font: 700 1.6rem/1.1 var(--fl-display);
+}
+
+small {
+  max-width: 260px;
+  color: var(--mat-sys-on-surface-variant);
+}
