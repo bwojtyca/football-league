@@ -2,10 +2,10 @@ rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
 // app itself makes: creating, renaming and archiving leagues and adding players to them,
-// adding players,
-// starting games, scoring one goal at a time, closing a game once it is won and
-// removing unfinished games. Nobody can change or delete players, remove anyone from a
-// league, rewrite results or touch finished games.
+// adding players, starting games, scoring one goal at a time, swapping positions,
+// undoing the last event of a game, closing a game once it is won and removing
+// unfinished games. Nobody can change or delete players, remove anyone from a league,
+// rewrite results or touch finished games.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -49,8 +49,9 @@ service cloud.firestore {
     match /games/{gameId} {
       allow read: if true;
 
-      // Games from 2017 have no `league`; they belong to the legacy league.
-      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams', 'league'])
+      // Games from 2017 have no `league`, `mode`, `events` or `series`; they belong to the
+      // legacy league and were played to 8.
+      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams', 'league', 'mode', 'events', 'series'])
         && (!('league' in request.resource.data)
           || (request.resource.data.league is string
             && request.resource.data.league.size() > 0
@@ -61,23 +62,142 @@ service cloud.firestore {
         && request.resource.data.start is string
         && request.resource.data.teams.keys().hasOnly(['red', 'blue'])
         && newTeam(request.resource.data.teams.red)
-        && newTeam(request.resource.data.teams.blue);
+        && newTeam(request.resource.data.teams.blue)
+        && (!('mode' in request.resource.data) || validMode(request.resource.data.mode))
+        && (!('events' in request.resource.data) || request.resource.data.events == [])
+        && (!('series' in request.resource.data) || validSeries(request.resource.data.series));
 
-      // While the game is running: at most one goal per write, and the game can be closed
-      // (`end` + `win`) only once the winning team has reached the target score. Who plays
-      // and when the game started never change.
+      // While the game is running, each write is one of: a goal (or own goal), a swap of
+      // positions within a team, undoing the last event, or recording the result once the
+      // game is won. Who plays, when the game started and how it is played never change.
       allow update: if !('end' in resource.data)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teams', 'end', 'win'])
-        && sameLineup(request.resource.data.teams, resource.data.teams)
-        && notLower(request.resource.data.teams, resource.data.teams)
-        && total(request.resource.data.teams) <= total(resource.data.teams) + 1
-        && ('end' in request.resource.data
-          ? request.resource.data.end is string
-            && wonBy(request.resource.data.teams, request.resource.data.win)
-          : !('win' in request.resource.data));
+        && (scored() || swapped() || undone() || closed() || scoredAndClosed());
 
       // Only games that are still being played can be removed.
       allow delete: if !('win' in resource.data);
+
+      function before() {
+        return resource.data;
+      }
+
+      function after() {
+        return request.resource.data;
+      }
+
+      function changed() {
+        return after().diff(before()).affectedKeys();
+      }
+
+      // One more goal or own goal. Games with an event log (from 2026) also append the
+      // matching event; older games only count.
+      function scored() {
+        return changed().hasOnly(['teams', 'events'])
+          && sameLineup(after().teams, before().teams)
+          && notLower(after().teams, before().teams)
+          && total(after().teams) == total(before().teams) + 1
+          && !decided(before().teams)
+          && ('events' in before()
+            ? appended() && goalEvent(lastOf(after().events))
+            : !('events' in after()));
+      }
+
+      // The defender and the attacker of one team change places, taking their goals along.
+      function swapped() {
+        return 'events' in before()
+          && changed().hasOnly(['teams', 'events'])
+          && appended()
+          && swapEvent(lastOf(after().events))
+          && isSwap(after().teams, before().teams, lastOf(after().events).team);
+      }
+
+      // The last event is removed and its goal taken back or its swap reversed.
+      function undone() {
+        return 'events' in before()
+          && before().events.size() > 0
+          && changed().hasOnly(['teams', 'events'])
+          && after().events == prefix(before().events, before().events.size() - 1)
+          && reverted(lastOf(before().events));
+      }
+
+      function closed() {
+        return changed().hasOnly(['end', 'win'])
+          && after().end is string
+          && after().win in ['red', 'blue']
+          && wins(after().teams, after().win);
+      }
+
+      // Apps from before October 2026 could score the deciding goal and close the game in
+      // one write; games without an event log still accept that.
+      function scoredAndClosed() {
+        return !('events' in before())
+          && changed().hasOnly(['teams', 'end', 'win'])
+          && sameLineup(after().teams, before().teams)
+          && notLower(after().teams, before().teams)
+          && total(after().teams) <= total(before().teams) + 1
+          && after().end is string
+          && after().win in ['red', 'blue']
+          && wins(after().teams, after().win);
+      }
+
+      function appended() {
+        return after().events.size() == before().events.size() + 1
+          && prefix(after().events, before().events.size()) == before().events;
+      }
+
+      // The first `n` events (a range of an empty list is an error).
+      function prefix(events, n) {
+        return n == 0 ? [] : events[0:n];
+      }
+
+      function lastOf(events) {
+        return events[events.size() - 1];
+      }
+
+      // `at`: milliseconds since the start of the game.
+      function goalEvent(event) {
+        return event.keys().hasOnly(['at', 'type', 'team', 'position', 'player'])
+          && event.at is int
+          && event.at >= 0
+          && event.team in ['red', 'blue']
+          && event.position in ['defence', 'offence']
+          && event.player == before().teams[event.team][event.position].player
+          && ((event.type == 'goal'
+              && after().teams[event.team][event.position].goals
+                == before().teams[event.team][event.position].goals + 1)
+            || (event.type == 'own'
+              && after().teams[event.team][event.position].ownGoals
+                == before().teams[event.team][event.position].ownGoals + 1));
+      }
+
+      function swapEvent(event) {
+        return event.keys().hasOnly(['at', 'type', 'team'])
+          && event.type == 'swap'
+          && event.at is int
+          && event.at >= 0
+          && event.team in ['red', 'blue'];
+      }
+
+      function reverted(event) {
+        return event.type == 'swap'
+          ? isSwap(after().teams, before().teams, event.team)
+          : sameLineup(after().teams, before().teams)
+            && notLower(before().teams, after().teams)
+            && total(after().teams) == total(before().teams) - 1
+            && ((event.type == 'goal'
+                && after().teams[event.team][event.position].goals
+                  == before().teams[event.team][event.position].goals - 1)
+              || (event.type == 'own'
+                && after().teams[event.team][event.position].ownGoals
+                  == before().teams[event.team][event.position].ownGoals - 1));
+      }
+
+      function isSwap(next, prev, color) {
+        return next.keys().hasOnly(['red', 'blue'])
+          && next[color].keys().hasOnly(['defence', 'offence'])
+          && next[color].defence == prev[color].offence
+          && next[color].offence == prev[color].defence
+          && next[other(color)] == prev[other(color)];
+      }
 
       function newTeam(team) {
         return team.keys().hasOnly(['defence', 'offence'])
@@ -90,6 +210,30 @@ service cloud.firestore {
           && score.player is string
           && score.goals == 0
           && score.ownGoals == 0;
+      }
+
+      // To `target` goals (at most 20); `winBy: 2` asks for a two-goal lead, up to `max`
+      // goals; `minutes` adds a time limit.
+      function validMode(mode) {
+        return mode.keys().hasOnly(['target', 'winBy', 'max', 'minutes'])
+          && mode.target is int
+          && mode.target >= 1
+          && mode.target <= 20
+          && mode.get('winBy', 1) in [1, 2]
+          && (!('max' in mode) || (mode.max is int && mode.max >= mode.target && mode.max <= 30))
+          && (!('minutes' in mode) || (mode.minutes is int && mode.minutes >= 1 && mode.minutes <= 60));
+      }
+
+      // A best-of-3 or best-of-5 series; `id` is the id of its first game.
+      function validSeries(series) {
+        return series.keys().hasOnly(['id', 'bestOf', 'game'])
+          && series.id is string
+          && series.id.size() > 0
+          && series.id.size() <= 64
+          && series.bestOf in [3, 5]
+          && series.game is int
+          && series.game >= 1
+          && series.game <= series.bestOf;
       }
 
       function sameLineup(next, prev) {
@@ -117,15 +261,36 @@ service cloud.firestore {
         return next.goals >= prev.goals && next.ownGoals >= prev.ownGoals;
       }
 
-      function wonBy(teams, color) {
-        return (color == 'red' && goalsFor(teams.red, teams.blue) >= 8)
-          || (color == 'blue' && goalsFor(teams.blue, teams.red) >= 8);
+      function mode() {
+        return before().get('mode', {});
       }
 
-      // Goals credited to `team`: its own goals plus the opponent's own goals.
-      function goalsFor(team, opponent) {
-        return team.defence.goals + team.offence.goals
-          + opponent.defence.ownGoals + opponent.offence.ownGoals;
+      function other(color) {
+        return color == 'red' ? 'blue' : 'red';
+      }
+
+      // Goals credited to `color`: its own goals plus the opponent's own goals.
+      function goalsFor(teams, color) {
+        return teams[color].defence.goals + teams[color].offence.goals
+          + teams[other(color)].defence.ownGoals + teams[other(color)].offence.ownGoals;
+      }
+
+      // The target reached with the needed lead, or the cap reached.
+      function reached(teams, color) {
+        return goalsFor(teams, color) >= mode().get('target', 8)
+          && (goalsFor(teams, color) - goalsFor(teams, other(color)) >= mode().get('winBy', 1)
+            || goalsFor(teams, color) >= mode().get('max', 1000));
+      }
+
+      function decided(teams) {
+        return reached(teams, 'red') || reached(teams, 'blue');
+      }
+
+      // In a timed game the team ahead may also be declared the winner: the rules cannot
+      // check the clock, the app does.
+      function wins(teams, color) {
+        return reached(teams, color)
+          || ('minutes' in mode() && goalsFor(teams, color) > goalsFor(teams, other(color)));
       }
 
       function total(teams) {
