@@ -1,4 +1,4 @@
-import { formatDuration, teamOf, teamPlayers, teamScore, winnerOf } from './game';
+import { addGoal, formatDuration, teamOf, teamPlayers, teamScore, winnerOf } from './game';
 import { makeGame } from './game.testing';
 
 describe('game', () => {
@@ -30,6 +30,16 @@ describe('game', () => {
     expect(teamPlayers(game.teams.blue)).toEqual(['c']);
     expect(teamOf(game, 'c')).toBe('blue');
     expect(teamOf(game, 'x')).toBeUndefined();
+  });
+
+  it('adds a goal without changing the original game', () => {
+    const game = makeGame();
+    const next = addGoal(addGoal(game, 'blue', 'defence', true), 'red', 'offence', false);
+
+    expect(next.teams.blue.defence.ownGoals).toBe(1);
+    expect(next.teams.red.offence.goals).toBe(1);
+    expect(teamScore(next, 'red')).toBe(2);
+    expect(game.teams.blue.defence.ownGoals).toBe(0);
   });
 
   it('formats durations as mm:ss', () => {

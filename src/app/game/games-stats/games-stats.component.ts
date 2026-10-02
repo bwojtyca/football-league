@@ -1,9 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
-import { switchMap } from 'rxjs';
 
 import { PlayerService } from '../../player/player.service';
 import { GameService } from '../game.service';
@@ -21,12 +19,8 @@ export class GamesStatsComponent {
 
   public readonly playerId = input.required<string>();
 
-  private readonly _games = toSignal(
-    toObservable(this.playerId).pipe(switchMap((id) => this._gameService.getPlayerGames(id))),
-  );
-
   protected readonly stats = computed(() => {
-    const games = this._games();
+    const games = this._gameService.playerGames(this.playerId());
     return games && calculateStats(games, this.playerId());
   });
 

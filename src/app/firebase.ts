@@ -4,8 +4,10 @@ import {
   connectFirestoreEmulator,
   DocumentReference,
   Firestore,
-  getFirestore,
+  initializeFirestore,
   onSnapshot,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   Query,
 } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -15,7 +17,11 @@ import { environment } from '../environments/environment';
 export const FIRESTORE = new InjectionToken<Firestore>('FIRESTORE', {
   providedIn: 'root',
   factory: () => {
-    const db = getFirestore(initializeApp(environment.firebase));
+    // Documents are kept in IndexedDB: later visits render from it straight away and only
+    // changes come over the network, and goals scored while offline are sent once back online.
+    const db = initializeFirestore(initializeApp(environment.firebase), {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
     const emulator = environment.firestoreEmulator;
     if (emulator) {
       connectFirestoreEmulator(db, emulator.host, emulator.port);

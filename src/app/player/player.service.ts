@@ -23,6 +23,6 @@ export class PlayerService {
   }
 
   public addPlayer(name: string): Promise<unknown> {
-    return addDoc(this._players, { name, wins: 0, loses: 0 });
+    return addDoc(this._players, { name });
   }
 }

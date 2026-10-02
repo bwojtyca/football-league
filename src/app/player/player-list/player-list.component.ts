@@ -10,7 +10,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { GameListComponent } from '../../game/game-list/game-list.component';
+import { GameService } from '../../game/game.service';
 import { GamesStatsComponent } from '../../game/games-stats/games-stats.component';
+import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
@@ -36,10 +38,13 @@ import { PlayerService } from '../player.service';
 })
 export class PlayerListComponent {
   private readonly _playerService = inject(PlayerService);
+  private readonly _gameService = inject(GameService);
+  private readonly _notifier = inject(Notifier);
 
   protected readonly players = computed(() => {
     const players = this._playerService.players();
-    return players && rankPlayers(players);
+    const games = this._gameService.games();
+    return players && games && rankPlayers(players, games);
   });
   protected readonly addNew = signal(false);
   protected readonly showStats = signal(false);
@@ -54,7 +59,9 @@ export class PlayerListComponent {
       this.newPlayerName.markAsTouched();
       return;
     }
-    this._playerService.addPlayer(name);
+    this._playerService
+      .addPlayer(name)
+      .catch((error) => this._notifier.error('Could not add the player.', error));
     this.newPlayerName.reset();
     this.addNew.set(false);
   }

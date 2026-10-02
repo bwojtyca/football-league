@@ -80,12 +80,7 @@
 
 <mat-dialog-actions align="end">
   <button matButton (click)="close()">Cancel</button>
-  <button
-    matButton="elevated"
-    color="primary"
-    (click)="startGame()"
-    [disabled]="!players() || starting()"
-  >
+  <button matButton="elevated" color="primary" (click)="startGame()" [disabled]="!players()">
     Start new game!
   </button>
 </mat-dialog-actions>

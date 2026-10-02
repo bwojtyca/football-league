@@ -36,8 +36,9 @@ Every push to `master` builds the app and publishes it to GitHub Pages
 ### Firestore security rules
 
 `firestore.rules` lets anyone read and play, but only through the writes the app makes:
-adding players, starting games, scoring one goal at a time and removing unfinished games.
-Players cannot be deleted or renamed, and finished games cannot be changed.
+adding players, starting games, scoring one goal at a time, closing a game once it is won
+and removing unfinished games. Players cannot be changed or deleted, and finished games
+cannot be changed.
 
 Pushing a change to `firestore.rules` or `firebase.json` on `master` deploys the rules
 (`.github/workflows/firebase.yml`, also runnable by hand from the Actions tab). It needs a
@@ -56,9 +57,12 @@ npx firebase-tools deploy --only hosting
 
 ## Data model
 
-- `players/{id}`: `name`, `wins`, `loses`
-- `games/{id}`: `players` (ids, for `array-contains` queries), `start`, `end?`, `win?`
+- `players/{id}`: `name` (older documents also hold `wins`/`loses` counters, which are no
+  longer used: rankings and stats are counted from the games)
+- `games/{id}`: `players` (ids of everyone playing), `start`, `end?`, `win?`
   (`'red' | 'blue'`), `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`
 
-Goals and results are written in a Firestore transaction, so scoring from several devices
-at once cannot lose a goal or count a result twice.
+All games are read through one live listener and kept in the browser (IndexedDB), so later
+visits render straight away and only changed games are downloaded. Goals are increments
+applied locally at once (also offline) and add up across devices; a transaction records the
+result once a team reaches 8, so it is recorded exactly once.

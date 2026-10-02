@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -26,6 +26,7 @@ import { take } from 'rxjs';
 import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
+import { Notifier } from '../../../notifier';
 import { Game, TEAM_COLORS, TeamColor } from '../../game';
 import { GameService, TeamLineup } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
@@ -100,6 +101,7 @@ export class GameNewDialogComponent {
   private readonly _playerService = inject(PlayerService);
   private readonly _gameService = inject(GameService);
   private readonly _router = inject(Router);
+  private readonly _notifier = inject(Notifier);
   private readonly _dialogRef = inject(MatDialogRef<GameNewDialogComponent>);
   private readonly _data = inject<GameNewDialogData | undefined>(MAT_DIALOG_DATA, {
     optional: true,
@@ -107,7 +109,6 @@ export class GameNewDialogComponent {
 
   protected readonly colors = TEAM_COLORS;
   protected readonly teams = { red: createTeam(), blue: createTeam() };
-  protected readonly starting = signal(false);
 
   protected readonly players = computed(() =>
     this._playerService.players()?.slice().sort(compareNames),
@@ -169,7 +170,7 @@ export class GameNewDialogComponent {
     this.teams.blue.form.setValue(red);
   }
 
-  protected async startGame(): Promise<void> {
+  protected startGame(): void {
     const red = this._lineup('red');
     const blue = this._lineup('blue');
     if (!red || !blue) {
@@ -179,14 +180,10 @@ export class GameNewDialogComponent {
       return;
     }
 
-    this.starting.set(true);
-    try {
-      const gameId = await this._gameService.createGame(red, blue);
-      this._dialogRef.close(gameId);
-      await this._router.navigate(['/game', gameId]);
-    } finally {
-      this.starting.set(false);
-    }
+    const { id, saved } = this._gameService.createGame(red, blue);
+    saved.catch((error) => this._notifier.error('Could not save the new game.', error));
+    this._dialogRef.close(id);
+    this._router.navigate(['/game', id]);
   }
 
   private _lineup(color: TeamColor): TeamLineup | undefined {

@@ -1,8 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
-import { switchMap } from 'rxjs';
 
 import { PlayerService } from '../../player/player.service';
 import { Game, Team, teamOf, teamPlayers, teamScore } from '../game';
@@ -24,14 +22,8 @@ export class GameListComponent {
   /** Show only the latest games. */
   public readonly limit = input(false);
 
-  private readonly _games = toSignal(
-    toObservable(this.playerId).pipe(switchMap((id) => this._gameService.getPlayerGames(id))),
-  );
-
   protected readonly games = computed(() => {
-    const games = [...(this._games() ?? [])].sort(
-      (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime(),
-    );
+    const games = this._gameService.playerGames(this.playerId()) ?? [];
     return (this.limit() ? games.slice(0, LIMIT) : games).map((game) => ({
       id: game.id,
       result: this._result(game),

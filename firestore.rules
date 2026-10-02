@@ -1,29 +1,23 @@
 rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
-// app itself makes: adding players, starting games, scoring one goal at a time and
-// removing unfinished games. Nobody can delete players, rewrite results or touch
-// finished games.
+// app itself makes: adding players, starting games, scoring one goal at a time,
+// closing a game once it is won and removing unfinished games. Nobody can change or
+// delete players, rewrite results or touch finished games.
 service cloud.firestore {
   match /databases/{database}/documents {
 
     match /players/{playerId} {
       allow read: if true;
 
+      // Results are counted from the games, so players never change after being added.
+      // `wins`/`loses` are legacy counters, accepted only as 0.
       allow create: if request.resource.data.keys().hasOnly(['name', 'wins', 'loses'])
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 50
-        && request.resource.data.wins == 0
-        && request.resource.data.loses == 0;
-
-      // Results only ever go up by one, when a game is won or lost.
-      allow update: if countedOnce('wins') || countedOnce('loses');
-
-      function countedOnce(field) {
-        return request.resource.data.diff(resource.data).affectedKeys().hasOnly([field])
-          && request.resource.data[field] == resource.data[field] + 1;
-      }
+        && request.resource.data.get('wins', 0) == 0
+        && request.resource.data.get('loses', 0) == 0;
     }
 
     match /games/{gameId} {
@@ -38,15 +32,18 @@ service cloud.firestore {
         && newTeam(request.resource.data.teams.red)
         && newTeam(request.resource.data.teams.blue);
 
-      // One goal per write while the game is running; the deciding write may also
-      // set `end` and `win`. Who plays and when the game started never change.
+      // While the game is running: at most one goal per write, and the game can be closed
+      // (`end` + `win`) only once the winning team has reached the target score. Who plays
+      // and when the game started never change.
       allow update: if !('end' in resource.data)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teams', 'end', 'win'])
         && sameLineup(request.resource.data.teams, resource.data.teams)
         && notLower(request.resource.data.teams, resource.data.teams)
-        && total(request.resource.data.teams) == total(resource.data.teams) + 1
-        && (!('end' in request.resource.data)
-          || (request.resource.data.end is string && request.resource.data.win in ['red', 'blue']));
+        && total(request.resource.data.teams) <= total(resource.data.teams) + 1
+        && ('end' in request.resource.data
+          ? request.resource.data.end is string
+            && wonBy(request.resource.data.teams, request.resource.data.win)
+          : !('win' in request.resource.data));
 
       // Only games that are still being played can be removed.
       allow delete: if !('win' in resource.data);
@@ -87,6 +84,17 @@ service cloud.firestore {
 
       function scoreNotLower(next, prev) {
         return next.goals >= prev.goals && next.ownGoals >= prev.ownGoals;
+      }
+
+      function wonBy(teams, color) {
+        return (color == 'red' && goalsFor(teams.red, teams.blue) >= 8)
+          || (color == 'blue' && goalsFor(teams.blue, teams.red) >= 8);
+      }
+
+      // Goals credited to `team`: its own goals plus the opponent's own goals.
+      function goalsFor(team, opponent) {
+        return team.defence.goals + team.offence.goals
+          + opponent.defence.ownGoals + opponent.offence.ownGoals;
       }
 
       function total(teams) {

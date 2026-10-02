@@ -38,6 +38,14 @@ export function winnerOf(game: Pick<Game, 'teams'>): TeamColor | undefined {
   return TEAM_COLORS.find((color) => teamScore(game, color) >= TARGET_SCORE);
 }
 
+/** A copy of `game` with one more goal (or own goal) for the given player. */
+export function addGoal(game: Game, color: TeamColor, position: Position, ownGoal: boolean): Game {
+  const field = ownGoal ? 'ownGoals' : 'goals';
+  const score = game.teams[color][position];
+  const team = { ...game.teams[color], [position]: { ...score, [field]: score[field] + 1 } };
+  return { ...game, teams: { ...game.teams, [color]: team } };
+}
+
 /** Distinct player ids of a team (a single id when one player covers both positions). */
 export function teamPlayers(team: Team): string[] {
   return team.defence.player === team.offence.player
