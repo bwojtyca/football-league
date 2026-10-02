@@ -22,6 +22,12 @@
               | translocoDate
                 : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
           }}
+          @if (game.mode; as mode) {
+            <span>{{ mode.key | transloco: { target: mode.target } }}</span>
+          }
+          @if (game.seriesGame; as n) {
+            <span>{{ 'series.game' | transloco: { n } }}</span>
+          }
           @if (game.change !== undefined) {
             <fl-change [value]="round(game.change)" />
           }

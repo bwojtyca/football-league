@@ -1,5 +1,6 @@
 @if (game(); as game) {
-  <div class="screen" [class.ended]="!!game.end">
+  @let winner = decided();
+  <div class="screen" [class.ended]="!!game.end" [class.decided]="!!winner">
     <header class="top">
       <a
         matIconButton
@@ -11,11 +12,24 @@
       <div class="score">
         <span class="r">{{ score().red }}</span
         ><span class="sep">:</span><span class="b">{{ score().blue }}</span>
-        <small>{{ gameTime() }}</small>
+        <small>
+          @if (clock().golden) {
+            <b class="golden">{{ 'game.goldenGoal' | transloco }}</b>
+          } @else {
+            {{ clock().time }}
+          }
+          @if (modeLabel(); as label) {
+            · {{ label.key | transloco: { target: label.target } }}
+          }
+        </small>
       </div>
       @if (!game.win) {
         <button matIconButton (click)="remove()" [attr.aria-label]="'game.remove' | transloco">
           <mat-icon>delete_outline</mat-icon>
+        </button>
+      } @else if (series()?.next; as next) {
+        <button matButton="filled" (click)="nextInSeries()">
+          {{ 'series.next' | transloco: { n: next } }}
         </button>
       } @else if (canRematch()) {
         <button matButton="tonal" (click)="rematch()">{{ 'game.rematch' | transloco }}</button>
@@ -24,10 +38,31 @@
       }
     </header>
 
+    @if (series(); as series) {
+      <p class="series">
+        @if (series.winner; as seriesWinner) {
+          {{ 'series.won' | transloco: { team: (teamNames[seriesWinner] | transloco) } }}
+        } @else {
+          {{ 'series.game' | transloco: { n: series.number, bestOf: series.bestOf } }}
+        }
+        <b
+          ><span class="r">{{ series.red }}</span
+          >:<span class="b">{{ series.blue }}</span></b
+        >
+      </p>
+    }
+
     <div class="teams">
       @for (color of colors; track color) {
         <section class="team team--{{ color }}" [class.won]="game.win === color">
-          <h2>{{ teamNames[color] | transloco }}</h2>
+          <div class="team-head">
+            <h2>{{ teamNames[color] | transloco }}</h2>
+            @if (canSwap(game, color)) {
+              <button matButton class="swap" (click)="swap(color)">
+                <mat-icon>swap_horiz</mat-icon>{{ 'game.swap' | transloco }}
+              </button>
+            }
+          </div>
           <div class="slots">
             @for (position of positions; track position) {
               @let slot = game.teams[color][position];
@@ -64,6 +99,42 @@
         </section>
       }
     </div>
+
+    @if (winner) {
+      <footer class="bar bar--decided" role="status">
+        <b class="text">{{ 'game.wins' | transloco: { team: (teamNames[winner] | transloco) } }}</b>
+        @if (game.events?.length) {
+          <button matButton="filled" (click)="undo()">
+            <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
+          </button>
+        }
+      </footer>
+    } @else if (lastEvent(); as last) {
+      <footer class="bar" role="status">
+        <span class="text">
+          @switch (last.type) {
+            @case ('swap') {
+              {{ 'game.lastSwap' | transloco: { team: (teamNames[last.team] | transloco) } }}
+            }
+            @case ('own') {
+              {{
+                'game.lastOwnGoal'
+                  | transloco: { name: playerService.getPlayerName($any(last).player) }
+              }}
+            }
+            @default {
+              {{
+                'game.lastGoal'
+                  | transloco: { name: playerService.getPlayerName($any(last).player) }
+              }}
+            }
+          }
+        </span>
+        <button matButton (click)="undo()">
+          <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
+        </button>
+      </footer>
+    }
   </div>
 } @else if (game() === null) {
   <main class="page">

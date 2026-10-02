@@ -1,6 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -16,13 +18,29 @@ import { map, Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { leagueOf } from '../league/league';
-import { Player } from '../player/player';
 import { computeRatings, Ratings } from '../player/rating';
-import { Game, Position, Team, TeamColor, teamPlayers, winnerOf } from './game';
+import {
+  decidedWinner,
+  Game,
+  GameEvent,
+  GameMode,
+  Position,
+  Series,
+  swapPositions,
+  Team,
+  TeamColor,
+  teamPlayers,
+} from './game';
 
+/** Player ids of a team; the same id twice when one player covers both positions. */
 export interface TeamLineup {
-  defence: Player;
-  offence: Player;
+  defence: string;
+  offence: string;
+}
+
+/** Milliseconds since the game started, as logged with each event. */
+function elapsed(game: Pick<Game, 'start'>): number {
+  return Math.max(0, Date.now() - Date.parse(game.start));
 }
 
 @Injectable({ providedIn: 'root' })
@@ -75,6 +93,16 @@ export class GameService {
     return this.leagueGames(leagueId)?.filter((game) => game.players.includes(playerId));
   }
 
+  /** Games of the series `game` belongs to, oldest first. */
+  public seriesGames(game: Pick<Game, 'league' | 'series'>): Game[] | undefined {
+    const id = game.series?.id;
+    return id
+      ? this.leagueGames(leagueOf(game))
+          ?.filter((other) => other.series?.id === id)
+          .reverse()
+      : undefined;
+  }
+
   public ratings(leagueId: string): Ratings | undefined {
     return this.games() && (this._ratings().get(leagueId) ?? computeRatings([]));
   }
@@ -87,54 +115,94 @@ export class GameService {
 
   /**
    * Creates a game. The id is known right away and the game shows up locally at once;
-   * `saved` settles when the server has stored it.
+   * `saved` settles when the server has stored it. A `series` without an id starts a new
+   * series with this game.
    */
   public createGame(
     leagueId: string,
     red: TeamLineup,
     blue: TeamLineup,
+    mode: GameMode,
+    series?: Omit<Series, 'id'> & { id?: string },
   ): { id: string; saved: Promise<void> } {
     const team = (lineup: TeamLineup): Team => ({
-      defence: { player: lineup.defence.id, goals: 0, ownGoals: 0 },
-      offence: { player: lineup.offence.id, goals: 0, ownGoals: 0 },
+      defence: { player: lineup.defence, goals: 0, ownGoals: 0 },
+      offence: { player: lineup.offence, goals: 0, ownGoals: 0 },
     });
+    const ref = doc(this._games);
     const teams = { red: team(red), blue: team(blue) };
     const game: Omit<Game, 'id'> = {
       league: leagueId,
       players: [...teamPlayers(teams.red), ...teamPlayers(teams.blue)],
       start: new Date().toISOString(),
       teams,
+      mode: { ...mode },
+      events: [],
+      ...(series && { series: { ...series, id: series.id ?? ref.id } }),
     };
-    const ref = doc(this._games);
     return { id: ref.id, saved: setDoc(ref, game) };
   }
 
   /**
-   * Adds a goal (or own goal). The increment is applied locally at once, so the score
-   * changes without waiting for the server, and goals from several devices add up.
+   * Adds a goal (or own goal) and logs it. The increment is applied locally at once, so the
+   * score changes without waiting for the server, and goals from several devices add up.
    */
   public scoreGoal(
-    gameId: string,
+    game: Game,
     color: TeamColor,
     position: Position,
     ownGoal: boolean,
   ): Promise<void> {
     const field = ownGoal ? 'ownGoals' : 'goals';
-    return updateDoc(doc(this._games, gameId), {
+    const event: GameEvent = {
+      at: elapsed(game),
+      type: ownGoal ? 'own' : 'goal',
+      team: color,
+      position,
+      player: game.teams[color][position].player,
+    };
+    return updateDoc(doc(this._games, game.id), {
       [`teams.${color}.${position}.${field}`]: increment(1),
+      // Games started by an older version of the app keep no log.
+      ...(game.events && { events: arrayUnion(event) }),
     });
   }
 
-  /**
-   * Records the result of a game that has reached the target score. A transaction makes
-   * sure it is recorded once even when several devices try. Resolves with the winner, or
-   * `undefined` while the game is not decided.
-   */
+  /** The defender and the attacker of a team change places (allowed between goals). */
+  public swapPositions(game: Game, color: TeamColor): Promise<void> {
+    const event: GameEvent = { at: elapsed(game), type: 'swap', team: color };
+    return updateDoc(doc(this._games, game.id), {
+      [`teams.${color}`]: swapPositions(game.teams[color]),
+      events: arrayUnion(event),
+    });
+  }
+
+  /** Takes back the last goal or swap. The rules refuse it if anything happened since. */
+  public undo(game: Game): Promise<void> {
+    const last = game.events?.at(-1);
+    if (!last) {
+      return Promise.resolve();
+    }
+    const revert =
+      last.type === 'swap'
+        ? { [`teams.${last.team}`]: swapPositions(game.teams[last.team]) }
+        : {
+            [`teams.${last.team}.${last.position}.${last.type === 'own' ? 'ownGoals' : 'goals'}`]:
+              increment(-1),
+          };
+    return updateDoc(doc(this._games, game.id), { ...revert, events: arrayRemove(last) });
+  }
+
   /** Settles when every write made on this device so far has reached the server. */
   public whenSaved(): Promise<void> {
     return waitForPendingWrites(this._db);
   }
 
+  /**
+   * Records the result of a decided game: on goals, or for a timed game by the team ahead
+   * when the time is up. A transaction makes sure it is recorded once even when several
+   * devices try. Resolves with the winner, or `undefined` while the game is not decided.
+   */
   public async closeGame(gameId: string): Promise<TeamColor | undefined> {
     const ref = doc(this._games, gameId);
     try {
@@ -147,7 +215,7 @@ export class GameService {
         if (game.end) {
           return game.win;
         }
-        const winner = winnerOf(game);
+        const winner = decidedWinner(game, Date.now());
         if (winner) {
           transaction.update(ref, { end: new Date().toISOString(), win: winner });
         }

@@ -6,7 +6,7 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { PlayerService } from '../../player/player.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
-import { Game, Team, teamOf, teamPlayers, teamScore } from '../game';
+import { Game, modeName, modeOf, Team, teamOf, teamPlayers, teamScore } from '../game';
 import { GameService } from '../game.service';
 
 /** Games of a league, or of one player in it, newest first. */
@@ -53,8 +53,20 @@ export class GameListComponent {
         blueScore: teamScore(game, 'blue'),
         win: game.win,
         change: playerId ? changes?.get(game.id)?.get(playerId) : undefined,
+        mode: this._modeLabel(game),
+        seriesGame: game.series?.game,
       }));
   });
+
+  /** Translation key of the mode, unless it is the usual game to 8. */
+  private _modeLabel(game: Game): { key: string; target: number } | undefined {
+    const mode = modeOf(game);
+    const name = modeName(mode);
+    if (name === 'to8') {
+      return undefined;
+    }
+    return { key: name ? `modes.${name}` : 'modes.custom', target: mode.target };
+  }
 
   protected showMore(): void {
     this._pages.update((pages) => pages + 1);

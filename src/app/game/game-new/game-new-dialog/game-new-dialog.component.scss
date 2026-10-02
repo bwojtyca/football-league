@@ -8,6 +8,22 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.choices {
+  display: grid;
+  gap: 6px;
+  padding: 4px 0 12px;
+}
+
+.choices mat-chip-listbox {
+  --mat-chip-container-height: 36px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
 .new-game {
   display: flex;
   flex-direction: column;

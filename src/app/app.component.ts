@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DOCUMENT, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterOutlet } from '@angular/router';

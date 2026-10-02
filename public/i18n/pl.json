@@ -114,7 +114,34 @@
     "removeConfirm": "Usunąć ten mecz? Tego nie da się cofnąć.",
     "wins": "Wygrywają {team}!",
     "notFound": "Nie ma takiego meczu.",
-    "rematch": "Rewanż"
+    "rematch": "Rewanż",
+    "swap": "Zamień pozycje",
+    "undo": "Cofnij",
+    "lastGoal": "Gol: {name}",
+    "lastOwnGoal": "Samobój: {name}",
+    "lastSwap": "{team}: zamiana pozycji",
+    "goldenGoal": "Złoty gol"
+  },
+  "modes": {
+    "title": "Tryb",
+    "to5": "Do 5",
+    "to8": "Do 8",
+    "to10": "Do 10",
+    "winBy2": "Przewaga 2",
+    "timed": "5 minut",
+    "custom": "Do {target}",
+    "winBy2Hint": "Do 8 goli, ale trzeba prowadzić dwoma. Kto pierwszy strzeli 11, wygrywa.",
+    "timedHint": "5 minut gry, potem wygrywa prowadzący, a przy remisie złoty gol. 8 goli kończy mecz wcześniej."
+  },
+  "series": {
+    "title": "Seria",
+    "bestOf1": "Jeden mecz",
+    "bestOf3": "Do 2 wygranych",
+    "bestOf5": "Do 3 wygranych",
+    "hint": "Po każdym meczu drużyny zamieniają się kolorami.",
+    "game": "Seria, mecz {n}",
+    "won": "Serię wygrywają {team}",
+    "next": "Mecz {n}"
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
@@ -122,6 +149,8 @@
     "newGame": "Nie udało się zapisać nowego meczu. Sprawdź połączenie i spróbuj ponownie.",
     "goal": "Nie udało się zapisać gola. Sprawdź połączenie i spróbuj ponownie.",
     "result": "Nie udało się zapisać wyniku. Sprawdź połączenie i spróbuj ponownie.",
-    "remove": "Nie udało się usunąć meczu. Sprawdź połączenie i spróbuj ponownie."
+    "remove": "Nie udało się usunąć meczu. Sprawdź połączenie i spróbuj ponownie.",
+    "swap": "Nie udało się zamienić pozycji. Sprawdź połączenie i spróbuj ponownie.",
+    "undo": "Nie udało się cofnąć. Ktoś mógł w międzyczasie zapisać kolejnego gola."
   }
 }

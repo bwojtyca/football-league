@@ -41,8 +41,63 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
+.score .golden {
+  color: var(--fl-gold);
+  font-weight: 700;
+}
+
 .spacer {
   width: 48px;
+}
+
+.series {
+  margin: 0;
+  padding: 0 16px 2px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.series b {
+  margin-left: 6px;
+  font: 700 1rem/1 var(--fl-display);
+  color: var(--mat-sys-on-surface);
+}
+
+.series .r {
+  color: var(--fl-red-text);
+}
+
+.series .b {
+  color: var(--fl-blue-text);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  margin: 0 8px 8px;
+  padding: 4px 6px 4px 16px;
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container);
+}
+
+.bar .text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar--decided {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.bar--decided .text {
+  font: 700 1.15rem/1.2 var(--fl-display);
 }
 
 .teams {
@@ -63,9 +118,22 @@
   background: var(--mat-sys-surface-container-low);
 }
 
+.team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+  margin: 0 0 4px 4px;
+}
+
 .team h2 {
-  margin: 0 4px 6px;
+  margin: 0;
   font: 700 1rem/1.2 var(--fl-display);
+}
+
+.swap {
+  --mat-button-text-container-height: 36px;
 }
 
 .team--red h2 {
@@ -164,12 +232,19 @@
 }
 
 .ended .goal,
-.ended .own {
+.ended .own,
+.decided .goal,
+.decided .own {
   cursor: default;
 }
 
-.ended .goal:active {
+.ended .goal:active,
+.decided .goal:active {
   transform: none;
+}
+
+.decided .goal {
+  opacity: 0.6;
 }
 
 :focus-visible {

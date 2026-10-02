@@ -114,7 +114,34 @@
     "removeConfirm": "Remove this game? This cannot be undone.",
     "wins": "{team} win!",
     "notFound": "Game not found.",
-    "rematch": "Rematch"
+    "rematch": "Rematch",
+    "swap": "Swap positions",
+    "undo": "Undo",
+    "lastGoal": "Goal: {name}",
+    "lastOwnGoal": "Own goal: {name}",
+    "lastSwap": "{team} swapped positions",
+    "goldenGoal": "Golden goal"
+  },
+  "modes": {
+    "title": "Mode",
+    "to5": "To 5",
+    "to8": "To 8",
+    "to10": "To 10",
+    "winBy2": "Win by 2",
+    "timed": "5 minutes",
+    "custom": "To {target}",
+    "winBy2Hint": "To 8, but you need a two-goal lead. First to 11 wins anyway.",
+    "timedHint": "5 minutes, then the team ahead wins; on a tie the next goal wins. Reaching 8 ends the game earlier."
+  },
+  "series": {
+    "title": "Series",
+    "bestOf1": "Single game",
+    "bestOf3": "Best of 3",
+    "bestOf5": "Best of 5",
+    "hint": "Teams swap colours after every game.",
+    "game": "Series, game {n}",
+    "won": "{team} win the series",
+    "next": "Game {n}"
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
@@ -122,6 +149,8 @@
     "newGame": "Could not save the new game. Check your connection and try again.",
     "goal": "Could not save the goal. Check your connection and try again.",
     "result": "Could not save the result. Check your connection and try again.",
-    "remove": "Could not remove the game. Check your connection and try again."
+    "remove": "Could not remove the game. Check your connection and try again.",
+    "swap": "Could not swap positions. Check your connection and try again.",
+    "undo": "Could not undo. Someone may have recorded another goal meanwhile."
   }
 }

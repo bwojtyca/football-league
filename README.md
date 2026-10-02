@@ -1,7 +1,8 @@
 # FootballLeague
 
 A table football (foosball) league: leagues for each office or crowd, live game scoring
-(first team to 8 wins), an Elo ranking with the change after every game, game history and
+(to 8 by default; also to 5 or 10, win by two, 5-minute games and best-of series), undo of
+the last goal and swapping positions mid-game, an Elo ranking with the change after every game, game history and
 per-player statistics, in Polish and English. Built for phones; it can be installed from the
 browser and opens offline. Data lives in Cloud Firestore; there is no backend.
 
@@ -38,9 +39,10 @@ Every push to `master` builds the app and publishes it to GitHub Pages
 ### Firestore security rules
 
 `firestore.rules` lets anyone read and play, but only through the writes the app makes:
-creating leagues and adding players to them, adding players, starting games, scoring one goal at a time, closing a game once it is won
-and removing unfinished games. Players cannot be changed or deleted, nobody can be removed
-from a league, and finished games cannot be changed.
+creating leagues and adding players to them, adding players, starting games, scoring one
+goal at a time (logged in the game), swapping positions, undoing the last event, closing a
+game once it is won and removing unfinished games. Players cannot be changed or deleted,
+nobody can be removed from a league, and finished games cannot be changed.
 
 Pushing a change to `firestore.rules` or `firebase.json` on `master` deploys the rules
 (`.github/workflows/firebase.yml`, also runnable by hand from the Actions tab). It needs a
@@ -65,7 +67,10 @@ npx firebase-tools deploy --only hosting
 - `players/{id}`: `name` (older documents also hold `wins`/`loses` counters, which are no
   longer used: rankings and stats are counted from the games)
 - `games/{id}`: `league?`, `players` (ids of everyone playing), `start`, `end?`, `win?`
-  (`'red' | 'blue'`), `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`
+  (`'red' | 'blue'`), `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`;
+  newer games also have `mode` (`{ target, winBy?, max?, minutes? }`, no mode = to 8),
+  `events` (goals, own goals and position swaps, in order, with the time since the start)
+  and `series?` (`{ id, bestOf, game }`)
 
 All games are read through one live listener and kept in the browser (IndexedDB), so later
 visits render straight away and only changed games are downloaded. Goals are increments

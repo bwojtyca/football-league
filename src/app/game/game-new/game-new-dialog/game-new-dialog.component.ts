@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
@@ -10,6 +10,7 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -30,7 +31,7 @@ import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
 import { START_RATING, winChance } from '../../../player/rating';
-import { Game, TEAM_COLORS, TeamColor } from '../../game';
+import { Game, MODES, ModeName, modeName, modeOf, TEAM_COLORS, TeamColor } from '../../game';
 import { GameService, TeamLineup } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
 
@@ -91,6 +92,7 @@ export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
     MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -115,6 +117,15 @@ export class GameNewDialogComponent {
   protected readonly colors = TEAM_COLORS;
   protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
   protected readonly teams = { red: createTeam(), blue: createTeam() };
+
+  protected readonly modes = Object.keys(MODES) as ModeName[];
+  protected readonly seriesLengths = [1, 3, 5];
+  /** Ready-made mode; a rematch keeps the mode of the previous game. */
+  protected readonly modeName = signal<ModeName>(
+    modeName(modeOf(this._data.previousGame ?? {})) ?? 'to8',
+  );
+  /** 1 for a single game, otherwise best of 3 or 5. */
+  protected readonly bestOf = signal(this._data.previousGame?.series?.bestOf ?? 1);
 
   /** Players of the league, by name. */
   protected readonly players = computed(() => {
@@ -158,7 +169,7 @@ export class GameNewDialogComponent {
   });
 
   /** Kind of game the form describes, and the lonely player of a stress test. */
-  protected readonly mode = computed(() => {
+  protected readonly kind = computed(() => {
     const { red, blue } = this.teams;
     if (red.singlePlayer() && blue.singlePlayer()) {
       return { key: 'newGame.mode1v1', name: '' };
@@ -211,7 +222,14 @@ export class GameNewDialogComponent {
       return;
     }
 
-    const { id, saved } = this._gameService.createGame(this._data.leagueId, red, blue);
+    const bestOf = this.bestOf();
+    const { id, saved } = this._gameService.createGame(
+      this._data.leagueId,
+      red,
+      blue,
+      MODES[this.modeName()],
+      bestOf > 1 ? { bestOf, game: 1 } : undefined,
+    );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);
@@ -220,7 +238,9 @@ export class GameNewDialogComponent {
   private _lineup(color: TeamColor): TeamLineup | undefined {
     const { singlePlayer, defence, offence } = this.teams[color].form.getRawValue();
     const attacker = singlePlayer ? defence : offence;
-    return isPlayer(defence) && isPlayer(attacker) ? { defence, offence: attacker } : undefined;
+    return isPlayer(defence) && isPlayer(attacker)
+      ? { defence: defence.id, offence: attacker.id }
+      : undefined;
   }
 
   private _prefill(game: Game, players: Player[]): void {

@@ -1,4 +1,15 @@
-import { addGoal, formatDuration, teamOf, teamPlayers, teamScore, winnerOf } from './game';
+import {
+  decidedWinner,
+  formatDuration,
+  Game,
+  MODES,
+  seriesScore,
+  teamOf,
+  teamPlayers,
+  teamScore,
+  timeLeft,
+  winnerOf,
+} from './game';
 import { makeGame } from './game.testing';
 
 describe('game', () => {
@@ -32,14 +43,13 @@ describe('game', () => {
     expect(teamOf(game, 'x')).toBeUndefined();
   });
 
-  it('adds a goal without changing the original game', () => {
+  it('credits own goals to the other team', () => {
     const game = makeGame();
-    const next = addGoal(addGoal(game, 'blue', 'defence', true), 'red', 'offence', false);
+    game.teams.blue.defence.ownGoals = 1;
+    game.teams.red.offence.goals = 1;
 
-    expect(next.teams.blue.defence.ownGoals).toBe(1);
-    expect(next.teams.red.offence.goals).toBe(1);
-    expect(teamScore(next, 'red')).toBe(2);
-    expect(game.teams.blue.defence.ownGoals).toBe(0);
+    expect(teamScore(game, 'red')).toBe(2);
+    expect(teamScore(game, 'blue')).toBe(0);
   });
 
   it('formats durations as mm:ss', () => {
@@ -47,5 +57,55 @@ describe('game', () => {
     expect(formatDuration(65.9)).toBe('01:05');
     expect(formatDuration(754)).toBe('12:34');
     expect(formatDuration(-3)).toBe('00:00');
+  });
+});
+
+describe('modes', () => {
+  const score = (red: number, blue: number, mode?: Game['mode']) =>
+    makeGame({
+      mode,
+      teams: {
+        red: {
+          defence: { player: 'a', goals: red, ownGoals: 0 },
+          offence: { player: 'b', goals: 0, ownGoals: 0 },
+        },
+        blue: {
+          defence: { player: 'c', goals: blue, ownGoals: 0 },
+          offence: { player: 'd', goals: 0, ownGoals: 0 },
+        },
+      },
+    });
+
+  it('plays old games to 8', () => {
+    expect(winnerOf(score(7, 3))).toBeUndefined();
+    expect(winnerOf(score(8, 7))).toBe('red');
+  });
+
+  it('needs a two-goal lead up to the cap', () => {
+    expect(winnerOf(score(8, 7, MODES.winBy2))).toBeUndefined();
+    expect(winnerOf(score(9, 7, MODES.winBy2))).toBe('red');
+    expect(winnerOf(score(10, 11, MODES.winBy2))).toBe('blue');
+  });
+
+  it('ends a timed game with the team ahead, or waits for a golden goal', () => {
+    const start = Date.parse('2017-11-03T10:00:00.000Z');
+    const afterTime = start + 5 * 60_000 + 1;
+    expect(decidedWinner(score(2, 1, MODES.timed), start + 60_000)).toBeUndefined();
+    expect(decidedWinner(score(2, 1, MODES.timed), afterTime)).toBe('red');
+    expect(decidedWinner(score(2, 2, MODES.timed), afterTime)).toBeUndefined();
+    expect(timeLeft(score(0, 0, MODES.timed), start + 60_000)).toBe(240);
+  });
+
+  it('counts series wins by players, whatever their colour', () => {
+    const series = { id: 's', bestOf: 3, game: 3 };
+    const first = { ...score(8, 2), win: 'red' as const };
+    // Second game: colours swapped, a+b now play blue and win again.
+    const second = makeGame({
+      teams: { red: first.teams.blue, blue: first.teams.red },
+      win: 'blue',
+    });
+    const third = makeGame({ series, teams: { red: first.teams.red, blue: first.teams.blue } });
+    expect(seriesScore(third, [first, second])).toEqual({ red: 2, blue: 0, winner: 'red' });
+    expect(seriesScore(third, [first])).toEqual({ red: 1, blue: 0, winner: undefined });
   });
 });

@@ -1,9 +1,38 @@
 <h2 mat-dialog-title class="header">
   {{ 'newGame.title' | transloco }}
-  <small>{{ mode().key | transloco: { name: mode().name } }}</small>
+  <small>{{ kind().key | transloco: { name: kind().name } }}</small>
 </h2>
 
 <mat-dialog-content>
+  <div class="choices">
+    <mat-chip-listbox [attr.aria-label]="'modes.title' | transloco" hideSingleSelectionIndicator>
+      @for (name of modes; track name) {
+        <mat-chip-option
+          [selected]="modeName() === name"
+          [selectable]="modeName() !== name"
+          (selectionChange)="$event.selected && modeName.set(name)"
+          >{{ 'modes.' + name | transloco }}</mat-chip-option
+        >
+      }
+    </mat-chip-listbox>
+    <mat-chip-listbox [attr.aria-label]="'series.title' | transloco" hideSingleSelectionIndicator>
+      @for (length of seriesLengths; track length) {
+        <mat-chip-option
+          [selected]="bestOf() === length"
+          [selectable]="bestOf() !== length"
+          (selectionChange)="$event.selected && bestOf.set(length)"
+          >{{ 'series.bestOf' + length | transloco }}</mat-chip-option
+        >
+      }
+    </mat-chip-listbox>
+    @if (modeName() === 'winBy2' || modeName() === 'timed') {
+      <p class="hint">{{ 'modes.' + modeName() + 'Hint' | transloco }}</p>
+    }
+    @if (bestOf() > 1) {
+      <p class="hint">{{ 'series.hint' | transloco }}</p>
+    }
+  </div>
+
   @if (players(); as players) {
     @if (players.length < 2) {
       <p class="empty">{{ 'newGame.needPlayers' | transloco }}</p>

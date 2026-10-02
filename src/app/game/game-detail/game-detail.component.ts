@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { interval, map, switchMap } from 'rxjs';
 
@@ -14,20 +14,27 @@ import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { keepScreenOn } from '../../shared/wake-lock';
 import {
+  decidedWinner,
   formatDuration,
   Game,
+  modeName,
+  modeOf,
   POSITIONS,
   Position,
+  seriesScore,
+  Team,
   TEAM_COLORS,
   TeamColor,
   teamScore,
-  winnerOf,
+  timeLeft,
 } from '../game';
-import { GameService } from '../game.service';
+import { GameService, TeamLineup } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 
-const CLOSE_FOR_OTHERS_AFTER_MS = 5000;
+/** A decided game waits this long for an undo before its result is recorded. */
+const UNDO_WINDOW_MS = 5000;
 
 @Component({
   selector: 'fl-game-detail',
@@ -47,12 +54,15 @@ export class GameDetailComponent {
   private readonly _gameService = inject(GameService);
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
   private readonly _transloco = inject(TranslocoService);
   protected readonly playerService = inject(PlayerService);
 
   /** Game this device is already closing, so it is closed (and announced) only once. */
   private _closing?: string;
+  /** Game scored on this device: when it ends, this device offers the rematch. */
+  private _scoredHere?: string;
 
   protected readonly colors = TEAM_COLORS;
   protected readonly positions = POSITIONS;
@@ -101,27 +111,71 @@ export class GameDetailComponent {
     initialValue: Date.now(),
   });
 
-  protected readonly gameTime = computed(() => {
+  /** Winner of a running game that is over (on goals, or when the time is up). */
+  protected readonly decided = computed(() => {
+    const game = this.game();
+    return game && !game.end ? decidedWinner(game, this._now()) : undefined;
+  });
+
+  /** Time played, or for a running timed game the time left; `golden` on a tie after it. */
+  protected readonly clock = computed(() => {
     const game = this.game();
     if (!game) {
-      return '';
+      return { time: '', golden: false };
     }
-    const end = game.end ? new Date(game.end).getTime() : this._now();
-    return formatDuration((end - new Date(game.start).getTime()) / 1000);
+    const now = game.end ? Date.parse(game.end) : this._now();
+    const left = game.end ? undefined : timeLeft(game, now);
+    if (left === undefined) {
+      return { time: formatDuration((now - Date.parse(game.start)) / 1000), golden: false };
+    }
+    return { time: formatDuration(Math.ceil(left)), golden: left <= 0 };
+  });
+
+  /** Mode shown next to the clock; nothing for the usual game to 8. */
+  protected readonly modeLabel = computed(() => {
+    const game = this.game();
+    const mode = game ? modeOf(game) : null;
+    const name = mode && modeName(mode);
+    if (!mode || name === 'to8') {
+      return null;
+    }
+    return name
+      ? { key: `modes.${name}`, target: mode.target }
+      : { key: 'modes.custom', target: mode.target };
+  });
+
+  protected readonly series = computed(() => {
+    const game = this.game();
+    if (!game?.series) {
+      return null;
+    }
+    const games = this._gameService.seriesGames(game) ?? [];
+    const score = seriesScore(game, games);
+    const { bestOf, game: number } = game.series;
+    // Only the latest game of an unfinished series leads to the next one.
+    const isLatest = games.at(-1)?.id === game.id;
+    const next = game.end && !score.winner && isLatest && number < bestOf ? number + 1 : null;
+    return { ...score, bestOf, number, next };
+  });
+
+  protected readonly lastEvent = computed(() => {
+    const game = this.game();
+    return game && !game.end ? game.events?.at(-1) : undefined;
   });
 
   constructor() {
-    // The device that scores the deciding goal closes the game. If it went away before
-    // doing so, any device showing the game closes it after a short wait.
+    // A decided game gives everyone a few seconds to undo the last goal; then any device
+    // showing it records the result.
     effect((onCleanup) => {
       const game = this.game();
-      if (game && !game.end && winnerOf(game) && this._closing !== game.id) {
-        const timer = setTimeout(() => {
-          this._closing = game.id;
-          this._close(game);
-        }, CLOSE_FOR_OTHERS_AFTER_MS);
+      if (game && this.decided() && this._closing !== game.id) {
+        const timer = setTimeout(() => this._closeDecided(game.id), UNDO_WINDOW_MS);
         onCleanup(() => clearTimeout(timer));
       }
+    });
+    keepScreenOn(() => {
+      const game = this.game();
+      return !!game && !game.end;
     });
   }
 
@@ -130,34 +184,37 @@ export class GameDetailComponent {
     return change === undefined ? null : Math.round(change);
   }
 
-  protected goal(color: TeamColor, position: Position, ownGoal = false): void {
-    const game = this.game();
-    if (!game || game.end || winnerOf(game) || this._closing === game.id) {
-      return;
-    }
-    this._gameService.scoreGoal(game.id, color, position, ownGoal).then(
-      () => this._closeIfWon(game.id),
-      (error) => this._notifier.error('error.goal', error),
+  protected canSwap(game: Game, color: TeamColor): boolean {
+    const team = game.teams[color];
+    return (
+      !game.end && !!game.events && !this.decided() && team.defence.player !== team.offence.player
     );
   }
 
-  /**
-   * Records the result once every goal from this device has reached the server and the
-   * score has a winner. Deciding after the writes, not before them, keeps quick taps
-   * from slipping past a stale score.
-   */
-  private async _closeIfWon(gameId: string): Promise<void> {
-    await this._gameService.whenSaved();
+  protected goal(color: TeamColor, position: Position, ownGoal = false): void {
     const game = this.game();
-    if (game?.id !== gameId || game.end || !winnerOf(game) || this._closing === gameId) {
+    if (!game || game.end || this.decided()) {
       return;
     }
-    this._closing = gameId;
-    const winner = await this._close(game);
-    if (winner) {
-      const team = this._transloco.translate(this.teamNames[winner]);
-      alert(this._transloco.translate('game.wins', { team }));
-      this.rematch();
+    this._scoredHere = game.id;
+    this._gameService
+      .scoreGoal(game, color, position, ownGoal)
+      .catch((error) => this._notifier.error('error.goal', error));
+  }
+
+  protected swap(color: TeamColor): void {
+    const game = this.game();
+    if (game && this.canSwap(game, color)) {
+      this._gameService
+        .swapPositions(game, color)
+        .catch((error) => this._notifier.error('error.swap', error));
+    }
+  }
+
+  protected undo(): void {
+    const game = this.game();
+    if (game && !game.end && game.events?.length) {
+      this._gameService.undo(game).catch((error) => this._notifier.error('error.undo', error));
     }
   }
 
@@ -167,6 +224,29 @@ export class GameDetailComponent {
     if (game && leagueId && this.canRematch()) {
       openNewGameDialog(this._dialog, { leagueId, previousGame: game });
     }
+  }
+
+  /** Starts the next game of the series: the teams swap colours and keep their positions. */
+  protected nextInSeries(): void {
+    const game = this.game();
+    const next = this.series()?.next;
+    const leagueId = this.leagueId();
+    if (!game?.series || !next || !leagueId) {
+      return;
+    }
+    const lineup = (team: Team): TeamLineup => ({
+      defence: team.defence.player,
+      offence: team.offence.player,
+    });
+    const { id, saved } = this._gameService.createGame(
+      leagueId,
+      lineup(game.teams.blue),
+      lineup(game.teams.red),
+      modeOf(game),
+      { ...game.series, game: next },
+    );
+    saved.catch((error) => this._notifier.error('error.newGame', error));
+    this._router.navigate(['/game', id]);
   }
 
   protected remove(): void {
@@ -186,12 +266,35 @@ export class GameDetailComponent {
     openNewGameDialog(this._dialog, { leagueId, previousGame: game });
   }
 
-  /** Records the result; resolves with the winner once the game is closed. */
-  private _close(game: Game): Promise<TeamColor | undefined> {
-    return this._gameService.closeGame(game.id).catch((error) => {
+  /**
+   * Records the result once every goal from this device has reached the server. The device
+   * used for scoring then offers a rematch, unless a series goes on.
+   */
+  private async _closeDecided(gameId: string): Promise<void> {
+    await this._gameService.whenSaved();
+    const game = this.game();
+    if (
+      game?.id !== gameId ||
+      game.end ||
+      !decidedWinner(game, Date.now()) ||
+      this._closing === gameId
+    ) {
+      return;
+    }
+    this._closing = gameId;
+    const winner = await this._gameService.closeGame(gameId).catch((error) => {
       this._closing = undefined;
       this._notifier.error('error.result', error);
       return undefined;
     });
+    if (!winner || this._scoredHere !== gameId) {
+      return;
+    }
+    const played = (this._gameService.seriesGames(game) ?? []).map((other) =>
+      other.id === gameId ? { ...other, win: winner } : other,
+    );
+    if (!game.series || seriesScore(game, played).winner) {
+      this.rematch();
+    }
   }
 }

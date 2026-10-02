@@ -45,11 +45,20 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   legacy and unused.
 - `games/{id}`: `league?`, `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
   `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. A game without `league`
-  belongs to the league `legacy` (`leagueOf()` in `league/league.ts`).
+  belongs to the league `legacy` (`leagueOf()` in `league/league.ts`). Games started since
+  stage 2 also have:
+  - `mode` = `{ target, winBy?, max?, minutes? }` (no mode = to 8; ready-made modes in
+    `MODES` in `game/game.ts`);
+  - `events` = list of `{ at, type: 'goal' | 'own', team, position, player }` and
+    `{ at, type: 'swap', team }`, `at` in ms since the start. The goal totals in `teams` stay
+    and change together with the log, so old views and the 2017 games need no log;
+  - `series?` = `{ id, bestOf, game }`, `id` being the first game's id; teams swap colours
+    from game to game, the series score is counted from the games.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
 - The database is publicly readable; `firestore.rules` allows only the writes the app makes
   (create leagues, rename or archive them and add players; create players; create games; one
-  goal per update; close a won game; delete running games).
+  goal per update with its event, a swap of positions or undoing the last event; close a won
+  game; delete running games). Games without `events` keep the pre-2026 behaviour.
   Every new kind of write needs a rules change, tested on the emulator first.
 - Do not bulk-read production data without asking the owner.
 
@@ -66,10 +75,12 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   installing on phones (a snackbar offers to reload when a new deploy is ready).
 - `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
 - `GameService` keeps one live listener on all games; per-league lists, Elo ratings
-  (`player/rating.ts`), rankings and stats all derive from it. `scoreGoal()` writes an
-  `increment()` (applied locally at once). Once the writes reach the server, the scoring device
-  records the result with `closeGame()` (a transaction); a device only watching a decided game
-  closes it after 5 s.
+  (`player/rating.ts`), rankings, series and stats all derive from it. `scoreGoal()` writes an
+  `increment()` plus `arrayUnion()` of the event (applied locally at once, works offline);
+  `undo()` uses `increment(-1)` and `arrayRemove()`. A decided game waits 5 s for an undo, then
+  any device showing it records the result with `closeGame()` (a transaction); the device that
+  scored the deciding goal offers a rematch, or the next game of a series. The game screen
+  keeps the phone's screen on (Wake Lock API).
 - `LeagueService` lists leagues and remembers the last one (localStorage).
 - `game/game.ts`, `player/player.ts` and `player/rating.ts` hold the pure scoring, ranking and
   Elo functions.
@@ -95,7 +106,19 @@ Decisions by the owner:
 Stages:
 1. (Done.) Leagues with the legacy league, Elo ranking per league, player profile, PL/EN, Material 3
    theme with dark mode, phone portrait layout of the game screen.
-2. Match: event log in the game document (each goal with time, player and position), undo,
+2. (Done.) Match: event log in the game document (each goal with time, player and position), undo,
    swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10, win by 2,
    timed, best-of series with colour swap), rematch.
 3. Tournaments inside leagues.
+
+Owner feedback after stage 1, to do later (not yet scheduled):
+- Redesign: the current look feels like a generic generated app. A real redesign comes later;
+  until then do not spend effort polishing visuals.
+- League ids are generated; the 2017 league should not depend on the fixed id `legacy`. Options:
+  give it a generated id and mark it with a field (e.g. "holds games without `league`"), or tag
+  the 2017 games with its id by an admin script (adds a field, keeps everything else).
+- "Najdroższa Liga Świata" should not be archived. Later, league management: a league moderator
+  can rename and configure a league, including blocking new games.
+- A global ranking and a global player profile across all leagues, next to the per-league ones.
+- Deleting games (today only running games can be deleted, from the game screen) and deleting
+  leagues. Decide who may do it before sign-in exists.
