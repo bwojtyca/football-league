@@ -9,7 +9,7 @@
 
 .top {
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: 48px 1fr auto auto;
   align-items: center;
   gap: 4px;
   padding: 6px 8px 2px;
@@ -261,4 +261,13 @@
 
 .empty {
   color: var(--mat-sys-on-surface-variant);
+}
+
+.deleted-note {
+  margin: 0 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  font-size: 0.9rem;
 }

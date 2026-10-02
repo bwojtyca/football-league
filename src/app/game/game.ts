@@ -73,6 +73,8 @@ export interface Game {
   series?: Series;
   /** Id of the tournament the game was played in. */
   tournament?: string;
+  /** Deleted games are left out everywhere; nothing is erased and they can be restored. */
+  deleted?: boolean;
 }
 
 export function opponent(color: TeamColor): TeamColor {

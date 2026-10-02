@@ -16,10 +16,10 @@ export class LeagueService {
     collectionData(this._leagues, { idField: 'id' }) as Observable<League[]>,
   );
 
-  /** Every league, active ones first, newest first; `undefined` while loading. */
+  /** Every league that is not deleted, active ones first, newest first; `undefined` while loading. */
   public readonly leagues = computed(() =>
     this._stored()
-      ?.slice()
+      ?.filter((league) => !league.deleted)
       .sort(
         (a, b) =>
           Number(!!a.archived) - Number(!!b.archived) ||
@@ -27,9 +27,18 @@ export class LeagueService {
       ),
   );
 
+  /** A league, deleted ones included; `undefined` while loading, `null` when there is none. */
   public league(id: string): League | null | undefined {
-    const leagues = this.leagues();
+    const leagues = this._stored();
     return leagues && (leagues.find((league) => league.id === id) ?? null);
+  }
+
+  /** Renames, locks or unlocks, sets the ranking threshold, deletes or restores a league. */
+  public update(
+    id: string,
+    changes: Partial<Pick<League, 'name' | 'archived' | 'minGames' | 'deleted'>>,
+  ): Promise<void> {
+    return updateDoc(doc(this._leagues, id), changes);
   }
 
   public createLeague(name: string): { id: string; saved: Promise<void> } {

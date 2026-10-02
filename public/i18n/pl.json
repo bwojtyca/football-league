@@ -8,7 +8,8 @@
     "back": "Wstecz",
     "cancel": "Anuluj",
     "ok": "OK",
-    "menu": "Menu"
+    "menu": "Menu",
+    "restore": "Przywróć"
   },
   "menu": {
     "leagues": "Wszystkie ligi",
@@ -40,7 +41,7 @@
     "nameHint": "Na przykład „Biuro 2026” albo „Weekend w górach”",
     "nameRequired": "Wpisz nazwę ligi",
     "create": "Utwórz ligę",
-    "archive": "Archiwum",
+    "archive": "Zablokowana",
     "empty": "Nie ma jeszcze lig. Utwórz pierwszą, dodaj graczy i grajcie.",
     "lastGame": "ostatni mecz {date}"
   },
@@ -51,7 +52,6 @@
     "newGame": "Nowy mecz",
     "noPlayers": "Dodaj co najmniej dwóch graczy, żeby zacząć pierwszy mecz.",
     "noGames": "Nie ma jeszcze meczów. Zacznij od „Nowy mecz”.",
-    "archiveNote": "Mecze z 2017 roku. Ta liga jest archiwum, nowe mecze grajcie w innej lidze.",
     "provisional": "Ocena tymczasowa: mniej niż {n} meczów",
     "notFound": "Nie ma takiej ligi.",
     "showMore": "Pokaż więcej",
@@ -60,7 +60,9 @@
     "rankingOf": "Ranking",
     "players": "Gracze",
     "duets": "Duety",
-    "duetsHint": "Duety z co najmniej {n} wspólnymi meczami są na górze, według procentu wygranych."
+    "duetsHint": "Duety z co najmniej {n} wspólnymi meczami są na górze, według procentu wygranych.",
+    "deletedNote": "Ta liga jest usunięta. Możesz ją przywrócić.",
+    "lockedNote": "Nowe mecze w tej lidze są zablokowane."
   },
   "addPlayer": {
     "title": "Dodaj gracza",
@@ -134,7 +136,10 @@
     "lastGoal": "Gol: {name}",
     "lastOwnGoal": "Samobój: {name}",
     "lastSwap": "{team}: zamiana pozycji",
-    "goldenGoal": "Złoty gol"
+    "goldenGoal": "Złoty gol",
+    "deleteConfirm": "Usunąć ten mecz? Zniknie z rankingów i statystyk, ale można go przywrócić.",
+    "deleted": "Mecz usunięty",
+    "deletedNote": "Ten mecz jest usunięty: nie liczy się do rankingów ani statystyk."
   },
   "modes": {
     "title": "Tryb",
@@ -251,6 +256,23 @@
     "times": "{n} razy",
     "locked": "jeszcze nie"
   },
+  "settings": {
+    "title": "Ustawienia ligi",
+    "lock": "Zablokuj nowe mecze",
+    "lockHint": "Nie da się zaczynać meczów i turniejów ani dodawać graczy. Historia i rankingi zostają.",
+    "minGames": "Ranking od",
+    "minGamesHint": "Gracze z mniejszą liczbą meczów są pokazani osobno, bez miejsca w rankingu.",
+    "everyone": "Wszyscy",
+    "delete": "Usuń ligę",
+    "deleteHint": "Liga zniknie z listy. Nic nie jest kasowane, więc można ją przywrócić.",
+    "deleteConfirm": "Usunąć ligę „{name}”?",
+    "deleted": "Liga usunięta"
+  },
+  "ranking": {
+    "sortBy": "Sortuj według",
+    "winRate": "% wygranych",
+    "belowThreshold": "Mniej niż {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}"
+  },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
     "createLeague": "Nie udało się utworzyć ligi. Sprawdź połączenie i spróbuj ponownie.",
@@ -262,6 +284,7 @@
     "undo": "Nie udało się cofnąć. Ktoś mógł w międzyczasie zapisać kolejnego gola.",
     "newTournament": "Nie udało się utworzyć turnieju. Sprawdź połączenie i spróbuj ponownie.",
     "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie.",
-    "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę."
+    "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę.",
+    "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie."
   }
 }

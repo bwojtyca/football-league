@@ -1,11 +1,9 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { map } from 'rxjs';
@@ -13,18 +11,15 @@ import { map } from 'rxjs';
 import { GameListComponent } from '../../game/game-list/game-list.component';
 import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-dialog.component';
 import { GameService } from '../../game/game.service';
-import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { rankPlayers } from '../../player/player';
-import { duets } from '../../player/records';
 import { PlayerService } from '../../player/player.service';
-import { PROVISIONAL_GAMES } from '../../player/rating';
-import { FormDotsComponent } from '../../shared/form-dots.component';
-import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { RankingComponent } from '../../player/ranking/ranking.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openTournamentNewDialog } from '../../tournament/tournament-new-dialog/tournament-new-dialog.component';
 import { TournamentService } from '../../tournament/tournament.service';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { TodayCardComponent } from '../today-card.component';
+import { Notifier } from '../../notifier';
 import { LeagueService } from '../league.service';
 
 type Tab = 'ranking' | 'games' | 'tournaments';
@@ -32,16 +27,12 @@ type Tab = 'ranking' | 'games' | 'tournaments';
 @Component({
   selector: 'fl-league-page',
   imports: [
-    DecimalPipe,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTooltipModule,
     RouterLink,
-    AvatarComponent,
-    FormDotsComponent,
     GameListComponent,
-    RatingChangeComponent,
+    RankingComponent,
     TodayCardComponent,
     TopBarComponent,
     TranslocoPipe,
@@ -54,20 +45,10 @@ export class LeaguePageComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _notifier = inject(Notifier);
   private readonly _tournamentService = inject(TournamentService);
 
-  protected readonly provisionalGames = PROVISIONAL_GAMES;
   protected readonly tab = signal<Tab>('ranking');
-  /** The ranking shows players or pairs. */
-  protected readonly rankingOf = signal<'players' | 'duets'>('players');
-  protected readonly minDuetGames = 3;
-  protected readonly duets = computed(() =>
-    duets(this._gameService.leagueGames(this.leagueId()) ?? [], this.minDuetGames).map((duet) => ({
-      ...duet,
-      names: duet.players.map((id) => this._playerService.getPlayerName(id)),
-    })),
-  );
-
   protected readonly leagueId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),
     { initialValue: '' },
@@ -99,14 +80,28 @@ export class LeaguePageComponent {
     })),
   );
 
+  protected readonly games = computed(() => this._gameService.leagueGames(this.leagueId()) ?? []);
+
+  protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
+
   protected readonly canPlay = computed(() => (this.league()?.players.length ?? 0) >= 2);
 
   constructor() {
     effect(() => {
-      if (this.league()) {
+      const league = this.league();
+      if (league && !league.deleted) {
         this._leagueService.lastLeague = this.leagueId();
+      } else if (league !== undefined && this._leagueService.lastLeague === this.leagueId()) {
+        // A remembered league that is gone (or deleted) no longer opens on start.
+        this._leagueService.lastLeague = '';
       }
     });
+  }
+
+  protected restore(): void {
+    this._leagueService
+      .update(this.leagueId(), { deleted: false })
+      .catch((error) => this._notifier.error('error.league', error));
   }
 
   protected addPlayer(): void {

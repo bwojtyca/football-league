@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -43,6 +45,7 @@ const UNDO_WINDOW_MS = 5000;
   imports: [
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     RouterLink,
     AvatarComponent,
@@ -57,6 +60,7 @@ export class GameDetailComponent {
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
   private readonly _bottomSheet = inject(MatBottomSheet);
+  private readonly _snackBar = inject(MatSnackBar);
   private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
   private readonly _transloco = inject(TranslocoService);
@@ -281,6 +285,34 @@ export class GameDetailComponent {
     } else {
       openNewGameDialog(this._dialog, { leagueId, previousGame: game });
     }
+  }
+
+  /** Deletes a finished game (it can be restored), with an undo right away. */
+  protected deleteFinished(): void {
+    const game = this.game();
+    if (!game?.end || !confirm(this._transloco.translate('game.deleteConfirm'))) {
+      return;
+    }
+    this._setDeleted(game.id, true);
+    this._snackBar
+      .open(this._transloco.translate('game.deleted'), this._transloco.translate('game.undo'), {
+        duration: 8000,
+      })
+      .onAction()
+      .subscribe(() => this._setDeleted(game.id, false));
+  }
+
+  protected restore(): void {
+    const game = this.game();
+    if (game) {
+      this._setDeleted(game.id, false);
+    }
+  }
+
+  private _setDeleted(gameId: string, deleted: boolean): void {
+    this._gameService
+      .setDeleted(gameId, deleted)
+      .catch((error) => this._notifier.error('error.remove', error));
   }
 
   /**

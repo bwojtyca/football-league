@@ -8,7 +8,8 @@
     "back": "Back",
     "cancel": "Cancel",
     "ok": "OK",
-    "menu": "Menu"
+    "menu": "Menu",
+    "restore": "Restore"
   },
   "menu": {
     "leagues": "All leagues",
@@ -40,7 +41,7 @@
     "nameHint": "For example “Office 2026” or “Weekend in the mountains”",
     "nameRequired": "Enter a name for the league",
     "create": "Create league",
-    "archive": "Archive",
+    "archive": "Locked",
     "empty": "No leagues yet. Create one, add players and start playing.",
     "lastGame": "last game {date}"
   },
@@ -51,7 +52,6 @@
     "newGame": "New game",
     "noPlayers": "Add at least two players to start the first game.",
     "noGames": "No games yet. Start one with “New game”.",
-    "archiveNote": "Games from 2017. This league is an archive: play new games in another league.",
     "provisional": "Provisional rating: fewer than {n} games",
     "notFound": "This league does not exist.",
     "showMore": "Show more",
@@ -60,7 +60,9 @@
     "rankingOf": "Ranking",
     "players": "Players",
     "duets": "Pairs",
-    "duetsHint": "Pairs with at least {n} games together come first, by win rate."
+    "duetsHint": "Pairs with at least {n} games together come first, by win rate.",
+    "deletedNote": "This league is deleted. You can restore it.",
+    "lockedNote": "New games are locked in this league."
   },
   "addPlayer": {
     "title": "Add player",
@@ -134,7 +136,10 @@
     "lastGoal": "Goal: {name}",
     "lastOwnGoal": "Own goal: {name}",
     "lastSwap": "{team} swapped positions",
-    "goldenGoal": "Golden goal"
+    "goldenGoal": "Golden goal",
+    "deleteConfirm": "Delete this game? It disappears from rankings and stats, but can be restored.",
+    "deleted": "Game deleted",
+    "deletedNote": "This game is deleted: it does not count for rankings or stats."
   },
   "modes": {
     "title": "Mode",
@@ -251,6 +256,23 @@
     "times": "{n} times",
     "locked": "not yet"
   },
+  "settings": {
+    "title": "League settings",
+    "lock": "Lock new games",
+    "lockHint": "No new games, tournaments or players. History and rankings stay.",
+    "minGames": "Ranked from",
+    "minGamesHint": "Players with fewer games are listed apart, without a place in the ranking.",
+    "everyone": "Everyone",
+    "delete": "Delete league",
+    "deleteHint": "The league disappears from the list. Nothing is erased, so it can be restored.",
+    "deleteConfirm": "Delete the league “{name}”?",
+    "deleted": "League deleted"
+  },
+  "ranking": {
+    "sortBy": "Sort by",
+    "winRate": "Win %",
+    "belowThreshold": "Fewer than {n, plural, one {# game} other {# games}}"
+  },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
     "createLeague": "Could not create the league. Check your connection and try again.",
@@ -262,6 +284,7 @@
     "undo": "Could not undo. Someone may have recorded another goal meanwhile.",
     "newTournament": "Could not create the tournament. Check your connection and try again.",
     "tournament": "Could not save the change to the tournament. Check your connection and try again.",
-    "bracket": "Could not draw the bracket. Check your connection and reload the page."
+    "bracket": "Could not draw the bracket. Check your connection and reload the page.",
+    "league": "Could not save the league settings. Check your connection and try again."
   }
 }

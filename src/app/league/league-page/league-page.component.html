@@ -1,14 +1,30 @@
 @let current = league();
-<fl-top-bar [title]="current?.name ?? ''" back="/leagues" />
+<fl-top-bar [title]="current?.name ?? ''" back="/leagues">
+  @if (current) {
+    <a
+      matIconButton
+      [routerLink]="['/l', current.id, 'settings']"
+      [attr.aria-label]="'settings.title' | transloco"
+    >
+      <mat-icon>settings</mat-icon>
+    </a>
+  }
+</fl-top-bar>
 
 <main class="page">
   @if (current === null) {
     <p class="empty">{{ 'league.notFound' | transloco }}</p>
+  } @else if (current?.deleted) {
+    <p class="note">{{ 'league.deletedNote' | transloco }}</p>
+    <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
   } @else if (!current || !ranking()) {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   } @else {
     @if (current.archived) {
-      <p class="note">{{ 'league.archiveNote' | transloco }}</p>
+      <p class="note">
+        {{ 'league.lockedNote' | transloco }}
+        <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
+      </p>
     }
 
     @if (!current.archived) {
@@ -40,85 +56,12 @@
       @if (!canPlay() && !current.archived) {
         <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
       }
-      @if (duets().length) {
-        <div class="switch" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
-          <button
-            role="radio"
-            [attr.aria-checked]="rankingOf() === 'players'"
-            (click)="rankingOf.set('players')"
-          >
-            {{ 'league.players' | transloco }}
-          </button>
-          <button
-            role="radio"
-            [attr.aria-checked]="rankingOf() === 'duets'"
-            (click)="rankingOf.set('duets')"
-          >
-            {{ 'league.duets' | transloco }}
-          </button>
-        </div>
-      }
-      @if (rankingOf() === 'duets' && duets().length) {
-        <ol class="ranking">
-          @for (duet of duets(); track duet.players.join(); let i = $index) {
-            <li class="row duet" [class.unrated]="duet.games < minDuetGames">
-              <span class="pos">{{ duet.games < minDuetGames ? '' : i + 1 }}</span>
-              <span class="avatars">
-                <fl-avatar [playerId]="duet.players[0]" [name]="duet.names[0]" [size]="28" />
-                <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
-              </span>
-              <span class="who">
-                <b>{{ duet.names.join(' & ') }}</b>
-                <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
-              </span>
-              <span class="rating">
-                <b>{{ duet.winRatio | number: '1.0-0' }}%</b>
-              </span>
-            </li>
-          }
-        </ol>
-        <p class="hint">{{ 'league.duetsHint' | transloco: { n: minDuetGames } }}</p>
-      } @else {
-        <ol class="ranking">
-          @for (player of ranking(); track player.id; let i = $index) {
-            <li>
-              <a
-                [routerLink]="['/l', current.id, 'player', player.id]"
-                class="row"
-                [class.unrated]="player.rating === null"
-              >
-                <span class="pos">{{ player.rating === null ? '' : i + 1 }}</span>
-                <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
-                <span class="who">
-                  <b>{{ player.name }}</b>
-                  @if (player.rating === null) {
-                    <small>{{ 'league.unrated' | transloco }}</small>
-                  } @else {
-                    <small>{{ player.wins }}–{{ player.loses }}</small>
-                  }
-                </span>
-                @if (player.rating !== null) {
-                  <fl-form [results]="player.form" />
-                  <span class="rating">
-                    <b
-                      [class.provisional]="player.provisional"
-                      [matTooltip]="
-                        player.provisional
-                          ? ('league.provisional' | transloco: { n: provisionalGames })
-                          : ''
-                      "
-                      >{{ player.rating }}</b
-                    >
-                    @if (player.change !== null) {
-                      <fl-change [value]="player.change" />
-                    }
-                  </span>
-                }
-              </a>
-            </li>
-          }
-        </ol>
-      }
+      <fl-ranking
+        [players]="ranking()!"
+        [games]="games()"
+        [minGames]="current.minGames ?? 0"
+        [playerLink]="playerLink"
+      />
     } @else if (tab() === 'games') {
       <fl-game-list [leagueId]="current.id" [pageSize]="30" />
     } @else {

@@ -39,8 +39,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 ## Data (Firestore project `football-league-b6e95`)
 
-- `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?`. The 2017
-  league is the document `leagues/legacy` ("Najdroższa Liga Świata", archived).
+- `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
+  new games, tournaments or players), `minGames?` (fewest games to be ranked), `deleted?`
+  (hidden, restorable). The 2017 league is still the document `leagues/legacy` ("Najdroższa
+  Liga Świata"); see the migration note below.
 - `players/{id}`: `name`. Documents from 2017 also hold `wins`, `loses` and `id`; these are
   legacy and unused.
 - `games/{id}`: `league?`, `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
@@ -54,7 +56,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
     and change together with the log, so old views and the 2017 games need no log;
   - `series?` = `{ id, bestOf, game }`, `id` being the first game's id; teams swap colours
     from game to game, the series score is counted from the games;
-  - `tournament?` = id of the tournament the game belongs to.
+  - `tournament?` = id of the tournament the game belongs to;
+  - `deleted?`: hidden from rankings and stats, restorable (any game can be marked; only running
+    games are erased for good).
 - `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin' | 'cup'`),
   `created`, `groups?` (cup: 0 or 2),
   `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
@@ -89,7 +93,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   any device showing it records the result with `closeGame()` (a transaction); the device that
   scored the deciding goal offers a rematch, or the next game of a series. The game screen
   keeps the phone's screen on (Wake Lock API).
-- `LeagueService` lists leagues and remembers the last one (localStorage). The league page
+- `LeagueService` lists leagues and remembers the last one (localStorage); `update()` changes
+  settings. `player/ranking/ranking.component.ts` is the ranking (players by Elo or win %,
+  pairs; players below `minGames` listed apart). The league page
   starts with a "Today" card (today's games, the current run between the same two teams, a
   rematch).
 - `game/timeline.ts` tells how a logged game went (score after each goal, longest run, biggest
@@ -143,14 +149,16 @@ Owner feedback, to do at the end (after the planned stages):
   until then do not spend effort polishing visuals.
 - The 2017 league: the owner prefers a regular league with a generated id and a one-off
   migration that sets `league` on all 2017 games, so the code needs no special case for games
-  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). The rules
-  forbid changing finished games, so run it as an admin script (service account) and only
-  add the field.
-- "Najdroższa Liga Świata" should not be archived. Later, league management: a league moderator
-  can rename and configure a league, including blocking new games.
+  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). Not done yet:
+  writing production data in bulk needs the owner's explicit go-ahead in the session (the
+  agent's permission check blocked it). Options: a temporary narrow rule that only lets games
+  without a league get the new league id (plus deleting `leagues/legacy`), then run a REST
+  script; or give the service account the Cloud Datastore User role and run it from Actions.
+- (Done: league settings page with rename, lock new games, ranking threshold, delete/restore;
+  anyone may use it until sign-in brings a moderator. The owner can unlock "Najdroższa Liga
+  Świata" there.)
 - A global ranking and a global player profile across all leagues, next to the per-league ones.
-- Deleting games (today only running games can be deleted, from the game screen) and deleting
-  leagues. Decide who may do it before sign-in exists.
+- (Done: games and leagues are deleted softly, with undo and restore, by anyone until sign-in.)
 - Win by two: a toggle that combines with any target (and the timed mode), not a mode of its
   own. Rule: at (target - 1):(target - 1) the game needs a two-goal lead and has no cap, so
   7:7 at "to 8" goes on to 9:7, or 8:8, 9:9... until e.g. 90:88. (Stage 2 shipped it as a

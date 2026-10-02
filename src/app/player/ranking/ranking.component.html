@@ -1,0 +1,110 @@
+<div class="controls">
+  <div class="switch" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
+    <button role="radio" [attr.aria-checked]="view() === 'players'" (click)="view.set('players')">
+      {{ 'league.players' | transloco }}
+    </button>
+    <button
+      role="radio"
+      [attr.aria-checked]="view() === 'duets'"
+      (click)="view.set('duets')"
+      [disabled]="!duets().length"
+    >
+      {{ 'league.duets' | transloco }}
+    </button>
+  </div>
+  @if (view() === 'players') {
+    <div class="switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
+      <button role="radio" [attr.aria-checked]="sortBy() === 'elo'" (click)="sortBy.set('elo')">
+        Elo
+      </button>
+      <button
+        role="radio"
+        [attr.aria-checked]="sortBy() === 'winRate'"
+        (click)="sortBy.set('winRate')"
+      >
+        {{ 'ranking.winRate' | transloco }}
+      </button>
+    </div>
+  }
+</div>
+
+@if (view() === 'duets') {
+  <ol class="ranking">
+    @for (duet of duets(); track duet.players.join(); let i = $index) {
+      <li class="row" [class.unrated]="duet.games < duetGames()">
+        <span class="pos">{{ duet.games < duetGames() ? '' : i + 1 }}</span>
+        <span class="avatars">
+          <fl-avatar [playerId]="duet.players[0]" [name]="duet.names[0]" [size]="28" />
+          <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
+        </span>
+        <span class="who">
+          <b>{{ duet.names.join(' & ') }}</b>
+          <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
+        </span>
+        <span class="rating">
+          <b>{{ duet.winRatio | number: '1.0-0' }}%</b>
+        </span>
+      </li>
+    }
+  </ol>
+  <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
+} @else {
+  <ol class="ranking">
+    @for (player of ranked(); track player.id; let i = $index) {
+      <li>
+        <ng-container *ngTemplateOutlet="row; context: { $implicit: player, position: i + 1 }" />
+      </li>
+    }
+  </ol>
+  @if (others().length) {
+    <h3 class="others">
+      @if (minGames() > 1) {
+        {{ 'ranking.belowThreshold' | transloco: { n: minGames() } }}
+      } @else {
+        {{ 'league.unrated' | transloco }}
+      }
+    </h3>
+    <ul class="ranking">
+      @for (player of others(); track player.id) {
+        <li>
+          <ng-container *ngTemplateOutlet="row; context: { $implicit: player, position: null }" />
+        </li>
+      }
+    </ul>
+  }
+}
+
+<ng-template #row let-player let-position="position">
+  <a [routerLink]="playerLink()(player.id)" class="row" [class.unrated]="position === null">
+    <span class="pos">{{ position }}</span>
+    <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
+    <span class="who">
+      <b>{{ player.name }}</b>
+      @if (player.games === 0) {
+        <small>{{ 'league.unrated' | transloco }}</small>
+      } @else {
+        <small>{{ player.wins }}–{{ player.loses }}</small>
+      }
+    </span>
+    @if (player.games > 0) {
+      <fl-form [results]="player.form" />
+      <span class="rating">
+        @if (sortBy() === 'elo') {
+          <b
+            [class.provisional]="player.provisional"
+            [matTooltip]="
+              player.provisional ? ('league.provisional' | transloco: { n: provisionalGames }) : ''
+            "
+            >{{ player.rating }}</b
+          >
+          @if (player.change !== null) {
+            <fl-change [value]="player.change" />
+          }
+        } @else {
+          <b>{{ player.winRatio | number: '1.0-0' }}%</b>
+          <small>{{ 'count.games' | transloco: { n: player.games } }}</small>
+        }
+      </span>
+    }
+  </a>
+</ng-template>

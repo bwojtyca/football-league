@@ -23,6 +23,8 @@
         <button matIconButton (click)="remove()" [attr.aria-label]="'game.remove' | transloco">
           <mat-icon>delete_outline</mat-icon>
         </button>
+      } @else if (game.deleted) {
+        <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
       } @else if (game.tournament) {
         <a matButton="filled" [routerLink]="backLink()">{{ 'tournament.back' | transloco }}</a>
       } @else if (series()?.next; as next) {
@@ -34,7 +36,25 @@
       } @else {
         <span class="spacer"></span>
       }
+      @if (game.end && !game.deleted) {
+        <button
+          matIconButton
+          class="more"
+          [matMenuTriggerFor]="gameMenu"
+          [attr.aria-label]="'common.menu' | transloco"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #gameMenu="matMenu">
+          <button mat-menu-item (click)="deleteFinished()">
+            <mat-icon>delete_outline</mat-icon>{{ 'game.remove' | transloco }}
+          </button>
+        </mat-menu>
+      }
     </header>
+    @if (game.deleted) {
+      <p class="deleted-note">{{ 'game.deletedNote' | transloco }}</p>
+    }
 
     @if (series(); as series) {
       <p class="series">

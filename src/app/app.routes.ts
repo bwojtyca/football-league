@@ -24,6 +24,13 @@ export const routes: Routes = [
       import('./league/league-page/league-page.component').then((m) => m.LeaguePageComponent),
   },
   {
+    path: 'l/:leagueId/settings',
+    loadComponent: () =>
+      import('./league/league-settings/league-settings.component').then(
+        (m) => m.LeagueSettingsComponent,
+      ),
+  },
+  {
     path: 'l/:leagueId/player/:playerId',
     loadComponent: () =>
       import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),

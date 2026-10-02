@@ -43,13 +43,16 @@ export class GameService {
   private readonly _db = inject(FIRESTORE);
   private readonly _games = collection(this._db, 'games');
 
-  /**
-   * Every game, kept live for the whole session. Rankings, histories and stats are all
-   * derived from this one listener; after the first load only changed games arrive.
-   */
-  public readonly games = toSignal(
+  private readonly _stored = toSignal(
     collectionData(this._games, { idField: 'id' }) as Observable<Game[]>,
   );
+
+  /**
+   * Every game that is not deleted, kept live for the whole session. Rankings, histories and
+   * stats are all derived from this one listener; after the first load only changed games
+   * arrive.
+   */
+  public readonly games = computed(() => this._stored()?.filter((game) => !game.deleted));
 
   /** Each league's games, newest first. */
   private readonly _byLeague = computed(() => {
@@ -236,6 +239,11 @@ export class GameService {
       }
       throw error;
     }
+  }
+
+  /** Hides a game from rankings and stats, or brings it back. */
+  public setDeleted(gameId: string, deleted: boolean): Promise<void> {
+    return updateDoc(doc(this._games, gameId), { deleted });
   }
 
   public deleteGame(gameId: string): Promise<void> {
