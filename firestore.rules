@@ -1,0 +1,100 @@
+rules_version = '2';
+
+// The app has no sign-in, so anyone may play. These rules only allow the writes the
+// app itself makes: adding players, starting games, scoring one goal at a time and
+// removing unfinished games. Nobody can delete players, rewrite results or touch
+// finished games.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /players/{playerId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['name', 'wins', 'loses'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 50
+        && request.resource.data.wins == 0
+        && request.resource.data.loses == 0;
+
+      // Results only ever go up by one, when a game is won or lost.
+      allow update: if countedOnce('wins') || countedOnce('loses');
+
+      function countedOnce(field) {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly([field])
+          && request.resource.data[field] == resource.data[field] + 1;
+      }
+    }
+
+    match /games/{gameId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams'])
+        && request.resource.data.players is list
+        && request.resource.data.players.size() >= 2
+        && request.resource.data.players.size() <= 4
+        && request.resource.data.start is string
+        && request.resource.data.teams.keys().hasOnly(['red', 'blue'])
+        && newTeam(request.resource.data.teams.red)
+        && newTeam(request.resource.data.teams.blue);
+
+      // One goal per write while the game is running; the deciding write may also
+      // set `end` and `win`. Who plays and when the game started never change.
+      allow update: if !('end' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['teams', 'end', 'win'])
+        && sameLineup(request.resource.data.teams, resource.data.teams)
+        && notLower(request.resource.data.teams, resource.data.teams)
+        && total(request.resource.data.teams) == total(resource.data.teams) + 1
+        && (!('end' in request.resource.data)
+          || (request.resource.data.end is string && request.resource.data.win in ['red', 'blue']));
+
+      // Only games that are still being played can be removed.
+      allow delete: if !('win' in resource.data);
+
+      function newTeam(team) {
+        return team.keys().hasOnly(['defence', 'offence'])
+          && newScore(team.defence)
+          && newScore(team.offence);
+      }
+
+      function newScore(score) {
+        return score.keys().hasOnly(['player', 'goals', 'ownGoals'])
+          && score.player is string
+          && score.goals == 0
+          && score.ownGoals == 0;
+      }
+
+      function sameLineup(next, prev) {
+        return next.keys().hasOnly(['red', 'blue'])
+          && next.red.keys().hasOnly(['defence', 'offence'])
+          && next.blue.keys().hasOnly(['defence', 'offence'])
+          && next.red.defence.keys().hasOnly(['player', 'goals', 'ownGoals'])
+          && next.red.offence.keys().hasOnly(['player', 'goals', 'ownGoals'])
+          && next.blue.defence.keys().hasOnly(['player', 'goals', 'ownGoals'])
+          && next.blue.offence.keys().hasOnly(['player', 'goals', 'ownGoals'])
+          && next.red.defence.player == prev.red.defence.player
+          && next.red.offence.player == prev.red.offence.player
+          && next.blue.defence.player == prev.blue.defence.player
+          && next.blue.offence.player == prev.blue.offence.player;
+      }
+
+      function notLower(next, prev) {
+        return scoreNotLower(next.red.defence, prev.red.defence)
+          && scoreNotLower(next.red.offence, prev.red.offence)
+          && scoreNotLower(next.blue.defence, prev.blue.defence)
+          && scoreNotLower(next.blue.offence, prev.blue.offence);
+      }
+
+      function scoreNotLower(next, prev) {
+        return next.goals >= prev.goals && next.ownGoals >= prev.ownGoals;
+      }
+
+      function total(teams) {
+        return teams.red.defence.goals + teams.red.defence.ownGoals
+          + teams.red.offence.goals + teams.red.offence.ownGoals
+          + teams.blue.defence.goals + teams.blue.defence.ownGoals
+          + teams.blue.offence.goals + teams.blue.offence.ownGoals;
+      }
+    }
+  }
+}

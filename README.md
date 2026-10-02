@@ -33,6 +33,19 @@ Every push to `master` builds the app and publishes it to GitHub Pages
 (`.github/workflows/deploy.yml`). Pages must be enabled once in the repository settings:
 **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
+### Firestore security rules
+
+`firestore.rules` lets anyone read and play, but only through the writes the app makes:
+adding players, starting games, scoring one goal at a time and removing unfinished games.
+Players cannot be deleted or renamed, and finished games cannot be changed.
+
+Pushing a change to `firestore.rules` or `firebase.json` on `master` deploys the rules
+(`.github/workflows/firebase.yml`, also runnable by hand from the Actions tab). It needs a
+service account key in the `FIREBASE_SERVICE_ACCOUNT` repository secret, with the roles
+Firebase Rules Admin, Cloud Datastore Index Admin and Service Usage Consumer.
+
+### Firebase Hosting
+
 Alternatively, with access to the Firebase project:
 
 ```bash
