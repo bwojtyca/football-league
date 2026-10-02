@@ -182,13 +182,19 @@
       "king": "King of the table",
       "dyp": "Draw your partner",
       "roundRobin": "Round robin",
-      "cup": "Cup"
+      "cup": "Cup",
+      "series": "Series",
+      "open": "Open",
+      "rotation": "Round robin (rotating partners)"
     },
     "formatHint": {
       "king": "Winners stay at the table, losers go to the back of the queue. Wins in a row are counted.",
       "dyp": "Every game draws who plays and with whom: those who played least first, in pairs that have not played together yet. Individual ranking.",
       "roundRobin": "Fixed teams, everyone plays everyone once. A table and a list of games to play.",
-      "cup": "Knockout: the loser is out, the winner plays on to the final. It can start with two groups."
+      "cup": "Knockout: the loser is out, the winner plays on to the final. It can start with two groups.",
+      "series": "Two teams play best of 3 or 5, swapping colours every game.",
+      "open": "Play as many games as you like, in any lineups of the chosen players. Individual table.",
+      "rotation": "Everyone partners everyone once, with changing opponents. Individual table."
     },
     "name": "Name (optional)",
     "teamSize": "Team size",
@@ -246,7 +252,24 @@
     "quarterFinal": "Quarter-final",
     "round": "Round {n}",
     "cupWinner": "Cup winners: {name}",
-    "noGames": "No games in this tournament yet."
+    "noGames": "No games in this tournament yet.",
+    "variant": "Variant",
+    "variantOf": {
+      "roundRobin": "Fixed teams",
+      "rotation": "Rotating partners"
+    },
+    "bestOf": "Best of",
+    "bestOfOption": "{n, select, 3 {Best of 3} 5 {Best of 5} other {Best of {n}}}",
+    "gamesUpTo": "{n, plural, one {At most # game.} other {At most # games.}}",
+    "gamesExactly": "{n, plural, one {# game in all.} other {# games in all.}}",
+    "gamesOpen": "As many games as you like.",
+    "needSeries": "Pick two teams: 2 players for 1 vs 1 or 4 for 2 vs 2.",
+    "needOpen": "At least 2 players are needed.",
+    "needRotation": "4 to 12 players are needed.",
+    "mostEven": "Most even",
+    "seriesTo": "Series to {n} wins",
+    "seriesWinner": "Series winners: {name}",
+    "startGame": "Start game {n}"
   },
   "timeline": {
     "title": "How it went",
@@ -279,7 +302,10 @@
     "delete": "Delete league",
     "deleteHint": "The league disappears from the list. Nothing is erased, so it can be restored.",
     "deleteConfirm": "Delete the league “{name}”?",
-    "deleted": "League deleted"
+    "deleted": "League deleted",
+    "deleteGames": "Also delete all games of this league ({n})",
+    "deleteGamesHint": "The games also leave the overall ranking and profiles. Restoring the league brings them back.",
+    "keepGamesHint": "The games stay in the overall ranking and player profiles."
   },
   "ranking": {
     "sortBy": "Sort by",

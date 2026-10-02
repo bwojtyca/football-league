@@ -12,6 +12,8 @@ export interface League {
   minGames?: number;
   /** Deleted leagues are hidden; nothing is erased and they can be restored. */
   deleted?: boolean;
+  /** The league was deleted with its games: restoring it brings them back too. */
+  gamesDeleted?: boolean;
 }
 
 /** Stands for every league at once: the overall ranking and player profiles. */

@@ -40,6 +40,10 @@ export interface GameNewDialogData {
   leagueId: string;
   /** Pre-fills the teams, e.g. for a rematch. */
   previousGame?: Game;
+  /** A game of this (open) tournament, between its players only, by its rules. */
+  tournamentId?: string;
+  playerIds?: string[];
+  mode?: GameMode;
 }
 
 /** An autocomplete holds the typed text until a player is picked. */
@@ -121,7 +125,9 @@ export class GameNewDialogComponent {
   protected readonly teams = { red: createTeam(), blue: createTeam() };
 
   /** How the game is played; a rematch keeps the rules of the previous game. */
-  protected readonly mode = signal<GameMode>({ ...modeOf(this._data.previousGame ?? {}) });
+  protected readonly mode = signal<GameMode>({
+    ...(this._data.mode ?? modeOf(this._data.previousGame ?? {})),
+  });
 
   /** Who plays with whom, once both teams are picked. */
   protected readonly lineupNames = computed(() => {
@@ -137,7 +143,9 @@ export class GameNewDialogComponent {
 
   /** Players of the league, by name. */
   protected readonly players = computed(() => {
-    const members = new Set(this._leagueService.league(this._data.leagueId)?.players);
+    const members = new Set(
+      this._data.playerIds ?? this._leagueService.league(this._data.leagueId)?.players,
+    );
     return this._playerService
       .players()
       ?.filter((p) => members.has(p.id))
@@ -294,7 +302,15 @@ export class GameNewDialogComponent {
       return;
     }
 
-    const { id, saved } = this._gameService.createGame(this._data.leagueId, red, blue, this.mode());
+    const { id, saved } = this._gameService.createGame(
+      this._data.leagueId,
+      red,
+      blue,
+      this.mode(),
+      {
+        tournament: this._data.tournamentId,
+      },
+    );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);

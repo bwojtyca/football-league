@@ -1,6 +1,7 @@
 import {
   Game,
   GameMode,
+  winsNeeded,
   Lineup,
   lineupOf,
   lineupPlayers,
@@ -18,10 +19,22 @@ import {
  *   individual.
  * - `roundRobin`: fixed teams, everyone plays everyone once.
  * - `cup`: knockout; optionally two groups first, whose best two teams reach the semi-finals.
+ * - `series`: two fixed teams play best of 3 or 5, swapping colours after each game.
+ * - `open`: any games between the players, as many as they like; an individual table.
+ * - `rotation`: everyone partners everyone once (rotating partners, like "Americano").
  */
-export type TournamentFormat = 'king' | 'dyp' | 'roundRobin' | 'cup';
+export type TournamentFormat =
+  'series' | 'open' | 'king' | 'dyp' | 'roundRobin' | 'rotation' | 'cup';
 
-export const FORMATS: readonly TournamentFormat[] = ['king', 'dyp', 'roundRobin', 'cup'];
+export const FORMATS: readonly TournamentFormat[] = [
+  'series',
+  'open',
+  'king',
+  'dyp',
+  'roundRobin',
+  'rotation',
+  'cup',
+];
 
 /** A player joining (or with `out`, leaving) the tournament; `at` is an ISO time. */
 export interface Entry {
@@ -46,6 +59,8 @@ export interface Tournament {
   teams?: Lineup[];
   /** Cup: number of groups played before the knockout stage (0 or 2). */
   groups?: number;
+  /** Series: best of 3 or 5. */
+  bestOf?: number;
   end?: string;
 }
 
@@ -380,4 +395,133 @@ export function seededRandom(seed: number): () => number {
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+}
+
+export interface SeriesState {
+  /** Games won by each of the two teams. */
+  wins: [number, number];
+  /** Index of the team that took the series. */
+  winner?: number;
+  running?: Game;
+  /** The next game: colours swap every game, players keep their last positions. */
+  next?: Record<TeamColor, Lineup>;
+  /** Number of the next (or running) game, from 1. */
+  number: number;
+}
+
+/** Where a best-of series stands, from its games. */
+export function seriesState(tournament: Tournament, games: Game[]): SeriesState {
+  const teams = tournament.teams ?? [];
+  const sides = teams.map(sideOf);
+  const finished = games.filter((game) => game.win).sort(byEnd);
+  const wins: [number, number] = [0, 0];
+  for (const game of finished) {
+    const index = sides.indexOf(sideOf(game.teams[game.win!]));
+    if (index >= 0) {
+      wins[index]++;
+    }
+  }
+  const needed = winsNeeded(tournament.bestOf ?? 3);
+  const winner = wins.findIndex((count) => count >= needed);
+  const running = games.find((game) => !game.end);
+  const number = finished.length + 1;
+  let next: SeriesState['next'];
+  if (!running && winner < 0 && !tournament.end && teams.length === 2) {
+    // The latest lineup of each team: positions swapped in a game stay swapped.
+    const last = finished.at(-1);
+    const lineup = (index: number) => {
+      const color = last && TEAM_COLORS.find((c) => sideOf(last.teams[c]) === sides[index]);
+      return color ? lineupOf(last.teams[color]) : teams[index];
+    };
+    const [first, second] = number % 2 ? [0, 1] : [1, 0];
+    next = { red: lineup(first), blue: lineup(second) };
+  }
+  return { wins, winner: winner < 0 ? undefined : winner, running, next, number };
+}
+
+/**
+ * Rotating partners: games in which every two players partner each other once (one pair
+ * plays twice when the number of pairs is odd). Those who played least go first and
+ * opponents are spread out; `random` (seeded per tournament) keeps it the same everywhere.
+ */
+export function rotationSchedule(
+  players: string[],
+  random: () => number,
+): Record<TeamColor, Lineup>[] {
+  const key = (a: string, b: string) => [a, b].sort().join('+');
+  const shuffle = <T>(items: T[]) =>
+    items
+      .map((item) => ({ item, order: random() }))
+      .sort((a, b) => a.order - b.order)
+      .map(({ item }) => item);
+  const allPairs = shuffle(
+    players.flatMap((a, i) => players.slice(i + 1).map((b) => [a, b] as [string, string])),
+  );
+  const remaining = new Set(allPairs.map(([a, b]) => key(a, b)));
+  const played = new Map(players.map((p) => [p, 0]));
+  const met = new Map<string, number>();
+  const games: Record<TeamColor, Lineup>[] = [];
+  const load = ([a, b]: [string, string]) => played.get(a)! + played.get(b)!;
+  const clash = ([a, b]: [string, string], [c, d]: [string, string]) =>
+    [key(a, c), key(a, d), key(b, c), key(b, d)].reduce((sum, k) => sum + (met.get(k) ?? 0), 0);
+
+  while (remaining.size) {
+    const open = allPairs.filter(([a, b]) => remaining.has(key(a, b)));
+    const first = [...open].sort((x, y) => load(x) - load(y))[0];
+    const disjoint = (pair: [string, string]) => !pair.some((p) => first.includes(p));
+    // Prefer a pair still to play; otherwise repeat one, to fill the last game.
+    const pool = open.filter(disjoint).length ? open.filter(disjoint) : allPairs.filter(disjoint);
+    if (!pool.length) {
+      break;
+    }
+    const second = [...pool].sort(
+      (x, y) => load(x) - load(y) || clash(first, x) - clash(first, y),
+    )[0];
+    games.push({ red: lineupFrom(first), blue: lineupFrom(second) });
+    for (const pair of [first, second]) {
+      remaining.delete(key(pair[0], pair[1]));
+      pair.forEach((p) => played.set(p, played.get(p)! + 1));
+    }
+    for (const a of first) {
+      for (const b of second) {
+        met.set(key(a, b), (met.get(key(a, b)) ?? 0) + 1);
+      }
+    }
+  }
+  return games;
+}
+
+/** A number from a string, to seed a tournament's own random draws. */
+export function seedOf(text: string): number {
+  let hash = 0;
+  for (const char of text) {
+    hash = (Math.imul(hash, 31) + char.charCodeAt(0)) | 0;
+  }
+  return hash >>> 0;
+}
+
+export interface LineupFixture {
+  red: Lineup;
+  blue: Lineup;
+  game?: Game;
+}
+
+/** The rotating partners schedule of a tournament, with the game of each pairing. */
+export function rotationFixtures(tournament: Tournament, games: Game[]): LineupFixture[] {
+  const players = [...presentPlayers(tournament.entries).keys()];
+  const schedule = rotationSchedule(players, seededRandom(seedOf(tournament.id)));
+  const pairing = (red: Lineup, blue: Lineup) => [sideOf(red), sideOf(blue)].sort().join(' vs ');
+  const used = new Set<string>();
+  return schedule.map(({ red, blue }) => {
+    // A repeated pairing gets the next of its games.
+    const game = games.find(
+      (g) =>
+        !used.has(g.id) &&
+        pairing(lineupOf(g.teams.red), lineupOf(g.teams.blue)) === pairing(red, blue),
+    );
+    if (game) {
+      used.add(game.id);
+    }
+    return { red, blue, game };
+  });
 }

@@ -5,6 +5,7 @@ import { collectionData } from 'rxfire/firestore';
 import { Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
+import { GameService } from '../game/game.service';
 import { League } from './league';
 
 const LAST_LEAGUE_KEY = 'fl.league';
@@ -12,6 +13,7 @@ const LAST_LEAGUE_KEY = 'fl.league';
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
   private readonly _leagues = collection(inject(FIRESTORE), 'leagues');
+  private readonly _gameService = inject(GameService);
   private readonly _stored = toSignal(
     collectionData(this._leagues, { idField: 'id' }) as Observable<League[]>,
   );
@@ -36,7 +38,7 @@ export class LeagueService {
   /** Renames, locks or unlocks, sets the ranking threshold, deletes or restores a league. */
   public update(
     id: string,
-    changes: Partial<Pick<League, 'name' | 'archived' | 'minGames' | 'deleted'>>,
+    changes: Partial<Pick<League, 'name' | 'archived' | 'minGames' | 'deleted' | 'gamesDeleted'>>,
   ): Promise<void> {
     return updateDoc(doc(this._leagues, id), changes);
   }
@@ -51,6 +53,23 @@ export class LeagueService {
 
   public addPlayer(leagueId: string, playerId: string): Promise<void> {
     return updateDoc(doc(this._leagues, leagueId), { players: arrayUnion(playerId) });
+  }
+
+  /** Deletes a league (it can be restored), with its games if asked. */
+  public async remove(leagueId: string, withGames: boolean): Promise<void> {
+    await this.update(leagueId, { deleted: true, gamesDeleted: withGames });
+    if (withGames) {
+      await this._gameService.setLeagueGamesDeleted(leagueId, true);
+    }
+  }
+
+  /** Brings a deleted league back, and its games when they were deleted with it. */
+  public async restore(leagueId: string): Promise<void> {
+    const withGames = !!this.league(leagueId)?.gamesDeleted;
+    await this.update(leagueId, { deleted: false, gamesDeleted: false });
+    if (withGames) {
+      await this._gameService.setLeagueGamesDeleted(leagueId, false);
+    }
   }
 
   /** The league opened last on this device, to come back to it on the next visit. */

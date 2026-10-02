@@ -41,7 +41,7 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 - `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
   new games, tournaments or players), `minGames?` (fewest games to be ranked), `deleted?`
-  (hidden, restorable). The 2017 league is still the document `leagues/legacy` ("Najdroższa
+  (hidden, restorable), `gamesDeleted?` (its games were deleted with it and come back with it). The 2017 league is still the document `leagues/legacy` ("Najdroższa
   Liga Świata"); see the migration note below.
 - `players/{id}`: `name`. Documents from 2017 also hold `wins`, `loses` and `id`; these are
   legacy and unused.
@@ -62,8 +62,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
     games are erased for good);
   - `paused?` (ISO time the clock stopped) and `pausedFor?` (ms of earlier pauses): the clock,
     time limits and event times count play time only (`playTime()`).
-- `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin' | 'cup'`),
-  `created`, `groups?` (cup: 0 or 2),
+- `tournaments/{id}`: `league`, `name`, `format` (`'series' | 'open' | 'king' | 'dyp' |
+  'roundRobin' | 'rotation' | 'cup'`), `created`, `groups?` (cup: 0 or 2), `bestOf?` (series),
   `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
   `{ player, at, out? }`, append-only), `teams?` (round robin: fixed lineups), `end?`.
   Queues, draws, fixtures and tables are computed from the tournament's games
@@ -177,14 +177,10 @@ Owner feedback, to do at the end (after the planned stages):
   `player/potato.ts` and shown in the app; tune them with the owner.)
 - (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
   fills up and moves on by itself after 8 s.)
-- Best of 3/5 feel like tournaments rather than games. Possible levels: game (played to a win)
-  -> series (several games, an overall winner, or loser for the "yolo" ranking) ->
-  tournament. The owner leans towards modelling everything as tournaments: best-of-N as a
-  tournament format, plus an "open" tournament (play as many games as you like, grouped at the
-  end). Address together with the rest of this feedback after stage 3.
-- Tournaments do not look good yet and the setup dialog's conditions need a review. In
-  particular "round robin" should not require defining teams: add players and the app makes
-  sure everyone plays with everyone as a partner and against everyone (rotating partners, like
-  the "Americano" format; at least offer this mode next to fixed teams). When addressing the
-  feedback, do a sanity check of the whole model together with the best-of-3/5 point above:
-  what is a game, a series and a tournament, and which formats belong where.
+- (Done, the model: a game is one match to a win under its rules; a tournament is a set of
+  games among chosen players whose format decides who plays next and how the table is counted.
+  Formats: series (best of 3/5, moved out of the new game dialog; old `series` games still show
+  their series), open, king of the table, draw your partner, round robin with fixed teams or
+  rotating partners ("Americano"), cup. The setup dialog states each format's needs and its
+  number of games.) Tournament visuals wait for the redesign.
+- (Done: deleting a league can delete its games too; restoring brings both back.)

@@ -182,13 +182,19 @@
       "king": "Król stołu",
       "dyp": "Losuj partnera",
       "roundRobin": "Każdy z każdym",
-      "cup": "Puchar"
+      "cup": "Puchar",
+      "series": "Seria",
+      "open": "Otwarty",
+      "rotation": "Każdy z każdym (zmiana partnerów)"
     },
     "formatHint": {
       "king": "Zwycięzcy zostają przy stole, przegrani wracają na koniec kolejki. Liczymy wygrane z rzędu.",
       "dyp": "Co mecz losujemy, kto gra i z kim: najpierw ci, którzy grali najmniej, w parach, które jeszcze ze sobą nie grały. Ranking indywidualny.",
       "roundRobin": "Stałe drużyny, każda gra z każdą raz. Tabela i lista meczów do rozegrania.",
-      "cup": "Mecze o wszystko: przegrany odpada, zwycięzca gra dalej aż do finału. Można zacząć od dwóch grup."
+      "cup": "Mecze o wszystko: przegrany odpada, zwycięzca gra dalej aż do finału. Można zacząć od dwóch grup.",
+      "series": "Dwie drużyny grają do 2 lub 3 wygranych, kolory zmieniają się co mecz.",
+      "open": "Gracie, ile chcecie, w dowolnych składach z wybranych graczy. Tabela indywidualna.",
+      "rotation": "Każdy zagra z każdym w parze, a rywale się zmieniają. Tabela indywidualna."
     },
     "name": "Nazwa (nieobowiązkowa)",
     "teamSize": "Wielkość drużyny",
@@ -246,7 +252,24 @@
     "quarterFinal": "Ćwierćfinał",
     "round": "Runda {n}",
     "cupWinner": "Puchar wygrywają: {name}",
-    "noGames": "Nie ma jeszcze meczów w tym turnieju."
+    "noGames": "Nie ma jeszcze meczów w tym turnieju.",
+    "variant": "Wariant",
+    "variantOf": {
+      "roundRobin": "Stałe drużyny",
+      "rotation": "Zmiana partnerów"
+    },
+    "bestOf": "Do ilu wygranych",
+    "bestOfOption": "{n, select, 3 {Do 2 wygranych} 5 {Do 3 wygranych} other {Najlepszy z {n}}}",
+    "gamesUpTo": "{n, plural, one {Najwyżej # mecz.} few {Najwyżej # mecze.} many {Najwyżej # meczów.} other {Najwyżej # meczu.}}",
+    "gamesExactly": "{n, plural, one {Razem # mecz.} few {Razem # mecze.} many {Razem # meczów.} other {Razem # meczu.}}",
+    "gamesOpen": "Tyle meczów, ile chcecie.",
+    "needSeries": "Wybierz dwie drużyny: 2 graczy przy grze 1 na 1 albo 4 przy 2 na 2.",
+    "needOpen": "Potrzeba co najmniej 2 graczy.",
+    "needRotation": "Potrzeba od 4 do 12 graczy.",
+    "mostEven": "Najrówniej",
+    "seriesTo": "Seria do {n} wygranych",
+    "seriesWinner": "Serię wygrywają: {name}",
+    "startGame": "Zacznij mecz {n}"
   },
   "timeline": {
     "title": "Przebieg meczu",
@@ -279,7 +302,10 @@
     "delete": "Usuń ligę",
     "deleteHint": "Liga zniknie z listy. Nic nie jest kasowane, więc można ją przywrócić.",
     "deleteConfirm": "Usunąć ligę „{name}”?",
-    "deleted": "Liga usunięta"
+    "deleted": "Liga usunięta",
+    "deleteGames": "Usuń też wszystkie mecze tej ligi ({n})",
+    "deleteGamesHint": "Mecze znikną też z rankingu ogólnego i profili. Przywrócenie ligi przywróci jej mecze.",
+    "keepGamesHint": "Mecze zostaną w rankingu ogólnym i profilach graczy."
   },
   "ranking": {
     "sortBy": "Sortuj według",

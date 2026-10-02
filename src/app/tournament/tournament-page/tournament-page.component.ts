@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -19,7 +20,16 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { GameListComponent } from '../../game/game-list/game-list.component';
-import { Game, Lineup, lineupOf, lineupPlayers, TeamColor, teamScore } from '../../game/game';
+import {
+  Game,
+  Lineup,
+  lineupOf,
+  lineupPlayers,
+  TeamColor,
+  teamScore,
+  winsNeeded,
+} from '../../game/game';
+import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-dialog.component';
 import { GameService } from '../../game/game.service';
 import { ModeLabelComponent } from '../../game/mode/mode-label.component';
 import { LeagueService } from '../../league/league.service';
@@ -36,6 +46,8 @@ import {
   playerStandings,
   presentPlayers,
   roundRobinFixtures,
+  rotationFixtures,
+  seriesState,
   seededRandom,
   teamStandings,
 } from '../tournament';
@@ -67,6 +79,7 @@ export class TournamentPageComponent {
   private readonly _transloco = inject(TranslocoService);
   private readonly _notifier = inject(Notifier);
   private readonly _router = inject(Router);
+  private readonly _dialog = inject(MatDialog);
 
   private readonly _params = toSignal(inject(ActivatedRoute).paramMap, { requireSync: true });
   protected readonly leagueId = computed(() => this._params().get('leagueId') ?? '');
@@ -129,7 +142,7 @@ export class TournamentPageComponent {
   protected readonly standings = computed(() => {
     const tournament = this.tournament();
     const games = this.games();
-    if (tournament?.format !== 'dyp' || !games) {
+    if (!tournament || !['dyp', 'open', 'rotation'].includes(tournament.format) || !games) {
       return [];
     }
     const players = new Set([
@@ -138,6 +151,27 @@ export class TournamentPageComponent {
     ]);
     return playerStandings([...players], games);
   });
+
+  protected readonly series = computed(() => {
+    const tournament = this.tournament();
+    const games = this.games();
+    return tournament?.format === 'series' && games ? seriesState(tournament, games) : null;
+  });
+
+  protected readonly rotation = computed(() => {
+    const tournament = this.tournament();
+    const games = this.games();
+    return tournament?.format === 'rotation' && games ? rotationFixtures(tournament, games) : [];
+  });
+
+  /** The latest finished game, for a one-tap rematch in an open tournament. */
+  protected readonly lastGame = computed(() =>
+    this.games()
+      ?.filter((game) => game.end)
+      .at(-1),
+  );
+
+  protected readonly winsNeeded = winsNeeded;
 
   protected readonly fixtures = computed(() => {
     const tournament = this.tournament();
@@ -168,9 +202,15 @@ export class TournamentPageComponent {
         const record = this.king()?.record;
         return record ? this.lineupName(record.lineup) : null;
       }
-      case 'dyp': {
+      case 'dyp':
+      case 'open':
+      case 'rotation': {
         const best = this.standings()[0];
         return best?.games ? this.name(best.player) : null;
+      }
+      case 'series': {
+        const winner = this.series()?.winner;
+        return winner === undefined ? null : this.teamName(winner);
       }
       case 'roundRobin': {
         const best = this.table()[0];
@@ -293,6 +333,27 @@ export class TournamentPageComponent {
       this._router.navigate(['/game', match.game.id]);
     } else if (!this.running() && !tournament.end) {
       this.start(tournament.teams[match.red], tournament.teams[match.blue]);
+    }
+  }
+
+  /** Open tournament: any game between its players. */
+  protected newOpenGame(): void {
+    const tournament = this.tournament();
+    if (tournament) {
+      openNewGameDialog(this._dialog, {
+        leagueId: tournament.league,
+        tournamentId: tournament.id,
+        playerIds: [...presentPlayers(tournament.entries).keys()],
+        mode: tournament.mode,
+      });
+    }
+  }
+
+  /** Open tournament: the last game again, colours swapped. */
+  protected rematchLast(): void {
+    const last = this.lastGame();
+    if (last) {
+      this.start(lineupOf(last.teams.blue), lineupOf(last.teams.red));
     }
   }
 

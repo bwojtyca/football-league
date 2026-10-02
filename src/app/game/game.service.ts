@@ -13,6 +13,7 @@ import {
   setDoc,
   updateDoc,
   waitForPendingWrites,
+  writeBatch,
 } from 'firebase/firestore';
 import { collectionData, docData } from 'rxfire/firestore';
 import { map, Observable } from 'rxjs';
@@ -257,6 +258,21 @@ export class GameService {
         return game.win;
       }
       throw error;
+    }
+  }
+
+  /** Hides (or brings back) every game of a league, deleted ones included when restoring. */
+  public async setLeagueGamesDeleted(leagueId: string, deleted: boolean): Promise<void> {
+    const games = (this._stored() ?? []).filter(
+      (game) => leagueOf(game) === leagueId && !!game.deleted !== deleted,
+    );
+    // A batch takes at most 500 writes.
+    for (let i = 0; i < games.length; i += 500) {
+      const batch = writeBatch(this._db);
+      for (const game of games.slice(i, i + 500)) {
+        batch.update(doc(this._games, game.id), { deleted });
+      }
+      await batch.commit();
     }
   }
 

@@ -210,3 +210,20 @@ ol.people li.empty::before {
   font-family: inherit;
   background: transparent;
 }
+
+.series {
+  margin-bottom: 20px;
+}
+
+.series .matchup .side:first-child {
+  text-align: right;
+}
+
+.vs.big {
+  font-size: 2rem;
+  color: var(--mat-sys-on-surface);
+}
+
+.actions.start {
+  margin: 0 0 16px;
+}

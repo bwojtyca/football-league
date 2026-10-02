@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
+import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { League } from '../league';
@@ -30,6 +32,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
   imports: [
     FormsModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -98,9 +101,35 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
         <section class="danger">
           <h2>{{ 'settings.delete' | transloco }}</h2>
           <p class="hint">{{ 'settings.deleteHint' | transloco }}</p>
-          <button matButton="outlined" (click)="remove()">
-            <mat-icon>delete_outline</mat-icon>{{ 'settings.delete' | transloco }}
-          </button>
+          @if (confirming()) {
+            <div
+              class="confirm"
+              role="alertdialog"
+              [attr.aria-label]="'settings.delete' | transloco"
+            >
+              <p>{{ 'settings.deleteConfirm' | transloco: { name: current.name } }}</p>
+              <mat-checkbox [(ngModel)]="withGames">
+                {{ 'settings.deleteGames' | transloco: { n: gameCount() } }}
+              </mat-checkbox>
+              <p class="hint">
+                {{
+                  (withGames ? 'settings.deleteGamesHint' : 'settings.keepGamesHint') | transloco
+                }}
+              </p>
+              <div class="buttons">
+                <button matButton (click)="confirming.set(false)">
+                  {{ 'common.cancel' | transloco }}
+                </button>
+                <button matButton="filled" class="delete" (click)="remove()">
+                  {{ 'settings.delete' | transloco }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button matButton="outlined" (click)="confirming.set(true)">
+              <mat-icon>delete_outline</mat-icon>{{ 'settings.delete' | transloco }}
+            </button>
+          }
         </section>
       }
     </main>
@@ -127,13 +156,34 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       font-size: 0.85rem;
       color: var(--mat-sys-on-surface-variant);
     }
-    .danger button {
+    .danger > button {
       color: var(--mat-sys-error);
+    }
+    .confirm {
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--mat-sys-error-container);
+      color: var(--mat-sys-on-error-container);
+    }
+    .confirm p {
+      margin: 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .delete {
+      --mat-button-filled-container-color: var(--mat-sys-error);
+      --mat-button-filled-label-text-color: var(--mat-sys-on-error);
     }
   `,
 })
 export class LeagueSettingsComponent {
   private readonly _leagueService = inject(LeagueService);
+  private readonly _gameService = inject(GameService);
   private readonly _notifier = inject(Notifier);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly _transloco = inject(TranslocoService);
@@ -170,14 +220,17 @@ export class LeagueSettingsComponent {
       .catch((error) => this._notifier.error('error.league', error));
   }
 
+  protected readonly confirming = signal(false);
+  protected withGames = false;
+  protected readonly gameCount = computed(
+    () => this._gameService.leagueGames(this.leagueId())?.length ?? 0,
+  );
+
   protected remove(): void {
     const id = this.leagueId();
-    if (
-      !confirm(this._transloco.translate('settings.deleteConfirm', { name: this.league()?.name }))
-    ) {
-      return;
-    }
-    this.save({ deleted: true });
+    this._leagueService
+      .remove(id, this.withGames)
+      .catch((error) => this._notifier.error('error.league', error));
     this._leagueService.lastLeague = '';
     this._router.navigate(['/leagues']);
     this._snackBar
@@ -187,7 +240,7 @@ export class LeagueSettingsComponent {
       .onAction()
       .subscribe(() =>
         this._leagueService
-          .update(id, { deleted: false })
+          .restore(id)
           .catch((error) => this._notifier.error('error.league', error)),
       );
   }

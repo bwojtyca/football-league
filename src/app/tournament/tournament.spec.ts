@@ -6,6 +6,9 @@ import {
   kingState,
   playerStandings,
   roundRobinFixtures,
+  rotationSchedule,
+  seededRandom,
+  seriesState,
   teamStandings,
   Tournament,
 } from './tournament';
@@ -153,4 +156,55 @@ describe('round robin', () => {
     expect(table[0]).toMatchObject({ team: 1, wins: 1, goalsFor: 5 });
     expect(table.find((row) => row.team === 0)).toMatchObject({ games: 1, wins: 0 });
   });
+});
+
+describe('seriesState', () => {
+  const series = tournament({
+    format: 'series',
+    bestOf: 3,
+    teams: [
+      { defence: 'a', offence: 'b' },
+      { defence: 'c', offence: 'd' },
+    ],
+  });
+
+  it('swaps colours every game and keeps the latest positions', () => {
+    const first = play(0, ['b', 'a'], ['c', 'd'], 'red'); // a and b swapped positions
+    const state = seriesState(series, [first]);
+    expect(state.wins).toEqual([1, 0]);
+    expect(state.number).toBe(2);
+    expect(state.next).toEqual({
+      red: { defence: 'c', offence: 'd' },
+      blue: { defence: 'b', offence: 'a' },
+    });
+  });
+
+  it('ends when a team has two wins out of three', () => {
+    const games = [play(0, ['a', 'b'], ['c', 'd'], 'red'), play(2, ['c', 'd'], ['a', 'b'], 'blue')];
+    const state = seriesState(series, games);
+    expect(state.winner).toBe(0);
+    expect(state.next).toBeUndefined();
+  });
+});
+
+describe('rotationSchedule', () => {
+  const partners = (games: ReturnType<typeof rotationSchedule>) =>
+    games
+      .flatMap((g) => [g.red, g.blue])
+      .map((team) => [team.defence, team.offence].sort().join('+'));
+
+  for (const count of [4, 5, 6, 7, 8]) {
+    it(`pairs everyone with everyone for ${count} players`, () => {
+      const players = [...Array(count).keys()].map((i) => `p${i}`);
+      const games = rotationSchedule(players, seededRandom(count));
+      const pairs = new Set(partners(games));
+      expect(pairs.size).toBe((count * (count - 1)) / 2);
+      expect(games.length).toBe(Math.ceil((count * (count - 1)) / 4));
+      // Nobody plays both sides of a game.
+      for (const game of games) {
+        const four = [game.red.defence, game.red.offence, game.blue.defence, game.blue.offence];
+        expect(new Set(four).size).toBe(4);
+      }
+    });
+  }
 });

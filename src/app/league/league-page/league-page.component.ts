@@ -100,7 +100,7 @@ export class LeaguePageComponent {
 
   protected restore(): void {
     this._leagueService
-      .update(this.leagueId(), { deleted: false })
+      .restore(this.leagueId())
       .catch((error) => this._notifier.error('error.league', error));
   }
 
