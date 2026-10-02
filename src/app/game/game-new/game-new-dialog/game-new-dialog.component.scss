@@ -1,20 +1,16 @@
-@import '~@angular/material/theming';
-
 .header {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 16px 24px;
-  margin: -24px -24px 16px -24px;
-  border-bottom: 1px solid rgba(0, 0, 0, .12);
-  text-align: center
+  text-align: center;
 }
 
 .header small {
   display: block;
-  color: rgba(0,0,0,.54);
+  color: rgba(0, 0, 0, 0.54);
   font-size: 0.66em;
   font-weight: 200;
+  line-height: 1.4;
 }
 
 .new-game {
@@ -35,32 +31,38 @@
     height: 40px;
     display: block;
     text-align: center;
-    margin: 10px;
+    margin: 10px auto;
     min-width: 40px;
   }
 }
 
 .team--red .team-color {
-  color: map_get($mat-red, 500);
+  color: #f44336;
 }
 
 .team--blue .team-color {
-  color: map_get($mat-indigo, 500);
+  color: #3f51b5;
 }
 
 .team-color {
   text-align: center;
   text-transform: uppercase;
-  padding-bottom: 20px;
+  padding: 10px 0 20px;
 }
 
 .team-players {
   margin-bottom: 10px;
 }
 
-.team-position__player .mat-form-field {
+.team-position .mat-mdc-form-field {
   width: 100%;
   display: block;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .loader {
@@ -68,17 +70,13 @@
   justify-content: center;
 }
 
-.mat-action-row {
-  display: block;
-  text-align: right;
-  padding: 16px 24px;
-  margin: 16px -24px -24px -24px;
-  border-top: 1px solid rgba(0, 0, 0, .12);
-}
-
-
 @media (min-width: 768px) {
   .new-game {
     flex-direction: row;
+  }
+
+  .team-switch {
+    margin: 10px;
+    align-self: center;
   }
 }

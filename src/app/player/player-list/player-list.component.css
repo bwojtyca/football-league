@@ -1,31 +1,21 @@
-.headers-align /deep/ .mat-expansion-panel-header-title,
-.headers-align /deep/ .mat-expansion-panel-header-description {
+.headers-align ::ng-deep .mat-expansion-panel-header-title,
+.headers-align ::ng-deep .mat-expansion-panel-header-description {
   flex-basis: 0;
 }
 
-.headers-align /deep/ .mat-expansion-panel-header-description {
+.headers-align ::ng-deep .mat-expansion-panel-header-description {
   justify-content: space-between;
   align-items: center;
 }
-.headers-align /deep/ .mat-content {
+
+.headers-align ::ng-deep .mat-content {
   overflow: visible;
 }
 
 .player-name {
   display: flex;
-}
-.player-name img {
-  width: 31px;
-  height: 31px;
-  margin: -7px 10px -7px -15px;
-}
-
-.mat-list-icon {
-  color: rgba(0, 0, 0, .54);
-}
-
-p.mat-line {
-  color: rgba(0, 0, 0, .36);
+  align-items: center;
+  gap: 10px;
 }
 
 .mat-list-group {
@@ -34,7 +24,7 @@ p.mat-line {
   align-items: stretch;
 }
 
-.mat-list-group .mat-list-item {
+.mat-list-group .mat-mdc-list-item {
   width: 100%;
 }
 
@@ -53,7 +43,7 @@ p.mat-line {
   padding-top: 10px;
 }
 
-.add-player .mat-form-field {
+.add-player .mat-mdc-form-field {
   display: block;
   width: 100%;
 }

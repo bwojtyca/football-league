@@ -1,249 +1,354 @@
-<mat-accordion class="headers-align" *ngIf="!!games">
+@if (stats(); as s) {
+  <mat-accordion class="headers-align">
     <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-description>
-                Goals summary
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <mat-list>
-            <mat-list-item>
-                <h4 mat-line><strong>{{goals.total}}</strong> ({{goals.total / games.total | number}}
-                    per game)</h4>
-                <p mat-line>goals</p>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line><strong>{{goals.own}}</strong> ({{goals.own / games.total | number}}
-                    per game)</h4>
-                <p mat-line>own</p>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line><strong>{{goals.total + goals.own}}</strong> ({{(goals.total + goals.own)
-                    / games.total | number}} per game)</h4>
-                <p mat-line>total</p>
-            </mat-list-item>
-        </mat-list>
+      <mat-expansion-panel-header>
+        <mat-panel-description>Goals summary</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ s.goals.total }}</strong> ({{
+              ratio(s.goals.total, s.games.total) | number
+            }}
+            per game)</span
+          >
+          <span matListItemLine>goals</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ s.goals.own }}</strong> ({{
+              ratio(s.goals.own, s.games.total) | number
+            }}
+            per game)</span
+          >
+          <span matListItemLine>own</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ s.goals.total + s.goals.own }}</strong> ({{
+              ratio(s.goals.total + s.goals.own, s.games.total) | number
+            }}
+            per game)</span
+          >
+          <span matListItemLine>total</span>
+        </mat-list-item>
+      </mat-list>
     </mat-expansion-panel>
+
     <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-description>
-                Time summary
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <mat-list>
-            <mat-list-item>
-                <h4 mat-line><strong>{{time.total / games.total | number}}s</strong></h4>
-                <p mat-line>average game time</p>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line><strong>{{time.wins / games.wins | number}}s</strong></h4>
-                <p mat-line>average win time</p>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line><strong>{{time.loses / games.loses | number}}s</strong></h4>
-                <p mat-line>average lost time</p>
-            </mat-list-item>
-            <mat-list-item>
-                <h4 mat-line><strong>{{time.total / goals.total | number}}s</strong></h4>
-                <p mat-line>average time per goal</p>
-            </mat-list-item>
-        </mat-list>
+      <mat-expansion-panel-header>
+        <mat-panel-description>Time summary</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ ratio(s.time.total, s.games.total) | number }}s</strong></span
+          >
+          <span matListItemLine>average game time</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ ratio(s.time.wins, s.games.wins) | number }}s</strong></span
+          >
+          <span matListItemLine>average win time</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ ratio(s.time.loses, s.games.loses) | number }}s</strong></span
+          >
+          <span matListItemLine>average lost time</span>
+        </mat-list-item>
+        <mat-list-item>
+          <span matListItemTitle
+            ><strong>{{ ratio(s.time.total, s.goals.total) | number }}s</strong></span
+          >
+          <span matListItemLine>average time per goal</span>
+        </mat-list-item>
+      </mat-list>
     </mat-expansion-panel>
+
     <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-description>
-                Positions summary
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <mat-list>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.defender.games}}</strong></h4>
-                    <p mat-line>defender games</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.attacker.games}}</strong></h4>
-                    <p mat-line>attacker games</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.defender.wins}}</strong> ({{(positions.defender.wins
-                        / positions.defender.games)*100 | number}} %)</h4>
-                    <p mat-line>defender wins</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.attacker.wins}}</strong> ({{(positions.attacker.wins
-                        / positions.attacker.games)*100 | number}} %)</h4>
-                    <p mat-line>attacker wins</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.defender.loses}}</strong> ({{(positions.defender.loses
-                        / positions.defender.games)*100 | number}} %)</h4>
-                    <p mat-line>defender loses</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.attacker.loses}}</strong> ({{(positions.attacker.loses
-                        / positions.attacker.games)*100 | number}} %)</h4>
-                    <p mat-line>attacker loses</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.defender.goals}}</strong> ({{positions.defender.goals
-                        / positions.defender.games | number}} per game)</h4>
-                    <p mat-line>defender goals</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.attacker.goals}}</strong> ({{positions.attacker.goals
-                        / positions.attacker.games | number}} per game)</h4>
-                    <p mat-line>attacker goals</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.defender.own}}</strong> ({{positions.defender.own
-                        / positions.defender.games | number}} per game)</h4>
-                    <p mat-line>defender own goals</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{positions.attacker.own}}</strong> ({{positions.attacker.own
-                        / positions.attacker.games | number}} per game)</h4>
-                    <p mat-line>attacker own goals</p>
-                </mat-list-item>
-            </div>
-        </mat-list>
+      <mat-expansion-panel-header>
+        <mat-panel-description>Positions summary</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        @let defender = s.positions.defender;
+        @let attacker = s.positions.attacker;
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ defender.games }}</strong></span
+            >
+            <span matListItemLine>defender games</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ attacker.games }}</strong></span
+            >
+            <span matListItemLine>attacker games</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ defender.wins }}</strong> ({{
+                ratio(defender.wins, defender.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>defender wins</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ attacker.wins }}</strong> ({{
+                ratio(attacker.wins, attacker.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>attacker wins</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ defender.loses }}</strong> ({{
+                ratio(defender.loses, defender.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>defender loses</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ attacker.loses }}</strong> ({{
+                ratio(attacker.loses, attacker.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>attacker loses</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ defender.goals }}</strong> ({{
+                ratio(defender.goals, defender.games) | number
+              }}
+              per game)</span
+            >
+            <span matListItemLine>defender goals</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ attacker.goals }}</strong> ({{
+                ratio(attacker.goals, attacker.games) | number
+              }}
+              per game)</span
+            >
+            <span matListItemLine>attacker goals</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ defender.own }}</strong> ({{
+                ratio(defender.own, defender.games) | number
+              }}
+              per game)</span
+            >
+            <span matListItemLine>defender own goals</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ attacker.own }}</strong> ({{
+                ratio(attacker.own, attacker.games) | number
+              }}
+              per game)</span
+            >
+            <span matListItemLine>attacker own goals</span>
+          </mat-list-item>
+        </div>
+      </mat-list>
     </mat-expansion-panel>
+
     <mat-expansion-panel>
-        <mat-expansion-panel-header>
-            <mat-panel-description>
-                Colors summary
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <mat-list>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.red.games}}</strong></h4>
-                    <p mat-line>red games</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.blue.games}}</strong></h4>
-                    <p mat-line>blue games</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.red.wins}}</strong> ({{(colors.red.wins / colors.red.games)*100
-                        | number}} %)</h4>
-                    <p mat-line>red wins</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.blue.wins}}</strong> ({{(colors.blue.wins /
-                        colors.blue.games)*100 | number}} %)</h4>
-                    <p mat-line>blue wins</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.red.loses}}</strong> ({{(colors.red.loses /
-                        colors.red.games)*100 | number}} %)</h4>
-                    <p mat-line>red loses</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.blue.loses}}</strong> ({{(colors.blue.loses
-                        / colors.blue.games)*100 | number}} %)</h4>
-                    <p mat-line>blue loses</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.red.goals}}</strong> ({{colors.red.goals / colors.red.games
-                        | number}} per game)</h4>
-                    <p mat-line>red goals</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.blue.goals}}</strong> ({{colors.blue.goals /
-                        colors.blue.games | number}} per game)</h4>
-                    <p mat-line>blue goals</p>
-                </mat-list-item>
-            </div>
-            <div class="mat-list-group">
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.red.own}}</strong> ({{colors.red.own / colors.red.games
-                        | number}} per game)</h4>
-                    <p mat-line>red own goals</p>
-                </mat-list-item>
-                <mat-list-item>
-                    <h4 mat-line><strong>{{colors.blue.own}}</strong> ({{colors.blue.own / colors.blue.games
-                        | number}} per game)</h4>
-                    <p mat-line>blue own goals</p>
-                </mat-list-item>
-            </div>
-        </mat-list>
+      <mat-expansion-panel-header>
+        <mat-panel-description>Colors summary</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-list>
+        @let red = s.colors.red;
+        @let blue = s.colors.blue;
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ red.games }}</strong></span
+            >
+            <span matListItemLine>red games</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ blue.games }}</strong></span
+            >
+            <span matListItemLine>blue games</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ red.wins }}</strong> ({{
+                ratio(red.wins, red.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>red wins</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ blue.wins }}</strong> ({{
+                ratio(blue.wins, blue.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>blue wins</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ red.loses }}</strong> ({{
+                ratio(red.loses, red.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>red loses</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ blue.loses }}</strong> ({{
+                ratio(blue.loses, blue.games) * 100 | number
+              }}
+              %)</span
+            >
+            <span matListItemLine>blue loses</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ red.goals }}</strong> ({{ ratio(red.goals, red.games) | number }} per
+              game)</span
+            >
+            <span matListItemLine>red goals</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ blue.goals }}</strong> ({{ ratio(blue.goals, blue.games) | number }} per
+              game)</span
+            >
+            <span matListItemLine>blue goals</span>
+          </mat-list-item>
+        </div>
+        <div class="mat-list-group">
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ red.own }}</strong> ({{ ratio(red.own, red.games) | number }} per
+              game)</span
+            >
+            <span matListItemLine>red own goals</span>
+          </mat-list-item>
+          <mat-list-item>
+            <span matListItemTitle
+              ><strong>{{ blue.own }}</strong> ({{ ratio(blue.own, blue.games) | number }} per
+              game)</span
+            >
+            <span matListItemLine>blue own goals</span>
+          </mat-list-item>
+        </div>
+      </mat-list>
     </mat-expansion-panel>
-    <mat-expansion-panel *ngIf="allies.length > 0">
+
+    @if (s.allies.length > 0) {
+      <mat-expansion-panel>
         <mat-expansion-panel-header>
-            <mat-panel-description>
-                Allies summary
-            </mat-panel-description>
+          <mat-panel-description>Allies summary</mat-panel-description>
         </mat-expansion-panel-header>
         <mat-accordion class="headers-align">
-            <mat-expansion-panel *ngFor="let allie of allies">
-                <mat-expansion-panel-header>
-                    <mat-panel-description>
-                        {{allie.name}}
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <mat-list>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{allie.games}}</strong></h4>
-                        <p mat-line>games played together</p>
-                    </mat-list-item>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{allie.wins}}</strong> ({{(allie.wins / allie.games)
-                            * 100 | number}}%)</h4>
-                        <p mat-line>wins together</p>
-                    </mat-list-item>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{allie.loses}}</strong> ({{(allie.loses / allie.games)
-                            * 100 | number}}%)</h4>
-                        <p mat-line>loses together</p>
-                    </mat-list-item>
-                </mat-list>
+          @for (ally of s.allies; track ally.playerId) {
+            @let name = playerService.getPlayerName(ally.playerId);
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-description>{{ name }}</mat-panel-description>
+              </mat-expansion-panel-header>
+              <mat-list>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ ally.games }}</strong></span
+                  >
+                  <span matListItemLine>games played together</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ ally.wins }}</strong> ({{
+                      ratio(ally.wins, ally.games) * 100 | number
+                    }}%)</span
+                  >
+                  <span matListItemLine>wins together</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ ally.loses }}</strong> ({{
+                      ratio(ally.loses, ally.games) * 100 | number
+                    }}%)</span
+                  >
+                  <span matListItemLine>loses together</span>
+                </mat-list-item>
+              </mat-list>
             </mat-expansion-panel>
+          }
         </mat-accordion>
-    </mat-expansion-panel>
-    <mat-expansion-panel *ngIf="enemies.length > 0">
+      </mat-expansion-panel>
+    }
+
+    @if (s.enemies.length > 0) {
+      <mat-expansion-panel>
         <mat-expansion-panel-header>
-            <mat-panel-description>
-                Enemies summary
-            </mat-panel-description>
+          <mat-panel-description>Enemies summary</mat-panel-description>
         </mat-expansion-panel-header>
         <mat-accordion class="headers-align">
-            <mat-expansion-panel *ngFor="let enemy of enemies">
-                <mat-expansion-panel-header>
-                    <mat-panel-description>
-                        {{enemy.name}}
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <mat-list>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{enemy.games}}</strong></h4>
-                        <p mat-line>games against each other</p>
-                    </mat-list-item>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{enemy.wins}}</strong> ({{(enemy.wins / enemy.games)
-                            * 100 | number}}%)</h4>
-                        <p mat-line>wins against {{enemy.name}}</p>
-                    </mat-list-item>
-                    <mat-list-item>
-                        <h4 mat-line><strong>{{enemy.loses}}</strong> ({{(enemy.loses / enemy.games)
-                            * 100 | number}}%)</h4>
-                        <p mat-line>loses against {{enemy.name}}</p>
-                    </mat-list-item>
-                </mat-list>
+          @for (enemy of s.enemies; track enemy.playerId) {
+            @let name = playerService.getPlayerName(enemy.playerId);
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-description>{{ name }}</mat-panel-description>
+              </mat-expansion-panel-header>
+              <mat-list>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ enemy.games }}</strong></span
+                  >
+                  <span matListItemLine>games against each other</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ enemy.wins }}</strong> ({{
+                      ratio(enemy.wins, enemy.games) * 100 | number
+                    }}%)</span
+                  >
+                  <span matListItemLine>wins against {{ name }}</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle
+                    ><strong>{{ enemy.loses }}</strong> ({{
+                      ratio(enemy.loses, enemy.games) * 100 | number
+                    }}%)</span
+                  >
+                  <span matListItemLine>loses against {{ name }}</span>
+                </mat-list-item>
+              </mat-list>
             </mat-expansion-panel>
+          }
         </mat-accordion>
-    </mat-expansion-panel>
-</mat-accordion>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+}

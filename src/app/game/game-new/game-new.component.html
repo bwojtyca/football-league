@@ -1,5 +1,5 @@
-<div class="create-new-game" [ngClass]="{'opened': opened}">
-  <button mat-fab (click)="openDialog()">
+<div class="create-new-game" [class.opened]="opened()">
+  <button matFab color="accent" (click)="openDialog()" aria-label="Create new game">
     <mat-icon>add</mat-icon>
   </button>
 </div>

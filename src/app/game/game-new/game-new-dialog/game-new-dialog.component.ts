@@ -1,209 +1,211 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { GameService } from './../../game.service';
-import { PlayerService } from '../../../player/player.service';
-import { Player } from '../../../player/player';
-import { FormControl, FormGroup } from '@angular/forms';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/startWith';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+} from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { Game } from '../../game';
+import { take } from 'rxjs';
+
+import { AvatarComponent } from '../../../player/avatar/avatar.component';
+import { compareNames, Player } from '../../../player/player';
+import { PlayerService } from '../../../player/player.service';
+import { Game, TEAM_COLORS, TeamColor } from '../../game';
+import { GameService, TeamLineup } from '../../game.service';
+import { HighlightPipe } from '../../highlight.pipe';
+
+export interface GameNewDialogData {
+  /** Pre-fills the teams, e.g. for a rematch. */
+  previousGame?: Game;
+}
+
+/** An autocomplete holds the typed text until a player is picked. */
+type PlayerValue = Player | string | null;
+
+function isPlayer(value: unknown): value is Player {
+  return !!value && typeof value === 'object' && 'id' in value;
+}
+
+function validatePlayer(control: AbstractControl): ValidationErrors | null {
+  return isPlayer(control.value) ? null : { validatePlayer: { valid: false } };
+}
+
+function createTeam() {
+  const form = new FormGroup({
+    singlePlayer: new FormControl(false, { nonNullable: true }),
+    defence: new FormControl<PlayerValue>(null, validatePlayer),
+    offence: new FormControl<PlayerValue>(null, validatePlayer),
+  });
+  const { singlePlayer, defence, offence } = form.controls;
+
+  singlePlayer.valueChanges.subscribe((single) => {
+    if (single) {
+      offence.disable();
+      offence.setValue('');
+    } else {
+      offence.enable();
+    }
+  });
+
+  return {
+    form,
+    singlePlayer: toSignal(singlePlayer.valueChanges, { initialValue: singlePlayer.value }),
+    defence: toSignal(defence.valueChanges, { initialValue: defence.value }),
+    offence: toSignal(offence.valueChanges, { initialValue: offence.value }),
+  };
+}
+
+export function openNewGameDialog(dialog: MatDialog, data?: GameNewDialogData) {
+  return dialog.open<GameNewDialogComponent, GameNewDialogData>(GameNewDialogComponent, {
+    data,
+    maxWidth: '95vw',
+  });
+}
+
 @Component({
   selector: 'fl-game-new-dialog',
+  imports: [
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    AvatarComponent,
+    HighlightPipe,
+  ],
   templateUrl: './game-new-dialog.component.html',
-  styleUrls: ['./game-new-dialog.component.scss']
+  styleUrl: './game-new-dialog.component.scss',
 })
-export class GameNewDialogComponent implements OnInit {
-  public players: Player[];
-  public teamRed: FormGroup;
-  public teamBlue: FormGroup;
-  public filteredPlayers: any;
-  public selected: {[playerId: string]: boolean};
-  private _selectedValues: {[positionInTeam: string]: string};
+export class GameNewDialogComponent {
+  private readonly _playerService = inject(PlayerService);
+  private readonly _gameService = inject(GameService);
+  private readonly _router = inject(Router);
+  private readonly _dialogRef = inject(MatDialogRef<GameNewDialogComponent>);
+  private readonly _data = inject<GameNewDialogData | undefined>(MAT_DIALOG_DATA, {
+    optional: true,
+  });
 
-  constructor(
-    private _playerService: PlayerService,
-    private _gameService: GameService,
-    private _router: Router,
-    private _dialogRef: MatDialogRef<GameNewDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private _dialogData: any
-  ) {
-    this.teamRed = new FormGroup({
-      singlePlayer: new FormControl(false),
-      defence: new FormControl(null, this._validatePlayer),
-      offence: new FormControl(null, this._validatePlayer)
-    });
-    this.teamBlue = new FormGroup({
-      singlePlayer: new FormControl(),
-      defence: new FormControl(null, this._validatePlayer),
-      offence: new FormControl(null, this._validatePlayer)
-    });
+  protected readonly colors = TEAM_COLORS;
+  protected readonly teams = { red: createTeam(), blue: createTeam() };
+  protected readonly starting = signal(false);
+
+  protected readonly players = computed(() =>
+    this._playerService.players()?.slice().sort(compareNames),
+  );
+
+  /** Players already picked anywhere in the form. */
+  protected readonly selected = computed(() => {
+    const ids = new Set<string>();
+    for (const team of Object.values(this.teams)) {
+      for (const value of [team.defence(), team.offence()]) {
+        if (isPlayer(value)) {
+          ids.add(value.id);
+        }
+      }
+    }
+    return ids;
+  });
+
+  protected readonly mode = computed(() => {
+    const { red, blue } = this.teams;
+    if (red.singlePlayer() && blue.singlePlayer()) {
+      return '1 vs 1';
+    }
+    if (red.singlePlayer() || blue.singlePlayer()) {
+      const defence = (red.singlePlayer() ? red : blue).defence();
+      return `Stress test on ${isPlayer(defence) ? defence.name : '...'}`;
+    }
+    return '2 vs 2';
+  });
+
+  constructor() {
+    const previousGame = this._data?.previousGame;
+    if (previousGame) {
+      this._playerService.players$
+        .pipe(take(1))
+        .subscribe((players) => this._prefill(previousGame, players));
+    }
   }
 
-  public ngOnInit() {
-    this._selectedValues = {};
-    this.selected = {};
-
-    this._playerService.getPlayers().delay(20).subscribe((players) => {
-      this._handlePlayers(players);
-    });
+  protected filterPlayers(value: PlayerValue): Player[] {
+    const players = this.players() ?? [];
+    const name = (isPlayer(value) ? value.name : (value ?? '')).toLowerCase();
+    return name ? players.filter((p) => p.name.toLowerCase().startsWith(name)) : players;
   }
 
-  public close() {
+  protected displayPlayer(value: PlayerValue): string {
+    return isPlayer(value) ? value.name : (value ?? '');
+  }
+
+  protected close(): void {
     this._dialogRef.close();
     this._router.navigate(['/']);
   }
 
-  public switchTeams(): void {
-    const teamValues = JSON.parse(JSON.stringify({
-      red: {
-        singlePlayer: !!this.teamRed.controls.singlePlayer.value,
-        defence: this.teamRed.controls.defence.value,
-        offence: this.teamRed.controls.offence.value
-      },
-      blue: {
-        singlePlayer: !!this.teamBlue.controls.singlePlayer.value,
-        defence: this.teamBlue.controls.defence.value,
-        offence: this.teamBlue.controls.offence.value
-      }
-    }));
-
-    this.teamRed.controls.singlePlayer.setValue(teamValues.blue.singlePlayer);
-    this.teamRed.controls.defence.setValue(teamValues.blue.defence);
-    this.teamRed.controls.offence.setValue(teamValues.blue.offence);
-
-    this.teamBlue.controls.singlePlayer.setValue(teamValues.red.singlePlayer);
-    this.teamBlue.controls.defence.setValue(teamValues.red.defence);
-    this.teamBlue.controls.offence.setValue(teamValues.red.offence);
+  protected switchTeams(): void {
+    const red = this.teams.red.form.getRawValue();
+    const blue = this.teams.blue.form.getRawValue();
+    this.teams.red.form.setValue(blue);
+    this.teams.blue.form.setValue(red);
   }
 
-  private _handlePlayers(players) {
-    this.players = players.sort((a, b) => {
-      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-    });
-
-    this.filteredPlayers = {
-      red: {
-        def: this.teamRed.controls.defence.valueChanges.startWith(null).map((player) => this._filterPlayers(player)),
-        off: this.teamRed.controls.offence.valueChanges.startWith(null).map((player) => this._filterPlayers(player))
-      },
-      blue: {
-        def: this.teamBlue.controls.defence.valueChanges.startWith(null).map((player) => this._filterPlayers(player)),
-        off: this.teamBlue.controls.offence.valueChanges.startWith(null).map((player) => this._filterPlayers(player))
+  protected async startGame(): Promise<void> {
+    const red = this._lineup('red');
+    const blue = this._lineup('blue');
+    if (!red || !blue) {
+      for (const team of Object.values(this.teams)) {
+        team.form.markAllAsTouched();
       }
-    };
-    this._prepareForm();
-  }
-
-  private _filterPlayers(player?: Player | any): Player[] {
-    if (!this.players) {
-      return null;
+      return;
     }
 
-    const name = player && player.name ? player.name : player;
-    const filteredPlayers = name ? this.players.filter(
-      (p) => p.name.toLowerCase().indexOf(name.toLowerCase()) === 0
-    ) : this.players.slice();
-
-    return filteredPlayers;
-  }
-
-  private _prepareForm() {
-    this.teamRed.controls.singlePlayer.valueChanges.subscribe((singlePlayer) => {
-      if (singlePlayer) {
-        this.teamRed.controls.offence.disable();
-        this.teamRed.controls.offence.setValue('');
-      } else {
-        this.teamRed.controls.offence.enable();
-      }
-    });
-    this.teamRed.controls.defence.valueChanges.subscribe((player) => {
-      this._updateSelected('teamRed', 'defence', player);
-    });
-    this.teamRed.controls.offence.valueChanges.subscribe((player) => {
-      this._updateSelected('teamRed', 'offence', player);
-    });
-
-    this.teamBlue.controls.singlePlayer.valueChanges.subscribe((singlePlayer) => {
-      if (singlePlayer) {
-        this.teamBlue.controls.offence.disable();
-        this.teamBlue.controls.offence.setValue('');
-      } else {
-        this.teamBlue.controls.offence.enable();
-      }
-    });
-    this.teamBlue.controls.defence.valueChanges.subscribe((player) => {
-      this._updateSelected('teamBlue', 'defence', player);
-    });
-    this.teamBlue.controls.offence.valueChanges.subscribe((player) => {
-      this._updateSelected('teamBlue', 'offence', player);
-    });
-
-    if (this._dialogData && this._dialogData.previousGame) {
-      const prevGame: Game = this._dialogData.previousGame;
-      this.teamRed.controls.defence.setValue(this._getPlayer(prevGame.teams.red.defence.player));
-      if (prevGame.teams.red.defence.player !== prevGame.teams.red.offence.player) {
-        this.teamRed.controls.offence.setValue(this._getPlayer(prevGame.teams.red.offence.player));
-      } else {
-        this.teamRed.controls.singlePlayer.setValue(true);
-      }
-
-      this.teamBlue.controls.defence.setValue(this._getPlayer(prevGame.teams.blue.defence.player));
-      if (prevGame.teams.blue.defence.player !== prevGame.teams.blue.offence.player) {
-        this.teamBlue.controls.offence.setValue(this._getPlayer(prevGame.teams.blue.offence.player));
-      } else {
-        this.teamBlue.controls.singlePlayer.setValue(true);
-      }
+    this.starting.set(true);
+    try {
+      const gameId = await this._gameService.createGame(red, blue);
+      this._dialogRef.close(gameId);
+      await this._router.navigate(['/game', gameId]);
+    } finally {
+      this.starting.set(false);
     }
   }
 
-  private _getPlayer(playerId: string): Player {
-    return this.players.find((player) => player.id === playerId);
+  private _lineup(color: TeamColor): TeamLineup | undefined {
+    const { singlePlayer, defence, offence } = this.teams[color].form.getRawValue();
+    const attacker = singlePlayer ? defence : offence;
+    return isPlayer(defence) && isPlayer(attacker) ? { defence, offence: attacker } : undefined;
   }
 
-  private _validatePlayer(c: FormControl) {
-    return c.value && c.value.id ? null : {
-      validatePlayer: {
-        valid: false
+  private _prefill(game: Game, players: Player[]): void {
+    const find = (id: string) => players.find((player) => player.id === id) ?? null;
+    for (const color of TEAM_COLORS) {
+      const { defence, offence } = game.teams[color];
+      const controls = this.teams[color].form.controls;
+      controls.defence.setValue(find(defence.player));
+      if (defence.player !== offence.player) {
+        controls.offence.setValue(find(offence.player));
+      } else {
+        controls.singlePlayer.setValue(true);
       }
-    };
-  }
-
-  private _updateSelected(team, position, player) {
-    this._selectedValues[`${team}/${position}`] = player && player.id ? player.id : null;
-    this.selected = Object.keys(this._selectedValues).reduce((total, key) => {
-      if (this._selectedValues[key]) {
-        total[this._selectedValues[key]] = true;
-      }
-      return total;
-    }, {});
-  }
-
-  public autocompleteDisplay(player) {
-    return player && player.name && player.name !== '' ? player.name : '';
-  }
-
-  public startGame() {
-    if (this.teamRed.valid && this.teamBlue.valid) {
-      const teamRed = {
-        defence: this.teamRed.controls.defence.value,
-        offence: this.teamRed.controls.singlePlayer.value ? this.teamRed.controls.defence.value : this.teamRed.controls.offence.value
-      };
-      const teamBlue = {
-        defence: this.teamBlue.controls.defence.value,
-        offence: this.teamBlue.controls.singlePlayer.value ? this.teamBlue.controls.defence.value : this.teamBlue.controls.offence.value
-      };
-
-      this._gameService.createGame(teamRed, teamBlue).subscribe((results) => {
-        this._router.navigate(['/game', results.id]);
-        this._dialogRef.close();
-      });
-    } else {
-      this.teamRed.controls.defence.markAsTouched();
-      this.teamRed.controls.offence.markAsTouched();
-      this.teamBlue.controls.defence.markAsTouched();
-      this.teamBlue.controls.offence.markAsTouched();
     }
   }
 }
-

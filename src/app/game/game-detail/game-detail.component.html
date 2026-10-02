@@ -1,82 +1,58 @@
-<button routerLink="/" mat-mini-fab color="accent" class="go-back">
+<button matMiniFab routerLink="/" color="accent" class="go-back" aria-label="Back">
   <mat-icon>arrow_back</mat-icon>
 </button>
-<button *ngIf="!!game && !game.win" (click)="remove()" mat-mini-fab color="accent" class="remove">
-  <mat-icon>close</mat-icon>
-</button>
+@if (game() && !game()?.win) {
+  <button matMiniFab (click)="remove()" color="accent" class="remove" aria-label="Remove game">
+    <mat-icon>close</mat-icon>
+  </button>
+}
 
-<div class="game-screen" *ngIf="game; else loading">
-  <div class="game-screen-summary">
-    <h2>
-      Red {{scoreSummary.red}} : {{scoreSummary.blue}} Blue
-      <small>{{gameTime}}</small>
-    </h2>
-  </div>
-  <div class="game-screen-teams">
-
-    <div class="team team--red">
-      <mat-card class="player player--offence">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{game.teams.red.offence.player}}" />
-          </div>
-          <mat-card-title><strong>{{players[game.teams.red.offence.player]?.name}}</strong></mat-card-title>
-          <mat-card-subtitle>Attacker</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.red, 'offence')" color="primary">{{game.teams.red.offence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.red, 'offence')">-{{game.teams.red.offence.ownGoals}}</button></div>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="player player--defence">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{game.teams.red.defence.player}}" />
-          </div>
-          <mat-card-title><strong>{{players[game.teams.red.defence.player]?.name}}</strong></mat-card-title>
-          <mat-card-subtitle>Defender</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.red, 'defence')" color="primary">{{game.teams.red.defence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.red, 'defence')">-{{game.teams.red.defence.ownGoals}}</button></div>
-        </mat-card-content>
-      </mat-card>
+@if (game(); as game) {
+  <div class="game-screen">
+    <div class="game-screen-summary">
+      <h2>
+        Red {{ score().red }} : {{ score().blue }} Blue
+        <small>{{ gameTime() }}</small>
+      </h2>
     </div>
-
-    <div class="team team--blue">
-      <mat-card class="player player--offence">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{game.teams.blue.offence.player}}" />
-          </div>
-          <mat-card-title><strong>{{players[game.teams.blue.offence.player]?.name}}</strong></mat-card-title>
-          <mat-card-subtitle>Attacker</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.blue, 'offence')" color="primary">{{game.teams.blue.offence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.blue, 'offence')">-{{game.teams.blue.offence.ownGoals}}</button></div>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="player player--defence">
-        <mat-card-header>
-          <div mat-card-avatar class="example-header-image">
-            <img src="https://api.adorable.io/avatars/40/{{game.teams.blue.defence.player}}" />
-          </div>
-          <mat-card-title><strong>{{players[game.teams.blue.defence.player]?.name}}</strong></mat-card-title>
-          <mat-card-subtitle>Defender</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="player-goals"><button mat-raised-button (click)="goal(game.teams.blue, 'defence')" color="primary">{{game.teams.blue.defence.goals}}</button></div>
-          <div class="player-own-goals"><button mat-mini-fab color="accent" (click)="owngoal(game.teams.blue, 'defence')">-{{game.teams.blue.defence.ownGoals}}</button></div>
-        </mat-card-content>
-      </mat-card>
+    <div class="game-screen-teams">
+      @for (color of colors; track color) {
+        <div class="team team--{{ color }}">
+          @for (position of positions; track position) {
+            @let player = game.teams[color][position];
+            @let name = playerService.getPlayerName(player.player);
+            <mat-card class="player player--{{ position }}">
+              <mat-card-header>
+                <fl-avatar mat-card-avatar [playerId]="player.player" [name]="name" />
+                <mat-card-title
+                  ><strong>{{ name }}</strong></mat-card-title
+                >
+                <mat-card-subtitle>{{ positionName(position) }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="player-goals">
+                  <button matButton="filled" (click)="goal(color, position)">
+                    {{ player.goals }}
+                  </button>
+                </div>
+                <div class="player-own-goals">
+                  <button matMiniFab color="accent" (click)="goal(color, position, true)">
+                    -{{ player.ownGoals }}
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
     </div>
-
   </div>
-</div>
-
-<ng-template #loading>
+} @else if (game() === null) {
+  <div class="not-found">
+    <h2>Game not found</h2>
+  </div>
+} @else {
   <div class="loader">
-    <mat-spinner [diameter]="50" [strokeWidth]="5"></mat-spinner>
+    <mat-spinner [diameter]="50" [strokeWidth]="5" />
   </div>
-</ng-template>
+}

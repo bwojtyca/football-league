@@ -1,108 +1,57 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import { Game } from '../game';
+import { Component, computed, inject, input } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatListModule } from '@angular/material/list';
+import { RouterLink } from '@angular/router';
+import { switchMap } from 'rxjs';
+
 import { PlayerService } from '../../player/player.service';
+import { Game, Team, teamOf, teamPlayers, teamScore } from '../game';
 import { GameService } from '../game.service';
+
+const LIMIT = 10;
 
 @Component({
   selector: 'fl-game-list',
+  imports: [MatListModule, RouterLink],
   templateUrl: './game-list.component.html',
-  styleUrls: ['./game-list.component.css']
+  styleUrl: './game-list.component.css',
 })
-export class GameListComponent implements OnInit, OnChanges {
-  @Input() public playerId?: string;
-  @Input() public limit?: string;
-  private allGames: Game[];
-  public games: Game[];
+export class GameListComponent {
+  private readonly _playerService = inject(PlayerService);
+  private readonly _gameService = inject(GameService);
 
-  constructor(private _playerService: PlayerService,
-    private _gameService: GameService) {
+  public readonly playerId = input.required<string>();
+  /** Show only the latest games. */
+  public readonly limit = input(false);
+
+  private readonly _games = toSignal(
+    toObservable(this.playerId).pipe(switchMap((id) => this._gameService.getPlayerGames(id))),
+  );
+
+  protected readonly games = computed(() => {
+    const games = [...(this._games() ?? [])].sort(
+      (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime(),
+    );
+    return (this.limit() ? games.slice(0, LIMIT) : games).map((game) => ({
+      id: game.id,
+      result: this._result(game),
+      score: `${teamScore(game, 'red')}:${teamScore(game, 'blue')}`,
+      red: this._names(game.teams.red),
+      blue: this._names(game.teams.blue),
+    }));
+  });
+
+  private _names(team: Team) {
+    return teamPlayers(team).map((id) => ({
+      name: this._playerService.getPlayerName(id),
+      current: id === this.playerId(),
+    }));
   }
 
-  public ngOnInit() {
-    this._gameService.getPlayerGames(this.playerId).subscribe((games) => {
-      this.allGames = games.sort((game1: Game, game2: Game) => {
-        const start1 = new Date(game1.start).getTime();
-        const start2 = new Date(game2.start).getTime();
-        return start1 > start2 ? -1 : start1 < start2 ? 1 : 0;
-      });
-
-      this.games = this.limit ? this.allGames.slice(0, 10) : this.allGames.slice(0, this.allGames.length - 1);
-    });
-  }
-
-  public ngOnChanges(changes) {
-    if (changes.limit && this.allGames) {
-      this.games = this.limit ? this.allGames.slice(0, 10) : this.allGames.slice(0, this.allGames.length - 1);
-    }
-  }
-
-  private getPlayerName(playerId) {
-    return playerId === this.playerId ?
-      `<strong>${this._playerService.getPlayerName(playerId)}</strong>` : this._playerService.getPlayerName(playerId);
-  }
-
-  public teamName(team) {
-    const players = [this.getPlayerName(team.defence.player)];
-    if (team.defence.player !== team.offence.player) {
-      players.push(this.getPlayerName(team.offence.player));
-    }
-    return `${players.join(' & ')}`;
-  }
-
-  public scoreSummary(game) {
-    const teamRedScore =
-      game.teams.red.defence.goals +
-      game.teams.red.offence.goals +
-      game.teams.blue.defence.ownGoals +
-      game.teams.blue.offence.ownGoals;
-    const teamBlueScore =
-      game.teams.blue.defence.goals +
-      game.teams.blue.offence.goals +
-      game.teams.red.defence.ownGoals +
-      game.teams.red.offence.ownGoals;
-
-    return `${teamRedScore}:${teamBlueScore}`;
-  }
-
-  public getIcon(game) {
-    if (!game.win) {
-      return 'games';
-    } else if ((game.win === 'blue' &&
-      (game.teams.blue.defence.player === this.playerId || game.teams.blue.offence.player === this.playerId)) ||
-      (game.win === 'red' && (game.teams.red.defence.player === this.playerId || game.teams.red.offence.player === this.playerId))
-    ) {
-      return 'thumb_up';
-    }
-    return 'thumb_down';
-  }
-
-  public getClass(game) {
+  private _result(game: Game): 'in-progress' | 'win' | 'lost' {
     if (!game.win) {
       return 'in-progress';
-    } else if ((game.win === 'blue' &&
-      (game.teams.blue.defence.player === this.playerId || game.teams.blue.offence.player === this.playerId)) ||
-      (game.win === 'red' && (game.teams.red.defence.player === this.playerId || game.teams.red.offence.player === this.playerId))
-    ) {
-      return 'win';
     }
-    return 'lost';
-  }
-
-  public gameType(game) {
-    let type = '-';
-
-    switch (game.players.length) {
-      case 2:
-        type = '1 vs 1';
-        break;
-      case 3:
-        type = 'Stress test';
-        break;
-      case 4:
-        type = '2 vs 2';
-        break;
-    }
-
-    return type;
+    return teamOf(game, this.playerId()) === game.win ? 'win' : 'lost';
   }
 }

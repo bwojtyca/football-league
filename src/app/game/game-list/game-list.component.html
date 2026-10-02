@@ -1,11 +1,25 @@
-<mat-list>
-  <mat-list-item *ngFor="let game of games" class="game-row" [ngClass]="getClass(game)">
-    <a routerLink="/game/{{game.id}}" mat-line>
-      <span class="game-summary">
-        <span class="col team-name" [innerHtml]="teamName(game.teams.red)"></span>
-        <span class="col">{{scoreSummary(game)}}</span>
-        <span class="col team-name" [innerHtml]="teamName(game.teams.blue)"></span>
+<mat-nav-list>
+  @for (game of games(); track game.id) {
+    <a mat-list-item [routerLink]="['/game', game.id]" class="game-row" [class]="game.result">
+      <span matListItemTitle class="game-summary">
+        <span class="col team-name">
+          @for (player of game.red; track $index) {
+            @if (!$first) {
+              &amp;
+            }
+            <span [class.current]="player.current">{{ player.name }}</span>
+          }
+        </span>
+        <span class="col">{{ game.score }}</span>
+        <span class="col team-name">
+          @for (player of game.blue; track $index) {
+            @if (!$first) {
+              &amp;
+            }
+            <span [class.current]="player.current">{{ player.name }}</span>
+          }
+        </span>
       </span>
     </a>
-  </mat-list-item>
-</mat-list>
+  }
+</mat-nav-list>

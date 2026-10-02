@@ -1,48 +1,28 @@
-import { Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { addDoc, collection } from 'firebase/firestore';
+import { shareReplay } from 'rxjs';
+
+import { collectionData, FIRESTORE } from '../firebase';
 import { Player } from './player';
-import { Observable } from 'rxjs/Observable';
-import { AngularFirestore } from 'angularfire2/firestore';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PlayerService {
-  private _players: Player[];
+  private readonly _players = collection(inject(FIRESTORE), 'players');
 
-  constructor(private _db: AngularFirestore) {
-  }
-
-
-  public getPlayers(): Observable<Player[]> {
-    return this._db.collection('players').snapshotChanges().map((actions) => {
-      const players = actions.map((action): Player => {
-        const id = action.payload.doc.id;
-        const data = action.payload.doc.data() as Player;
-        return { id, ...data } as Player;
-      });
-      this._players = players;
-      return players;
-    });
-  }
-
-  public getPlayer(playerId: string): Observable<Player> {
-    return this.getPlayers().map((players) => players.find((player) => player.id === playerId));
-  }
+  /** All players, kept live for the whole session so names can be resolved synchronously. */
+  public readonly players$ = collectionData<Player>(this._players).pipe(shareReplay(1));
+  public readonly players = toSignal(this.players$);
+  private readonly _byId = computed(() => new Map(this.players()?.map((p) => [p.id, p])));
 
   public getPlayerName(playerId: string): string {
-    if (!this._players || !this._players.find((player) => player.id === playerId)) {
-      return `User id: ${playerId}`;
+    if (!this.players()) {
+      return '…';
     }
-    return this._players.find((player) => player.id === playerId).name;
+    return this._byId().get(playerId)?.name ?? `User id: ${playerId}`;
   }
 
-  public addPlayer(name: string): void {
-    this._db.collection('players').add({ name, wins: 0, loses: 0 });
-  }
-
-  public updatePlayer(player: Player): Observable<any> {
-    return Observable.fromPromise(this._db.doc(`players/${player.id}`).update(player));
-  }
-
-  public deletePlayer(player: Player): Observable<any> {
-    return Observable.fromPromise(this._db.doc(`players/${player.id}`).delete());
+  public addPlayer(name: string): Promise<unknown> {
+    return addDoc(this._players, { name, wins: 0, loses: 0 });
   }
 }

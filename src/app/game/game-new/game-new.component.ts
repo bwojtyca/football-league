@@ -1,28 +1,25 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {GameNewDialogComponent} from './game-new-dialog/game-new-dialog.component';
+import { Component, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+
+import { openNewGameDialog } from './game-new-dialog/game-new-dialog.component';
 
 @Component({
   selector: 'fl-game-new',
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './game-new.component.html',
-  styleUrls: ['./game-new.component.css']
+  styleUrl: './game-new.component.css',
 })
-export class GameNewComponent implements OnInit {
-  public opened: boolean;
+export class GameNewComponent {
+  private readonly _dialog = inject(MatDialog);
 
-  constructor(private _dialog: MatDialog) {
+  protected readonly opened = signal(false);
+
+  protected openDialog(): void {
+    this.opened.set(true);
+    openNewGameDialog(this._dialog)
+      .afterClosed()
+      .subscribe(() => this.opened.set(false));
   }
-
-  ngOnInit() {
-  }
-
-  public openDialog() {
-    this.opened = true;
-    const dialogRef = this._dialog.open(GameNewDialogComponent);
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.opened = false;
-    });
-  }
-
 }

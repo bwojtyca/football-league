@@ -10,21 +10,16 @@
 .game-summary .col.team-name:first-child {
   text-align: right;
 }
-/* .mat-list-icon.thumb_up {
-  color: green;
-}
-.mat-list-icon.thumb_down {
-  color: darkred;
-} */
-
-a.mat-line {
-  color: rgba(0,0,0,.87);
-  text-decoration: none;
+.game-summary .current {
+  font-weight: bold;
 }
 
-.game-row.win a.mat-line {
+.game-row .game-summary {
+  color: rgba(0, 0, 0, 0.87);
+}
+.game-row.win .game-summary {
   color: green;
 }
-.game-row.lost a.mat-line {
+.game-row.lost .game-summary {
   color: darkred;
 }
