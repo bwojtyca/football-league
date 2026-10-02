@@ -1,0 +1,9 @@
+{
+  "enabledPlugins": {
+    "frontend-design@anthropic-plugin-directory": true,
+    "design@anthropic-plugin-directory": true,
+    "engineering@anthropic-plugin-directory": true,
+    "data@anthropic-plugin-directory": true,
+    "claude-code-setup@anthropic-plugin-directory": true
+  }
+}
