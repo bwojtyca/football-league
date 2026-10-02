@@ -1,8 +1,61 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$green-palette,
+        tertiary: mat.$blue-palette,
+        theme-type: color-scheme,
+      ),
+      typography: Barlow,
+      density: 0,
+    )
+  );
+
+  --fl-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fl-red: light-dark(#d33a3a, #c44545);
+  --fl-blue: light-dark(#2c59cf, #4669dd);
+  --fl-red-text: light-dark(#c22f2f, #f07c7c);
+  --fl-blue-text: light-dark(#2a55c4, #8ea6f6);
+  --fl-win: light-dark(#1f7a4d, #3fae74);
+  --fl-loss: light-dark(#b3261e, #f2b8b5);
+  --fl-gold: light-dark(#a86a12, #e2ac45);
+}
+
+html,
 body {
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-large);
+}
+
+/* Content column of every page; the game screen fills the whole viewport instead. */
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4px 16px 32px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .highlight {

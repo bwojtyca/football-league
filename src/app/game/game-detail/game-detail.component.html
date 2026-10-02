@@ -1,58 +1,75 @@
-<button matMiniFab routerLink="/" color="accent" class="go-back" aria-label="Back">
-  <mat-icon>arrow_back</mat-icon>
-</button>
-@if (game() && !game()?.win) {
-  <button matMiniFab (click)="remove()" color="accent" class="remove" aria-label="Remove game">
-    <mat-icon>close</mat-icon>
-  </button>
-}
-
 @if (game(); as game) {
-  <div class="game-screen">
-    <div class="game-screen-summary">
-      <h2>
-        Red {{ score().red }} : {{ score().blue }} Blue
+  <div class="screen" [class.ended]="!!game.end">
+    <header class="top">
+      <a
+        matIconButton
+        [routerLink]="['/l', leagueId()]"
+        [attr.aria-label]="'common.back' | transloco"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <div class="score">
+        <span class="r">{{ score().red }}</span
+        ><span class="sep">:</span><span class="b">{{ score().blue }}</span>
         <small>{{ gameTime() }}</small>
-      </h2>
-    </div>
-    <div class="game-screen-teams">
+      </div>
+      @if (!game.win) {
+        <button matIconButton (click)="remove()" [attr.aria-label]="'game.remove' | transloco">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      } @else if (canRematch()) {
+        <button matButton="tonal" (click)="rematch()">{{ 'game.rematch' | transloco }}</button>
+      } @else {
+        <span class="spacer"></span>
+      }
+    </header>
+
+    <div class="teams">
       @for (color of colors; track color) {
-        <div class="team team--{{ color }}">
-          @for (position of positions; track position) {
-            @let player = game.teams[color][position];
-            @let name = playerService.getPlayerName(player.player);
-            <mat-card class="player player--{{ position }}">
-              <mat-card-header>
-                <fl-avatar mat-card-avatar [playerId]="player.player" [name]="name" />
-                <mat-card-title
-                  ><strong>{{ name }}</strong></mat-card-title
+        <section class="team team--{{ color }}" [class.won]="game.win === color">
+          <h2>{{ teamNames[color] | transloco }}</h2>
+          <div class="slots">
+            @for (position of positions; track position) {
+              @let slot = game.teams[color][position];
+              @let name = playerService.getPlayerName(slot.player);
+              @let delta = change(slot.player);
+              <div class="slot">
+                <div class="who">
+                  <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
+                  <span class="name">
+                    <b>{{ name }}</b>
+                    <small>{{ positionNames[position] | transloco }}</small>
+                  </span>
+                  @if (delta !== null) {
+                    <fl-change [value]="delta" />
+                  }
+                </div>
+                <button
+                  class="goal"
+                  (click)="goal(color, position)"
+                  [attr.aria-label]="'game.goalAria' | transloco: { name }"
                 >
-                <mat-card-subtitle>{{ positionName(position) }}</mat-card-subtitle>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="player-goals">
-                  <button matButton="filled" (click)="goal(color, position)">
-                    {{ player.goals }}
-                  </button>
-                </div>
-                <div class="player-own-goals">
-                  <button matMiniFab color="accent" (click)="goal(color, position, true)">
-                    -{{ player.ownGoals }}
-                  </button>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          }
-        </div>
+                  {{ slot.goals }}
+                </button>
+                <button
+                  class="own"
+                  (click)="goal(color, position, true)"
+                  [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
+                >
+                  {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
+                </button>
+              </div>
+            }
+          </div>
+        </section>
       }
     </div>
   </div>
 } @else if (game() === null) {
-  <div class="not-found">
-    <h2>Game not found</h2>
-  </div>
+  <main class="page">
+    <p class="empty">{{ 'game.notFound' | transloco }}</p>
+    <a matButton routerLink="/">{{ 'common.back' | transloco }}</a>
+  </main>
 } @else {
-  <div class="loader">
-    <mat-spinner [diameter]="50" [strokeWidth]="5" />
-  </div>
+  <div class="loader"><mat-spinner [diameter]="40" /></div>
 }

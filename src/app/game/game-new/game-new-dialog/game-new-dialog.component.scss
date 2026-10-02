@@ -1,62 +1,54 @@
 .header {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  text-align: center;
 }
 
 .header small {
-  display: block;
-  color: rgba(0, 0, 0, 0.54);
-  font-size: 0.66em;
-  font-weight: 200;
-  line-height: 1.4;
+  font: 400 0.9rem/1.3 var(--mat-sys-body-medium-font, inherit);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .new-game {
   display: flex;
-  margin: 0 -10px;
   flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
 }
 
 .team {
-  margin: 0 10px;
   display: flex;
   flex-direction: column;
-  min-width: 260px;
-  box-sizing: border-box;
-
-  &-switch {
-    width: 40px;
-    height: 40px;
-    display: block;
-    text-align: center;
-    margin: 10px auto;
-    min-width: 40px;
-  }
+  min-width: 0;
 }
 
-.team--red .team-color {
-  color: #f44336;
-}
-
-.team--blue .team-color {
-  color: #3f51b5;
+.team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 4px;
 }
 
 .team-color {
-  text-align: center;
-  text-transform: uppercase;
-  padding: 10px 0 20px;
+  font: 700 1.1rem/1 var(--fl-display);
 }
 
-.team-players {
-  margin-bottom: 10px;
+.team--red .team-color {
+  color: var(--fl-red-text);
 }
 
-.team-position .mat-mdc-form-field {
+.team--blue .team-color {
+  color: var(--fl-blue-text);
+}
+
+.team mat-form-field {
   width: 100%;
-  display: block;
+}
+
+.team-switch {
+  display: flex;
+  justify-content: center;
 }
 
 .option {
@@ -65,18 +57,62 @@
   gap: 10px;
 }
 
+.chance {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.chance-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.chance .num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+}
+
+.chance-bar {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chance-bar .r {
+  background: var(--fl-red);
+}
+
+.chance-bar .b {
+  background: var(--fl-blue);
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}
+
 .loader {
   display: flex;
   justify-content: center;
+  padding: 16px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 720px) {
   .new-game {
     flex-direction: row;
+    gap: 16px;
+  }
+
+  .team {
+    width: 270px;
   }
 
   .team-switch {
-    margin: 10px;
-    align-self: center;
+    align-items: center;
   }
 }

@@ -1,7 +1,9 @@
 # FootballLeague
 
-A table football (foosball) league: players, live game scoring (first team to 8 wins),
-game history and per-player statistics. Data lives in Cloud Firestore; there is no backend.
+A table football (foosball) league: leagues for each office or crowd, live game scoring
+(first team to 8 wins), an Elo ranking with the change after every game, game history and
+per-player statistics, in Polish and English. Built for phones; it can be installed from the
+browser and opens offline. Data lives in Cloud Firestore; there is no backend.
 
 Originally written in 2017 with Angular 4 and angularfire2; revived in 2026 on
 Angular 22, Angular Material and the modular Firebase SDK, keeping the same Firestore
@@ -36,9 +38,9 @@ Every push to `master` builds the app and publishes it to GitHub Pages
 ### Firestore security rules
 
 `firestore.rules` lets anyone read and play, but only through the writes the app makes:
-adding players, starting games, scoring one goal at a time, closing a game once it is won
-and removing unfinished games. Players cannot be changed or deleted, and finished games
-cannot be changed.
+creating leagues and adding players to them, adding players, starting games, scoring one goal at a time, closing a game once it is won
+and removing unfinished games. Players cannot be changed or deleted, nobody can be removed
+from a league, and finished games cannot be changed.
 
 Pushing a change to `firestore.rules` or `firebase.json` on `master` deploys the rules
 (`.github/workflows/firebase.yml`, also runnable by hand from the Actions tab). It needs a
@@ -57,8 +59,9 @@ npx firebase-tools deploy --only hosting
 
 ## Data model
 
-- `leagues/{id}`: `name`, `created`, `players` (ids). Games without a league are the 2017
-  history, shown as the read-only "Legacy 2017" league.
+- `leagues/{id}`: `name`, `created`, `players` (ids), `archived?`. Games without a league
+  are the 2017 history and belong to the archived league `leagues/legacy`
+  ("Najdroższa Liga Świata").
 - `players/{id}`: `name` (older documents also hold `wins`/`loses` counters, which are no
   longer used: rankings and stats are counted from the games)
 - `games/{id}`: `league?`, `players` (ids of everyone playing), `start`, `end?`, `win?`
@@ -68,3 +71,9 @@ All games are read through one live listener and kept in the browser (IndexedDB)
 visits render straight away and only changed games are downloaded. Goals are increments
 applied locally at once (also offline) and add up across devices; a transaction records the
 result once a team reaches 8, so it is recorded exactly once.
+
+Ratings are Elo, counted from each league's games: everyone starts at 1500, K = 24, a team
+is rated as the average of its players and both players of a team gain or lose the same
+amount. Ratings from fewer than 10 games are marked as provisional.
+
+Interface texts are in `public/i18n/{pl,en}.json` (Transloco, ICU message format).

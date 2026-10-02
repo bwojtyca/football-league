@@ -1,0 +1,64 @@
+@let p = player();
+<fl-top-bar [title]="p?.name ?? ''" [back]="'/l/' + leagueId()" />
+
+<main class="page">
+  @if (p === null) {
+    <p class="empty">{{ 'player.notFound' | transloco }}</p>
+  } @else if (!p) {
+    <div class="loader"><mat-spinner [diameter]="40" /></div>
+  } @else {
+    <div class="head">
+      <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
+      <div>
+        <div class="league">{{ league()?.name }}</div>
+        @if (mainPosition(); as position) {
+          <div class="sub">{{ position | transloco }}</div>
+        }
+      </div>
+    </div>
+
+    @if (p.games === 0) {
+      <p class="empty">{{ 'player.noGames' | transloco }}</p>
+    } @else {
+      <div class="tiles">
+        <div>
+          <b>{{ p.rating }}</b>
+          @if (p.change !== null) {
+            <fl-change [value]="p.change" />
+          }
+          <small>{{ 'player.rating' | transloco }}</small>
+        </div>
+        <div>
+          <b>{{ p.wins }}–{{ p.loses }}</b>
+          <small>{{ 'player.record' | transloco }}</small>
+        </div>
+        <div>
+          <b>{{ p.winRatio | translocoDecimal: { maximumFractionDigits: 0 } }}%</b>
+          <small>{{ 'player.winRate' | transloco }}</small>
+        </div>
+      </div>
+      <div class="form-row"><fl-form [results]="p.form" /></div>
+
+      @if (chart(); as data) {
+        <figure class="chart">
+          <figcaption>{{ 'player.ratingHistory' | transloco }}</figcaption>
+          <div class="canvas">
+            <canvas
+              baseChart
+              type="line"
+              [data]="data"
+              [options]="chartOptions"
+              [attr.aria-label]="'player.ratingHistory' | transloco"
+            ></canvas>
+          </div>
+        </figure>
+      }
+
+      <h2>{{ 'player.stats' | transloco }}</h2>
+      <fl-games-stats [leagueId]="leagueId()" [playerId]="p.id" />
+    }
+
+    <h2>{{ 'player.history' | transloco }}</h2>
+    <fl-game-list [leagueId]="leagueId()" [playerId]="p.id" [pageSize]="20" />
+  }
+</main>

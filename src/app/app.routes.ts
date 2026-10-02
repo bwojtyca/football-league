@@ -1,10 +1,37 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { GameDetailComponent } from './game/game-detail/game-detail.component';
+import { LeagueService } from './league/league.service';
 
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'game/:gameId', component: GameDetailComponent },
+  {
+    path: '',
+    pathMatch: 'full',
+    // Back to the league opened last on this device, or the list of leagues.
+    redirectTo: () => {
+      const last = inject(LeagueService).lastLeague;
+      return last ? `/l/${last}` : '/leagues';
+    },
+  },
+  {
+    path: 'leagues',
+    loadComponent: () =>
+      import('./league/leagues/leagues.component').then((m) => m.LeaguesComponent),
+  },
+  {
+    path: 'l/:leagueId',
+    loadComponent: () =>
+      import('./league/league-page/league-page.component').then((m) => m.LeaguePageComponent),
+  },
+  {
+    path: 'l/:leagueId/player/:playerId',
+    loadComponent: () =>
+      import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
+  },
+  {
+    path: 'game/:gameId',
+    loadComponent: () =>
+      import('./game/game-detail/game-detail.component').then((m) => m.GameDetailComponent),
+  },
   { path: '**', redirectTo: '' },
 ];

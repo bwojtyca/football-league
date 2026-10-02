@@ -1,91 +1,189 @@
-.go-back {
-  position: absolute;
-  z-index: 10;
-  top: 13px;
-  left: 13px;
-}
-.remove {
-  position: absolute;
-  z-index: 10;
-  top: 13px;
-  right: 13px;
-}
-
-.game-screen {
-  display: flex;
-  width: 100%;
-  text-align: center;
-  align-items: center;
-  flex-direction: column;
+.screen {
   position: fixed;
   inset: 0;
-  z-index: 1;
-}
-
-.game-screen-summary small {
-  display: block;
-  font-weight: 300;
-  font-size: 0.66em;
-  color: rgba(0, 0, 0, 0.54);
-}
-
-.game-screen-teams {
   display: flex;
-  width: 100%;
-  height: 100%;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: var(--mat-sys-surface);
+}
+
+.top {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 2px;
+}
+
+.score {
+  text-align: center;
+  font: 700 2.4rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.score .r {
+  color: var(--fl-red-text);
+}
+
+.score .b {
+  color: var(--fl-blue-text);
+}
+
+.score .sep {
+  margin: 0 6px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.score small {
+  display: block;
+  margin-top: 2px;
+  font: 500 0.8rem/1 var(--mat-sys-body-small-font, inherit);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.spacer {
+  width: 48px;
+}
+
+.teams {
+  flex: 1;
   min-height: 0;
-  text-align: left;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  padding: 6px 8px 8px;
 }
 
 .team {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  margin: 0 12px;
-
-  &--red .player-goals button {
-    --mat-button-filled-container-color: #f44336;
-  }
-  &--blue .player-goals button {
-    --mat-button-filled-container-color: #3f51b5;
-  }
+  min-height: 0;
+  padding: 6px 8px 8px;
+  border-radius: 20px;
+  background: var(--mat-sys-surface-container-low);
 }
 
-.player {
-  margin: 12px 0;
-  padding: 16px;
-  box-sizing: border-box;
-  width: 100%;
+.team h2 {
+  margin: 0 4px 6px;
+  font: 700 1rem/1.2 var(--fl-display);
+}
+
+.team--red h2 {
+  color: var(--fl-red-text);
+}
+
+.team--blue h2 {
+  color: var(--fl-blue-text);
+}
+
+.team.won h2::after {
+  content: ' ★';
+  color: var(--fl-gold);
+}
+
+.slots {
   flex: 1;
   min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
-.player .mat-mdc-card-content {
+.slot {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  min-height: 0;
+  min-width: 0;
+}
+
+.who {
   display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.name {
+  display: grid;
+  min-width: 0;
   flex: 1;
-  padding: 16px 0 0;
+  line-height: 1.15;
 }
 
-.player-goals {
-  width: 100%;
-}
-.player-goals button {
-  --mat-button-filled-label-text-color: #fff;
-  width: 100%;
-  height: 100%;
-  font-size: 48px;
-  border-radius: 4px;
+.name b {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.player-own-goals button {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
+.name small {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.75rem;
 }
 
-.loader,
-.not-found {
-  display: flex;
-  justify-content: center;
-  padding-top: 80px;
+.goal {
+  min-height: 64px;
+  border: 0;
+  border-radius: 16px;
+  color: #fff;
+  font: 700 clamp(2.4rem, 9vh, 4.5rem)/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 80ms ease-out;
+}
+
+.goal:active {
+  transform: scale(0.97);
+}
+
+.team--red .goal {
+  background: var(--fl-red);
+}
+
+.team--blue .goal {
+  background: var(--fl-blue);
+}
+
+.own {
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: transparent;
+  color: var(--mat-sys-on-surface-variant);
+  font: 500 0.85rem/1 inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.own b {
+  color: var(--mat-sys-on-surface);
+  margin-left: 4px;
+}
+
+.ended .goal,
+.ended .own {
+  cursor: default;
+}
+
+.ended .goal:active {
+  transform: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+}
+
+@media (min-width: 700px) and (min-aspect-ratio: 1/1) {
+  .teams {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
 }

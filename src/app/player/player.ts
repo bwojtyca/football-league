@@ -1,4 +1,5 @@
-import { Game, TEAM_COLORS, teamPlayers } from '../game/game';
+import { Game, teamOf } from '../game/game';
+import { PROVISIONAL_GAMES, Ratings, START_RATING } from './rating';
 
 /**
  * Documents created before 2026 also hold `wins`/`loses` counters; they drifted from
@@ -9,49 +10,62 @@ export interface Player {
   name: string;
 }
 
+export type Result = 'W' | 'L';
+
 export interface RankedPlayer extends Player {
+  /** Rounded Elo rating, `null` before the first finished game. */
+  rating: number | null;
+  /** Rounded rating change in the player's last game. */
+  change: number | null;
   wins: number;
   loses: number;
   games: number;
+  /** Percentage of games won, two decimals. */
   winRatio: number;
+  /** Results of the last 5 games, oldest first. */
+  form: Result[];
+  provisional: boolean;
 }
 
-/** Wins and losses of every player, counted from finished games. */
-export function countResults(games: Game[]): Map<string, { wins: number; loses: number }> {
-  const results = new Map<string, { wins: number; loses: number }>();
-  for (const game of games) {
-    if (!game.end || !game.win) {
-      continue;
-    }
-    for (const color of TEAM_COLORS) {
-      for (const playerId of teamPlayers(game.teams[color])) {
-        let result = results.get(playerId);
-        if (!result) {
-          result = { wins: 0, loses: 0 };
-          results.set(playerId, result);
-        }
-        if (color === game.win) {
-          ++result.wins;
-        } else {
-          ++result.loses;
-        }
-      }
+/** Results of each player in finished games, oldest first. */
+export function results(games: Game[]): Map<string, Result[]> {
+  const byPlayer = new Map<string, Result[]>();
+  const finished = games
+    .filter((game) => game.end && game.win)
+    .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0));
+  for (const game of finished) {
+    for (const id of new Set(game.players)) {
+      const result: Result = teamOf(game, id) === game.win ? 'W' : 'L';
+      byPlayer.set(id, [...(byPlayer.get(id) ?? []), result]);
     }
   }
-  return results;
+  return byPlayer;
 }
 
-/** Players with their results, best win ratio first, then by name. */
-export function rankPlayers(players: Player[], games: Game[]): RankedPlayer[] {
-  const results = countResults(games);
+/** Players by rating (best first); players without games last, by name. */
+export function rankPlayers(players: Player[], games: Game[], ratings: Ratings): RankedPlayer[] {
+  const byPlayer = results(games);
   return players
-    .map((player) => {
-      const { wins, loses } = results.get(player.id) ?? { wins: 0, loses: 0 };
-      const total = wins + loses;
-      const winRatio = total ? Math.round((wins / total) * 10000) / 100 : 0;
-      return { id: player.id, name: player.name, wins, loses, games: total, winRatio };
+    .map((player): RankedPlayer => {
+      const own = byPlayer.get(player.id) ?? [];
+      const wins = own.filter((r) => r === 'W').length;
+      const rating = ratings.current.get(player.id);
+      const history = ratings.history.get(player.id) ?? [];
+      const last = history.length > 1 ? history[history.length - 2] : null;
+      return {
+        id: player.id,
+        name: player.name,
+        rating: rating === undefined ? null : Math.round(rating),
+        change: rating === undefined ? null : Math.round(rating) - Math.round(last ?? START_RATING),
+        wins,
+        loses: own.length - wins,
+        games: own.length,
+        winRatio: own.length ? Math.round((wins / own.length) * 10000) / 100 : 0,
+        form: own.slice(-5),
+        provisional: own.length < PROVISIONAL_GAMES,
+      };
     })
-    .sort((a, b) => b.winRatio - a.winRatio || compareNames(a, b));
+    .sort((a, b) => (b.rating ?? -Infinity) - (a.rating ?? -Infinity) || compareNames(a, b));
 }
 
 export function compareNames(a: Player, b: Player): number {

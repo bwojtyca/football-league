@@ -1,0 +1,53 @@
+<fl-top-bar [title]="'leagues.title' | transloco" />
+
+<main class="page">
+  @if (leagues(); as leagues) {
+    @if (onlyArchive()) {
+      <p class="empty">{{ 'leagues.empty' | transloco }}</p>
+    }
+    <ul class="leagues">
+      @for (league of leagues; track league.id) {
+        <li>
+          <a [routerLink]="['/l', league.id]" class="league">
+            <span class="name">
+              {{ league.name }}
+              @if (league.archived) {
+                <em class="tag">{{ 'leagues.archive' | transloco }}</em>
+              }
+            </span>
+            <span class="meta">
+              {{ 'count.players' | transloco: { n: league.players.length } }}
+              @if (league.games !== undefined) {
+                · {{ 'count.games' | transloco: { n: league.games } }}
+              }
+              @if (league.lastGame) {
+                ·
+                {{
+                  'leagues.lastGame'
+                    | transloco
+                      : { date: (league.lastGame | translocoDate: { dateStyle: 'medium' }) }
+                }}
+              }
+            </span>
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="loader"><mat-spinner [diameter]="40" /></div>
+  }
+
+  <form class="new" [formGroup]="form" (ngSubmit)="create()">
+    <h2>{{ 'leagues.new' | transloco }}</h2>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
+      <input matInput formControlName="name" maxlength="60" autocomplete="off" />
+      <mat-hint>{{ 'leagues.nameHint' | transloco }}</mat-hint>
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>{{ 'leagues.nameRequired' | transloco }}</mat-error>
+      }
+    </mat-form-field>
+    <button matButton="filled" type="submit">{{ 'leagues.create' | transloco }}</button>
+  </form>
+</main>

@@ -1,0 +1,72 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.league {
+  font-weight: 600;
+}
+
+.sub {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tiles div {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--mat-sys-surface-container);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.tiles b {
+  font: 700 1.5rem/1.1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.tiles small {
+  flex-basis: 100%;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.75rem;
+}
+
+.form-row {
+  margin: 10px 2px 0;
+}
+
+.chart {
+  margin: 16px 0 0;
+  padding: 10px 12px 6px;
+  border-radius: 14px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.chart figcaption {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.canvas {
+  position: relative;
+  height: 140px;
+}
+
+h2 {
+  margin: 24px 0 4px;
+  font: 600 1.3rem/1.2 var(--fl-display);
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}

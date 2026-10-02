@@ -9,11 +9,15 @@ import {
   runTransaction,
   setDoc,
   updateDoc,
+  waitForPendingWrites,
 } from 'firebase/firestore';
-import { Observable } from 'rxjs';
+import { collectionData, docData } from 'rxfire/firestore';
+import { map, Observable } from 'rxjs';
 
-import { collectionData, docData, FIRESTORE } from '../firebase';
+import { FIRESTORE } from '../firebase';
+import { leagueOf } from '../league/league';
 import { Player } from '../player/player';
+import { computeRatings, Ratings } from '../player/rating';
 import { Game, Position, Team, TeamColor, teamPlayers, winnerOf } from './game';
 
 export interface TeamLineup {
@@ -30,47 +34,73 @@ export class GameService {
    * Every game, kept live for the whole session. Rankings, histories and stats are all
    * derived from this one listener; after the first load only changed games arrive.
    */
-  public readonly games = toSignal(collectionData<Game>(this._games));
+  public readonly games = toSignal(
+    collectionData(this._games, { idField: 'id' }) as Observable<Game[]>,
+  );
 
-  /** Each player's games, newest first. */
-  private readonly _byPlayer = computed(() => {
-    const byPlayer = new Map<string, Game[]>();
+  /** Each league's games, newest first. */
+  private readonly _byLeague = computed(() => {
+    const byLeague = new Map<string, Game[]>();
     const games = [...(this.games() ?? [])].sort((a, b) =>
       a.start < b.start ? 1 : a.start > b.start ? -1 : 0,
     );
     for (const game of games) {
-      for (const playerId of new Set(game.players)) {
-        const list = byPlayer.get(playerId);
-        if (list) {
-          list.push(game);
-        } else {
-          byPlayer.set(playerId, [game]);
-        }
+      const league = leagueOf(game);
+      const list = byLeague.get(league);
+      if (list) {
+        list.push(game);
+      } else {
+        byLeague.set(league, [game]);
       }
     }
-    return byPlayer;
+    return byLeague;
   });
 
-  /** A player's games, newest first, or `undefined` while games are loading. */
-  public playerGames(playerId: string): Game[] | undefined {
-    return this.games() && (this._byPlayer().get(playerId) ?? []);
+  /** Elo ratings of every league. */
+  private readonly _ratings = computed(() => {
+    const ratings = new Map<string, Ratings>();
+    for (const [league, games] of this._byLeague()) {
+      ratings.set(league, computeRatings(games));
+    }
+    return ratings;
+  });
+
+  /** A league's games, newest first, or `undefined` while games are loading. */
+  public leagueGames(leagueId: string): Game[] | undefined {
+    return this.games() && (this._byLeague().get(leagueId) ?? []);
+  }
+
+  /** A player's games in a league, newest first, or `undefined` while games are loading. */
+  public playerGames(leagueId: string, playerId: string): Game[] | undefined {
+    return this.leagueGames(leagueId)?.filter((game) => game.players.includes(playerId));
+  }
+
+  public ratings(leagueId: string): Ratings | undefined {
+    return this.games() && (this._ratings().get(leagueId) ?? computeRatings([]));
   }
 
   public getGame(gameId: string): Observable<Game | null> {
-    return docData<Game>(doc(this._games, gameId));
+    return (
+      docData(doc(this._games, gameId), { idField: 'id' }) as Observable<Game | undefined>
+    ).pipe(map((game) => game ?? null));
   }
 
   /**
    * Creates a game. The id is known right away and the game shows up locally at once;
    * `saved` settles when the server has stored it.
    */
-  public createGame(red: TeamLineup, blue: TeamLineup): { id: string; saved: Promise<void> } {
+  public createGame(
+    leagueId: string,
+    red: TeamLineup,
+    blue: TeamLineup,
+  ): { id: string; saved: Promise<void> } {
     const team = (lineup: TeamLineup): Team => ({
       defence: { player: lineup.defence.id, goals: 0, ownGoals: 0 },
       offence: { player: lineup.offence.id, goals: 0, ownGoals: 0 },
     });
     const teams = { red: team(red), blue: team(blue) };
     const game: Omit<Game, 'id'> = {
+      league: leagueId,
       players: [...teamPlayers(teams.red), ...teamPlayers(teams.blue)],
       start: new Date().toISOString(),
       teams,
@@ -100,6 +130,11 @@ export class GameService {
    * sure it is recorded once even when several devices try. Resolves with the winner, or
    * `undefined` while the game is not decided.
    */
+  /** Settles when every write made on this device so far has reached the server. */
+  public whenSaved(): Promise<void> {
+    return waitForPendingWrites(this._db);
+  }
+
   public async closeGame(gameId: string): Promise<TeamColor | undefined> {
     const ref = doc(this._games, gameId);
     try {

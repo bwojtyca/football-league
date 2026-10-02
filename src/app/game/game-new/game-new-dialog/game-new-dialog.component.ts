@@ -21,17 +21,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { take } from 'rxjs';
 
+import { LeagueService } from '../../../league/league.service';
+import { Notifier } from '../../../notifier';
 import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
-import { Notifier } from '../../../notifier';
+import { START_RATING, winChance } from '../../../player/rating';
 import { Game, TEAM_COLORS, TeamColor } from '../../game';
 import { GameService, TeamLineup } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
 
 export interface GameNewDialogData {
+  leagueId: string;
   /** Pre-fills the teams, e.g. for a rematch. */
   previousGame?: Game;
 }
@@ -72,9 +76,10 @@ function createTeam() {
   };
 }
 
-export function openNewGameDialog(dialog: MatDialog, data?: GameNewDialogData) {
+export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
   return dialog.open<GameNewDialogComponent, GameNewDialogData>(GameNewDialogComponent, {
     data,
+    width: '700px',
     maxWidth: '95vw',
   });
 }
@@ -93,26 +98,51 @@ export function openNewGameDialog(dialog: MatDialog, data?: GameNewDialogData) {
     MatProgressSpinnerModule,
     AvatarComponent,
     HighlightPipe,
+    TranslocoPipe,
   ],
   templateUrl: './game-new-dialog.component.html',
   styleUrl: './game-new-dialog.component.scss',
 })
 export class GameNewDialogComponent {
   private readonly _playerService = inject(PlayerService);
+  private readonly _leagueService = inject(LeagueService);
   private readonly _gameService = inject(GameService);
   private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
   private readonly _dialogRef = inject(MatDialogRef<GameNewDialogComponent>);
-  private readonly _data = inject<GameNewDialogData | undefined>(MAT_DIALOG_DATA, {
-    optional: true,
-  });
+  private readonly _data = inject<GameNewDialogData>(MAT_DIALOG_DATA);
 
   protected readonly colors = TEAM_COLORS;
+  protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
   protected readonly teams = { red: createTeam(), blue: createTeam() };
 
-  protected readonly players = computed(() =>
-    this._playerService.players()?.slice().sort(compareNames),
-  );
+  /** Players of the league, by name. */
+  protected readonly players = computed(() => {
+    const members = new Set(this._leagueService.league(this._data.leagueId)?.players);
+    return this._playerService
+      .players()
+      ?.filter((p) => members.has(p.id))
+      .sort(compareNames);
+  });
+
+  /** Chance of the red team to win, from the players' ratings; `null` until both teams are set. */
+  protected readonly redChance = computed(() => {
+    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
+    const team = (color: TeamColor) => {
+      const { singlePlayer, defence, offence } = this.teams[color];
+      const ids = [defence(), singlePlayer() ? defence() : offence()];
+      if (!ids.every(isPlayer)) {
+        return null;
+      }
+      const unique = [...new Set(ids.map((p) => (p as Player).id))];
+      return (
+        unique.reduce((sum, id) => sum + (ratings?.get(id) ?? START_RATING), 0) / unique.length
+      );
+    };
+    const red = team('red');
+    const blue = team('blue');
+    return red === null || blue === null ? null : Math.round(winChance(red, blue) * 100);
+  });
 
   /** Players already picked anywhere in the form. */
   protected readonly selected = computed(() => {
@@ -127,20 +157,21 @@ export class GameNewDialogComponent {
     return ids;
   });
 
+  /** Kind of game the form describes, and the lonely player of a stress test. */
   protected readonly mode = computed(() => {
     const { red, blue } = this.teams;
     if (red.singlePlayer() && blue.singlePlayer()) {
-      return '1 vs 1';
+      return { key: 'newGame.mode1v1', name: '' };
     }
     if (red.singlePlayer() || blue.singlePlayer()) {
       const defence = (red.singlePlayer() ? red : blue).defence();
-      return `Stress test on ${isPlayer(defence) ? defence.name : '...'}`;
+      return { key: 'newGame.modeStress', name: isPlayer(defence) ? defence.name : '…' };
     }
-    return '2 vs 2';
+    return { key: 'newGame.mode2v2', name: '' };
   });
 
   constructor() {
-    const previousGame = this._data?.previousGame;
+    const previousGame = this._data.previousGame;
     if (previousGame) {
       this._playerService.players$
         .pipe(take(1))
@@ -160,7 +191,7 @@ export class GameNewDialogComponent {
 
   protected close(): void {
     this._dialogRef.close();
-    this._router.navigate(['/']);
+    this._router.navigate(['/l', this._data.leagueId]);
   }
 
   protected switchTeams(): void {
@@ -180,8 +211,8 @@ export class GameNewDialogComponent {
       return;
     }
 
-    const { id, saved } = this._gameService.createGame(red, blue);
-    saved.catch((error) => this._notifier.error('Could not save the new game.', error));
+    const { id, saved } = this._gameService.createGame(this._data.leagueId, red, blue);
+    saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);
   }

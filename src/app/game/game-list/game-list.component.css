@@ -1,25 +1,93 @@
-.game-summary {
-  display: flex;
-}
-.game-summary .col {
-  padding: 0 5px;
-}
-.game-summary .col.team-name {
-  width: 100%;
-}
-.game-summary .col.team-name:first-child {
-  text-align: right;
-}
-.game-summary .current {
-  font-weight: bold;
+.games {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.game-row .game-summary {
-  color: rgba(0, 0, 0, 0.87);
+.game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  color: inherit;
+  text-decoration: none;
 }
-.game-row.win .game-summary {
-  color: green;
+
+.game:hover,
+.game:focus-visible {
+  background: var(--mat-sys-surface-container-low);
 }
-.game-row.lost .game-summary {
-  color: darkred;
+
+.team {
+  display: grid;
+  min-width: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.team span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team.red {
+  text-align: right;
+}
+
+.team.won {
+  color: var(--mat-sys-on-surface);
+  font-weight: 600;
+}
+
+.team .current {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.score {
+  font: 700 1.3rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.score .r {
+  color: var(--fl-red-text);
+}
+
+.score .b {
+  color: var(--fl-blue-text);
+}
+
+.meta {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--mat-sys-on-surface-variant);
+  display: flex;
+  gap: 8px;
+}
+
+.in-progress .meta::before {
+  content: '●';
+  color: var(--fl-win);
+}
+
+.win {
+  box-shadow: inset 3px 0 0 var(--fl-win);
+}
+
+.lost {
+  box-shadow: inset 3px 0 0 var(--fl-loss);
+}
+
+.empty {
+  padding: 16px 8px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.more {
+  margin: 8px auto 0;
+  display: flex;
 }

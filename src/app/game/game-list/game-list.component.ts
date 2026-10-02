@@ -1,16 +1,18 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
+import { Component, computed, inject, input, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { PlayerService } from '../../player/player.service';
+import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { Game, Team, teamOf, teamPlayers, teamScore } from '../game';
 import { GameService } from '../game.service';
 
-const LIMIT = 10;
-
+/** Games of a league, or of one player in it, newest first. */
 @Component({
   selector: 'fl-game-list',
-  imports: [MatListModule, RouterLink],
+  imports: [MatButtonModule, RouterLink, RatingChangeComponent, TranslocoDatePipe, TranslocoPipe],
   templateUrl: './game-list.component.html',
   styleUrl: './game-list.component.css',
 })
@@ -18,32 +20,64 @@ export class GameListComponent {
   private readonly _playerService = inject(PlayerService);
   private readonly _gameService = inject(GameService);
 
-  public readonly playerId = input.required<string>();
-  /** Show only the latest games. */
-  public readonly limit = input(false);
+  public readonly leagueId = input.required<string>();
+  /** Shows only this player's games, from their side. */
+  public readonly playerId = input<string | null>(null);
+  public readonly pageSize = input(20);
 
-  protected readonly games = computed(() => {
-    const games = this._gameService.playerGames(this.playerId()) ?? [];
-    return (this.limit() ? games.slice(0, LIMIT) : games).map((game) => ({
-      id: game.id,
-      result: this._result(game),
-      score: `${teamScore(game, 'red')}:${teamScore(game, 'blue')}`,
-      red: this._names(game.teams.red),
-      blue: this._names(game.teams.blue),
-    }));
+  private readonly _pages = signal(1);
+
+  private readonly _games = computed(() => {
+    const playerId = this.playerId();
+    return (
+      (playerId
+        ? this._gameService.playerGames(this.leagueId(), playerId)
+        : this._gameService.leagueGames(this.leagueId())) ?? []
+    );
   });
 
-  private _names(team: Team) {
+  protected readonly more = computed(() => this._games().length > this._pages() * this.pageSize());
+
+  protected readonly games = computed(() => {
+    const playerId = this.playerId();
+    const changes = this._gameService.ratings(this.leagueId())?.changes;
+    return this._games()
+      .slice(0, this._pages() * this.pageSize())
+      .map((game) => ({
+        id: game.id,
+        result: this._result(game, playerId),
+        start: game.start,
+        red: this._names(game.teams.red, playerId),
+        blue: this._names(game.teams.blue, playerId),
+        redScore: teamScore(game, 'red'),
+        blueScore: teamScore(game, 'blue'),
+        win: game.win,
+        change: playerId ? changes?.get(game.id)?.get(playerId) : undefined,
+      }));
+  });
+
+  protected showMore(): void {
+    this._pages.update((pages) => pages + 1);
+  }
+
+  protected round(value: number): number {
+    return Math.round(value);
+  }
+
+  private _names(team: Team, playerId: string | null) {
     return teamPlayers(team).map((id) => ({
       name: this._playerService.getPlayerName(id),
-      current: id === this.playerId(),
+      current: id === playerId,
     }));
   }
 
-  private _result(game: Game): 'in-progress' | 'win' | 'lost' {
+  private _result(game: Game, playerId: string | null): 'in-progress' | 'win' | 'lost' | 'done' {
     if (!game.win) {
       return 'in-progress';
     }
-    return teamOf(game, this.playerId()) === game.win ? 'win' : 'lost';
+    if (!playerId) {
+      return 'done';
+    }
+    return teamOf(game, playerId) === game.win ? 'win' : 'lost';
   }
 }

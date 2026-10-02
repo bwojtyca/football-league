@@ -30,9 +30,16 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "@fontsource/barlow/400.css",
+              "@fontsource/barlow/500.css",
+              "@fontsource/barlow/600.css",
+              "@fontsource/barlow/700.css",
+              "@fontsource/barlow-condensed/600.css",
+              "@fontsource/barlow-condensed/700.css",
+              "material-icons/iconfont/filled.css",
               "src/styles.scss"
-            ]
+            ],
+            "allowedCommonJsDependencies": ["@messageformat/core"]
           },
           "configurations": {
             "production": {
@@ -48,7 +55,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -56,9 +64,6 @@
               "sourceMap": true
             },
             "emulator": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -79,7 +84,7 @@
               "buildTarget": "football-league:build:development"
             },
             "emulator": {
-              "buildTarget": "football-league:build:emulator"
+              "buildTarget": "football-league:build:development,emulator"
             }
           },
           "defaultConfiguration": "development"

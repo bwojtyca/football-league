@@ -13,6 +13,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 - Starting a game takes at most 3 taps, a rematch 1 tap. Defaults stay: game to 8, 2 vs 2, no login.
 - Test suites are not a priority ("we work live"): build, check the change in the app, and use
   the Firestore emulator for anything that touches data or security rules.
+- Prefer established, well-liked libraries over home-grown code for solved problems (i18n,
+  charts, Firebase bindings, tournament brackets...): they are easier to swap or extend and cost
+  nothing to maintain. Write custom code only for what is specific to this app.
 
 ## Working on it
 
@@ -20,7 +23,11 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   https://nodejs.org/dist/ into the scratchpad and put it first on `PATH` (see `.nvmrc`).
 - `npm ci`, `npm start` (uses the real Firestore), `npm run build`, `npm test` (Vitest).
 - Local data: `npm run emulator` (needs Java 21) and `npm run start:emulator`; the emulator uses
-  the `demo-football-league` project and never touches production.
+  the `demo-football-league` project and never touches production. The emulator does not
+  reload rules reliably: restart it after editing `firestore.rules`.
+- The `emulator` build configuration only swaps the environment, so it combines with others:
+  `ng build -c production,emulator` is the production bundle (with the service worker) against
+  the emulator.
 
 ## Deploys (everything goes out from `master`)
 
@@ -32,25 +39,40 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 ## Data (Firestore project `football-league-b6e95`)
 
+- `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?`. The 2017
+  league is the document `leagues/legacy` ("Najdroższa Liga Świata", archived).
 - `players/{id}`: `name`. Documents from 2017 also hold `wins`, `loses` and `id`; these are
   legacy and unused.
-- `games/{id}`: `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
-  `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`.
+- `games/{id}`: `league?`, `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
+  `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. A game without `league`
+  belongs to the league `legacy` (`leagueOf()` in `league/league.ts`).
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
 - The database is publicly readable; `firestore.rules` allows only the writes the app makes
-  (create players, create games, one goal per update, close a won game, delete running games).
+  (create leagues, rename or archive them and add players; create players; create games; one
+  goal per update; close a won game; delete running games).
   Every new kind of write needs a rules change, tested on the emulator first.
 - Do not bulk-read production data without asking the owner.
 
 ## Code map
 
-- Standalone components, signals, zoneless change detection.
-- `src/app/firebase.ts`: Firestore instance (persistent IndexedDB cache) and the
-  `collectionData` / `docData` helpers.
-- `GameService` keeps one live listener on all games; `playerGames()` and the ranking derive from
-  it. `scoreGoal()` writes an `increment()` (applied locally at once); `closeGame()` records the
-  result in a transaction. A device only watching a decided game closes it after 5 s.
-- `game/game.ts` and `player/player.ts` hold the pure scoring and ranking functions.
+- Standalone components, signals, zoneless change detection, lazy routes with hash URLs
+  (`#/leagues`, `#/l/<league>`, `#/l/<league>/player/<id>`, `#/game/<id>`); `/` opens the
+  league used last.
+- Libraries: Angular Material 3 (theme in `src/styles.scss`, light and dark), Transloco for
+  i18n (`public/i18n/{pl,en}.json`, ICU plurals via `transloco-messageformat`, dates and
+  numbers via `transloco-locale`, language kept by `transloco-persist-lang`), rxfire for
+  Firestore observables, ng2-charts (Chart.js) for the rating chart, Fontsource and
+  `material-icons` for self-hosted fonts, `@angular/service-worker` for offline use and
+  installing on phones (a snackbar offers to reload when a new deploy is ready).
+- `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
+- `GameService` keeps one live listener on all games; per-league lists, Elo ratings
+  (`player/rating.ts`), rankings and stats all derive from it. `scoreGoal()` writes an
+  `increment()` (applied locally at once). Once the writes reach the server, the scoring device
+  records the result with `closeGame()` (a transaction); a device only watching a decided game
+  closes it after 5 s.
+- `LeagueService` lists leagues and remembers the last one (localStorage).
+- `game/game.ts`, `player/player.ts` and `player/rating.ts` hold the pure scoring, ranking and
+  Elo functions.
 
 ## Plan (October 2026)
 
@@ -63,7 +85,7 @@ Decisions by the owner:
 - UI in Polish and English from the start (switchable at runtime), designed for phones first.
 - Leagues ("Liga" / "League") group play by place or crowd, e.g. "Biuro X 2026" or a weekend
   trip. Many leagues can run at once, each with its own ranking and stats; players are global
-  and can join several leagues. The 2017 games form the read-only "Legacy 2017" league: games
+  and can join several leagues. The 2017 games form the read-only league "Najdroższa Liga Świata" (id `legacy`): games
   without a `league` field belong to it, so old documents are never rewritten.
 - For now every league is visible to everyone (simplest). Later: Google sign-in with a guest
   mode that joins leagues by link.
@@ -71,7 +93,7 @@ Decisions by the owner:
   knockout, draws / draw your partner, king of the table) come later inside leagues.
 
 Stages:
-1. Leagues with the legacy league, Elo ranking per league, player profile, PL/EN, Material 3
+1. (Done.) Leagues with the legacy league, Elo ranking per league, player profile, PL/EN, Material 3
    theme with dark mode, phone portrait layout of the game screen.
 2. Match: event log in the game document (each goal with time, player and position), undo,
    swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10, win by 2,

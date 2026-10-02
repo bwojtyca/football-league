@@ -1,25 +1,37 @@
-<mat-nav-list>
+<ul class="games">
   @for (game of games(); track game.id) {
-    <a mat-list-item [routerLink]="['/game', game.id]" class="game-row" [class]="game.result">
-      <span matListItemTitle class="game-summary">
-        <span class="col team-name">
+    <li>
+      <a [routerLink]="['/game', game.id]" class="game" [class]="game.result">
+        <span class="team red" [class.won]="game.win === 'red'">
           @for (player of game.red; track $index) {
-            @if (!$first) {
-              &amp;
-            }
             <span [class.current]="player.current">{{ player.name }}</span>
           }
         </span>
-        <span class="col">{{ game.score }}</span>
-        <span class="col team-name">
+        <span class="score">
+          <span class="r">{{ game.redScore }}</span
+          >:<span class="b">{{ game.blueScore }}</span>
+        </span>
+        <span class="team blue" [class.won]="game.win === 'blue'">
           @for (player of game.blue; track $index) {
-            @if (!$first) {
-              &amp;
-            }
             <span [class.current]="player.current">{{ player.name }}</span>
           }
         </span>
-      </span>
-    </a>
+        <span class="meta">
+          {{
+            game.start
+              | translocoDate
+                : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
+          }}
+          @if (game.change !== undefined) {
+            <fl-change [value]="round(game.change)" />
+          }
+        </span>
+      </a>
+    </li>
+  } @empty {
+    <li class="empty">{{ (playerId() ? 'player.noGames' : 'league.noGames') | transloco }}</li>
   }
-</mat-nav-list>
+</ul>
+@if (more()) {
+  <button matButton class="more" (click)="showMore()">{{ 'league.showMore' | transloco }}</button>
+}

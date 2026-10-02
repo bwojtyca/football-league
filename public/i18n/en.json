@@ -1,0 +1,127 @@
+{
+  "app": {
+    "title": "Football League",
+    "updateReady": "A new version is available",
+    "reload": "Reload"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "menu": "Menu"
+  },
+  "menu": {
+    "leagues": "All leagues",
+    "language": "Language"
+  },
+  "team": {
+    "red": "Red",
+    "blue": "Blue"
+  },
+  "position": {
+    "offence": "Attack",
+    "defence": "Defence"
+  },
+  "result": {
+    "win": "won",
+    "loss": "lost"
+  },
+  "form": {
+    "label": "Last games:"
+  },
+  "count": {
+    "games": "{n, plural, one {# game} other {# games}}",
+    "players": "{n, plural, one {# player} other {# players}}"
+  },
+  "leagues": {
+    "title": "Leagues",
+    "new": "New league",
+    "name": "League name",
+    "nameHint": "For example “Office 2026” or “Weekend in the mountains”",
+    "nameRequired": "Enter a name for the league",
+    "create": "Create league",
+    "archive": "Archive",
+    "empty": "No leagues yet. Create one, add players and start playing.",
+    "lastGame": "last game {date}"
+  },
+  "league": {
+    "ranking": "Ranking",
+    "games": "Games",
+    "addPlayer": "Add player",
+    "newGame": "New game",
+    "noPlayers": "Add at least two players to start the first game.",
+    "noGames": "No games yet. Start one with “New game”.",
+    "archiveNote": "Games from 2017. This league is an archive: play new games in another league.",
+    "provisional": "Provisional rating: fewer than {n} games",
+    "notFound": "This league does not exist.",
+    "showMore": "Show more",
+    "unrated": "no games yet"
+  },
+  "addPlayer": {
+    "title": "Add player",
+    "name": "Name",
+    "required": "Enter a name",
+    "existing": "Plays in another league",
+    "new": "New player “{name}”",
+    "add": "Add"
+  },
+  "player": {
+    "rating": "rating",
+    "record": "won – lost",
+    "winRate": "won",
+    "ratingHistory": "Rating after each game",
+    "stats": "Stats",
+    "history": "Games",
+    "noGames": "No games in this league yet.",
+    "notFound": "Player not found.",
+    "mostlyDefence": "Mostly in defence",
+    "mostlyOffence": "Mostly in attack"
+  },
+  "stats": {
+    "goals": "Goals",
+    "time": "Time",
+    "positions": "Positions",
+    "colors": "Colours",
+    "partners": "Partners",
+    "opponents": "Opponents",
+    "scored": "scored",
+    "own": "own goals",
+    "perGame": "{value} per game",
+    "avgGame": "average game",
+    "avgWin": "average win",
+    "avgLoss": "average loss",
+    "perGoal": "per goal scored",
+    "games": "games",
+    "winRate": "won",
+    "none": "No finished games yet."
+  },
+  "newGame": {
+    "title": "New game",
+    "mode2v2": "2 vs 2",
+    "mode1v1": "1 vs 1",
+    "modeStress": "Stress test on {name}",
+    "onePlayer": "One player in team",
+    "switchTeams": "Switch teams",
+    "start": "Start game",
+    "needPlayers": "This league needs at least two players.",
+    "chance": "Win chance"
+  },
+  "game": {
+    "ownGoal": "own goal",
+    "goalAria": "Goal by {name}",
+    "ownGoalAria": "Own goal by {name}",
+    "remove": "Remove game",
+    "removeConfirm": "Remove this game? This cannot be undone.",
+    "wins": "{team} win!",
+    "notFound": "Game not found.",
+    "rematch": "Rematch"
+  },
+  "error": {
+    "addPlayer": "Could not add the player. Check your connection and try again.",
+    "createLeague": "Could not create the league. Check your connection and try again.",
+    "newGame": "Could not save the new game. Check your connection and try again.",
+    "goal": "Could not save the goal. Check your connection and try again.",
+    "result": "Could not save the result. Check your connection and try again.",
+    "remove": "Could not remove the game. Check your connection and try again."
+  }
+}

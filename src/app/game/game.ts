@@ -15,6 +15,8 @@ export type Team = Record<Position, PlayerScore>;
 
 export interface Game {
   id: string;
+  /** League id; the games from 2017 have none and belong to the legacy league. */
+  league?: string;
   /** Distinct ids of everyone playing, used for `array-contains` queries. */
   players: string[];
   start: string;

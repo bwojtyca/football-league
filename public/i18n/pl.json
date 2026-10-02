@@ -1,0 +1,127 @@
+{
+  "app": {
+    "title": "Football League",
+    "updateReady": "Jest nowa wersja aplikacji",
+    "reload": "Odśwież"
+  },
+  "common": {
+    "back": "Wstecz",
+    "cancel": "Anuluj",
+    "ok": "OK",
+    "menu": "Menu"
+  },
+  "menu": {
+    "leagues": "Wszystkie ligi",
+    "language": "Język"
+  },
+  "team": {
+    "red": "Czerwoni",
+    "blue": "Niebiescy"
+  },
+  "position": {
+    "offence": "Atak",
+    "defence": "Obrona"
+  },
+  "result": {
+    "win": "wygrana",
+    "loss": "porażka"
+  },
+  "form": {
+    "label": "Ostatnie mecze:"
+  },
+  "count": {
+    "games": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
+    "players": "{n, plural, one {# gracz} few {# gracze} many {# graczy} other {# gracza}}"
+  },
+  "leagues": {
+    "title": "Ligi",
+    "new": "Nowa liga",
+    "name": "Nazwa ligi",
+    "nameHint": "Na przykład „Biuro 2026” albo „Weekend w górach”",
+    "nameRequired": "Wpisz nazwę ligi",
+    "create": "Utwórz ligę",
+    "archive": "Archiwum",
+    "empty": "Nie ma jeszcze lig. Utwórz pierwszą, dodaj graczy i grajcie.",
+    "lastGame": "ostatni mecz {date}"
+  },
+  "league": {
+    "ranking": "Ranking",
+    "games": "Mecze",
+    "addPlayer": "Dodaj gracza",
+    "newGame": "Nowy mecz",
+    "noPlayers": "Dodaj co najmniej dwóch graczy, żeby zacząć pierwszy mecz.",
+    "noGames": "Nie ma jeszcze meczów. Zacznij od „Nowy mecz”.",
+    "archiveNote": "Mecze z 2017 roku. Ta liga jest archiwum, nowe mecze grajcie w innej lidze.",
+    "provisional": "Ocena tymczasowa: mniej niż {n} meczów",
+    "notFound": "Nie ma takiej ligi.",
+    "showMore": "Pokaż więcej",
+    "unrated": "jeszcze bez meczów"
+  },
+  "addPlayer": {
+    "title": "Dodaj gracza",
+    "name": "Imię",
+    "required": "Wpisz imię",
+    "existing": "Gra w innej lidze",
+    "new": "Nowy gracz „{name}”",
+    "add": "Dodaj"
+  },
+  "player": {
+    "rating": "rating",
+    "record": "wygrane – porażki",
+    "winRate": "wygranych",
+    "ratingHistory": "Rating po każdym meczu",
+    "stats": "Statystyki",
+    "history": "Mecze",
+    "noGames": "Jeszcze bez meczów w tej lidze.",
+    "notFound": "Nie ma takiego gracza.",
+    "mostlyDefence": "Głównie w obronie",
+    "mostlyOffence": "Głównie w ataku"
+  },
+  "stats": {
+    "goals": "Gole",
+    "time": "Czas",
+    "positions": "Pozycje",
+    "colors": "Kolory",
+    "partners": "Partnerzy",
+    "opponents": "Rywale",
+    "scored": "strzelone",
+    "own": "samobóje",
+    "perGame": "{value} na mecz",
+    "avgGame": "średni mecz",
+    "avgWin": "średnia wygrana",
+    "avgLoss": "średnia porażka",
+    "perGoal": "na jednego gola",
+    "games": "mecze",
+    "winRate": "wygranych",
+    "none": "Jeszcze bez zakończonych meczów."
+  },
+  "newGame": {
+    "title": "Nowy mecz",
+    "mode2v2": "2 na 2",
+    "mode1v1": "1 na 1",
+    "modeStress": "Stress test: {name}",
+    "onePlayer": "Jeden gracz w drużynie",
+    "switchTeams": "Zamień drużyny",
+    "start": "Zacznij mecz",
+    "needPlayers": "W tej lidze potrzeba co najmniej dwóch graczy.",
+    "chance": "Szansa wygranej"
+  },
+  "game": {
+    "ownGoal": "samobój",
+    "goalAria": "Gol: {name}",
+    "ownGoalAria": "Samobój: {name}",
+    "remove": "Usuń mecz",
+    "removeConfirm": "Usunąć ten mecz? Tego nie da się cofnąć.",
+    "wins": "Wygrywają {team}!",
+    "notFound": "Nie ma takiego meczu.",
+    "rematch": "Rewanż"
+  },
+  "error": {
+    "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
+    "createLeague": "Nie udało się utworzyć ligi. Sprawdź połączenie i spróbuj ponownie.",
+    "newGame": "Nie udało się zapisać nowego meczu. Sprawdź połączenie i spróbuj ponownie.",
+    "goal": "Nie udało się zapisać gola. Sprawdź połączenie i spróbuj ponownie.",
+    "result": "Nie udało się zapisać wyniku. Sprawdź połączenie i spróbuj ponownie.",
+    "remove": "Nie udało się usunąć meczu. Sprawdź połączenie i spróbuj ponownie."
+  }
+}

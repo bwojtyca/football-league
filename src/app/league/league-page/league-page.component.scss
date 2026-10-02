@@ -1,0 +1,114 @@
+.note {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0 0 12px;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tabs [role='tab'] {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 20px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: transparent;
+  color: inherit;
+  font: 600 0.95rem/1 inherit;
+  cursor: pointer;
+}
+
+.tabs [role='tab'][aria-selected='true'] {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  border-color: transparent;
+}
+
+.tabs .add {
+  margin-left: auto;
+}
+
+.ranking {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 88px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  color: inherit;
+  text-decoration: none;
+}
+
+.row:hover,
+.row:focus-visible {
+  background: var(--mat-sys-surface-container-low);
+}
+
+.pos {
+  width: 18px;
+  text-align: right;
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.who b {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.who small {
+  color: var(--mat-sys-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+.rating {
+  display: grid;
+  justify-items: end;
+  min-width: 48px;
+}
+
+.rating b {
+  font: 700 1.25rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.rating b.provisional {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.rating b.provisional::after {
+  content: '?';
+  font-size: 0.6em;
+  vertical-align: super;
+}
+
+.unrated .who b {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
