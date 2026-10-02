@@ -143,7 +143,7 @@ service cloud.firestore {
       // positions within a team, undoing the last event, or recording the result once the
       // game is won. Who plays, when the game started and how it is played never change.
       allow update: if !('end' in resource.data)
-        && (scored() || swapped() || undone() || closed() || scoredAndClosed());
+        && (scored() || swapped() || undone() || closed() || scoredAndClosed() || pausedOrResumed());
 
       // Only games that are still being played can be removed. Any game can be marked as
       // deleted (hidden from rankings and stats) and restored; nothing else changes with it.
@@ -212,6 +212,15 @@ service cloud.firestore {
           && after().end is string
           && after().win in ['red', 'blue']
           && wins(after().teams, after().win);
+      }
+
+      // The clock stops (`paused`: when) and starts again (`pausedFor`: total pause, which
+      // only grows); nothing else changes.
+      function pausedOrResumed() {
+        return changed().hasOnly(['paused', 'pausedFor'])
+          && (!('paused' in after()) || after().paused is string)
+          && (!('pausedFor' in after())
+            || (after().pausedFor is int && after().pausedFor >= before().get('pausedFor', 0)));
       }
 
       function appended() {
