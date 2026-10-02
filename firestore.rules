@@ -1,7 +1,8 @@
 rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
-// app itself makes: creating leagues and adding players to them, adding players,
+// app itself makes: creating, renaming and archiving leagues and adding players to them,
+// adding players,
 // starting games, scoring one goal at a time, closing a game once it is won and
 // removing unfinished games. Nobody can change or delete players, remove anyone from a
 // league, rewrite results or touch finished games.
@@ -24,20 +25,21 @@ service cloud.firestore {
     match /leagues/{leagueId} {
       allow read: if true;
 
-      // "legacy" is the 2017 archive; it exists only in the app.
-      allow create: if leagueId != 'legacy'
-        && request.resource.data.keys().hasOnly(['name', 'created', 'players'])
+      // The league with id "legacy" holds the 2017 games, which have no `league` field.
+      allow create: if request.resource.data.keys().hasOnly(['name', 'created', 'players', 'archived'])
         && leagueName(request.resource.data.name)
         && request.resource.data.created is string
         && request.resource.data.players is list
-        && request.resource.data.players.size() <= 100;
+        && request.resource.data.players.size() <= 100
+        && request.resource.data.get('archived', false) is bool;
 
-      // A league can be renamed and gain players; nobody is removed from it.
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players'])
+      // A league can be renamed, archived and gain players; nobody is removed from it.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived'])
         && leagueName(request.resource.data.name)
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
-        && request.resource.data.players.hasAll(resource.data.players);
+        && request.resource.data.players.hasAll(resource.data.players)
+        && request.resource.data.get('archived', false) is bool;
 
       function leagueName(name) {
         return name is string && name.size() > 0 && name.size() <= 60;
