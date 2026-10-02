@@ -54,17 +54,26 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 ## Plan (October 2026)
 
-Analysis of the 2017 games, other foosball formats and mockups:
+Analysis of the 2017 games, other foosball formats and the first mockups:
 https://claude.ai/artifact/RcFTGpWyd4qfBXqF4SSATt (read it with the Artifact tool).
 
-1. Match: event log in the game document (each goal with time, player and position), undo of the
-   last event, swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10,
-   win by 2, timed, best-of series with colour swap), game type in the history.
-2. Ranking and looks: Elo overall and per position (computed over the whole history), ranking
-   table with form, player profile, duos, win chance and balanced teams, achievements, Material 3
-   theme with dark mode, tablet layout, installable PWA.
-3. Group play: king of the table, draw your partner, round robin, seasons.
+Decisions by the owner:
+- Default game stays "to 8". Main ranking is Elo (start 1500, K 24, team = average of its
+  players) with the +/- change shown after each game; win % moves to the player profile.
+- UI in Polish and English from the start (switchable at runtime), designed for phones first.
+- Leagues ("Liga" / "League") group play by place or crowd, e.g. "Biuro X 2026" or a weekend
+  trip. Many leagues can run at once, each with its own ranking and stats; players are global
+  and can join several leagues. The 2017 games form the read-only "Legacy 2017" league: games
+  without a `league` field belong to it, so old documents are never rewritten.
+- For now every league is visible to everyone (simplest). Later: Google sign-in with a guest
+  mode that joins leagues by link.
+- Inside a league people can play any game mode; tournaments (round robin, group stage with
+  knockout, draws / draw your partner, king of the table) come later inside leagues.
 
-Open questions for the owner: default target (8, or ITSF-style 5 with best of 3), Elo or win %
-on the ranking list, which device sits at the table, UI language (mockups are in Polish), which
-group formats to build, and whether seasons continue the 2017 history.
+Stages:
+1. Leagues with the legacy league, Elo ranking per league, player profile, PL/EN, Material 3
+   theme with dark mode, phone portrait layout of the game screen.
+2. Match: event log in the game document (each goal with time, player and position), undo,
+   swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10, win by 2,
+   timed, best-of series with colour swap), rematch.
+3. Tournaments inside leagues.

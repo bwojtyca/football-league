@@ -57,9 +57,11 @@ npx firebase-tools deploy --only hosting
 
 ## Data model
 
+- `leagues/{id}`: `name`, `created`, `players` (ids). Games without a league are the 2017
+  history, shown as the read-only "Legacy 2017" league.
 - `players/{id}`: `name` (older documents also hold `wins`/`loses` counters, which are no
   longer used: rankings and stats are counted from the games)
-- `games/{id}`: `players` (ids of everyone playing), `start`, `end?`, `win?`
+- `games/{id}`: `league?`, `players` (ids of everyone playing), `start`, `end?`, `win?`
   (`'red' | 'blue'`), `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`
 
 All games are read through one live listener and kept in the browser (IndexedDB), so later

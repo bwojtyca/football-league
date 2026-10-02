@@ -1,9 +1,10 @@
 rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
-// app itself makes: adding players, starting games, scoring one goal at a time,
-// closing a game once it is won and removing unfinished games. Nobody can change or
-// delete players, rewrite results or touch finished games.
+// app itself makes: creating leagues and adding players to them, adding players,
+// starting games, scoring one goal at a time, closing a game once it is won and
+// removing unfinished games. Nobody can change or delete players, remove anyone from a
+// league, rewrite results or touch finished games.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -20,10 +21,38 @@ service cloud.firestore {
         && request.resource.data.get('loses', 0) == 0;
     }
 
+    match /leagues/{leagueId} {
+      allow read: if true;
+
+      // "legacy" is the 2017 archive; it exists only in the app.
+      allow create: if leagueId != 'legacy'
+        && request.resource.data.keys().hasOnly(['name', 'created', 'players'])
+        && leagueName(request.resource.data.name)
+        && request.resource.data.created is string
+        && request.resource.data.players is list
+        && request.resource.data.players.size() <= 100;
+
+      // A league can be renamed and gain players; nobody is removed from it.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players'])
+        && leagueName(request.resource.data.name)
+        && request.resource.data.players is list
+        && request.resource.data.players.size() <= 100
+        && request.resource.data.players.hasAll(resource.data.players);
+
+      function leagueName(name) {
+        return name is string && name.size() > 0 && name.size() <= 60;
+      }
+    }
+
     match /games/{gameId} {
       allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams'])
+      // Games from 2017 have no `league`; they belong to the legacy league.
+      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams', 'league'])
+        && (!('league' in request.resource.data)
+          || (request.resource.data.league is string
+            && request.resource.data.league.size() > 0
+            && request.resource.data.league.size() <= 64))
         && request.resource.data.players is list
         && request.resource.data.players.size() >= 2
         && request.resource.data.players.size() <= 4
