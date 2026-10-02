@@ -1,4 +1,4 @@
-import { Component, computed, effect, HostListener, inject } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -47,6 +47,28 @@ import { PauseOverlayComponent } from './pause-overlay.component';
 
 /** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
 const FINISH_AFTER_MS = 8000;
+
+const ROTATION_KEY = 'fl.rotation';
+
+/** Cells clockwise from the top left when the table is not turned. */
+const CELL_ORDER = ['red-offence', 'red-defence', 'blue-offence', 'blue-defence'];
+/** Grid areas of the corners, clockwise from the top left. */
+const CORNERS = ['1 / 1', '1 / 2', '2 / 2', '2 / 1'];
+/** Middles of the lines between two cells: top, right, bottom and left, as [left, top] %. */
+const EDGE_MIDDLES = [
+  [50, 25],
+  [75, 50],
+  [50, 75],
+  [25, 50],
+] as const;
+
+function readRotation(): number {
+  try {
+    return Number(localStorage.getItem(ROTATION_KEY)) % 4 || 0;
+  } catch {
+    return 0;
+  }
+}
 
 @Component({
   selector: 'fl-game-detail',
@@ -226,6 +248,33 @@ export class GameDetailComponent implements LeaveGuarded {
   protected change(playerId: string): number | null {
     const change = this._changes()?.get(playerId);
     return change === undefined ? null : Math.round(change);
+  }
+
+  /**
+   * How the table lies, in quarter turns clockwise (kept on this device). At 0 it is seen from
+   * the blue side: red offence and defence on top, blue defence and offence below.
+   */
+  protected readonly rotation = signal(readRotation());
+
+  protected rotate(): void {
+    const rotation = (this.rotation() + 1) % 4;
+    this.rotation.set(rotation);
+    try {
+      localStorage.setItem(ROTATION_KEY, String(rotation));
+    } catch {
+      // Not remembered: private mode or storage blocked.
+    }
+  }
+
+  /** The grid cell of a player: the corners clockwise from the top left, turned. */
+  protected area(color: TeamColor, position: Position): string {
+    const start = CELL_ORDER.indexOf(`${color}-${position}`);
+    return CORNERS[(start + this.rotation()) % 4];
+  }
+
+  /** Where a team's swap button sits: on the line between its two cells, in % of the table. */
+  protected swapSpot(color: TeamColor): readonly [number, number] {
+    return EDGE_MIDDLES[(this.rotation() + (color === 'red' ? 0 : 2)) % 4];
   }
 
   protected canSwap(game: Game, color: TeamColor): boolean {

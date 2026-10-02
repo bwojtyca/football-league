@@ -5,6 +5,9 @@
       <a matIconButton [routerLink]="backLink()" [attr.aria-label]="'common.back' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </a>
+      <button matIconButton (click)="rotate()" [attr.aria-label]="'game.rotate' | transloco">
+        <mat-icon>rotate_right</mat-icon>
+      </button>
       <div class="score">
         <span class="bug"
           ><span class="r">{{ score().red }}</span
@@ -85,54 +88,63 @@
       </p>
     }
 
+    <!-- The table seen from where the phone lies: four cells, turned in quarter steps. -->
     <div class="teams" [class.paused]="!!game.paused">
       @if (game.paused) {
         <fl-pause-overlay (resume)="resume()" />
       }
       @for (color of colors; track color) {
-        <section class="team team--{{ color }}" [class.won]="game.win === color">
-          <div class="team-head">
-            <h2>{{ teamNames[color] | transloco }}</h2>
-            @if (canSwap(game, color)) {
-              <button matButton class="swap" (click)="swap(color)">
-                <mat-icon>swap_horiz</mat-icon>{{ 'game.swap' | transloco }}
-              </button>
-            }
-          </div>
-          <div class="slots">
-            @for (position of positions; track position) {
-              @let slot = game.teams[color][position];
-              @let name = playerService.getPlayerName(slot.player);
-              @let delta = change(slot.player);
-              <div class="slot">
-                <div class="who">
-                  <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
-                  <span class="name">
-                    <b>{{ name }}</b>
-                    <small>{{ positionNames[position] | transloco }}</small>
-                  </span>
-                  @if (delta !== null) {
-                    <fl-change [value]="delta" />
-                  }
-                </div>
-                <button
-                  class="goal"
-                  (click)="goal(color, position)"
-                  [attr.aria-label]="'game.goalAria' | transloco: { name }"
-                >
-                  {{ slot.goals }}
-                </button>
-                <button
-                  class="own"
-                  (click)="goal(color, position, true)"
-                  [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
-                >
-                  {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
-                </button>
-              </div>
-            }
-          </div>
-        </section>
+        @for (position of positions; track position) {
+          @let slot = game.teams[color][position];
+          @let name = playerService.getPlayerName(slot.player);
+          @let delta = change(slot.player);
+          <section
+            class="team team--{{ color }}"
+            [class.won]="game.win === color"
+            [style.grid-area]="area(color, position)"
+            [attr.aria-label]="
+              (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
+            "
+          >
+            <div class="who">
+              <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
+              <span class="name">
+                <b>{{ name }}</b>
+                <small>{{ positionNames[position] | transloco }}</small>
+              </span>
+              @if (delta !== null) {
+                <fl-change [value]="delta" />
+              }
+            </div>
+            <button
+              class="goal"
+              (click)="goal(color, position)"
+              [attr.aria-label]="'game.goalAria' | transloco: { name }"
+            >
+              {{ slot.goals }}
+            </button>
+            <button
+              class="own"
+              (click)="goal(color, position, true)"
+              [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
+            >
+              {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
+            </button>
+          </section>
+        }
+        @if (canSwap(game, color)) {
+          @let spot = swapSpot(color);
+          <button
+            matMiniFab
+            class="swap"
+            [style.left.%]="spot[0]"
+            [style.top.%]="spot[1]"
+            (click)="swap(color)"
+            [attr.aria-label]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
+          >
+            <mat-icon>swap_horiz</mat-icon>
+          </button>
+        }
       }
     </div>
 

@@ -158,7 +158,8 @@
     "leaveText": "Stop the clock before you leave? You can finish the game later.",
     "leavePause": "Pause and leave",
     "leaveRunning": "Leave, the game goes on",
-    "leaveStay": "Stay"
+    "leaveStay": "Stay",
+    "rotate": "Turn the table layout"
   },
   "modes": {
     "title": "Mode",

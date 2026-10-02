@@ -158,7 +158,8 @@
     "leaveText": "Wstrzymać zegar, zanim wyjdziesz? Mecz dokończysz później.",
     "leavePause": "Wstrzymaj i wyjdź",
     "leaveRunning": "Wyjdź, mecz trwa dalej",
-    "leaveStay": "Zostań"
+    "leaveStay": "Zostań",
+    "rotate": "Obróć układ stołu"
   },
   "modes": {
     "title": "Tryb",

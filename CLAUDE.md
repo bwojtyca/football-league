@@ -226,11 +226,14 @@ session can pick up where the last one stopped:
   on the emulator first.
 - To do: a cup ends by itself when the final is won (a series too); the bracket shows the
   current round, the games played and who went through more clearly.
-- To do: game screen as a 2x2 table that rotates in 90 degree steps (remembered on the device).
-  From the blue side: top left red offence, top right red defence, bottom left blue defence,
-  bottom right blue offence; each step turns the layout a quarter clockwise, the texts stay
-  upright. Keep the DOM order (red offence, red defence, blue offence, blue defence) for the
-  end-to-end scenarios.
+- (Done, checked with `rotateF.js`) Game screen as a 2x2 table turned in quarter steps (button
+  next to back, kept in localStorage `fl.rotation`). From the blue side: top left red offence,
+  top right red defence, bottom left blue defence, bottom right blue offence. Cells keep the DOM
+  order (red offence, red defence, blue offence, blue defence) and get their grid area from
+  `area()`; each team's swap button sits on the line between its two cells (`swapSpot()`).
+- To do (new, larger): league statistics; play time in player statistics; more statistics from
+  the data we have (events with times, positions, modes, tournaments) shown with better charts;
+  comparing players (head to head), games and tournaments.
 - To do: update the Playwright scenarios for the new navigation (no `button.fab`: the "+" in
   the bottom bar, then "Mecz"; potato is a sort option, back to players with "Elo"), run them
   all, deploy (rules first if changed).

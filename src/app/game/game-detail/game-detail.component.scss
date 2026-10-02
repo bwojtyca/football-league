@@ -12,7 +12,7 @@
 
 .top {
   display: grid;
-  grid-template-columns: 48px 1fr auto auto;
+  grid-template-columns: auto auto 1fr auto auto;
   align-items: center;
   gap: 4px;
   padding: 6px 8px 4px;
@@ -86,26 +86,26 @@
   color: var(--fl-blue-board);
 }
 
+/* The table: four cells (one per player), placed by the component as the table is turned. */
 .teams {
   position: relative;
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template: 1fr 1fr / 1fr 1fr;
   gap: 6px;
   padding: 4px 6px 6px;
 }
 
-/* Each half of the table in its team's colour. */
 .team {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 6px;
   min-height: 0;
-  padding: 4px 8px 8px;
-  border-radius: 16px;
+  min-width: 0;
+  padding: 8px;
+  border-radius: 14px;
   color: #fff;
-  --mat-button-text-label-text-color: #fff;
-  --mat-button-text-state-layer-color: #fff;
 }
 
 .team--red,
@@ -118,46 +118,18 @@
   background: var(--fl-blue);
 }
 
-.team-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 36px;
-  margin: 0 0 2px 4px;
-}
-
-.team h2 {
-  margin: 0;
-  font: italic 800 1.15rem/1.2 var(--fl-display);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
+/* A team's swap of positions, on the line between its two cells. */
 .swap {
-  --mat-button-text-container-height: 34px;
-  --mat-button-text-label-text-size: 0.9rem;
+  position: absolute;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  --mat-fab-small-container-color: var(--fl-board);
+  --mat-fab-small-foreground-color: #fff;
 }
 
-.team.won h2::after {
+.team.won .name b::after {
   content: ' ★';
   color: var(--fl-ball);
-}
-
-.slots {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.slot {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 6px;
-  min-height: 0;
-  min-width: 0;
 }
 
 .who {
@@ -257,16 +229,13 @@
   outline-offset: 2px;
 }
 
-@media (min-width: 700px) and (min-aspect-ratio: 1/1) {
-  .teams {
-    grid-template-rows: 1fr;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 .teams.paused .team {
   opacity: 0.3;
   pointer-events: none;
+}
+
+.teams.paused .swap {
+  display: none;
 }
 
 /* The last move and its undo, always at the bottom. */
