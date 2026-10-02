@@ -16,6 +16,23 @@
       }
     </mat-chip-listbox>
     <p class="hint">{{ 'tournament.formatHint.' + format() | transloco }}</p>
+    @if (format() === 'cup') {
+      <mat-chip-listbox
+        [attr.aria-label]="'tournament.groupsLabel' | transloco"
+        hideSingleSelectionIndicator
+      >
+        @for (option of [0, 2]; track option) {
+          <mat-chip-option
+            [selected]="groups() === option"
+            [selectable]="groups() !== option"
+            (selectionChange)="$event.isUserInput && $event.selected && groups.set(option)"
+            >{{
+              (option ? 'tournament.groupsTwo' : 'tournament.groupsNone') | transloco
+            }}</mat-chip-option
+          >
+        }
+      </mat-chip-listbox>
+    }
   </div>
 
   <mat-form-field appearance="outline" class="full">
@@ -74,7 +91,7 @@
     </mat-chip-listbox>
   </div>
 
-  @if (format() === 'roundRobin' && teams().length) {
+  @if (fixedTeams() && teams().length) {
     <div class="section">
       <div class="teams-head">
         <h3>{{ 'tournament.teams' | transloco }}</h3>

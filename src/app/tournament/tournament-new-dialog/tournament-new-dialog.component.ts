@@ -67,6 +67,8 @@ export class TournamentNewDialogComponent {
   protected readonly modeName = signal<ModeName>('to5');
   private _modeChosen = false;
   protected readonly teamSize = signal(2);
+  /** Cup: groups before the knockout stage (0 or 2). */
+  protected readonly groups = signal(0);
   private readonly _seed = signal(Date.now());
 
   /** League players, by name. */
@@ -87,18 +89,19 @@ export class TournamentNewDialogComponent {
 
   protected readonly size = computed(() => (this.format() === 'dyp' ? 2 : this.teamSize()));
 
-  /** Round robin teams, drawn from the selected players. */
+  /** Whether the format plays fixed teams drawn at the start. */
+  protected readonly fixedTeams = computed(() => ['roundRobin', 'cup'].includes(this.format()));
+
+  /** Round robin and cup teams, drawn from the selected players. */
   protected readonly teams = computed<Lineup[]>(() =>
-    this.format() === 'roundRobin'
-      ? drawTeams(this.selected(), this.size(), seededRandom(this._seed()))
-      : [],
+    this.fixedTeams() ? drawTeams(this.selected(), this.size(), seededRandom(this._seed())) : [],
   );
 
   /** Names of selected players left without a team in a round robin, if any. */
   protected readonly benched = computed(() => {
     const inTeams = new Set(this.teams().flatMap(lineupPlayers));
     const left = this.selected().filter((player) => !inTeams.has(player));
-    return this.format() === 'roundRobin' && left.length
+    return this.fixedTeams() && left.length
       ? left.map((player) => this.playerName(player)).join(', ')
       : null;
   });
@@ -113,6 +116,12 @@ export class TournamentNewDialogComponent {
         return count < 4 ? 'tournament.needDyp' : null;
       case 'roundRobin':
         return this.teams().length < 3 ? 'tournament.needRoundRobin' : null;
+      case 'cup':
+        return this.teams().length < 3
+          ? 'tournament.needRoundRobin'
+          : this.groups() && this.teams().length < 6
+            ? 'tournament.needGroups'
+            : null;
     }
   });
 
@@ -177,8 +186,9 @@ export class TournamentNewDialogComponent {
       format,
       mode: { ...MODES[this.modeName()] },
       teamSize: this.size(),
-      entries: format === 'roundRobin' ? [] : players.map((player) => ({ player, at: now })),
-      ...(format === 'roundRobin' && { teams: this.teams() }),
+      entries: this.fixedTeams() ? [] : players.map((player) => ({ player, at: now })),
+      ...(this.fixedTeams() && { teams: this.teams() }),
+      ...(format === 'cup' && { groups: this.groups() }),
     });
     saved.catch((error) => this._notifier.error('error.newTournament', error));
     this._dialogRef.close(id);

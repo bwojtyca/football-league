@@ -55,7 +55,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   - `series?` = `{ id, bestOf, game }`, `id` being the first game's id; teams swap colours
     from game to game, the series score is counted from the games;
   - `tournament?` = id of the tournament the game belongs to.
-- `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin'`), `created`,
+- `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin' | 'cup'`),
+  `created`, `groups?` (cup: 0 or 2),
   `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
   `{ player, at, out? }`, append-only), `teams?` (round robin: fixed lineups), `end?`.
   Queues, draws, fixtures and tables are computed from the tournament's games
@@ -120,8 +121,10 @@ Stages:
 2. (Done.) Match: event log in the game document (each goal with time, player and position), undo,
    swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10, win by 2,
    timed, best-of series with colour swap), rematch.
-3. Tournaments inside leagues. Done: king of the table, draw your partner, round robin.
-   Next: group stage with a knockout cup (prefer brackets-manager / brackets-viewer).
+3. (Done.) Tournaments inside leagues: king of the table, draw your partner, round robin and a
+   cup (knockout, optionally after two groups) built with brackets-manager and drawn with
+   brackets-viewer (loaded on demand from `vendor/`; brackets-manager needs the `events`
+   polyfill).
 
 Owner feedback, to do at the end (after the planned stages):
 - Redesign: the current look feels like a generic generated app. A real redesign comes later;
@@ -164,3 +167,9 @@ Owner feedback, to do at the end (after the planned stages):
   tournament. The owner leans towards modelling everything as tournaments: best-of-N as a
   tournament format, plus an "open" tournament (play as many games as you like, grouped at the
   end). Address together with the rest of this feedback after stage 3.
+- Tournaments do not look good yet and the setup dialog's conditions need a review. In
+  particular "round robin" should not require defining teams: add players and the app makes
+  sure everyone plays with everyone as a partner and against everyone (rotating partners, like
+  the "Americano" format; at least offer this mode next to fixed teams). When addressing the
+  feedback, do a sanity check of the whole model together with the best-of-3/5 point above:
+  what is a game, a series and a tournament, and which formats belong where.

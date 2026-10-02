@@ -1,4 +1,14 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  Component,
+  computed,
+  DOCUMENT,
+  effect,
+  inject,
+  signal,
+  viewChild,
+  ElementRef,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +35,8 @@ import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { compareNames } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
+import { loadBracketsViewer } from '../brackets-viewer';
+import { CupState, cupState } from '../cup';
 import {
   drawRound,
   kingState,
@@ -39,6 +51,7 @@ import { TournamentService } from '../tournament.service';
 @Component({
   selector: 'fl-tournament-page',
   imports: [
+    NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
@@ -151,6 +164,11 @@ export class TournamentPageComponent {
     return tournament?.format === 'roundRobin' ? teamStandings(tournament, this.fixtures()) : [];
   });
 
+  /** Cup: worked out with brackets-manager, which is asynchronous. */
+  protected readonly cup = signal<CupState | undefined>(undefined);
+  private readonly _bracket = viewChild<ElementRef<HTMLElement>>('bracket');
+  private readonly _document = inject(DOCUMENT);
+
   /** Winner shown once the tournament is over. */
   protected readonly winner = computed(() => {
     const tournament = this.tournament();
@@ -170,8 +188,55 @@ export class TournamentPageComponent {
         const best = this.table()[0];
         return best?.games ? this.lineupName(tournament.teams![best.team]) : null;
       }
+      case 'cup': {
+        const champion = this.cup()?.champion;
+        return champion === undefined ? null : this.teamName(champion);
+      }
     }
   });
+
+  constructor() {
+    effect((onCleanup) => {
+      const tournament = this.tournament();
+      const games = this.games();
+      if (tournament?.format !== 'cup' || !games) {
+        return;
+      }
+      let current = true;
+      onCleanup(() => (current = false));
+      cupState(tournament, games).then(
+        (state) => current && this.cup.set(state),
+        (error) => this._notifier.error('error.tournament', error),
+      );
+    });
+    // Draws the knockout bracket with brackets-viewer whenever it changes.
+    effect(() => {
+      const bracket = this.cup()?.bracket;
+      const element = this._bracket()?.nativeElement;
+      if (!bracket || !element) {
+        return;
+      }
+      const data = {
+        ...bracket,
+        participants: bracket.participants.map((p) => ({
+          ...p,
+          name: this.teamName(Number(p.name)),
+        })),
+      };
+      loadBracketsViewer(this._document)
+        .then((viewer) =>
+          viewer.render(data, {
+            selector: `#${element.id}`,
+            clear: true,
+            showSlotsOrigin: false,
+            highlightParticipantOnHover: true,
+            customRoundName: (info) => this._roundName(info),
+            onMatchClick: (match) => this._openMatch(Number(match.id)),
+          }),
+        )
+        .catch((error) => this._notifier.error('error.bracket', error));
+    });
+  }
 
   protected name(playerId: string): string {
     return this._playerService.getPlayerName(playerId);
@@ -214,6 +279,33 @@ export class TournamentPageComponent {
     );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._router.navigate(['/game', id]);
+  }
+
+  private _roundName(info: { roundNumber: number; fractionOfFinal?: number }): string {
+    const fraction = info.fractionOfFinal;
+    const key =
+      fraction === 1
+        ? 'tournament.final'
+        : fraction === 1 / 2
+          ? 'tournament.semiFinal'
+          : fraction === 1 / 4
+            ? 'tournament.quarterFinal'
+            : 'tournament.round';
+    return this._transloco.translate(key, { n: info.roundNumber });
+  }
+
+  /** A tap on a bracket match: its game, or a new one when both teams are known. */
+  private _openMatch(matchId: number): void {
+    const tournament = this.tournament();
+    const match = this.cup()?.ready.find((m) => m.matchId === matchId);
+    if (!tournament?.teams || !match) {
+      return;
+    }
+    if (match.game) {
+      this._router.navigate(['/game', match.game.id]);
+    } else if (!this.running() && !tournament.end) {
+      this.start(tournament.teams[match.red], tournament.teams[match.blue]);
+    }
   }
 
   protected redraw(): void {

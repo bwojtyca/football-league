@@ -38,7 +38,12 @@
       </a>
     </li>
   } @empty {
-    <li class="empty">{{ (playerId() ? 'player.noGames' : 'league.noGames') | transloco }}</li>
+    <li class="empty">
+      {{
+        (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
+          | transloco
+      }}
+    </li>
   }
 </ul>
 @if (more()) {

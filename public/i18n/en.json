@@ -150,12 +150,14 @@
     "format": {
       "king": "King of the table",
       "dyp": "Draw your partner",
-      "roundRobin": "Round robin"
+      "roundRobin": "Round robin",
+      "cup": "Cup"
     },
     "formatHint": {
       "king": "Winners stay at the table, losers go to the back of the queue. Wins in a row are counted.",
       "dyp": "Every game draws who plays and with whom: those who played least first, in pairs that have not played together yet. Individual ranking.",
-      "roundRobin": "Fixed teams, everyone plays everyone once. A table and a list of games to play."
+      "roundRobin": "Fixed teams, everyone plays everyone once. A table and a list of games to play.",
+      "cup": "Knockout: the loser is out, the winner plays on to the final. It can start with two groups."
     },
     "name": "Name (optional)",
     "teamSize": "Team size",
@@ -199,7 +201,21 @@
     "games": "Tournament games",
     "running": "running",
     "none": "No tournaments yet.",
-    "back": "Tournament"
+    "back": "Tournament",
+    "groupsLabel": "Group stage",
+    "groupsNone": "Straight to the cup",
+    "groupsTwo": "Two groups first",
+    "needGroups": "A group stage needs at least 6 teams.",
+    "toPlay": "To play",
+    "group": "Group {n}",
+    "groupsHint": "The best two teams of each group play the semi-finals.",
+    "bracket": "Bracket",
+    "final": "Final",
+    "semiFinal": "Semi-final",
+    "quarterFinal": "Quarter-final",
+    "round": "Round {n}",
+    "cupWinner": "Cup winners: {name}",
+    "noGames": "No games in this tournament yet."
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
@@ -211,6 +227,7 @@
     "swap": "Could not swap positions. Check your connection and try again.",
     "undo": "Could not undo. Someone may have recorded another goal meanwhile.",
     "newTournament": "Could not create the tournament. Check your connection and try again.",
-    "tournament": "Could not save the change to the tournament. Check your connection and try again."
+    "tournament": "Could not save the change to the tournament. Check your connection and try again.",
+    "bracket": "Could not draw the bracket. Check your connection and reload the page."
   }
 }

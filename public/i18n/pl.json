@@ -150,12 +150,14 @@
     "format": {
       "king": "Król stołu",
       "dyp": "Losuj partnera",
-      "roundRobin": "Każdy z każdym"
+      "roundRobin": "Każdy z każdym",
+      "cup": "Puchar"
     },
     "formatHint": {
       "king": "Zwycięzcy zostają przy stole, przegrani wracają na koniec kolejki. Liczymy wygrane z rzędu.",
       "dyp": "Co mecz losujemy, kto gra i z kim: najpierw ci, którzy grali najmniej, w parach, które jeszcze ze sobą nie grały. Ranking indywidualny.",
-      "roundRobin": "Stałe drużyny, każda gra z każdą raz. Tabela i lista meczów do rozegrania."
+      "roundRobin": "Stałe drużyny, każda gra z każdą raz. Tabela i lista meczów do rozegrania.",
+      "cup": "Mecze o wszystko: przegrany odpada, zwycięzca gra dalej aż do finału. Można zacząć od dwóch grup."
     },
     "name": "Nazwa (nieobowiązkowa)",
     "teamSize": "Wielkość drużyny",
@@ -199,7 +201,21 @@
     "games": "Mecze turnieju",
     "running": "trwa",
     "none": "Nie ma jeszcze turniejów.",
-    "back": "Turniej"
+    "back": "Turniej",
+    "groupsLabel": "Faza grupowa",
+    "groupsNone": "Od razu puchar",
+    "groupsTwo": "Najpierw 2 grupy",
+    "needGroups": "Do gry w grupach potrzeba co najmniej 6 drużyn.",
+    "toPlay": "Do rozegrania",
+    "group": "Grupa {n}",
+    "groupsHint": "Po dwie najlepsze drużyny z każdej grupy grają w półfinałach.",
+    "bracket": "Drabinka",
+    "final": "Finał",
+    "semiFinal": "Półfinał",
+    "quarterFinal": "Ćwierćfinał",
+    "round": "Runda {n}",
+    "cupWinner": "Puchar wygrywają: {name}",
+    "noGames": "Nie ma jeszcze meczów w tym turnieju."
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
@@ -211,6 +227,7 @@
     "swap": "Nie udało się zamienić pozycji. Sprawdź połączenie i spróbuj ponownie.",
     "undo": "Nie udało się cofnąć. Ktoś mógł w międzyczasie zapisać kolejnego gola.",
     "newTournament": "Nie udało się utworzyć turnieju. Sprawdź połączenie i spróbuj ponownie.",
-    "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie."
+    "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie.",
+    "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę."
   }
 }

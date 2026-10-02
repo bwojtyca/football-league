@@ -17,10 +17,11 @@ import {
  * - `dyp`: draw your partner. Each round draws who plays and with whom; the ranking is
  *   individual.
  * - `roundRobin`: fixed teams, everyone plays everyone once.
+ * - `cup`: knockout; optionally two groups first, whose best two teams reach the semi-finals.
  */
-export type TournamentFormat = 'king' | 'dyp' | 'roundRobin';
+export type TournamentFormat = 'king' | 'dyp' | 'roundRobin' | 'cup';
 
-export const FORMATS: readonly TournamentFormat[] = ['king', 'dyp', 'roundRobin'];
+export const FORMATS: readonly TournamentFormat[] = ['king', 'dyp', 'roundRobin', 'cup'];
 
 /** A player joining (or with `out`, leaving) the tournament; `at` is an ISO time. */
 export interface Entry {
@@ -41,8 +42,10 @@ export interface Tournament {
   teamSize: number;
   /** Who takes part, in the order they joined; people can join and leave on the way. */
   entries: Entry[];
-  /** Round robin: the teams, fixed when the tournament starts. */
+  /** Round robin and cup: the teams, fixed when the tournament starts (in seeding order). */
   teams?: Lineup[];
+  /** Cup: number of groups played before the knockout stage (0 or 2). */
+  groups?: number;
   end?: string;
 }
 

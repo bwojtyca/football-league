@@ -174,3 +174,39 @@ ol.people li.empty::before {
 .empty {
   color: var(--mat-sys-on-surface-variant);
 }
+
+.champion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.hint {
+  margin: -8px 0 16px;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* brackets-viewer, themed with the app's colours; scrolls sideways on phones. */
+.bracket {
+  --primary-background: var(--mat-sys-surface);
+  --secondary-background: var(--mat-sys-surface-container);
+  --match-background: var(--mat-sys-surface-container-low);
+  --font-color: var(--mat-sys-on-surface);
+  --win-color: var(--fl-win);
+  --loss-color: var(--fl-loss);
+  --label-color: var(--mat-sys-on-surface-variant);
+  --hint-color: var(--mat-sys-on-surface-variant);
+  --connector-color: var(--mat-sys-outline-variant);
+  --border-color: var(--mat-sys-outline-variant);
+  --border-hover-color: var(--mat-sys-primary);
+  --border-selected-color: var(--mat-sys-primary);
+  --text-size: 14px;
+  --match-width: 150px;
+  margin: 0 -16px;
+  padding: 0 16px 8px;
+  overflow-x: auto;
+  font-family: inherit;
+  background: transparent;
+}

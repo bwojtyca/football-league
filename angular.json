@@ -27,6 +27,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "brackets-viewer.min.{js,css}",
+                "input": "node_modules/brackets-viewer/dist",
+                "output": "vendor/brackets-viewer"
               }
             ],
             "styles": [
@@ -39,7 +44,12 @@
               "material-icons/iconfont/filled.css",
               "src/styles.scss"
             ],
-            "allowedCommonJsDependencies": ["@messageformat/core"]
+            "allowedCommonJsDependencies": [
+              "@messageformat/core",
+              "brackets-manager",
+              "brackets-memory-db",
+              "brackets-model"
+            ]
           },
           "configurations": {
             "production": {

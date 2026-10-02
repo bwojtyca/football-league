@@ -3,7 +3,7 @@
 A table football (foosball) league: leagues for each office or crowd, live game scoring
 (to 8 by default; also to 5 or 10, win by two, 5-minute games and best-of series), undo of
 the last goal and swapping positions mid-game, tournaments (king of the table, draw your
-partner, round robin), an Elo ranking with the change after every game, game history and
+partner, round robin, cup with an optional group stage), an Elo ranking with the change after every game, game history and
 per-player statistics, in Polish and English. Built for phones; it can be installed from the
 browser and opens offline. Data lives in Cloud Firestore; there is no backend.
 
@@ -73,7 +73,8 @@ npx firebase-tools deploy --only hosting
   newer games also have `mode` (`{ target, winBy?, max?, minutes? }`, no mode = to 8),
   `events` (goals, own goals and position swaps, in order, with the time since the start)
   and `series?` (`{ id, bestOf, game }`); games of a tournament carry its id in `tournament`
-- `tournaments/{id}`: `league`, `name`, `format` (`king`, `dyp` or `roundRobin`), `created`,
+- `tournaments/{id}`: `league`, `name`, `format` (`king`, `dyp`, `roundRobin` or `cup`),
+  `groups?` (cup), `created`,
   `mode`, `teamSize`, `entries` (players joining or leaving, in order), `teams?` (round
   robin), `end?`; queues, draws and tables are worked out from the tournament's games
 

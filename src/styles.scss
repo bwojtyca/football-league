@@ -61,3 +61,8 @@ body {
 .highlight {
   font-weight: bold;
 }
+
+/* brackets-viewer prints the stage name above a bracket; the page has its own heading. */
+.bracket.brackets-viewer h1 {
+  display: none;
+}

@@ -189,61 +189,69 @@
       @case ('roundRobin') {
         <section>
           <h2>{{ 'tournament.table' | transloco }}</h2>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col" class="name">{{ 'tournament.team' | transloco }}</th>
-                <th scope="col">{{ 'tournament.gamesShort' | transloco }}</th>
-                <th scope="col">{{ 'tournament.winsShort' | transloco }}</th>
-                <th scope="col">{{ 'tournament.goalsShort' | transloco }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of table(); track row.team; let i = $index) {
-                <tr>
-                  <td>{{ i + 1 }}</td>
-                  <th scope="row" class="name">{{ teamName(row.team) }}</th>
-                  <td>{{ row.games }}</td>
-                  <td>
-                    <b>{{ row.wins }}</b>
-                  </td>
-                  <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: table() }" />
         </section>
         <section>
           <h2>{{ 'tournament.fixtures' | transloco }}</h2>
           <ol class="fixtures">
             @for (fixture of fixtures(); track $index) {
-              <li>
-                <span class="side r">{{ teamName(fixture.red) }}</span>
-                @if (fixture.game; as game) {
-                  <a class="vs" [routerLink]="['/game', game.id]">{{
-                    game.end ? score(game) : ('tournament.live' | transloco)
-                  }}</a>
-                } @else if (!current.end && !running()) {
-                  <button
-                    matButton="tonal"
-                    class="vs"
-                    (click)="start(current.teams![fixture.red], current.teams![fixture.blue])"
-                  >
-                    {{ 'tournament.play' | transloco }}
-                  </button>
-                } @else {
-                  <span class="vs">{{ 'tournament.vs' | transloco }}</span>
-                }
-                <span class="side b">{{ teamName(fixture.blue) }}</span>
-              </li>
+              <ng-container
+                *ngTemplateOutlet="
+                  fixtureRow;
+                  context: { red: fixture.red, blue: fixture.blue, game: fixture.game }
+                "
+              />
             }
           </ol>
         </section>
       }
+      @case ('cup') {
+        @if (cup(); as cup) {
+          @if (cup.champion !== undefined && !current.end) {
+            <p class="note champion">
+              <mat-icon class="crown">emoji_events</mat-icon>
+              {{ 'tournament.cupWinner' | transloco: { name: teamName(cup.champion) } }}
+            </p>
+          }
+          @if (cup.ready.length && !current.end) {
+            <section>
+              <h2>{{ 'tournament.toPlay' | transloco }}</h2>
+              <ol class="fixtures">
+                @for (match of cup.ready; track match.matchId) {
+                  <ng-container
+                    *ngTemplateOutlet="
+                      fixtureRow;
+                      context: { red: match.red, blue: match.blue, game: match.game }
+                    "
+                  />
+                }
+              </ol>
+            </section>
+          }
+          @for (group of cup.groups; track $index) {
+            <section>
+              <h2>{{ 'tournament.group' | transloco: { n: $index + 1 } }}</h2>
+              <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: group }" />
+            </section>
+          }
+          @if (cup.phase === 'groups') {
+            <p class="hint">{{ 'tournament.groupsHint' | transloco }}</p>
+          }
+          @if (cup.bracket) {
+            <section>
+              <h2>{{ 'tournament.bracket' | transloco }}</h2>
+              <div id="cup-bracket" class="brackets-viewer bracket" #bracket></div>
+            </section>
+          }
+        } @else {
+          <div class="loader"><mat-spinner [diameter]="32" /></div>
+        }
+      }
     }
 
-    @if (current.format !== 'roundRobin' && !current.end && absent().length) {
+    @if (
+      (current.format === 'king' || current.format === 'dyp') && !current.end && absent().length
+    ) {
       <button matButton class="join" [matMenuTriggerFor]="joinMenu">
         <mat-icon>person_add</mat-icon>{{ 'tournament.join' | transloco }}
       </button>
@@ -260,3 +268,53 @@
     </section>
   }
 </main>
+
+<ng-template #teamTable let-rows>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" class="name">{{ 'tournament.team' | transloco }}</th>
+        <th scope="col">{{ 'tournament.gamesShort' | transloco }}</th>
+        <th scope="col">{{ 'tournament.winsShort' | transloco }}</th>
+        <th scope="col">{{ 'tournament.goalsShort' | transloco }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows; track row.team; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <th scope="row" class="name">{{ teamName(row.team) }}</th>
+          <td>{{ row.games }}</td>
+          <td>
+            <b>{{ row.wins }}</b>
+          </td>
+          <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #fixtureRow let-red="red" let-blue="blue" let-game="game">
+  @let current = tournament()!;
+  <li>
+    <span class="side r">{{ teamName(red) }}</span>
+    @if (game) {
+      <a class="vs" [routerLink]="['/game', game.id]">{{
+        game.end ? score(game) : ('tournament.live' | transloco)
+      }}</a>
+    } @else if (!current.end && !running()) {
+      <button
+        matButton="tonal"
+        class="vs"
+        (click)="start(current.teams![red], current.teams![blue])"
+      >
+        {{ 'tournament.play' | transloco }}
+      </button>
+    } @else {
+      <span class="vs">{{ 'tournament.vs' | transloco }}</span>
+    }
+    <span class="side b">{{ teamName(blue) }}</span>
+  </li>
+</ng-template>
