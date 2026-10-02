@@ -2,12 +2,29 @@ rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
 // app itself makes: creating, renaming and archiving leagues and adding players to them,
-// adding players, starting games, scoring one goal at a time, swapping positions,
-// undoing the last event of a game, closing a game once it is won and removing
-// unfinished games. Nobody can change or delete players, remove anyone from a league,
+// adding players, creating tournaments and joining, leaving or ending them, starting games,
+// scoring one goal at a time, swapping positions, undoing the last event of a game,
+// closing a game once it is won and removing unfinished games. Nobody can change or delete players, remove anyone from a league,
 // rewrite results or touch finished games.
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // To `target` goals (at most 20); `winBy: 2` asks for a two-goal lead, up to `max`
+    // goals; `minutes` adds a time limit.
+    function validMode(mode) {
+      return mode.keys().hasOnly(['target', 'winBy', 'max', 'minutes'])
+        && mode.target is int
+        && mode.target >= 1
+        && mode.target <= 20
+        && mode.get('winBy', 1) in [1, 2]
+        && (!('max' in mode) || (mode.max is int && mode.max >= mode.target && mode.max <= 30))
+        && (!('minutes' in mode) || (mode.minutes is int && mode.minutes >= 1 && mode.minutes <= 60));
+    }
+
+    // The first `n` items (a range of an empty list is an error).
+    function prefix(items, n) {
+      return n == 0 ? [] : items[0:n];
+    }
 
     match /players/{playerId} {
       allow read: if true;
@@ -46,12 +63,55 @@ service cloud.firestore {
       }
     }
 
+    match /tournaments/{tournamentId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams'])
+        && request.resource.data.league is string
+        && request.resource.data.league.size() > 0
+        && request.resource.data.league.size() <= 64
+        && tournamentName(request.resource.data.name)
+        && request.resource.data.format in ['king', 'dyp', 'roundRobin']
+        && request.resource.data.created is string
+        && validMode(request.resource.data.mode)
+        && request.resource.data.teamSize in [1, 2]
+        && request.resource.data.entries is list
+        && request.resource.data.entries.size() <= 100
+        && (!('teams' in request.resource.data)
+          || (request.resource.data.teams is list
+            && request.resource.data.teams.size() >= 2
+            && request.resource.data.teams.size() <= 16));
+
+      // While it runs, a tournament can be renamed and ended, and players join or leave it one
+      // at a time; how it is played never changes.
+      allow update: if !('end' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'entries', 'end'])
+        && tournamentName(request.resource.data.name)
+        && (request.resource.data.entries == resource.data.entries
+          || (request.resource.data.entries.size() == resource.data.entries.size() + 1
+            && request.resource.data.entries.size() <= 100
+            && prefix(request.resource.data.entries, resource.data.entries.size()) == resource.data.entries
+            && validEntry(request.resource.data.entries[resource.data.entries.size()])))
+        && (!('end' in request.resource.data) || request.resource.data.end is string);
+
+      function tournamentName(name) {
+        return name is string && name.size() > 0 && name.size() <= 60;
+      }
+
+      function validEntry(entry) {
+        return entry.keys().hasOnly(['player', 'at', 'out'])
+          && entry.player is string
+          && entry.at is string
+          && (!('out' in entry) || entry.out == true);
+      }
+    }
+
     match /games/{gameId} {
       allow read: if true;
 
       // Games from 2017 have no `league`, `mode`, `events` or `series`; they belong to the
       // legacy league and were played to 8.
-      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams', 'league', 'mode', 'events', 'series'])
+      allow create: if request.resource.data.keys().hasOnly(['players', 'start', 'teams', 'league', 'mode', 'events', 'series', 'tournament'])
         && (!('league' in request.resource.data)
           || (request.resource.data.league is string
             && request.resource.data.league.size() > 0
@@ -65,7 +125,11 @@ service cloud.firestore {
         && newTeam(request.resource.data.teams.blue)
         && (!('mode' in request.resource.data) || validMode(request.resource.data.mode))
         && (!('events' in request.resource.data) || request.resource.data.events == [])
-        && (!('series' in request.resource.data) || validSeries(request.resource.data.series));
+        && (!('series' in request.resource.data) || validSeries(request.resource.data.series))
+        && (!('tournament' in request.resource.data)
+          || (request.resource.data.tournament is string
+            && request.resource.data.tournament.size() > 0
+            && request.resource.data.tournament.size() <= 64));
 
       // While the game is running, each write is one of: a goal (or own goal), a swap of
       // positions within a team, undoing the last event, or recording the result once the
@@ -144,11 +208,6 @@ service cloud.firestore {
           && prefix(after().events, before().events.size()) == before().events;
       }
 
-      // The first `n` events (a range of an empty list is an error).
-      function prefix(events, n) {
-        return n == 0 ? [] : events[0:n];
-      }
-
       function lastOf(events) {
         return events[events.size() - 1];
       }
@@ -210,18 +269,6 @@ service cloud.firestore {
           && score.player is string
           && score.goals == 0
           && score.ownGoals == 0;
-      }
-
-      // To `target` goals (at most 20); `winBy: 2` asks for a two-goal lead, up to `max`
-      // goals; `minutes` adds a time limit.
-      function validMode(mode) {
-        return mode.keys().hasOnly(['target', 'winBy', 'max', 'minutes'])
-          && mode.target is int
-          && mode.target >= 1
-          && mode.target <= 20
-          && mode.get('winBy', 1) in [1, 2]
-          && (!('max' in mode) || (mode.max is int && mode.max >= mode.target && mode.max <= 30))
-          && (!('minutes' in mode) || (mode.minutes is int && mode.minutes >= 1 && mode.minutes <= 60));
       }
 
       // A best-of-3 or best-of-5 series; `id` is the id of its first game.
