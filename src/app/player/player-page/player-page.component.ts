@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe, TranslocoDecimalPipe } from '@jsverse/transloco-locale';
@@ -16,6 +17,7 @@ import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { COMEBACK_GOALS, MILESTONE_GAMES, playerRecords, STREAK_WINS } from '../records';
+import { ALL_LEAGUES } from '../../league/league';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { AvatarComponent } from '../avatar/avatar.component';
@@ -28,6 +30,7 @@ import { START_RATING } from '../rating';
   imports: [
     MatIconModule,
     MatProgressSpinnerModule,
+    RouterLink,
     AvatarComponent,
     BaseChartDirective,
     FormDotsComponent,
@@ -49,7 +52,11 @@ export class PlayerPageComponent {
 
   private readonly _params = toSignal(
     inject(ActivatedRoute).paramMap.pipe(
-      map((p) => ({ leagueId: p.get('leagueId') ?? '', playerId: p.get('playerId') ?? '' })),
+      // Without a league in the address, the profile covers every league.
+      map((p) => ({
+        leagueId: p.get('leagueId') ?? ALL_LEAGUES,
+        playerId: p.get('playerId') ?? '',
+      })),
     ),
     { initialValue: { leagueId: '', playerId: '' } },
   );
@@ -57,6 +64,10 @@ export class PlayerPageComponent {
   protected readonly leagueId = computed(() => this._params().leagueId);
   protected readonly playerId = computed(() => this._params().playerId);
   protected readonly league = computed(() => this._leagueService.league(this.leagueId()));
+  protected readonly overall = computed(() => this.leagueId() === ALL_LEAGUES);
+  protected readonly backLink = computed(() =>
+    this.overall() ? '/ranking' : `/l/${this.leagueId()}`,
+  );
 
   /** `undefined` while loading, `null` when the player does not exist. */
   protected readonly player = computed(() => {

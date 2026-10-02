@@ -32,6 +32,9 @@ import { LANGUAGES } from '../i18n/transloco';
         <a mat-menu-item routerLink="/leagues">
           <mat-icon>emoji_events</mat-icon>{{ 'menu.leagues' | transloco }}
         </a>
+        <a mat-menu-item routerLink="/ranking">
+          <mat-icon>leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
+        </a>
         @for (option of languages; track option.lang) {
           <button mat-menu-item (click)="transloco.setActiveLang(option.lang)">
             <mat-icon>{{

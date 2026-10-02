@@ -162,18 +162,19 @@ Owner feedback, to do at the end (after the planned stages):
 - (Done: league settings page with rename, lock new games, ranking threshold, delete/restore;
   anyone may use it until sign-in brings a moderator. The owner can unlock "Najdroższa Liga
   Świata" there.)
-- A global ranking and a global player profile across all leagues, next to the per-league ones.
+- (Done: overall ranking `#/ranking` and overall profile `#/player/<id>`, from every league via
+  `ALL_LEAGUES`.)
 - (Done: games and leagues are deleted softly, with undo and restore, by anyone until sign-in.)
 - (Done: win by 2 as a toggle without a cap, any target; timed games with a chosen length;
   pause and resume; the new game dialog's summary of rules, lineups, kind and win chance; an
   always-visible undo bar with precise event texts.)
-- More rankings: win % next to Elo, and a configurable minimum number of games to appear in a
-  ranking (hide players with fewer than X games).
+- (Done: win % next to Elo; a league setting for the fewest games to be ranked.)
 - A fun "yolo" ranking (working name) about who is the "ziemniak" (potato: the one who loses
   everything). The group plays for fun and the drive is not to stay the potato, so it is about
   mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
   proposal: losing to the current potato costs a lot of points (not necessarily the potato
-  title at once).
+  title at once). (A first version is live as a ranking view, rules in `POTATO_POINTS` in
+  `player/potato.ts` and shown in the app; tune them with the owner.)
 - (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
   fills up and moves on by itself after 8 s.)
 - Best of 3/5 feel like tournaments rather than games. Possible levels: game (played to a win)

@@ -284,7 +284,23 @@
   "ranking": {
     "sortBy": "Sort by",
     "winRate": "Win %",
-    "belowThreshold": "Fewer than {n, plural, one {# game} other {# games}}"
+    "belowThreshold": "Fewer than {n, plural, one {# game} other {# games}}",
+    "global": "Overall ranking",
+    "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
+    "allLeagues": "All leagues",
+    "overallProfile": "overall profile"
+  },
+  "potato": {
+    "title": "Potato",
+    "points": "pts",
+    "asPotato": "potato for {n, plural, one {# game} other {# games}}",
+    "rules": "Rules (to be tuned together)",
+    "ruleLoss": "A loss: +{n} pt, a win: −{m} pt (never below 0).",
+    "ruleShutout": "A loss without scoring: +{n} more.",
+    "ruleUpset": "A loss as clear favourites (a win chance of 65% or more): +{n} more.",
+    "ruleLossToPotato": "Losing to the current potato: +{n} more.",
+    "ruleBeatKing": "Beating the Elo leader (some hate for the strongest): −{n}.",
+    "ruleTitle": "The potato is the player with the most points and at least {n} games."
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",

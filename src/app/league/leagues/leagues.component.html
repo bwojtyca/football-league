@@ -1,6 +1,9 @@
 <fl-top-bar [title]="'leagues.title' | transloco" />
 
 <main class="page">
+  <a matButton="tonal" routerLink="/ranking" class="global">
+    <mat-icon>leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
+  </a>
   @if (leagues(); as leagues) {
     @if (onlyArchive()) {
       <p class="empty">{{ 'leagues.empty' | transloco }}</p>

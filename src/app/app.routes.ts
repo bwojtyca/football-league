@@ -43,6 +43,16 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'ranking',
+    loadComponent: () =>
+      import('./player/global-ranking.component').then((m) => m.GlobalRankingComponent),
+  },
+  {
+    path: 'player/:playerId',
+    loadComponent: () =>
+      import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
+  },
+  {
     path: 'game/:gameId',
     loadComponent: () =>
       import('./game/game-detail/game-detail.component').then((m) => m.GameDetailComponent),

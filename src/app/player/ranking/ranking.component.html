@@ -11,6 +11,14 @@
     >
       {{ 'league.duets' | transloco }}
     </button>
+    <button
+      role="radio"
+      [attr.aria-checked]="view() === 'potato'"
+      (click)="view.set('potato')"
+      [disabled]="!potatoes().length"
+    >
+      🥔 {{ 'potato.title' | transloco }}
+    </button>
   </div>
   @if (view() === 'players') {
     <div class="switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
@@ -28,7 +36,47 @@
   }
 </div>
 
-@if (view() === 'duets') {
+@if (view() === 'potato') {
+  <ol class="ranking">
+    @for (row of potatoes(); track row.player; let i = $index) {
+      <li>
+        <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
+          <span class="pos">{{ i + 1 }}</span>
+          <fl-avatar [playerId]="row.player" [name]="row.name" [size]="36" />
+          <span class="who">
+            <b
+              >{{ row.name }}
+              @if (row.isPotato) {
+                🥔
+              }
+            </b>
+            <small>
+              {{ 'count.games' | transloco: { n: row.games } }}
+              @if (row.gamesAsPotato) {
+                · {{ 'potato.asPotato' | transloco: { n: row.gamesAsPotato } }}
+              }
+            </small>
+          </span>
+          <span class="rating">
+            <b>{{ row.points }}</b>
+            <small>{{ 'potato.points' | transloco }}</small>
+          </span>
+        </a>
+      </li>
+    }
+  </ol>
+  <details class="rules">
+    <summary>{{ 'potato.rules' | transloco }}</summary>
+    <ul>
+      <li>{{ 'potato.ruleLoss' | transloco: { n: potatoPoints.loss, m: -potatoPoints.win } }}</li>
+      <li>{{ 'potato.ruleShutout' | transloco: { n: potatoPoints.shutoutLoss } }}</li>
+      <li>{{ 'potato.ruleUpset' | transloco: { n: potatoPoints.upsetLoss } }}</li>
+      <li>{{ 'potato.ruleLossToPotato' | transloco: { n: potatoPoints.lossToPotato } }}</li>
+      <li>{{ 'potato.ruleBeatKing' | transloco: { n: -potatoPoints.beatKing } }}</li>
+      <li>{{ 'potato.ruleTitle' | transloco: { n: potatoMinGames } }}</li>
+    </ul>
+  </details>
+} @else if (view() === 'duets') {
   <ol class="ranking">
     @for (duet of duets(); track duet.players.join(); let i = $index) {
       <li class="row" [class.unrated]="duet.games < duetGames()">

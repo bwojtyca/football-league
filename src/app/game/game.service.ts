@@ -18,7 +18,7 @@ import { collectionData, docData } from 'rxfire/firestore';
 import { map, Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
-import { leagueOf } from '../league/league';
+import { ALL_LEAGUES, leagueOf } from '../league/league';
 import { computeRatings, Ratings } from '../player/rating';
 import {
   decidedWinner,
@@ -56,7 +56,7 @@ export class GameService {
    */
   public readonly games = computed(() => this._stored()?.filter((game) => !game.deleted));
 
-  /** Each league's games, newest first. */
+  /** Each league's games, newest first; `ALL_LEAGUES` has every game. */
   private readonly _byLeague = computed(() => {
     const byLeague = new Map<string, Game[]>();
     const games = [...(this.games() ?? [])].sort((a, b) =>
@@ -71,6 +71,7 @@ export class GameService {
         byLeague.set(league, [game]);
       }
     }
+    byLeague.set(ALL_LEAGUES, games);
     return byLeague;
   });
 

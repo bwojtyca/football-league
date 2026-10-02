@@ -1,5 +1,5 @@
 @let p = player();
-<fl-top-bar [title]="p?.name ?? ''" [back]="'/l/' + leagueId()" />
+<fl-top-bar [title]="p?.name ?? ''" [back]="backLink()" />
 
 <main class="page">
   @if (p === null) {
@@ -10,7 +10,14 @@
     <div class="head">
       <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
       <div>
-        <div class="league">{{ league()?.name }}</div>
+        <div class="league">
+          @if (overall()) {
+            {{ 'ranking.allLeagues' | transloco }}
+          } @else {
+            {{ league()?.name }} ·
+            <a [routerLink]="['/player', p.id]">{{ 'ranking.overallProfile' | transloco }}</a>
+          }
+        </div>
         @if (mainPosition(); as position) {
           <div class="sub">{{ position | transloco }}</div>
         }

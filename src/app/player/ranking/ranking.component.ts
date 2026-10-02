@@ -11,6 +11,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { RankedPlayer } from '../player';
 import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
+import { POTATO_MIN_GAMES, POTATO_POINTS, potatoRanking } from '../potato';
 import { duets } from '../records';
 
 /** Fewest games together for a pair to be ranked. */
@@ -46,7 +47,7 @@ export class RankingComponent {
   public readonly minGames = input(0);
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
-  protected readonly view = signal<'players' | 'duets'>('players');
+  protected readonly view = signal<'players' | 'duets' | 'potato'>('players');
   protected readonly sortBy = signal<'elo' | 'winRate'>('elo');
 
   private readonly _threshold = computed(() => Math.max(1, this.minGames()));
@@ -64,6 +65,15 @@ export class RankingComponent {
     this.players()
       .filter((p) => p.games < this._threshold())
       .sort((a, b) => b.games - a.games),
+  );
+
+  protected readonly potatoPoints = POTATO_POINTS;
+  protected readonly potatoMinGames = POTATO_MIN_GAMES;
+  protected readonly potatoes = computed(() =>
+    potatoRanking(this.games()).map((row) => ({
+      ...row,
+      name: this._playerService.getPlayerName(row.player),
+    })),
   );
 
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));

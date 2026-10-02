@@ -14,6 +14,9 @@ export interface League {
   deleted?: boolean;
 }
 
+/** Stands for every league at once: the overall ranking and player profiles. */
+export const ALL_LEAGUES = '*';
+
 /** The games from 2017 have no `league` field; they belong to the league with this id. */
 export const LEGACY_LEAGUE_ID = 'legacy';
 

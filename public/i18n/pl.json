@@ -284,7 +284,23 @@
   "ranking": {
     "sortBy": "Sortuj według",
     "winRate": "% wygranych",
-    "belowThreshold": "Mniej niż {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}"
+    "belowThreshold": "Mniej niż {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
+    "global": "Ranking ogólny",
+    "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
+    "allLeagues": "Wszystkie ligi",
+    "overallProfile": "profil ogólny"
+  },
+  "potato": {
+    "title": "Ziemniak",
+    "points": "pkt",
+    "asPotato": "ziemniakiem przez {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
+    "rules": "Zasady (do wspólnego dopracowania)",
+    "ruleLoss": "Porażka: +{n} pkt, wygrana: −{m} pkt (nie mniej niż 0).",
+    "ruleShutout": "Porażka bez strzelonego gola: dodatkowo +{n}.",
+    "ruleUpset": "Porażka mimo wyraźnej przewagi (szansa co najmniej 65%): dodatkowo +{n}.",
+    "ruleLossToPotato": "Przegrana z aktualnym ziemniakiem: dodatkowo +{n}.",
+    "ruleBeatKing": "Wygrana z liderem Elo (hejt na najmocniejszego): −{n}.",
+    "ruleTitle": "Ziemniakiem jest gracz z największą liczbą punktów, który ma co najmniej {n} mecze."
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
