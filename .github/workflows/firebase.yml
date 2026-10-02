@@ -1,16 +1,17 @@
 name: Deploy Firestore rules
 
+# On master the rules are deployed; on any other branch they are only validated
+# against the real project (`--dry-run`), which also checks the credentials.
 on:
   push:
-    branches: [master]
-    paths: [firestore.rules, firebase.json]
+    paths: [firestore.rules, firebase.json, .github/workflows/firebase.yml]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: firebase
+  group: firebase-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -21,11 +22,35 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-      - name: Write service account key
-        run: echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/service-account.json"
+      # Never print the key: logs of this public repository are public.
+      - name: Check service account key
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-      - run: npx -y firebase-tools@15 deploy --only firestore:rules --non-interactive
+          SAVED_AS_VARIABLE: ${{ vars.FIREBASE_SERVICE_ACCOUNT != '' }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "::error::Repository secret FIREBASE_SERVICE_ACCOUNT is not set (saved as a variable instead: $SAVED_AS_VARIABLE)."
+            exit 1
+          fi
+          node -e '
+            let key;
+            try {
+              key = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+            } catch {
+              console.log("::error::FIREBASE_SERVICE_ACCOUNT is not valid JSON.");
+              process.exit(1);
+            }
+            console.log(`type=${key.type} project=${key.project_id} account=${key.client_email}`);
+            if (key.type !== "service_account" || !key.private_key) {
+              console.log("::error::FIREBASE_SERVICE_ACCOUNT is not a service account key.");
+              process.exit(1);
+            }
+          '
+          echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/service-account.json"
+      - name: ${{ github.ref == 'refs/heads/master' && 'Deploy rules' || 'Validate rules (dry run)' }}
+        run: >-
+          npx -y firebase-tools@15 deploy --only firestore:rules --non-interactive
+          ${{ github.ref != 'refs/heads/master' && '--dry-run' || '' }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/service-account.json
       - if: always()
