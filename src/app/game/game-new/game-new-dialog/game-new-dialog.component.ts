@@ -164,6 +164,55 @@ export class GameNewDialogComponent {
     return red === null || blue === null ? null : Math.round(winChance(red, blue) * 100);
   });
 
+  /**
+   * With four players picked, the most even way to split them into two teams, when it is
+   * clearly more even than the current one. Players keep their positions where possible.
+   */
+  protected readonly suggestion = computed(() => {
+    const { red, blue } = this.teams;
+    const picked = [red.defence(), red.offence(), blue.defence(), blue.offence()];
+    if (red.singlePlayer() || blue.singlePlayer() || !picked.every(isPlayer)) {
+      return null;
+    }
+    const [a, b, c, d] = picked as Player[];
+    if (new Set([a, b, c, d].map((p) => p.id)).size < 4) {
+      return null;
+    }
+    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
+    const rating = (team: Player[]) =>
+      team.reduce((sum, p) => sum + (ratings?.get(p.id) ?? START_RATING), 0) / team.length;
+    const unevenness = ([x, y]: Player[][]) => Math.abs(winChance(rating(x), rating(y)) - 0.5);
+    const splits = [
+      [
+        [a, b],
+        [c, d],
+      ],
+      [
+        [a, c],
+        [b, d],
+      ],
+      [
+        [a, d],
+        [b, c],
+      ],
+    ];
+    const best = splits.reduce((x, y) => (unevenness(y) < unevenness(x) ? y : x));
+    if (best === splits[0] || unevenness(splits[0]) - unevenness(best) < 0.03) {
+      return null;
+    }
+    // The current red defender stays red; defenders stay in defence where they can.
+    const [redTeam, blueTeam] = best[0].includes(a) ? best : [best[1], best[0]];
+    const lineup = (team: Player[]) => {
+      const defender = team.find((p) => p === a || p === c) ?? team[0];
+      return { defence: defender, offence: team.find((p) => p !== defender)! };
+    };
+    return {
+      red: lineup(redTeam),
+      blue: lineup(blueTeam),
+      chance: Math.round(winChance(rating(redTeam), rating(blueTeam)) * 100),
+    };
+  });
+
   /** Players already picked anywhere in the form. */
   protected readonly selected = computed(() => {
     const ids = new Set<string>();
@@ -212,6 +261,21 @@ export class GameNewDialogComponent {
   protected close(): void {
     this._dialogRef.close();
     this._router.navigate(['/l', this._data.leagueId]);
+  }
+
+  protected useSuggestion(suggestion: {
+    red: { defence: Player; offence: Player };
+    blue: { defence: Player; offence: Player };
+  }): void {
+    for (const color of TEAM_COLORS) {
+      const controls = this.teams[color].form.controls;
+      controls.defence.setValue(suggestion[color].defence);
+      controls.offence.setValue(suggestion[color].offence);
+    }
+  }
+
+  protected teamLabel(team: { defence: Player; offence: Player }): string {
+    return `${team.defence.name} & ${team.offence.name}`;
   }
 
   protected switchTeams(): void {

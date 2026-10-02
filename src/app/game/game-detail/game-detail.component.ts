@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -32,6 +33,7 @@ import {
 } from '../game';
 import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
+import { openGameTimeline } from '../game-timeline/game-timeline.component';
 
 /** A decided game waits this long for an undo before its result is recorded. */
 const UNDO_WINDOW_MS = 5000;
@@ -54,6 +56,7 @@ export class GameDetailComponent {
   private readonly _gameService = inject(GameService);
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _bottomSheet = inject(MatBottomSheet);
   private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
   private readonly _transloco = inject(TranslocoService);
@@ -222,6 +225,13 @@ export class GameDetailComponent {
     const game = this.game();
     if (game && !game.end && game.events?.length) {
       this._gameService.undo(game).catch((error) => this._notifier.error('error.undo', error));
+    }
+  }
+
+  protected showTimeline(): void {
+    const game = this.game();
+    if (game?.events) {
+      openGameTimeline(this._bottomSheet, game);
     }
   }
 

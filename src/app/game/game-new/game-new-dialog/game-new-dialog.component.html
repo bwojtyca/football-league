@@ -113,6 +113,22 @@
           </div>
         </div>
       }
+      @if (suggestion(); as even) {
+        <div class="suggestion">
+          <span>{{
+            'newGame.evenest'
+              | transloco
+                : {
+                    red: teamLabel(even.red),
+                    blue: teamLabel(even.blue),
+                    chance: even.chance + '% : ' + (100 - even.chance) + '%',
+                  }
+          }}</span>
+          <button matButton (click)="useSuggestion(even)">
+            {{ 'newGame.useSuggestion' | transloco }}
+          </button>
+        </div>
+      }
     }
   } @else {
     <div class="loader"><mat-spinner [diameter]="40" /></div>

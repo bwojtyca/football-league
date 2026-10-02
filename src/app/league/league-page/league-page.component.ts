@@ -22,6 +22,7 @@ import { TopBarComponent } from '../../shared/top-bar.component';
 import { openTournamentNewDialog } from '../../tournament/tournament-new-dialog/tournament-new-dialog.component';
 import { TournamentService } from '../../tournament/tournament.service';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
+import { TodayCardComponent } from '../today-card.component';
 import { LeagueService } from '../league.service';
 
 type Tab = 'ranking' | 'games' | 'tournaments';
@@ -38,6 +39,7 @@ type Tab = 'ranking' | 'games' | 'tournaments';
     FormDotsComponent,
     GameListComponent,
     RatingChangeComponent,
+    TodayCardComponent,
     TopBarComponent,
     TranslocoPipe,
   ],

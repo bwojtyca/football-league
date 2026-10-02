@@ -105,7 +105,9 @@
     "switchTeams": "Zamień drużyny",
     "start": "Zacznij mecz",
     "needPlayers": "W tej lidze potrzeba co najmniej dwóch graczy.",
-    "chance": "Szansa wygranej"
+    "chance": "Szansa wygranej",
+    "evenest": "Najrówniej: {red} vs {blue} ({chance})",
+    "useSuggestion": "Ustaw"
   },
   "game": {
     "ownGoal": "samobój",
@@ -216,6 +218,18 @@
     "round": "Runda {n}",
     "cupWinner": "Puchar wygrywają: {name}",
     "noGames": "Nie ma jeszcze meczów w tym turnieju."
+  },
+  "timeline": {
+    "title": "Przebieg meczu",
+    "prompt": "Jak to szło?",
+    "chart": "Gole obu drużyn w czasie meczu",
+    "comeback": "{team} odrobili straty przy {score}",
+    "run": "Najdłuższa seria: {team}, {n, plural, one {# gol} few {# gole} many {# goli} other {# gola}} z rzędu",
+    "lead": "Największe prowadzenie, {team}: {score}"
+  },
+  "today": {
+    "title": "Dziś, {date}",
+    "playing": "Trwa mecz"
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",

@@ -14,21 +14,12 @@ import { GameService } from '../../game/game.service';
 import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { cssColor, withAlpha } from '../../shared/css-color';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
 import { START_RATING } from '../rating';
-
-/** A theme colour as `rgb(...)`, for Chart.js which cannot read CSS variables. */
-function cssColor(variable: string): string {
-  const probe = document.createElement('span');
-  probe.style.color = `var(${variable})`;
-  document.body.append(probe);
-  const color = getComputedStyle(probe).color;
-  probe.remove();
-  return color;
-}
 
 @Component({
   selector: 'fl-player-page',
@@ -107,7 +98,7 @@ export class PlayerPageComponent {
         {
           data: points,
           borderColor: color,
-          backgroundColor: color.replace(/^rgb\((.*)\)$/, 'rgba($1, 0.12)'),
+          backgroundColor: withAlpha(color, 0.12),
           fill: true,
           borderWidth: 2,
           pointRadius: 0,

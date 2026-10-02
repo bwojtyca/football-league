@@ -11,6 +11,10 @@
       <p class="note">{{ 'league.archiveNote' | transloco }}</p>
     }
 
+    @if (!current.archived) {
+      <fl-today-card [leagueId]="current.id" />
+    }
+
     <div class="tabs" role="tablist">
       <button role="tab" [attr.aria-selected]="tab() === 'ranking'" (click)="tab.set('ranking')">
         {{ 'league.ranking' | transloco }}

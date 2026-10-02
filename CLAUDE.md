@@ -89,7 +89,13 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   any device showing it records the result with `closeGame()` (a transaction); the device that
   scored the deciding goal offers a rematch, or the next game of a series. The game screen
   keeps the phone's screen on (Wake Lock API).
-- `LeagueService` lists leagues and remembers the last one (localStorage).
+- `LeagueService` lists leagues and remembers the last one (localStorage). The league page
+  starts with a "Today" card (today's games, the current run between the same two teams, a
+  rematch).
+- `game/timeline.ts` tells how a logged game went (score after each goal, longest run, biggest
+  leads, comeback); the finished game screen opens it in a bottom sheet with a step chart.
+- The new game dialog suggests the most even split of four players (Elo) when it is clearly
+  more even than the chosen one.
 - `TournamentService` lists tournaments; `tournament/tournament.ts` holds the pure logic: king
   of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the

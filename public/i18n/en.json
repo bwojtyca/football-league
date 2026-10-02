@@ -105,7 +105,9 @@
     "switchTeams": "Switch teams",
     "start": "Start game",
     "needPlayers": "This league needs at least two players.",
-    "chance": "Win chance"
+    "chance": "Win chance",
+    "evenest": "Most even: {red} vs {blue} ({chance})",
+    "useSuggestion": "Use"
   },
   "game": {
     "ownGoal": "own goal",
@@ -216,6 +218,18 @@
     "round": "Round {n}",
     "cupWinner": "Cup winners: {name}",
     "noGames": "No games in this tournament yet."
+  },
+  "timeline": {
+    "title": "How it went",
+    "prompt": "How did it go?",
+    "chart": "Goals of both teams over the game",
+    "comeback": "{team} came back from {score}",
+    "run": "Longest run: {team}, {n, plural, one {# goal} other {# goals}} in a row",
+    "lead": "Biggest lead, {team}: {score}"
+  },
+  "today": {
+    "title": "Today, {date}",
+    "playing": "Game on"
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",

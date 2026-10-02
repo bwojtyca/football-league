@@ -98,7 +98,14 @@
       }
     </div>
 
-    @if (winner) {
+    @if (game.end && game.events?.length) {
+      <footer class="bar">
+        <span class="text">{{ 'timeline.prompt' | transloco }}</span>
+        <button matButton (click)="showTimeline()">
+          <mat-icon>timeline</mat-icon>{{ 'timeline.title' | transloco }}
+        </button>
+      </footer>
+    } @else if (winner) {
       <footer class="bar bar--decided" role="status">
         <b class="text">{{ 'game.wins' | transloco: { team: (teamNames[winner] | transloco) } }}</b>
         @if (game.events?.length) {
