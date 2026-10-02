@@ -191,11 +191,11 @@
     },
     "formatHint": {
       "king": "Zwycięzcy zostają przy stole, przegrani wracają na koniec kolejki. Liczymy wygrane z rzędu.",
-      "dyp": "Co mecz losujemy, kto gra i z kim: najpierw ci, którzy grali najmniej, w parach, które jeszcze ze sobą nie grały. Ranking indywidualny.",
+      "dyp": "Przed każdym meczem aplikacja losuje, kto gra i z kim: najpierw ci, którzy grali najmniej, w parach, które jeszcze ze sobą nie grały. Tabela indywidualna.",
       "roundRobin": "Stałe drużyny, każda gra z każdą raz. Tabela i lista meczów do rozegrania.",
       "cup": "Mecze o wszystko: przegrany odpada, zwycięzca gra dalej aż do finału. Można zacząć od dwóch grup.",
       "series": "Dwie drużyny grają do 2 lub 3 wygranych, kolory zmieniają się co mecz.",
-      "open": "Gracie, ile chcecie, w dowolnych składach z wybranych graczy. Tabela indywidualna.",
+      "open": "Wybierasz graczy, a przed każdym meczem sam ustalasz składy. Gracie, ile chcecie. Tabela indywidualna.",
       "rotation": "Każdy zagra z każdym w parze, a rywale się zmieniają. Tabela indywidualna."
     },
     "name": "Nazwa (nieobowiązkowa)",
@@ -203,7 +203,7 @@
     "players": "Gracze ({n})",
     "playersLabel": "Gracze",
     "teams": "Drużyny",
-    "redraw": "Losuj ponownie",
+    "redraw": "Losuj",
     "benched": "Bez drużyny: {names}",
     "needKing": "Potrzeba co najmniej 4 graczy (przy grze 1 na 1: 3).",
     "needDyp": "Potrzeba co najmniej 4 graczy.",
@@ -268,10 +268,11 @@
     "needSeries": "Wybierz dwie drużyny: 2 graczy przy grze 1 na 1 albo 4 przy 2 na 2.",
     "needOpen": "Potrzeba co najmniej 2 graczy.",
     "needRotation": "Potrzeba od 4 do 12 graczy.",
-    "mostEven": "Najrówniej",
+    "mostEven": "Wyrównaj",
     "seriesTo": "Seria do {n} wygranych",
     "seriesWinner": "Serię wygrywają: {name}",
-    "startGame": "Zacznij mecz {n}"
+    "startGame": "Zacznij mecz {n}",
+    "teamsHint": "Drużyny powstają w kolejności wybierania graczy: pierwszy z drugim, trzeci z czwartym i tak dalej. Możesz też je wylosować albo wyrównać według Elo."
   },
   "timeline": {
     "title": "Przebieg meczu",

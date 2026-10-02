@@ -21,8 +21,8 @@ import { Notifier } from '../../notifier';
 import { compareNames } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { GameService } from '../../game/game.service';
-import { START_RATING, winChance } from '../../player/rating';
-import { drawTeams, FORMATS, lineupFrom, seededRandom, TournamentFormat } from '../tournament';
+import { START_RATING } from '../../player/rating';
+import { drawTeams, FORMATS, TournamentFormat } from '../tournament';
 
 /** Games of a group stage: two groups sharing `teams`, everyone in a group plays once. */
 function groupGames(teams: number): number {
@@ -70,10 +70,15 @@ export class TournamentNewDialogComponent {
   private readonly _notifier = inject(Notifier);
   private readonly _router = inject(Router);
 
-  /** Formats offered as chips; rotating partners is a variant of round robin. */
-  protected readonly formats = FORMATS.filter((format) => format !== 'rotation');
+  /**
+   * Formats offered as chips; rotating partners is a variant of round robin. A series is
+   * started from "+" (the new game dialog), where its two teams are picked.
+   */
+  protected readonly formats = FORMATS.filter(
+    (format) => format !== 'rotation' && format !== 'series',
+  );
 
-  protected readonly format = signal<TournamentFormat>('series');
+  protected readonly format = signal<TournamentFormat>('open');
   protected readonly name = signal('');
   /** How the games are played; king of the table plays short games by default. */
   protected readonly mode = signal<GameMode>(NEW_GAME_MODE);
@@ -81,11 +86,8 @@ export class TournamentNewDialogComponent {
   protected readonly teamSize = signal(2);
   /** Cup: groups before the knockout stage (0 or 2). */
   protected readonly groups = signal(0);
-  /** Series: best of 3 or 5. */
-  protected readonly bestOf = signal(3);
-  /** Series: teams set by "most even", instead of drawn. */
-  private readonly _evenTeams = signal<Lineup[] | null>(null);
-  private readonly _seed = signal(Date.now());
+  /** Fixed teams in another order than picked: drawn or evened out. */
+  private readonly _arranged = signal<string[] | null>(null);
 
   /** League players, by name. */
   protected readonly members = computed(() => {
@@ -96,41 +98,39 @@ export class TournamentNewDialogComponent {
   });
 
   /**
-   * Who takes part. A series starts with nobody picked (it is between two teams); the other
-   * formats start with everyone in the league.
+   * Who takes part, in the order they were picked; `null` is everyone in the league. Fixed
+   * teams start with nobody picked, as the order of picking makes the teams.
    */
-  private readonly _picked = signal<Set<string> | null>(new Set());
+  private readonly _picked = signal<string[] | null>(null);
   protected readonly selected = computed(() => {
-    const picked = this._picked();
-    const all = this.members().map((player) => player.id);
-    return picked ? all.filter((id) => picked.has(id)) : all;
+    const members = new Set(this.members().map((player) => player.id));
+    return (this._picked() ?? [...members]).filter((id) => members.has(id));
   });
 
   protected readonly size = computed(() =>
     ['dyp', 'rotation'].includes(this.format()) ? 2 : this.teamSize(),
   );
 
-  /** Whether the format plays fixed teams drawn at the start. */
-  protected readonly fixedTeams = computed(() =>
-    ['series', 'roundRobin', 'cup'].includes(this.format()),
-  );
+  /** Whether the format plays fixed teams, made when it starts. */
+  protected readonly fixedTeams = computed(() => ['roundRobin', 'cup'].includes(this.format()));
 
   /** The chip a format belongs to: rotating partners is shown under round robin. */
   protected readonly chip = computed(() =>
     this.format() === 'rotation' ? 'roundRobin' : this.format(),
   );
 
-  /** Fixed teams, drawn from the selected players (a series takes the first two). */
+  /** Fixed teams in the order the players were picked: 1st with 2nd, 3rd with 4th... */
   protected readonly teams = computed<Lineup[]>(() => {
     if (!this.fixedTeams()) {
       return [];
     }
-    const even = this._evenTeams();
-    const teams =
-      even && this.format() === 'series'
-        ? even
-        : drawTeams(this.selected(), this.size(), seededRandom(this._seed()));
-    return this.format() === 'series' ? teams.slice(0, 2) : teams;
+    const order = this._arranged() ?? this.selected();
+    const size = this.size();
+    const teams: Lineup[] = [];
+    for (let i = 0; i + size <= order.length; i += size) {
+      teams.push({ defence: order[i], offence: order[i + size - 1] });
+    }
+    return teams;
   });
 
   /** How many games the tournament takes, when that is known. */
@@ -138,8 +138,6 @@ export class TournamentNewDialogComponent {
     const teams = this.teams().length;
     const players = this.selected().length;
     switch (this.format()) {
-      case 'series':
-        return { key: 'tournament.gamesUpTo', n: this.bestOf() };
       case 'roundRobin':
         return { key: 'tournament.gamesExactly', n: (teams * (teams - 1)) / 2 };
       case 'rotation':
@@ -168,8 +166,6 @@ export class TournamentNewDialogComponent {
   protected readonly problem = computed(() => {
     const count = this.selected().length;
     switch (this.format()) {
-      case 'series':
-        return count !== 2 * this.size() ? 'tournament.needSeries' : null;
       case 'open':
         return count < 2 ? 'tournament.needOpen' : null;
       case 'king':
@@ -186,52 +182,47 @@ export class TournamentNewDialogComponent {
           : this.groups() && this.teams().length < 6
             ? 'tournament.needGroups'
             : null;
+      default:
+        return null;
     }
   });
 
   protected setFormat(format: TournamentFormat): void {
-    const wasSeries = this.format() === 'series';
+    const wasFixed = this.fixedTeams();
     this.format.set(format);
     if (!this._modeChosen) {
       this.mode.set({ ...NEW_GAME_MODE, target: format === 'king' ? 5 : NEW_GAME_MODE.target });
     }
-    // A series is picked player by player; the others start with everyone.
-    if (wasSeries !== (format === 'series') && !this._pickedByHand) {
-      this._picked.set(format === 'series' ? new Set() : null);
+    // Fixed teams are made by picking players one by one; the others start with everyone.
+    if (wasFixed !== this.fixedTeams() && !this._pickedByHand) {
+      this._picked.set(this.fixedTeams() ? [] : null);
     }
   }
 
-  /** Series: the two most even teams of the four picked players (Elo). */
-  protected mostEven(): void {
-    const players = this.selected();
-    if (players.length !== 4) {
+  /** Teams drawn at random from the picked players. */
+  protected redraw(): void {
+    const order = [...this.selected()];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    this._arranged.set(order);
+  }
+
+  /** Even teams (Elo): the best player with the weakest, the second with the second weakest... */
+  protected evenOut(): void {
+    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
+    const rating = (id: string) => ratings?.get(id) ?? START_RATING;
+    const sorted = [...this.selected()].sort((a, b) => rating(b) - rating(a));
+    if (this.size() === 1) {
+      this._arranged.set(sorted);
       return;
     }
-    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
-    const rating = (team: string[]) =>
-      team.reduce((sum, id) => sum + (ratings?.get(id) ?? START_RATING), 0) / team.length;
-    const [a, b, c, d] = players;
-    const splits = [
-      [
-        [a, b],
-        [c, d],
-      ],
-      [
-        [a, c],
-        [b, d],
-      ],
-      [
-        [a, d],
-        [b, c],
-      ],
-    ];
-    const best = splits.reduce((x, y) =>
-      Math.abs(winChance(rating(y[0]), rating(y[1])) - 0.5) <
-      Math.abs(winChance(rating(x[0]), rating(x[1])) - 0.5)
-        ? y
-        : x,
-    );
-    this._evenTeams.set(best.map(lineupFrom));
+    const order: string[] = [];
+    for (let i = 0, j = sorted.length - 1; i < j; i++, j--) {
+      order.push(sorted[i], sorted[j]);
+    }
+    this._arranged.set(order);
   }
 
   protected setMode(mode: GameMode): void {
@@ -243,21 +234,11 @@ export class TournamentNewDialogComponent {
 
   protected toggle(playerId: string, selected: boolean): void {
     this._pickedByHand = true;
-    this._evenTeams.set(null);
+    this._arranged.set(null);
     this._picked.update((picked) => {
-      const next = new Set(picked ?? this.selected());
-      if (selected) {
-        next.add(playerId);
-      } else {
-        next.delete(playerId);
-      }
-      return next;
+      const rest = (picked ?? this.selected()).filter((id) => id !== playerId);
+      return selected ? [...rest, playerId] : rest;
     });
-  }
-
-  protected redraw(): void {
-    this._evenTeams.set(null);
-    this._seed.update((seed) => seed + 1);
   }
 
   protected playerName(playerId: string): string {
@@ -296,7 +277,6 @@ export class TournamentNewDialogComponent {
       entries: this.fixedTeams() ? [] : players.map((player) => ({ player, at: now })),
       ...(this.fixedTeams() && { teams: this.teams() }),
       ...(format === 'cup' && { groups: this.groups() }),
-      ...(format === 'series' && { bestOf: this.bestOf() }),
     });
     saved.catch((error) => this._notifier.error('error.newTournament', error));
     this._dialogRef.close(id);

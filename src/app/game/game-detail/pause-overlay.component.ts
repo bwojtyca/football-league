@@ -8,7 +8,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'fl-pause-overlay',
   imports: [MatButtonModule, MatIconModule, TranslocoPipe],
   template: `
-    <mat-icon aria-hidden="true">pause_circle</mat-icon>
+    <mat-icon class="big" aria-hidden="true">pause_circle</mat-icon>
     <b>{{ 'game.pausedTitle' | transloco }}</b>
     <small>{{ 'game.pausedHint' | transloco }}</small>
     <button matButton="filled" class="fl-cta" (click)="resume.emit()">

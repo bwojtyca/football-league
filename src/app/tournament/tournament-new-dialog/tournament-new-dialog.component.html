@@ -30,21 +30,6 @@
         }
       </mat-chip-listbox>
     }
-    @if (format() === 'series') {
-      <mat-chip-listbox
-        [attr.aria-label]="'tournament.bestOf' | transloco"
-        hideSingleSelectionIndicator
-      >
-        @for (option of [3, 5]; track option) {
-          <mat-chip-option
-            [selected]="bestOf() === option"
-            [selectable]="bestOf() !== option"
-            (selectionChange)="$event.isUserInput && $event.selected && bestOf.set(option)"
-            >{{ 'tournament.bestOfOption' | transloco: { n: option } }}</mat-chip-option
-          >
-        }
-      </mat-chip-listbox>
-    }
     <p class="hint">
       {{ 'tournament.formatHint.' + format() | transloco }}
       {{ gameCount().key | transloco: { n: gameCount().n } }}
@@ -83,7 +68,7 @@
   <div class="section">
     <h3>{{ 'modes.title' | transloco }}</h3>
     <fl-mode-picker [mode]="mode()" (modeChange)="setMode($event)" />
-    @if (['series', 'king', 'roundRobin', 'cup'].includes(format())) {
+    @if (['king', 'roundRobin', 'cup'].includes(format())) {
       <mat-chip-listbox
         [attr.aria-label]="'tournament.teamSize' | transloco"
         hideSingleSelectionIndicator
@@ -120,16 +105,15 @@
       <div class="teams-head">
         <h3>{{ 'tournament.teams' | transloco }}</h3>
         <span class="team-actions">
-          @if (format() === 'series' && selected().length === 4) {
-            <button matButton (click)="mostEven()">
-              <mat-icon>balance</mat-icon>{{ 'tournament.mostEven' | transloco }}
-            </button>
-          }
+          <button matButton (click)="evenOut()">
+            <mat-icon>balance</mat-icon>{{ 'tournament.mostEven' | transloco }}
+          </button>
           <button matButton (click)="redraw()">
             <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
           </button>
         </span>
       </div>
+      <p class="hint">{{ 'tournament.teamsHint' | transloco }}</p>
       <ol class="teams">
         @for (team of teams(); track $index) {
           <li>{{ teamName(team) }}</li>

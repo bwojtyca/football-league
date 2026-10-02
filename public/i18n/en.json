@@ -191,11 +191,11 @@
     },
     "formatHint": {
       "king": "Winners stay at the table, losers go to the back of the queue. Wins in a row are counted.",
-      "dyp": "Every game draws who plays and with whom: those who played least first, in pairs that have not played together yet. Individual ranking.",
+      "dyp": "Before every game the app draws who plays and with whom: those who played least first, in pairs that have not played together yet. Individual table.",
       "roundRobin": "Fixed teams, everyone plays everyone once. A table and a list of games to play.",
       "cup": "Knockout: the loser is out, the winner plays on to the final. It can start with two groups.",
       "series": "Two teams play best of 3 or 5, swapping colours every game.",
-      "open": "Play as many games as you like, in any lineups of the chosen players. Individual table.",
+      "open": "You pick the players and choose the teams before every game. Play as many games as you like. Individual table.",
       "rotation": "Everyone partners everyone once, with changing opponents. Individual table."
     },
     "name": "Name (optional)",
@@ -203,7 +203,7 @@
     "players": "Players ({n})",
     "playersLabel": "Players",
     "teams": "Teams",
-    "redraw": "Draw again",
+    "redraw": "Draw",
     "benched": "Without a team: {names}",
     "needKing": "At least 4 players are needed (3 for 1 vs 1).",
     "needDyp": "At least 4 players are needed.",
@@ -268,10 +268,11 @@
     "needSeries": "Pick two teams: 2 players for 1 vs 1 or 4 for 2 vs 2.",
     "needOpen": "At least 2 players are needed.",
     "needRotation": "4 to 12 players are needed.",
-    "mostEven": "Most even",
+    "mostEven": "Even out",
     "seriesTo": "Series to {n} wins",
     "seriesWinner": "Series winners: {name}",
-    "startGame": "Start game {n}"
+    "startGame": "Start game {n}",
+    "teamsHint": "Teams are made in the order players are picked: the first with the second, the third with the fourth and so on. You can also draw them or even them out by Elo."
   },
   "timeline": {
     "title": "How it went",
