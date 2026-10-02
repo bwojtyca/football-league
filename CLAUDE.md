@@ -234,6 +234,12 @@ session can pick up where the last one stopped:
 - To do (new, larger): league statistics; play time in player statistics; more statistics from
   the data we have (events with times, positions, modes, tournaments) shown with better charts;
   comparing players (head to head), games and tournaments.
+- (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
+- Deployed to master untested by the full regression (the owner asked to ship before the
+  session ran out). Scenario files in the old session's scratchpad were being updated: tabs
+  are `nav.tabs a` links, "+" is `nav.tabs button.play` then `fl-new-play-sheet button.option`,
+  dialogs come pre-filled (clear inputs with `fill('')`), win by 2 is on by default, round robin
+  and cup need "Everyone", a series starts from "+" → "Seria".
 - To do: update the Playwright scenarios for the new navigation (no `button.fab`: the "+" in
   the bottom bar, then "Mecz"; potato is a sort option, back to players with "Elo"), run them
   all, deploy (rules first if changed).

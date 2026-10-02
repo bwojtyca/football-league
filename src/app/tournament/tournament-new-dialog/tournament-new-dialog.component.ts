@@ -232,6 +232,19 @@ export class TournamentNewDialogComponent {
 
   private _pickedByHand = false;
 
+  /** Picks everyone not picked yet, after those already picked. */
+  protected pickEveryone(): void {
+    this._pickedByHand = true;
+    this._arranged.set(null);
+    const picked = this.selected();
+    this._picked.set([
+      ...picked,
+      ...this.members()
+        .map((player) => player.id)
+        .filter((id) => !picked.includes(id)),
+    ]);
+  }
+
   protected toggle(playerId: string, selected: boolean): void {
     this._pickedByHand = true;
     this._arranged.set(null);

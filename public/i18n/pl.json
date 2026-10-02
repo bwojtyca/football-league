@@ -278,7 +278,8 @@
     "seriesTo": "Seria do {n} wygranych",
     "seriesWinner": "Serię wygrywają: {name}",
     "startGame": "Zacznij mecz {n}",
-    "teamsHint": "Drużyny powstają w kolejności wybierania graczy: pierwszy z drugim, trzeci z czwartym i tak dalej. Możesz też je wylosować albo wyrównać według Elo."
+    "teamsHint": "Drużyny powstają w kolejności wybierania graczy: pierwszy z drugim, trzeci z czwartym i tak dalej. Możesz też je wylosować albo wyrównać według Elo.",
+    "everyone": "Wszyscy"
   },
   "timeline": {
     "title": "Przebieg meczu",

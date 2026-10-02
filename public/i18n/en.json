@@ -278,7 +278,8 @@
     "seriesTo": "Series to {n} wins",
     "seriesWinner": "Series winners: {name}",
     "startGame": "Start game {n}",
-    "teamsHint": "Teams are made in the order players are picked: the first with the second, the third with the fourth and so on. You can also draw them or even them out by Elo."
+    "teamsHint": "Teams are made in the order players are picked: the first with the second, the third with the fourth and so on. You can also draw them or even them out by Elo.",
+    "everyone": "Everyone"
   },
   "timeline": {
     "title": "How it went",

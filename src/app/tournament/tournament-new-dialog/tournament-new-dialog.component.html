@@ -88,7 +88,14 @@
   </div>
 
   <div class="section">
-    <h3>{{ 'tournament.players' | transloco: { n: selected().length } }}</h3>
+    <div class="teams-head">
+      <h3>{{ 'tournament.players' | transloco: { n: selected().length } }}</h3>
+      @if (selected().length < members().length) {
+        <button matButton (click)="pickEveryone()">
+          <mat-icon>done_all</mat-icon>{{ 'tournament.everyone' | transloco }}
+        </button>
+      }
+    </div>
     <mat-chip-listbox multiple [attr.aria-label]="'tournament.playersLabel' | transloco">
       @for (player of members(); track player.id) {
         <mat-chip-option
