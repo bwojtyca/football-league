@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, HostListener, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { interval, map, switchMap } from 'rxjs';
+import { firstValueFrom, interval, map, switchMap } from 'rxjs';
 
 import { leagueOf } from '../../league/league';
 import { LeagueService } from '../../league/league.service';
@@ -18,6 +18,7 @@ import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
 import { cssColor } from '../../shared/css-color';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { LeaveGuarded } from '../../shared/leave-guard';
 import { keepScreenOn } from '../../shared/wake-lock';
 import {
   decidedWinner,
@@ -41,6 +42,7 @@ import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.c
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent } from './finish-panel.component';
+import { openLeaveDialog } from './leave-dialog.component';
 import { PauseOverlayComponent } from './pause-overlay.component';
 
 /** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
@@ -64,7 +66,7 @@ const FINISH_AFTER_MS = 8000;
   templateUrl: './game-detail.component.html',
   styleUrl: './game-detail.component.scss',
 })
-export class GameDetailComponent {
+export class GameDetailComponent implements LeaveGuarded {
   private readonly _gameService = inject(GameService);
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
@@ -238,6 +240,34 @@ export class GameDetailComponent {
     const game = this.game();
     if (game && this.decided()) {
       this._closeDecided(game.id, true);
+    }
+  }
+
+  /** A game whose clock runs: started, not decided, not paused. */
+  private _running(): boolean {
+    const game = this.game();
+    return !!game && !game.end && !game.paused && !game.deleted && !this.decided();
+  }
+
+  /** Leaving a running game asks whether to pause it first. */
+  public canLeave(): boolean | Promise<boolean> {
+    if (!this._running()) {
+      return true;
+    }
+    return firstValueFrom(openLeaveDialog(this._dialog).afterClosed()).then((choice) => {
+      if (choice === 'pause') {
+        this.pause();
+      }
+      return choice === 'pause' || choice === 'leave';
+    });
+  }
+
+  /** Closing the tab or the browser during a running game asks the browser to confirm. */
+  @HostListener('window:beforeunload', ['$event'])
+  protected warnBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this._running()) {
+      event.preventDefault();
+      event.returnValue = '';
     }
   }
 

@@ -153,7 +153,12 @@
       "own": "{name} scores an own goal {from}",
       "swap": "{team} swap positions",
       "none": "Every goal shows up here. Undo a mistake with one tap."
-    }
+    },
+    "leaveTitle": "The game is on",
+    "leaveText": "Stop the clock before you leave? You can finish the game later.",
+    "leavePause": "Pause and leave",
+    "leaveRunning": "Leave, the game goes on",
+    "leaveStay": "Stay"
   },
   "modes": {
     "title": "Mode",

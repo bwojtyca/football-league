@@ -212,13 +212,15 @@ session can pick up where the last one stopped:
 - (Done, checked) "+" opens "What are we playing?" (`league/new-play-sheet.component.ts`):
   a game (teams of the latest game filled in), a series (the new game dialog with `series: true`
   creates a `series` tournament of the two chosen teams and starts game 1) or a tournament.
-- (Done, built, not yet clicked through) Tournament dialog without the series format, open by
+- (Done, checked with `guardF.js`) Tournament dialog without the series format, open by
   default; fixed teams (round robin, cup) made in the order players are picked (1st+2nd,
   3rd+4th...), with "Draw" and "Even out" (Elo: best with weakest); the hints explain open (you
   pick each game's teams) vs draw your partner (the app draws them).
 - (Done) Pause overlay: the "Resume" icon was yellow on yellow (the big icon's style leaked).
-- To do: leaving a running game asks whether to pause it (CanDeactivate on `game/:gameId`:
-  pause and leave / leave / stay), and closing the tab warns (`beforeunload`) while it runs.
+- (Done, checked with `guardF.js`) Leaving a running game asks whether to pause it
+  (`shared/leave-guard.ts` on `game/:gameId`, `leave-dialog.component.ts`: pause and leave /
+  leave / stay), and closing the tab warns (`beforeunload`) while the clock runs. End-to-end
+  scenarios that `page.goto` away from a running game must answer that dialog.
 - To do: edit and delete a tournament after it started (rename, rules for the next games,
   finish, delete with or without its games): needs a rules change (`deleted`, `mode`), tested
   on the emulator first.

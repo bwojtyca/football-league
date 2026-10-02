@@ -153,7 +153,12 @@
       "own": "{name} strzela samobója {from}",
       "swap": "{team} zamieniają pozycje",
       "none": "Tu pojawi się każdy gol. Pomyłkę cofniesz jednym tapnięciem."
-    }
+    },
+    "leaveTitle": "Mecz trwa",
+    "leaveText": "Wstrzymać zegar, zanim wyjdziesz? Mecz dokończysz później.",
+    "leavePause": "Wstrzymaj i wyjdź",
+    "leaveRunning": "Wyjdź, mecz trwa dalej",
+    "leaveStay": "Zostań"
   },
   "modes": {
     "title": "Tryb",

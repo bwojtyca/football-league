@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 
 import { LeagueService } from './league/league.service';
+import { leaveGuard } from './shared/leave-guard';
 
 export const routes: Routes = [
   {
@@ -75,6 +76,7 @@ export const routes: Routes = [
     path: 'game/:gameId',
     loadComponent: () =>
       import('./game/game-detail/game-detail.component').then((m) => m.GameDetailComponent),
+    canDeactivate: [leaveGuard],
   },
   { path: '**', redirectTo: '' },
 ];
