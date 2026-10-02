@@ -56,7 +56,11 @@
     "notFound": "Nie ma takiej ligi.",
     "showMore": "Pokaż więcej",
     "unrated": "jeszcze bez meczów",
-    "tournaments": "Turnieje"
+    "tournaments": "Turnieje",
+    "rankingOf": "Ranking",
+    "players": "Gracze",
+    "duets": "Duety",
+    "duetsHint": "Duety z co najmniej {n} wspólnymi meczami są na górze, według procentu wygranych."
   },
   "addPlayer": {
     "title": "Dodaj gracza",
@@ -76,7 +80,14 @@
     "noGames": "Jeszcze bez meczów w tej lidze.",
     "notFound": "Nie ma takiego gracza.",
     "mostlyDefence": "Głównie w obronie",
-    "mostlyOffence": "Głównie w ataku"
+    "mostlyOffence": "Głównie w ataku",
+    "inDefence": "w obronie ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}})",
+    "inAttack": "w ataku ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}})",
+    "records": "Rekordy",
+    "longestWinStreak": "Najdłuższa seria wygranych",
+    "longestLossStreak": "Najdłuższa seria porażek",
+    "peakRating": "Najwyższy rating",
+    "biggestWin": "Najwyższa wygrana"
   },
   "stats": {
     "goals": "Gole",
@@ -230,6 +241,15 @@
   "today": {
     "title": "Dziś, {date}",
     "playing": "Trwa mecz"
+  },
+  "achievements": {
+    "title": "Osiągnięcia",
+    "shutout": "Do zera",
+    "comeback": "Powrót z {n} goli straty",
+    "streak": "{n} wygranych z rzędu",
+    "milestone": "{n}. mecz",
+    "times": "{n} razy",
+    "locked": "jeszcze nie"
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",

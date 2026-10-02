@@ -1,9 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { TranslocoDecimalPipe } from '@jsverse/transloco-locale';
+import { TranslocoDatePipe, TranslocoDecimalPipe } from '@jsverse/transloco-locale';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { map } from 'rxjs';
@@ -14,6 +15,7 @@ import { GameService } from '../../game/game.service';
 import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { COMEBACK_GOALS, MILESTONE_GAMES, playerRecords, STREAK_WINS } from '../records';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { AvatarComponent } from '../avatar/avatar.component';
@@ -24,6 +26,7 @@ import { START_RATING } from '../rating';
 @Component({
   selector: 'fl-player-page',
   imports: [
+    MatIconModule,
     MatProgressSpinnerModule,
     AvatarComponent,
     BaseChartDirective,
@@ -32,6 +35,7 @@ import { START_RATING } from '../rating';
     GamesStatsComponent,
     RatingChangeComponent,
     TopBarComponent,
+    TranslocoDatePipe,
     TranslocoDecimalPipe,
     TranslocoPipe,
   ],
@@ -82,6 +86,43 @@ export class PlayerPageComponent {
       return null;
     }
     return defence >= offence ? 'player.mostlyDefence' : 'player.mostlyOffence';
+  });
+
+  /** Ratings in defence and in attack (2 vs 2 games), for positions played at least once. */
+  protected readonly positionRatings = computed(() => {
+    const positions = this._gameService.ratings(this.leagueId())?.positions.get(this.playerId());
+    return (['defence', 'offence'] as const)
+      .filter((position) => positions?.[position].games)
+      .map((position) => ({
+        key: position === 'defence' ? 'player.inDefence' : 'player.inAttack',
+        rating: Math.round(positions![position].rating),
+        games: positions![position].games,
+      }));
+  });
+
+  protected readonly records = computed(() => {
+    const games = this._gameService.leagueGames(this.leagueId());
+    const history = this._gameService.ratings(this.leagueId())?.history.get(this.playerId());
+    return games ? playerRecords(this.playerId(), games, history) : null;
+  });
+
+  /** Achievements in display order, earned ones lit. */
+  protected readonly achievements = computed(() => {
+    const earned = this.records()?.achievements;
+    if (!earned) {
+      return [];
+    }
+    return [
+      { id: 'shutout', icon: 'block', ...earned.shutout, params: {} },
+      { id: 'comeback', icon: 'trending_up', ...earned.comeback, params: { n: COMEBACK_GOALS } },
+      { id: 'streak', icon: 'local_fire_department', ...earned.streak, params: { n: STREAK_WINS } },
+      {
+        id: 'milestone',
+        icon: 'military_tech',
+        ...earned.milestone,
+        params: { n: MILESTONE_GAMES },
+      },
+    ];
   });
 
   /** Rating after each game, starting from the initial rating. */

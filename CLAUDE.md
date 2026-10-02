@@ -101,7 +101,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the
   scoring device back to the tournament page, where the next game starts with one tap.
 - `game/game.ts`, `player/player.ts` and `player/rating.ts` hold the pure scoring, ranking and
-  Elo functions.
+  Elo functions; `rating.ts` also rates defence and attack separately (2 vs 2 games only).
+  `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
+  down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
 
 ## Plan (October 2026)
 
@@ -131,6 +133,10 @@ Stages:
    cup (knockout, optionally after two groups) built with brackets-manager and drawn with
    brackets-viewer (loaded on demand from `vendor/`; brackets-manager needs the `events`
    polyfill).
+
+After stage 3 the remaining items of the plan artifact were done too: the "Today" card, the
+most even lineups, the match timeline, pairs ranking, defence/attack ratings, records and
+achievements on the profile. Next: the owner's feedback below.
 
 Owner feedback, to do at the end (after the planned stages):
 - Redesign: the current look feels like a generic generated app. A real redesign comes later;

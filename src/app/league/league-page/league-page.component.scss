@@ -167,3 +167,40 @@
   font-style: normal;
   vertical-align: 2px;
 }
+
+.switch {
+  display: inline-flex;
+  margin: 4px 0 4px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.switch button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 500 0.85rem/1 inherit;
+  cursor: pointer;
+}
+
+.switch button[aria-checked='true'] {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.avatars {
+  display: flex;
+}
+
+.avatars fl-avatar + fl-avatar {
+  margin-left: -8px;
+}
+
+.hint {
+  margin: 8px 0 88px;
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant);
+}

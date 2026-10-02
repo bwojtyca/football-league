@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +15,7 @@ import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-
 import { GameService } from '../../game/game.service';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { rankPlayers } from '../../player/player';
+import { duets } from '../../player/records';
 import { PlayerService } from '../../player/player.service';
 import { PROVISIONAL_GAMES } from '../../player/rating';
 import { FormDotsComponent } from '../../shared/form-dots.component';
@@ -30,6 +32,7 @@ type Tab = 'ranking' | 'games' | 'tournaments';
 @Component({
   selector: 'fl-league-page',
   imports: [
+    DecimalPipe,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -55,6 +58,15 @@ export class LeaguePageComponent {
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
   protected readonly tab = signal<Tab>('ranking');
+  /** The ranking shows players or pairs. */
+  protected readonly rankingOf = signal<'players' | 'duets'>('players');
+  protected readonly minDuetGames = 3;
+  protected readonly duets = computed(() =>
+    duets(this._gameService.leagueGames(this.leagueId()) ?? [], this.minDuetGames).map((duet) => ({
+      ...duet,
+      names: duet.players.map((id) => this._playerService.getPlayerName(id)),
+    })),
+  );
 
   protected readonly leagueId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),

@@ -70,3 +70,76 @@ h2 {
 .empty {
   color: var(--mat-sys-on-surface-variant);
 }
+
+.tiles--positions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.records {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.records div {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.records dt {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.records dd {
+  margin: 0;
+  font: 700 1.3rem/1.2 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.achievements {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.achievements li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface-variant);
+  opacity: 0.6;
+}
+
+.achievements li.earned {
+  opacity: 1;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
+.achievements li.earned mat-icon {
+  color: var(--fl-gold);
+}
+
+.achievements span {
+  display: grid;
+  min-width: 0;
+}
+
+.achievements b {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.achievements small {
+  font-size: 0.75rem;
+}

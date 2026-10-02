@@ -32,6 +32,15 @@ describe('computeRatings', () => {
     expect(changes.has('3')).toBe(false);
   });
 
+  it('rates defence and attack separately in 2 vs 2 games', () => {
+    const game = makeGame({ end: '2017-11-03T10:05:00.000Z', win: 'red' });
+    const { positions } = computeRatings([game]);
+    // a defends and b attacks for red.
+    expect(positions.get('a')?.defence).toEqual({ rating: START_RATING + K_FACTOR / 2, games: 1 });
+    expect(positions.get('a')?.offence).toEqual({ rating: START_RATING, games: 0 });
+    expect(positions.get('d')?.offence.rating).toBe(START_RATING - K_FACTOR / 2);
+  });
+
   it('turns rating gaps into win chances', () => {
     expect(winChance(1500, 1500)).toBe(0.5);
     expect(winChance(1600, 1400)).toBeCloseTo(0.76, 2);

@@ -37,6 +37,16 @@
           <small>{{ 'player.winRate' | transloco }}</small>
         </div>
       </div>
+      @if (positionRatings().length) {
+        <div class="tiles tiles--positions">
+          @for (position of positionRatings(); track position.key) {
+            <div>
+              <b>{{ position.rating }}</b>
+              <small>{{ position.key | transloco: { n: position.games } }}</small>
+            </div>
+          }
+        </div>
+      }
       <div class="form-row"><fl-form [results]="p.form" /></div>
 
       @if (chart(); as data) {
@@ -52,6 +62,56 @@
             ></canvas>
           </div>
         </figure>
+      }
+
+      @if (records(); as records) {
+        <h2>{{ 'player.records' | transloco }}</h2>
+        <dl class="records">
+          <div>
+            <dt>{{ 'player.longestWinStreak' | transloco }}</dt>
+            <dd>{{ records.longestWinStreak }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'player.longestLossStreak' | transloco }}</dt>
+            <dd>{{ records.longestLossStreak }}</dd>
+          </div>
+          @if (records.peakRating) {
+            <div>
+              <dt>{{ 'player.peakRating' | transloco }}</dt>
+              <dd>{{ records.peakRating }}</dd>
+            </div>
+          }
+          @if (records.biggestWin) {
+            <div>
+              <dt>{{ 'player.biggestWin' | transloco }}</dt>
+              <dd>{{ records.biggestWin }}</dd>
+            </div>
+          }
+        </dl>
+
+        <h2>{{ 'achievements.title' | transloco }}</h2>
+        <ul class="achievements">
+          @for (badge of achievements(); track badge.id) {
+            <li [class.earned]="badge.count > 0">
+              <mat-icon aria-hidden="true">{{ badge.icon }}</mat-icon>
+              <span>
+                <b>{{ 'achievements.' + badge.id | transloco: badge.params }}</b>
+                <small>
+                  @if (badge.count > 0) {
+                    @if (badge.count > 1) {
+                      {{ 'achievements.times' | transloco: { n: badge.count } }} ·
+                    }
+                    @if (badge.date; as date) {
+                      {{ date | translocoDate: { dateStyle: 'medium' } }}
+                    }
+                  } @else {
+                    {{ 'achievements.locked' | transloco }}
+                  }
+                </small>
+              </span>
+            </li>
+          }
+        </ul>
       }
 
       <h2>{{ 'player.stats' | transloco }}</h2>

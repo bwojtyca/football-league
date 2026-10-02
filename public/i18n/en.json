@@ -56,7 +56,11 @@
     "notFound": "This league does not exist.",
     "showMore": "Show more",
     "unrated": "no games yet",
-    "tournaments": "Tournaments"
+    "tournaments": "Tournaments",
+    "rankingOf": "Ranking",
+    "players": "Players",
+    "duets": "Pairs",
+    "duetsHint": "Pairs with at least {n} games together come first, by win rate."
   },
   "addPlayer": {
     "title": "Add player",
@@ -76,7 +80,14 @@
     "noGames": "No games in this league yet.",
     "notFound": "Player not found.",
     "mostlyDefence": "Mostly in defence",
-    "mostlyOffence": "Mostly in attack"
+    "mostlyOffence": "Mostly in attack",
+    "inDefence": "in defence ({n, plural, one {# game} other {# games}})",
+    "inAttack": "in attack ({n, plural, one {# game} other {# games}})",
+    "records": "Records",
+    "longestWinStreak": "Longest winning streak",
+    "longestLossStreak": "Longest losing streak",
+    "peakRating": "Best rating",
+    "biggestWin": "Biggest win"
   },
   "stats": {
     "goals": "Goals",
@@ -230,6 +241,15 @@
   "today": {
     "title": "Today, {date}",
     "playing": "Game on"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "shutout": "Clean sheet",
+    "comeback": "Came back from {n} down",
+    "streak": "{n} wins in a row",
+    "milestone": "Game number {n}",
+    "times": "{n} times",
+    "locked": "not yet"
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
