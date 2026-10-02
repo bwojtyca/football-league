@@ -1,17 +1,19 @@
 import { Component, inject, input } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { openLeagueSwitcher } from '../league/league-switcher.component';
 
-import { LANGUAGES } from '../i18n/transloco';
-
-/** Page header: optional back link, title, page actions and the app menu. */
+/**
+ * Page header: a back link or the league switcher, the title and the page's actions. The
+ * sections of a league are reached from the bottom navigation.
+ */
 @Component({
   selector: 'fl-top-bar',
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, RouterLink, TranslocoPipe],
+  imports: [MatButtonModule, MatIconModule, RouterLink, TranslocoPipe],
   template: `
     <header class="bar">
       @if (back(); as back) {
@@ -19,33 +21,19 @@ import { LANGUAGES } from '../i18n/transloco';
           <mat-icon>arrow_back</mat-icon>
         </a>
       }
-      <h1>{{ title() }}</h1>
+      @if (switcher() !== null) {
+        <button
+          class="title switch"
+          (click)="switchLeague()"
+          [attr.aria-label]="'switcher.open' | transloco: { name: title() }"
+        >
+          <h1>{{ title() }}</h1>
+          <mat-icon aria-hidden="true">expand_more</mat-icon>
+        </button>
+      } @else {
+        <h1 class="title">{{ title() }}</h1>
+      }
       <ng-content />
-      <button
-        matIconButton
-        [matMenuTriggerFor]="menu"
-        [attr.aria-label]="'common.menu' | transloco"
-      >
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <a mat-menu-item routerLink="/leagues">
-          <mat-icon>emoji_events</mat-icon>{{ 'menu.leagues' | transloco }}
-        </a>
-        <a mat-menu-item routerLink="/ranking">
-          <mat-icon>leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
-        </a>
-        @for (option of languages; track option.lang) {
-          <button mat-menu-item (click)="transloco.setActiveLang(option.lang)">
-            <mat-icon>{{
-              transloco.activeLang() === option.lang
-                ? 'radio_button_checked'
-                : 'radio_button_unchecked'
-            }}</mat-icon>
-            {{ option.label }}
-          </button>
-        }
-      </mat-menu>
     </header>
   `,
   styles: `
@@ -53,13 +41,15 @@ import { LANGUAGES } from '../i18n/transloco';
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 8px 4px 8px 8px;
+      padding: 8px 8px 8px 8px;
       min-height: 56px;
       box-sizing: border-box;
     }
-    h1 {
+    .title {
       flex: 1;
       min-width: 0;
+    }
+    h1 {
       margin: 0 8px;
       padding-right: 2px;
       font: italic 800 1.65rem/1.1 var(--fl-display);
@@ -68,14 +58,36 @@ import { LANGUAGES } from '../i18n/transloco';
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .switch {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .switch h1 {
+      margin-right: 2px;
+    }
+    .switch mat-icon {
+      flex: none;
+      color: var(--fl-ink-2);
+    }
   `,
 })
 export class TopBarComponent {
-  protected readonly transloco = inject(TranslocoService);
+  private readonly _sheet = inject(MatBottomSheet);
 
   public readonly title = input.required<string>();
   /** Route of the back arrow; no arrow when empty. */
-  public readonly back = input<string | null>(null);
+  public readonly back = input<string | unknown[] | null>(null);
+  /** The current league: the title then opens the list of leagues. */
+  public readonly switcher = input<string | null>(null);
 
-  protected readonly languages = LANGUAGES;
+  protected switchLeague(): void {
+    openLeagueSwitcher(this._sheet, this.switcher());
+  }
 }

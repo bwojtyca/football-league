@@ -123,7 +123,9 @@
     "chance": "Win chance",
     "evenest": "Most even: {red} vs {blue} ({chance})",
     "useSuggestion": "Use",
-    "rules": "Rules"
+    "rules": "Rules",
+    "seriesTitle": "New series",
+    "startSeries": "Start the series"
   },
   "game": {
     "ownGoal": "own goal",
@@ -211,7 +213,7 @@
     "finish": "End tournament",
     "finishConfirm": "End the tournament? No more games can be played in it afterwards.",
     "ended": "The tournament is over.",
-    "winner": "Winner: {name}",
+    "winner": "{n, plural, =1 {Winner} other {Winners}}: {name}",
     "playing": "Playing now",
     "next": "Next game",
     "vs": "vs",
@@ -342,5 +344,31 @@
     "bracket": "Could not draw the bracket. Check your connection and reload the page.",
     "league": "Could not save the league settings. Check your connection and try again.",
     "pause": "Could not pause or resume the game. Check your connection and try again."
+  },
+  "nav": {
+    "label": "League navigation",
+    "ranking": "Ranking",
+    "games": "Games",
+    "tournaments": "Tournaments",
+    "more": "More",
+    "new": "New play"
+  },
+  "switcher": {
+    "title": "Leagues",
+    "open": "{name}: switch league",
+    "manage": "All leagues and a new one"
+  },
+  "play": {
+    "title": "What are we playing?",
+    "game": "Game",
+    "gameHint": "One game, the same teams as last time.",
+    "series": "Series",
+    "seriesHint": "The same teams to 2 or 3 wins, swapping colours.",
+    "tournament": "Tournament",
+    "tournamentHint": "Open, king of the table, draw your partner, round robin, cup."
+  },
+  "more": {
+    "language": "Language",
+    "league": "League settings"
   }
 }

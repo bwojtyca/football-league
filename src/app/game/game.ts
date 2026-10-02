@@ -19,15 +19,19 @@ export interface GameMode {
   minutes?: number;
 }
 
-/** The usual game: to 8, no lead needed, no clock. */
+/** Games without a mode (2017 and early 2026): to 8, no lead needed, no clock. */
 export const DEFAULT_MODE: GameMode = { target: TARGET_SCORE };
+
+/** A new game unless the players choose otherwise: to 8 with a two-goal lead. */
+export const NEW_GAME_MODE: GameMode = { target: TARGET_SCORE, winBy: 2 };
 
 /** Targets and time limits offered when starting a game. */
 export const TARGETS = [5, 8, 10] as const;
 export const MINUTES = [3, 5, 7, 10] as const;
 
-export function isDefaultMode(mode: GameMode): boolean {
-  return mode.target === TARGET_SCORE && (mode.winBy ?? 1) === 1 && !mode.minutes;
+/** Whether a game's rules go without saying: no mode at all, or those of a new game. */
+export function isDefaultMode(mode: GameMode | undefined): boolean {
+  return !mode || (mode.target === TARGET_SCORE && mode.winBy === 2 && !mode.max && !mode.minutes);
 }
 
 /** A best-of series between the same two teams, which swap colours after each game. */

@@ -6,6 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { Game } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
+import { places } from '../../shared/places';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { RankedPlayer } from '../player';
@@ -18,8 +19,8 @@ import { duets } from '../records';
 const DUET_GAMES = 3;
 
 /**
- * Players by Elo or by win rate, or pairs by win rate. Players with fewer than `minGames`
- * games are listed apart, unranked.
+ * Players by Elo, win rate or potato points, or pairs by win rate. Players with fewer than
+ * `minGames` games are listed apart, unranked. Equal numbers share a place.
  */
 @Component({
   selector: 'fl-ranking',
@@ -47,8 +48,9 @@ export class RankingComponent {
   public readonly minGames = input(0);
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
-  protected readonly view = signal<'players' | 'duets' | 'potato'>('players');
-  protected readonly sortBy = signal<'elo' | 'winRate'>('elo');
+  /** Who is ranked, and (players) by what: Elo, win rate or potato points. */
+  protected readonly view = signal<'players' | 'duets'>('players');
+  protected readonly sortBy = signal<'elo' | 'winRate' | 'potato'>('elo');
 
   private readonly _threshold = computed(() => Math.max(1, this.minGames()));
 
@@ -59,6 +61,15 @@ export class RankingComponent {
       ? ranked
       : [...ranked].sort((a, b) => b.winRatio - a.winRatio || b.games - a.games);
   });
+
+  /** Places of the ranked players, shared when the shown number is the same. */
+  protected readonly rankedPlaces = computed(() =>
+    places(this.ranked(), (a, b) =>
+      this.sortBy() === 'elo'
+        ? a.rating === b.rating
+        : Math.round(a.winRatio) === Math.round(b.winRatio),
+    ),
+  );
 
   /** Players below the threshold, most games first. */
   protected readonly others = computed(() =>
@@ -76,11 +87,18 @@ export class RankingComponent {
     })),
   );
 
+  protected readonly potatoPlaces = computed(() =>
+    places(this.potatoes(), (a, b) => a.points === b.points),
+  );
+
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));
   protected readonly duets = computed(() =>
     duets(this.games(), this.duetGames()).map((duet) => ({
       ...duet,
       names: duet.players.map((id) => this._playerService.getPlayerName(id)),
     })),
+  );
+  protected readonly duetPlaces = computed(() =>
+    places(this.duets(), (a, b) => Math.round(a.winRatio) === Math.round(b.winRatio)),
   );
 }

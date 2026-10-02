@@ -5,38 +5,6 @@
   margin: 8px 0 4px;
 }
 
-/* A segmented switch: the chosen segment is black ink. */
-.switch {
-  display: inline-flex;
-  padding: 2px;
-  border: 1px solid var(--fl-line);
-  border-radius: 10px;
-  background: var(--fl-card);
-}
-
-.switch button {
-  min-height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--fl-ink-2);
-  font: 700 0.95rem/1 var(--fl-display);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.switch button[aria-checked='true'] {
-  background: var(--fl-ink);
-  color: var(--fl-paper);
-}
-
-.switch button:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
 .ranking {
   list-style: none;
   margin: 0;

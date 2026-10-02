@@ -1,117 +1,38 @@
 @let current = league();
-<fl-top-bar [title]="current?.name ?? ''" back="/leagues">
-  @if (current) {
-    <a
+<fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()">
+  @if (current && !current.archived) {
+    <button
       matIconButton
-      [routerLink]="['/l', current.id, 'settings']"
-      [attr.aria-label]="'settings.title' | transloco"
+      (click)="addPlayer()"
+      [attr.aria-label]="'league.addPlayer' | transloco"
+      [matTooltip]="'league.addPlayer' | transloco"
     >
-      <mat-icon>settings</mat-icon>
-    </a>
+      <mat-icon>person_add</mat-icon>
+    </button>
   }
 </fl-top-bar>
 
 <main class="page">
-  @if (current === null) {
-    <p class="empty">{{ 'league.notFound' | transloco }}</p>
-  } @else if (current?.deleted) {
-    <p class="note">{{ 'league.deletedNote' | transloco }}</p>
-    <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
-  } @else if (!current || !ranking()) {
+  @if (!current || !ranking()) {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   } @else {
     @if (current.archived) {
       <p class="note">
         {{ 'league.lockedNote' | transloco }}
-        <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
+        <a [routerLink]="['/l', current.id, 'more']">{{ 'settings.title' | transloco }}</a>
       </p>
-    }
-
-    @if (!current.archived) {
+    } @else {
       <fl-today-card [leagueId]="current.id" />
     }
 
-    <div class="tabs" role="tablist">
-      <button role="tab" [attr.aria-selected]="tab() === 'ranking'" (click)="tab.set('ranking')">
-        {{ 'league.ranking' | transloco }}
-      </button>
-      <button role="tab" [attr.aria-selected]="tab() === 'games'" (click)="tab.set('games')">
-        {{ 'league.games' | transloco }}
-      </button>
-      <button
-        role="tab"
-        [attr.aria-selected]="tab() === 'tournaments'"
-        (click)="tab.set('tournaments')"
-      >
-        {{ 'league.tournaments' | transloco }}
-      </button>
-      @if (!current.archived) {
-        <button
-          matIconButton
-          class="add"
-          (click)="addPlayer()"
-          [attr.aria-label]="'league.addPlayer' | transloco"
-          [matTooltip]="'league.addPlayer' | transloco"
-        >
-          <mat-icon>person_add</mat-icon>
-        </button>
-      }
-    </div>
-
-    @if (tab() === 'ranking') {
-      @if (!canPlay() && !current.archived) {
-        <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
-      }
-      <fl-ranking
-        [players]="ranking()!"
-        [games]="games()"
-        [minGames]="current.minGames ?? 0"
-        [playerLink]="playerLink"
-      />
-    } @else if (tab() === 'games') {
-      <fl-game-list [leagueId]="current.id" [pageSize]="30" />
-    } @else {
-      @if (!current.archived) {
-        <button
-          matButton="tonal"
-          class="new-tournament"
-          (click)="newTournament()"
-          [disabled]="!canPlay()"
-        >
-          <mat-icon>emoji_events</mat-icon>{{ 'tournament.new' | transloco }}
-        </button>
-      }
-      <ul class="tournaments">
-        @for (tournament of tournaments(); track tournament.id) {
-          <li>
-            <a
-              [routerLink]="['/l', current.id, 't', tournament.id]"
-              class="tournament"
-              [class.running]="!tournament.end"
-            >
-              <span class="name">
-                {{ tournament.name }}
-                @if (!tournament.end) {
-                  <em class="tag">{{ 'tournament.running' | transloco }}</em>
-                }
-              </span>
-              <span class="meta">
-                {{ 'tournament.format.' + tournament.format | transloco }} ·
-                {{ 'count.games' | transloco: { n: tournament.games } }}
-              </span>
-              <mat-icon aria-hidden="true">chevron_right</mat-icon>
-            </a>
-          </li>
-        } @empty {
-          <li class="empty">{{ 'tournament.none' | transloco }}</li>
-        }
-      </ul>
+    @if (!canPlay() && !current.archived) {
+      <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
     }
-
-    @if (!current.archived) {
-      <button matFab extended class="fab" (click)="newGame()" [disabled]="!canPlay()">
-        <mat-icon>add</mat-icon>{{ 'league.newGame' | transloco }}
-      </button>
-    }
+    <fl-ranking
+      [players]="ranking()!"
+      [games]="games()"
+      [minGames]="current.minGames ?? 0"
+      [playerLink]="playerLink"
+    />
   }
 </main>

@@ -28,9 +28,12 @@ import { TeamColor } from '../game';
         </button>
       }
       <button matButton="filled" class="fl-cta" (click)="next.emit()">
-        <svg class="countdown" viewBox="0 0 20 20" aria-hidden="true">
-          <circle cx="10" cy="10" r="8" />
-        </svg>
+        <mat-icon class="countdown" aria-hidden="true">
+          <svg viewBox="0 0 20 20">
+            <circle class="track" cx="10" cy="10" r="8" />
+            <circle class="fill" cx="10" cy="10" r="8" />
+          </svg>
+        </mat-icon>
         {{ 'game.next' | transloco }}
       </button>
     </div>

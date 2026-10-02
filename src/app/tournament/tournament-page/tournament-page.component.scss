@@ -175,7 +175,7 @@ ol.people li.empty::before {
   color: var(--fl-ink-2);
 }
 
-.table tbody tr:first-child .name {
+.table tr.first .name {
   box-shadow: inset 4px 0 0 var(--fl-ball);
   padding-left: 10px;
 }

@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
-import { GameMode, Lineup, lineupPlayers } from '../../game/game';
+import { GameMode, Lineup, lineupPlayers, NEW_GAME_MODE } from '../../game/game';
 import { ModePickerComponent } from '../../game/mode/mode-picker.component';
 import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
@@ -76,7 +76,7 @@ export class TournamentNewDialogComponent {
   protected readonly format = signal<TournamentFormat>('series');
   protected readonly name = signal('');
   /** How the games are played; king of the table plays short games by default. */
-  protected readonly mode = signal<GameMode>({ target: 8 });
+  protected readonly mode = signal<GameMode>(NEW_GAME_MODE);
   private _modeChosen = false;
   protected readonly teamSize = signal(2);
   /** Cup: groups before the knockout stage (0 or 2). */
@@ -193,7 +193,7 @@ export class TournamentNewDialogComponent {
     const wasSeries = this.format() === 'series';
     this.format.set(format);
     if (!this._modeChosen) {
-      this.mode.set({ target: format === 'king' ? 5 : 8 });
+      this.mode.set({ ...NEW_GAME_MODE, target: format === 'king' ? 5 : NEW_GAME_MODE.target });
     }
     // A series is picked player by player; the others start with everyone.
     if (wasSeries !== (format === 'series') && !this._pickedByHand) {

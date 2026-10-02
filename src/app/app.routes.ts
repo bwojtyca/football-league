@@ -19,28 +19,47 @@ export const routes: Routes = [
       import('./league/leagues/leagues.component').then((m) => m.LeaguesComponent),
   },
   {
+    // A league's pages share the bottom navigation.
     path: 'l/:leagueId',
     loadComponent: () =>
-      import('./league/league-page/league-page.component').then((m) => m.LeaguePageComponent),
-  },
-  {
-    path: 'l/:leagueId/settings',
-    loadComponent: () =>
-      import('./league/league-settings/league-settings.component').then(
-        (m) => m.LeagueSettingsComponent,
-      ),
-  },
-  {
-    path: 'l/:leagueId/player/:playerId',
-    loadComponent: () =>
-      import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
-  },
-  {
-    path: 'l/:leagueId/t/:tournamentId',
-    loadComponent: () =>
-      import('./tournament/tournament-page/tournament-page.component').then(
-        (m) => m.TournamentPageComponent,
-      ),
+      import('./league/league-layout.component').then((m) => m.LeagueLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./league/league-page/league-page.component').then((m) => m.LeaguePageComponent),
+      },
+      {
+        path: 'games',
+        loadComponent: () =>
+          import('./league/league-games.component').then((m) => m.LeagueGamesComponent),
+      },
+      {
+        path: 'tournaments',
+        loadComponent: () =>
+          import('./league/league-tournaments.component').then((m) => m.LeagueTournamentsComponent),
+      },
+      {
+        path: 'more',
+        loadComponent: () =>
+          import('./league/league-settings/league-settings.component').then(
+            (m) => m.LeagueSettingsComponent,
+          ),
+      },
+      { path: 'settings', redirectTo: 'more' },
+      {
+        path: 'player/:playerId',
+        loadComponent: () =>
+          import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
+      },
+      {
+        path: 't/:tournamentId',
+        loadComponent: () =>
+          import('./tournament/tournament-page/tournament-page.component').then(
+            (m) => m.TournamentPageComponent,
+          ),
+      },
+    ],
   },
   {
     path: 'ranking',

@@ -10,6 +10,7 @@ import {
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -21,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { take } from 'rxjs';
 
 import { LeagueService } from '../../../league/league.service';
@@ -29,8 +30,9 @@ import { Notifier } from '../../../notifier';
 import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
+import { TournamentService } from '../../../tournament/tournament.service';
 import { START_RATING, winChance } from '../../../player/rating';
-import { Game, GameMode, Lineup, modeOf, TEAM_COLORS, TeamColor } from '../../game';
+import { Game, GameMode, Lineup, NEW_GAME_MODE, TEAM_COLORS, TeamColor } from '../../game';
 import { GameService } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
 import { ModeLabelComponent } from '../../mode/mode-label.component';
@@ -44,6 +46,8 @@ export interface GameNewDialogData {
   tournamentId?: string;
   playerIds?: string[];
   mode?: GameMode;
+  /** Starts a series (a tournament of two teams, best of 3 or 5) with its first game. */
+  series?: boolean;
 }
 
 /** An autocomplete holds the typed text until a player is picked. */
@@ -97,6 +101,7 @@ export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
     MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatChipsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -119,6 +124,8 @@ export class GameNewDialogComponent {
   private readonly _notifier = inject(Notifier);
   private readonly _dialogRef = inject(MatDialogRef<GameNewDialogComponent>);
   private readonly _data = inject<GameNewDialogData>(MAT_DIALOG_DATA);
+  private readonly _tournamentService = inject(TournamentService);
+  private readonly _transloco = inject(TranslocoService);
 
   protected readonly colors = TEAM_COLORS;
   protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
@@ -126,8 +133,12 @@ export class GameNewDialogComponent {
 
   /** How the game is played; a rematch keeps the rules of the previous game. */
   protected readonly mode = signal<GameMode>({
-    ...(this._data.mode ?? modeOf(this._data.previousGame ?? {})),
+    ...(this._data.mode ?? this._data.previousGame?.mode ?? NEW_GAME_MODE),
   });
+
+  /** A series of games between these two teams instead of a single game. */
+  protected readonly series = !!this._data.series;
+  protected readonly bestOf = signal(3);
 
   /** Who plays with whom, once both teams are picked. */
   protected readonly lineupNames = computed(() => {
@@ -302,18 +313,35 @@ export class GameNewDialogComponent {
       return;
     }
 
+    const tournament = this.series ? this._createSeries(red, blue) : this._data.tournamentId;
     const { id, saved } = this._gameService.createGame(
       this._data.leagueId,
       red,
       blue,
       this.mode(),
-      {
-        tournament: this._data.tournamentId,
-      },
+      { tournament },
     );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);
+  }
+
+  /** The series as a tournament of the two teams; its first game is played at once. */
+  private _createSeries(red: Lineup, blue: Lineup): string {
+    const lang = this._transloco.getActiveLang() === 'pl' ? 'pl-PL' : 'en-GB';
+    const date = new Date().toLocaleDateString(lang, { day: 'numeric', month: 'short' });
+    const { id, saved } = this._tournamentService.create({
+      league: this._data.leagueId,
+      name: `${this._transloco.translate('tournament.format.series')}, ${date}`,
+      format: 'series',
+      mode: this.mode(),
+      teamSize: red.defence === red.offence && blue.defence === blue.offence ? 1 : 2,
+      entries: [],
+      teams: [red, blue],
+      bestOf: this.bestOf(),
+    });
+    saved.catch((error) => this._notifier.error('error.newTournament', error));
+    return id;
   }
 
   private _lineup(color: TeamColor): Lineup | undefined {

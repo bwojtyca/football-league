@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ 'newGame.title' | transloco }}</h2>
+<h2 mat-dialog-title>{{ (series ? 'newGame.seriesTitle' : 'newGame.title') | transloco }}</h2>
 
 <mat-dialog-content>
   @if (players(); as players) {
@@ -72,6 +72,22 @@
       <section class="rules">
         <h3 class="fl-kicker">{{ 'newGame.rules' | transloco }}</h3>
         <fl-mode-picker [(mode)]="mode" />
+        @if (series) {
+          <mat-chip-listbox
+            class="best-of"
+            [attr.aria-label]="'tournament.bestOf' | transloco"
+            hideSingleSelectionIndicator
+          >
+            @for (option of [3, 5]; track option) {
+              <mat-chip-option
+                [selected]="bestOf() === option"
+                [selectable]="bestOf() !== option"
+                (selectionChange)="$event.isUserInput && $event.selected && bestOf.set(option)"
+                >{{ 'tournament.bestOfOption' | transloco: { n: option } }}</mat-chip-option
+              >
+            }
+          </mat-chip-listbox>
+        }
       </section>
 
       <section class="summary" aria-live="polite">
@@ -129,6 +145,6 @@
     (click)="startGame()"
     [disabled]="(players()?.length ?? 0) < 2"
   >
-    {{ 'newGame.start' | transloco }}
+    {{ (series ? 'newGame.startSeries' : 'newGame.start') | transloco }}
   </button>
 </mat-dialog-actions>

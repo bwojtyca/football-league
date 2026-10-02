@@ -10,12 +10,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
+import { LanguageSwitchComponent } from '../../shared/language-switch.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { League } from '../league';
 import { LeagueService } from '../league.service';
@@ -24,8 +25,8 @@ import { LeagueService } from '../league.service';
 const MIN_GAMES = [0, 3, 5, 10, 20, 50];
 
 /**
- * League settings. Without sign-in anyone may change them; a league moderator comes with
- * sign-in later.
+ * "More": the app's language, links to all leagues and the overall ranking, and the league
+ * settings. Without sign-in anyone may change them; a league moderator comes with sign-in.
  */
 @Component({
   selector: 'fl-league-settings',
@@ -39,18 +40,36 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSlideToggleModule,
+    RouterLink,
+    LanguageSwitchComponent,
     TopBarComponent,
     TranslocoPipe,
   ],
   template: `
     @let current = league();
-    <fl-top-bar [title]="'settings.title' | transloco" [back]="'/l/' + leagueId()" />
+    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
     <main class="page">
       @if (current === null) {
         <p class="empty">{{ 'league.notFound' | transloco }}</p>
       } @else if (!current) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
+        <section>
+          <h2>{{ 'more.language' | transloco }}</h2>
+          <fl-language-switch />
+        </section>
+
+        <section class="links">
+          <a routerLink="/ranking"
+            ><mat-icon aria-hidden="true">leaderboard</mat-icon
+            >{{ 'ranking.global' | transloco }}</a
+          >
+          <a routerLink="/leagues"
+            ><mat-icon aria-hidden="true">list</mat-icon>{{ 'switcher.manage' | transloco }}</a
+          >
+        </section>
+
+        <h2 class="fl-kicker group">{{ 'more.league' | transloco }}</h2>
         <section>
           <mat-form-field appearance="outline" class="full">
             <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
@@ -145,6 +164,24 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
     }
     .full {
       width: 100%;
+    }
+    .group {
+      margin: 8px 0 12px;
+    }
+    .links {
+      display: grid;
+    }
+    .links a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .links mat-icon {
+      color: var(--fl-ink-2);
     }
     .row {
       display: flex;

@@ -23,7 +23,9 @@
       <p class="note">
         {{ 'tournament.ended' | transloco }}
         @if (winner(); as winner) {
-          <b>{{ 'tournament.winner' | transloco: { name: winner } }}</b>
+          <b>{{
+            'tournament.winner' | transloco: { name: winner.join(', '), n: winner.length }
+          }}</b>
         }
       </p>
     }
@@ -308,9 +310,9 @@
       </tr>
     </thead>
     <tbody>
-      @for (row of rows; track row.team; let i = $index) {
-        <tr>
-          <td>{{ i + 1 }}</td>
+      @for (row of rows; track row.team) {
+        <tr [class.first]="row.place === 1 && row.games">
+          <td>{{ row.place }}</td>
           <th scope="row" class="name">{{ teamName(row.team) }}</th>
           <td>{{ row.games }}</td>
           <td>
@@ -358,9 +360,9 @@
       </tr>
     </thead>
     <tbody>
-      @for (row of standings(); track row.player; let i = $index) {
-        <tr>
-          <td>{{ i + 1 }}</td>
+      @for (row of standings(); track row.player) {
+        <tr [class.first]="row.place === 1 && row.games">
+          <td>{{ row.place }}</td>
           <th scope="row" class="name">{{ name(row.player) }}</th>
           <td>{{ row.games }}</td>
           <td>

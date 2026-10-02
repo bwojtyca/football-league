@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,22 +9,16 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
-import { GameListComponent } from '../../game/game-list/game-list.component';
-import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-dialog.component';
 import { GameService } from '../../game/game.service';
 import { rankPlayers } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { RankingComponent } from '../../player/ranking/ranking.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
-import { openTournamentNewDialog } from '../../tournament/tournament-new-dialog/tournament-new-dialog.component';
-import { TournamentService } from '../../tournament/tournament.service';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { TodayCardComponent } from '../today-card.component';
-import { Notifier } from '../../notifier';
 import { LeagueService } from '../league.service';
 
-type Tab = 'ranking' | 'games' | 'tournaments';
-
+/** A league's home: today's games and the ranking. */
 @Component({
   selector: 'fl-league-page',
   imports: [
@@ -33,7 +27,6 @@ type Tab = 'ranking' | 'games' | 'tournaments';
     MatProgressSpinnerModule,
     MatTooltipModule,
     RouterLink,
-    GameListComponent,
     RankingComponent,
     TodayCardComponent,
     TopBarComponent,
@@ -47,10 +40,7 @@ export class LeaguePageComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _dialog = inject(MatDialog);
-  private readonly _notifier = inject(Notifier);
-  private readonly _tournamentService = inject(TournamentService);
 
-  protected readonly tab = signal<Tab>('ranking');
   protected readonly leagueId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),
     { initialValue: '' },
@@ -75,46 +65,13 @@ export class LeaguePageComponent {
     );
   });
 
-  protected readonly tournaments = computed(() =>
-    this._tournamentService.leagueTournaments(this.leagueId())?.map((tournament) => ({
-      ...tournament,
-      games: this._gameService.tournamentGames(this.leagueId(), tournament.id)?.length ?? 0,
-    })),
-  );
-
   protected readonly games = computed(() => this._gameService.leagueGames(this.leagueId()) ?? []);
 
   protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
 
   protected readonly canPlay = computed(() => (this.league()?.players.length ?? 0) >= 2);
 
-  constructor() {
-    effect(() => {
-      const league = this.league();
-      if (league && !league.deleted) {
-        this._leagueService.lastLeague = this.leagueId();
-      } else if (league !== undefined && this._leagueService.lastLeague === this.leagueId()) {
-        // A remembered league that is gone (or deleted) no longer opens on start.
-        this._leagueService.lastLeague = '';
-      }
-    });
-  }
-
-  protected restore(): void {
-    this._leagueService
-      .restore(this.leagueId())
-      .catch((error) => this._notifier.error('error.league', error));
-  }
-
   protected addPlayer(): void {
     openAddPlayerDialog(this._dialog, { leagueId: this.leagueId() });
-  }
-
-  protected newTournament(): void {
-    openTournamentNewDialog(this._dialog, { leagueId: this.leagueId() });
-  }
-
-  protected newGame(): void {
-    openNewGameDialog(this._dialog, { leagueId: this.leagueId() });
   }
 }

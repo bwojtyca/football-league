@@ -82,10 +82,10 @@ h2 {
 }
 
 /* "Next" fills up over the time the panel waits before moving on by itself. */
-.countdown {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
+.countdown svg {
+  display: block;
+  width: 100%;
+  height: 100%;
   transform: rotate(-90deg);
 }
 
@@ -93,6 +93,13 @@ h2 {
   fill: none;
   stroke: currentColor;
   stroke-width: 3.5;
+}
+
+.countdown .track {
+  opacity: 0.25;
+}
+
+.countdown .fill {
   stroke-dasharray: 50.3;
   stroke-dashoffset: 50.3;
   animation: countdown 8s linear forwards;

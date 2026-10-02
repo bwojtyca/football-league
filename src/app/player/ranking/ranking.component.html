@@ -1,5 +1,5 @@
 <div class="controls">
-  <div class="switch" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
+  <div class="fl-switch" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
     <button role="radio" [attr.aria-checked]="view() === 'players'" (click)="view.set('players')">
       {{ 'league.players' | transloco }}
     </button>
@@ -11,17 +11,9 @@
     >
       {{ 'league.duets' | transloco }}
     </button>
-    <button
-      role="radio"
-      [attr.aria-checked]="view() === 'potato'"
-      (click)="view.set('potato')"
-      [disabled]="!potatoes().length"
-    >
-      🥔 {{ 'potato.title' | transloco }}
-    </button>
   </div>
   @if (view() === 'players') {
-    <div class="switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
+    <div class="fl-switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
       <button role="radio" [attr.aria-checked]="sortBy() === 'elo'" (click)="sortBy.set('elo')">
         Elo
       </button>
@@ -32,16 +24,24 @@
       >
         {{ 'ranking.winRate' | transloco }}
       </button>
+      <button
+        role="radio"
+        [attr.aria-checked]="sortBy() === 'potato'"
+        (click)="sortBy.set('potato')"
+        [disabled]="!potatoes().length"
+      >
+        🥔 {{ 'potato.title' | transloco }}
+      </button>
     </div>
   }
 </div>
 
-@if (view() === 'potato') {
+@if (view() === 'players' && sortBy() === 'potato') {
   <ol class="ranking">
     @for (row of potatoes(); track row.player; let i = $index) {
       <li>
         <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
-          <span class="pos">{{ i + 1 }}</span>
+          <span class="pos">{{ potatoPlaces()[i] }}</span>
           <fl-avatar [playerId]="row.player" [name]="row.name" [size]="36" />
           <span class="who">
             <b
@@ -80,7 +80,7 @@
   <ol class="ranking">
     @for (duet of duets(); track duet.players.join(); let i = $index) {
       <li class="row" [class.unrated]="duet.games < duetGames()">
-        <span class="pos">{{ duet.games < duetGames() ? '' : i + 1 }}</span>
+        <span class="pos">{{ duet.games < duetGames() ? '' : duetPlaces()[i] }}</span>
         <span class="avatars">
           <fl-avatar [playerId]="duet.players[0]" [name]="duet.names[0]" [size]="28" />
           <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
@@ -100,7 +100,9 @@
   <ol class="ranking">
     @for (player of ranked(); track player.id; let i = $index) {
       <li>
-        <ng-container *ngTemplateOutlet="row; context: { $implicit: player, position: i + 1 }" />
+        <ng-container
+          *ngTemplateOutlet="row; context: { $implicit: player, position: rankedPlaces()[i] }"
+        />
       </li>
     }
   </ol>

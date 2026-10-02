@@ -3,7 +3,7 @@ import { InMemoryDatabase } from 'brackets-memory-db';
 import { Id, Match, MatchGame, Participant, Stage, Status } from 'brackets-model';
 
 import { Game, sideOf, TeamColor, teamScore } from '../game/game';
-import { TeamStanding, Tournament } from './tournament';
+import { compareTeams, TeamStanding, Tournament, withPlaces } from './tournament';
 
 /** A cup game whose teams are known: by team index, `red` being the first opponent. */
 export interface CupMatch {
@@ -214,7 +214,7 @@ export async function cupState(tournament: Tournament, games: Game[]): Promise<C
   };
 }
 
-/** Group tables from the group matches: wins, then goal difference, then goals scored. */
+/** Group tables from the group matches, in the order of `compareTeams`. */
 async function groupTables(
   groupIds: Id[],
   matches: Match[],
@@ -226,7 +226,7 @@ async function groupTables(
     const rows = new Map<number, TeamStanding>();
     const row = (team: number) => {
       if (!rows.has(team)) {
-        rows.set(team, { team, games: 0, wins: 0, goalsFor: 0, goalsAgainst: 0 });
+        rows.set(team, { team, place: 0, games: 0, wins: 0, goalsFor: 0, goalsAgainst: 0 });
       }
       return rows.get(team)!;
     };
@@ -246,14 +246,7 @@ async function groupTables(
         team.goalsAgainst += other?.score ?? 0;
       }
     }
-    tables.push(
-      [...rows.values()].sort(
-        (a, b) =>
-          b.wins - a.wins ||
-          b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-          b.goalsFor - a.goalsFor,
-      ),
-    );
+    tables.push(withPlaces([...rows.values()].sort(compareTeams), compareTeams));
   }
   return tables;
 }

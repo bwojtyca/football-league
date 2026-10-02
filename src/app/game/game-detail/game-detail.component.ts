@@ -159,8 +159,7 @@ export class GameDetailComponent {
   /** Rules shown next to the clock; nothing for the usual game to 8. */
   protected readonly mode = computed(() => {
     const game = this.game();
-    const mode = game && modeOf(game);
-    return mode && !isDefaultMode(mode) ? mode : null;
+    return game && !isDefaultMode(game.mode) ? modeOf(game) : null;
   });
 
   protected readonly series = computed(() => {

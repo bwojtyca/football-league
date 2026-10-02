@@ -191,8 +191,8 @@ export class TournamentPageComponent {
   private readonly _bracket = viewChild<ElementRef<HTMLElement>>('bracket');
   private readonly _document = inject(DOCUMENT);
 
-  /** Winner shown once the tournament is over. */
-  protected readonly winner = computed(() => {
+  /** Winners shown once the tournament is over: more than one when they tie at the top. */
+  protected readonly winner = computed((): string[] | null => {
     const tournament = this.tournament();
     if (!tournament?.end) {
       return null;
@@ -200,25 +200,25 @@ export class TournamentPageComponent {
     switch (tournament.format) {
       case 'king': {
         const record = this.king()?.record;
-        return record ? this.lineupName(record.lineup) : null;
+        return record ? [this.lineupName(record.lineup)] : null;
       }
       case 'dyp':
       case 'open':
       case 'rotation': {
-        const best = this.standings()[0];
-        return best?.games ? this.name(best.player) : null;
+        const best = this.standings().filter((row) => row.place === 1 && row.games);
+        return best.length ? best.map((row) => this.name(row.player)) : null;
       }
       case 'series': {
         const winner = this.series()?.winner;
-        return winner === undefined ? null : this.teamName(winner);
+        return winner === undefined ? null : [this.teamName(winner)];
       }
       case 'roundRobin': {
-        const best = this.table()[0];
-        return best?.games ? this.lineupName(tournament.teams![best.team]) : null;
+        const best = this.table().filter((row) => row.place === 1 && row.games);
+        return best.length ? best.map((row) => this.lineupName(tournament.teams![row.team])) : null;
       }
       case 'cup': {
         const champion = this.cup()?.champion;
-        return champion === undefined ? null : this.teamName(champion);
+        return champion === undefined ? null : [this.teamName(champion)];
       }
     }
   });

@@ -11,6 +11,7 @@ import {
   TeamColor,
   teamScore,
 } from '../game/game';
+import { places } from '../shared/places';
 
 /**
  * - `king`: king of the table. Winners stay at the table, the losers go to the back of the
@@ -173,6 +174,8 @@ export function kingState(tournament: Tournament, games: Game[]): KingState {
 
 export interface PlayerStanding {
   player: string;
+  /** Place in the table, shared with the players tied with this one. */
+  place: number;
   games: number;
   wins: number;
   goalsFor: number;
@@ -182,7 +185,10 @@ export interface PlayerStanding {
 /** Individual table: most wins first, then goal difference, then fewer games. */
 export function playerStandings(players: string[], games: Game[]): PlayerStanding[] {
   const table = new Map(
-    players.map((player) => [player, { player, games: 0, wins: 0, goalsFor: 0, goalsAgainst: 0 }]),
+    players.map((player) => [
+      player,
+      { player, place: 0, games: 0, wins: 0, goalsFor: 0, goalsAgainst: 0 },
+    ]),
   );
   for (const game of games.filter((g) => g.win)) {
     for (const color of TEAM_COLORS) {
@@ -197,12 +203,22 @@ export function playerStandings(players: string[], games: Game[]): PlayerStandin
       }
     }
   }
-  return [...table.values()].sort(
-    (a, b) =>
-      b.wins - a.wins ||
-      b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-      a.games - b.games,
+  const compare = (a: PlayerStanding, b: PlayerStanding) =>
+    b.wins - a.wins ||
+    b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
+    a.games - b.games;
+  return withPlaces([...table.values()].sort(compare), compare);
+}
+
+/** Sets the places of a sorted table: rows the comparison finds equal share one. */
+export function withPlaces<T extends { place: number }>(
+  rows: T[],
+  compare: (a: T, b: T) => number,
+): T[] {
+  places(rows, (a, b) => compare(a, b) === 0).forEach(
+    (place, index) => (rows[index].place = place),
   );
+  return rows;
 }
 
 /** Team ratings this close (average Elo) count as an even game when drawing partners. */
@@ -325,16 +341,28 @@ export function roundRobinFixtures(tournament: Tournament, games: Game[]): Fixtu
 
 export interface TeamStanding {
   team: number;
+  /** Place in the table, shared with the teams tied with this one. */
+  place: number;
   games: number;
   wins: number;
   goalsFor: number;
   goalsAgainst: number;
 }
 
-/** Round robin table: most wins first, then goal difference, then goals scored. */
+/** Order of a team table: most wins first, then goal difference, then goals scored. */
+export function compareTeams(a: TeamStanding, b: TeamStanding): number {
+  return (
+    b.wins - a.wins ||
+    b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
+    b.goalsFor - a.goalsFor
+  );
+}
+
+/** Round robin table, in the order of `compareTeams`. */
 export function teamStandings(tournament: Tournament, fixtureList: Fixture[]): TeamStanding[] {
   const table = (tournament.teams ?? []).map((_, team) => ({
     team,
+    place: 0,
     games: 0,
     wins: 0,
     goalsFor: 0,
@@ -357,12 +385,7 @@ export function teamStandings(tournament: Tournament, fixtureList: Fixture[]): T
       row.goalsAgainst += teamScore(game, opponent(color));
     }
   }
-  return table.sort(
-    (a, b) =>
-      b.wins - a.wins ||
-      b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-      b.goalsFor - a.goalsFor,
-  );
+  return withPlaces(table.sort(compareTeams), compareTeams);
 }
 
 /** Pairs (or single players) drawn at random for a round robin. */

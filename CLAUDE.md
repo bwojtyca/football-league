@@ -10,7 +10,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   not need to be "enterprise" grade.
 - Stay backward compatible: the 421 games from 2017 must keep working. New fields are optional,
   old documents are never migrated destructively, and old games simply lack new data.
-- Starting a game takes at most 3 taps, a rematch 1 tap. Defaults stay: game to 8, 2 vs 2, no login.
+- Starting a game takes at most 3 taps, a rematch 1 tap. Defaults: game to 8 with a two-goal
+  lead (since October 2026; games without `mode` stay plain "to 8"), 2 vs 2, no login.
 - Test suites are not a priority ("we work live"): build, check the change in the app, and use
   the Firestore emulator for anything that touches data or security rules.
 - Prefer established, well-liked libraries over home-grown code for solved problems (i18n,
@@ -192,3 +193,39 @@ Owner feedback, to do at the end (after the planned stages):
   rotating partners ("Americano"), cup. The setup dialog states each format's needs and its
   number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)
+
+Owner feedback, round F (October 2026). Status is kept here after every commit, so a new
+session can pick up where the last one stopped:
+- (Done) Shared places on ties ("1, 1, 3") in every ranking and tournament table
+  (`shared/places.ts`, `withPlaces()` in `tournament/tournament.ts`); a tournament can have
+  several winners.
+- (Done) Ranking switches: Players / Pairs, and for players Elo / win % / potato.
+- (Done) Win by 2 is the default of new games and tournaments (`NEW_GAME_MODE`); games without
+  a mode keep "to 8" (`DEFAULT_MODE`), and the rules label is hidden for both.
+- (Done) Countdown ring of "Next" on the finish panel centred (a `mat-icon`) with a track.
+- (Done, not yet checked on the emulator) Mobile navigation: `league/league-layout.component.ts`
+  holds a league's pages (`l/:id` ranking, `games`, `tournaments`, `more`, `player/:id`,
+  `t/:id`; `settings` redirects to `more`) with a bottom bar Ranking / Games / + / Tournaments /
+  More. The title of a league page opens the league switcher (bottom sheet). The 3-dot menu is
+  gone; the language is in More (`shared/language-switch.component.ts`) and on the leagues page
+  (to do).
+- (Done, not yet checked) "+" opens "What are we playing?" (`league/new-play-sheet.component.ts`):
+  a game (teams of the latest game filled in), a series (the new game dialog with `series: true`
+  creates a `series` tournament of the two chosen teams and starts game 1) or a tournament.
+- To do: tournament dialog without the series format; fixed teams (round robin, cup) made by
+  the order players are picked (1st+2nd, 3rd+4th...), with "draw" and "even out" (Elo snake);
+  explain open (you pick each game's teams) vs draw your partner (the app draws them).
+- To do: edit and delete a tournament after it started (rename, rules for the next games,
+  finish, delete with or without its games): needs a rules change (`deleted`, `mode`), tested
+  on the emulator first.
+- To do: a cup ends by itself when the final is won (a series too); the bracket shows the
+  current round, the games played and who went through more clearly.
+- To do: game screen as a 2x2 table that rotates in 90 degree steps (remembered on the device).
+  From the blue side: top left red offence, top right red defence, bottom left blue defence,
+  bottom right blue offence; each step turns the layout a quarter clockwise, the texts stay
+  upright. Keep the DOM order (red offence, red defence, blue offence, blue defence) for the
+  end-to-end scenarios.
+- To do: update the Playwright scenarios for the new navigation (no `button.fab`: the "+" in
+  the bottom bar, then "Mecz"; potato is a sort option, back to players with "Elo"), run them
+  all, deploy (rules first if changed).
+- Open question to the owner: the 2017 migration (see above) still waits for an explicit go-ahead.

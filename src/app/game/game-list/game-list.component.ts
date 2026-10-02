@@ -66,7 +66,7 @@ export class GameListComponent {
         blueScore: teamScore(game, 'blue'),
         win: game.win,
         change: playerId ? changes?.get(game.id)?.get(playerId) : undefined,
-        mode: isDefaultMode(modeOf(game)) ? null : modeOf(game),
+        mode: isDefaultMode(game.mode) ? null : modeOf(game),
         seriesGame: game.series?.game,
         tournament:
           game.tournament && !this.tournamentId()
