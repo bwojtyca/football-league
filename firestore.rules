@@ -52,14 +52,16 @@ service cloud.firestore {
 
       // A league can be renamed, locked for new games (`archived`), given a minimum number of
       // games to appear in its ranking, deleted and restored (`deleted`, nothing is erased) and
-      // gain players; nobody is removed from it.
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted'])
+      // gain players; nobody is removed from it. `gamesDeleted` remembers that its games were
+      // deleted with it, to restore them together.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted', 'gamesDeleted'])
         && leagueName(request.resource.data.name)
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
         && request.resource.data.players.hasAll(resource.data.players)
         && request.resource.data.get('archived', false) is bool
         && request.resource.data.get('deleted', false) is bool
+        && request.resource.data.get('gamesDeleted', false) is bool
         && (!('minGames' in request.resource.data)
           || (request.resource.data.minGames is int
             && request.resource.data.minGames >= 0
@@ -73,12 +75,12 @@ service cloud.firestore {
     match /tournaments/{tournamentId} {
       allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams', 'groups'])
+      allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams', 'groups', 'bestOf'])
         && request.resource.data.league is string
         && request.resource.data.league.size() > 0
         && request.resource.data.league.size() <= 64
         && tournamentName(request.resource.data.name)
-        && request.resource.data.format in ['king', 'dyp', 'roundRobin', 'cup']
+        && request.resource.data.format in ['series', 'open', 'king', 'dyp', 'roundRobin', 'rotation', 'cup']
         && request.resource.data.created is string
         && validMode(request.resource.data.mode)
         && request.resource.data.teamSize in [1, 2]
@@ -88,7 +90,8 @@ service cloud.firestore {
           || (request.resource.data.teams is list
             && request.resource.data.teams.size() >= 2
             && request.resource.data.teams.size() <= 16))
-        && (!('groups' in request.resource.data) || request.resource.data.groups in [0, 2]);
+        && (!('groups' in request.resource.data) || request.resource.data.groups in [0, 2])
+        && (!('bestOf' in request.resource.data) || request.resource.data.bestOf in [3, 5]);
 
       // While it runs, a tournament can be renamed and ended, and players join or leave it one
       // at a time; how it is played never changes.
