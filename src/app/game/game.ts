@@ -51,6 +51,12 @@ export interface PlayerScore {
 
 export type Team = Record<Position, PlayerScore>;
 
+/** Player ids of a team; the same id twice when one player covers both positions. */
+export interface Lineup {
+  defence: string;
+  offence: string;
+}
+
 export interface Game {
   id: string;
   /** League id; the games from 2017 have none and belong to the legacy league. */
@@ -65,6 +71,8 @@ export interface Game {
   mode?: GameMode;
   events?: GameEvent[];
   series?: Series;
+  /** Id of the tournament the game was played in. */
+  tournament?: string;
 }
 
 export function opponent(color: TeamColor): TeamColor {
@@ -135,8 +143,19 @@ export function winsNeeded(bestOf: number): number {
 }
 
 /** Identifies a team across games whatever its colour: its players. */
-export function sideOf(team: Team): string {
-  return teamPlayers(team).sort().join('+');
+export function sideOf(team: Team | Lineup): string {
+  return lineupPlayers(team).sort().join('+');
+}
+
+export function lineupOf(team: Team): Lineup {
+  return { defence: team.defence.player, offence: team.offence.player };
+}
+
+/** Distinct player ids of a lineup. */
+export function lineupPlayers(team: Team | Lineup): string[] {
+  const defence = typeof team.defence === 'string' ? team.defence : team.defence.player;
+  const offence = typeof team.offence === 'string' ? team.offence : team.offence.player;
+  return defence === offence ? [defence] : [defence, offence];
 }
 
 /**

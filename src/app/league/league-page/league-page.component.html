@@ -18,6 +18,13 @@
       <button role="tab" [attr.aria-selected]="tab() === 'games'" (click)="tab.set('games')">
         {{ 'league.games' | transloco }}
       </button>
+      <button
+        role="tab"
+        [attr.aria-selected]="tab() === 'tournaments'"
+        (click)="tab.set('tournaments')"
+      >
+        {{ 'league.tournaments' | transloco }}
+      </button>
       @if (!current.archived) {
         <button matButton class="add" (click)="addPlayer()">
           <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
@@ -68,8 +75,40 @@
           </li>
         }
       </ol>
-    } @else {
+    } @else if (tab() === 'games') {
       <fl-game-list [leagueId]="current.id" [pageSize]="30" />
+    } @else {
+      @if (!current.archived) {
+        <button
+          matButton="tonal"
+          class="new-tournament"
+          (click)="newTournament()"
+          [disabled]="!canPlay()"
+        >
+          <mat-icon>emoji_events</mat-icon>{{ 'tournament.new' | transloco }}
+        </button>
+      }
+      <ul class="tournaments">
+        @for (tournament of tournaments(); track tournament.id) {
+          <li>
+            <a [routerLink]="['/l', current.id, 't', tournament.id]" class="tournament">
+              <span class="name">
+                {{ tournament.name }}
+                @if (!tournament.end) {
+                  <em class="tag">{{ 'tournament.running' | transloco }}</em>
+                }
+              </span>
+              <span class="meta">
+                {{ 'tournament.format.' + tournament.format | transloco }} ·
+                {{ 'count.games' | transloco: { n: tournament.games } }}
+              </span>
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </a>
+          </li>
+        } @empty {
+          <li class="empty">{{ 'tournament.none' | transloco }}</li>
+        }
+      </ul>
     }
 
     @if (!current.archived) {

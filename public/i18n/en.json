@@ -55,7 +55,8 @@
     "provisional": "Provisional rating: fewer than {n} games",
     "notFound": "This league does not exist.",
     "showMore": "Show more",
-    "unrated": "no games yet"
+    "unrated": "no games yet",
+    "tournaments": "Tournaments"
   },
   "addPlayer": {
     "title": "Add player",
@@ -143,6 +144,63 @@
     "won": "{team} win the series",
     "next": "Game {n}"
   },
+  "tournament": {
+    "new": "New tournament",
+    "formatLabel": "Format",
+    "format": {
+      "king": "King of the table",
+      "dyp": "Draw your partner",
+      "roundRobin": "Round robin"
+    },
+    "formatHint": {
+      "king": "Winners stay at the table, losers go to the back of the queue. Wins in a row are counted.",
+      "dyp": "Every game draws who plays and with whom: those who played least first, in pairs that have not played together yet. Individual ranking.",
+      "roundRobin": "Fixed teams, everyone plays everyone once. A table and a list of games to play."
+    },
+    "name": "Name (optional)",
+    "teamSize": "Team size",
+    "players": "Players ({n})",
+    "playersLabel": "Players",
+    "teams": "Teams",
+    "redraw": "Draw again",
+    "benched": "Without a team: {names}",
+    "needKing": "At least 4 players are needed (3 for 1 vs 1).",
+    "needDyp": "At least 4 players are needed.",
+    "needRoundRobin": "At least 3 teams are needed.",
+    "start": "Start tournament",
+    "notFound": "There is no such tournament.",
+    "finish": "End tournament",
+    "finishConfirm": "End the tournament? No more games can be played in it afterwards.",
+    "ended": "The tournament is over.",
+    "winner": "Winner: {name}",
+    "playing": "Playing now",
+    "next": "Next game",
+    "vs": "vs",
+    "champions": "At the table",
+    "waitingKing": "Not enough people in the queue. Add someone to keep playing.",
+    "drawn": "Drawn game",
+    "kingIs": "At the table: {name}",
+    "streak": "{n, plural, one {first win} other {# wins in a row}}",
+    "record": "Record: {name}, {n, plural, one {# win} other {# wins}} in a row",
+    "queue": "Queue",
+    "queueEmpty": "Nobody is waiting.",
+    "leave": "{name} leaves the tournament",
+    "table": "Table",
+    "player": "Player",
+    "team": "Team",
+    "gamesShort": "P",
+    "winsShort": "W",
+    "goalsShort": "Goals",
+    "playersNow": "Playing ({n})",
+    "fixtures": "Fixtures",
+    "live": "live",
+    "play": "Play",
+    "join": "Add a player",
+    "games": "Tournament games",
+    "running": "running",
+    "none": "No tournaments yet.",
+    "back": "Tournament"
+  },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
     "createLeague": "Could not create the league. Check your connection and try again.",
@@ -151,6 +209,8 @@
     "result": "Could not save the result. Check your connection and try again.",
     "remove": "Could not remove the game. Check your connection and try again.",
     "swap": "Could not swap positions. Check your connection and try again.",
-    "undo": "Could not undo. Someone may have recorded another goal meanwhile."
+    "undo": "Could not undo. Someone may have recorded another goal meanwhile.",
+    "newTournament": "Could not create the tournament. Check your connection and try again.",
+    "tournament": "Could not save the change to the tournament. Check your connection and try again."
   }
 }

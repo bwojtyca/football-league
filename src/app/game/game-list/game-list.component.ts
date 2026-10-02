@@ -5,6 +5,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { PlayerService } from '../../player/player.service';
+import { TournamentService } from '../../tournament/tournament.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { Game, modeName, modeOf, Team, teamOf, teamPlayers, teamScore } from '../game';
 import { GameService } from '../game.service';
@@ -19,21 +20,25 @@ import { GameService } from '../game.service';
 export class GameListComponent {
   private readonly _playerService = inject(PlayerService);
   private readonly _gameService = inject(GameService);
+  private readonly _tournamentService = inject(TournamentService);
 
   public readonly leagueId = input.required<string>();
   /** Shows only this player's games, from their side. */
   public readonly playerId = input<string | null>(null);
+  /** Shows only the games of this tournament. */
+  public readonly tournamentId = input<string | null>(null);
   public readonly pageSize = input(20);
 
   private readonly _pages = signal(1);
 
   private readonly _games = computed(() => {
     const playerId = this.playerId();
-    return (
+    const tournamentId = this.tournamentId();
+    const games =
       (playerId
         ? this._gameService.playerGames(this.leagueId(), playerId)
-        : this._gameService.leagueGames(this.leagueId())) ?? []
-    );
+        : this._gameService.leagueGames(this.leagueId())) ?? [];
+    return tournamentId ? games.filter((game) => game.tournament === tournamentId) : games;
   });
 
   protected readonly more = computed(() => this._games().length > this._pages() * this.pageSize());
@@ -55,6 +60,10 @@ export class GameListComponent {
         change: playerId ? changes?.get(game.id)?.get(playerId) : undefined,
         mode: this._modeLabel(game),
         seriesGame: game.series?.game,
+        tournament:
+          game.tournament && !this.tournamentId()
+            ? this._tournamentService.tournament(game.tournament)?.name
+            : undefined,
       }));
   });
 

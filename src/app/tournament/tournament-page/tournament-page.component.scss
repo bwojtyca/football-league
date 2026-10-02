@@ -1,0 +1,176 @@
+.meta {
+  margin: 0 0 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.note {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+  margin: 0 0 12px;
+}
+
+.note b {
+  display: block;
+  margin-top: 4px;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font: 700 1.1rem/1.2 var(--fl-display);
+}
+
+.card {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border-radius: 20px;
+  background: var(--mat-sys-surface-container);
+  color: inherit;
+  text-decoration: none;
+}
+
+.card h2 {
+  margin: 0;
+}
+
+.matchup {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.side {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.side.r {
+  color: var(--fl-red-text);
+  text-align: right;
+}
+
+.side.b {
+  color: var(--fl-blue-text);
+}
+
+.vs {
+  justify-self: center;
+  font: 700 1.1rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.crown {
+  color: var(--fl-gold);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  vertical-align: -4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+}
+
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ol.people {
+  counter-reset: queue;
+}
+
+.people li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+ol.people li::before {
+  counter-increment: queue;
+  content: counter(queue);
+  width: 18px;
+  text-align: right;
+  color: var(--mat-sys-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+ol.people li.empty::before {
+  content: none;
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  text-align: center;
+}
+
+.table .name {
+  text-align: left;
+  font-weight: 600;
+}
+
+.table thead th {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.fixtures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fixtures li {
+  display: grid;
+  grid-template-columns: 1fr 96px 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.fixtures a.vs {
+  color: inherit;
+}
+
+.join {
+  margin: -8px 0 16px;
+}
+
+.empty {
+  color: var(--mat-sys-on-surface-variant);
+}

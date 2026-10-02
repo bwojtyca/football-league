@@ -24,6 +24,7 @@ import {
   Game,
   GameEvent,
   GameMode,
+  Lineup,
   Position,
   Series,
   swapPositions,
@@ -31,12 +32,6 @@ import {
   TeamColor,
   teamPlayers,
 } from './game';
-
-/** Player ids of a team; the same id twice when one player covers both positions. */
-export interface TeamLineup {
-  defence: string;
-  offence: string;
-}
 
 /** Milliseconds since the game started, as logged with each event. */
 function elapsed(game: Pick<Game, 'start'>): number {
@@ -103,6 +98,13 @@ export class GameService {
       : undefined;
   }
 
+  /** Games of a tournament, oldest first. */
+  public tournamentGames(leagueId: string, tournamentId: string): Game[] | undefined {
+    return this.leagueGames(leagueId)
+      ?.filter((game) => game.tournament === tournamentId)
+      .reverse();
+  }
+
   public ratings(leagueId: string): Ratings | undefined {
     return this.games() && (this._ratings().get(leagueId) ?? computeRatings([]));
   }
@@ -120,12 +122,15 @@ export class GameService {
    */
   public createGame(
     leagueId: string,
-    red: TeamLineup,
-    blue: TeamLineup,
+    red: Lineup,
+    blue: Lineup,
     mode: GameMode,
-    series?: Omit<Series, 'id'> & { id?: string },
+    {
+      series,
+      tournament,
+    }: { series?: Omit<Series, 'id'> & { id?: string }; tournament?: string } = {},
   ): { id: string; saved: Promise<void> } {
-    const team = (lineup: TeamLineup): Team => ({
+    const team = (lineup: Lineup): Team => ({
       defence: { player: lineup.defence, goals: 0, ownGoals: 0 },
       offence: { player: lineup.offence, goals: 0, ownGoals: 0 },
     });
@@ -139,6 +144,7 @@ export class GameService {
       mode: { ...mode },
       events: [],
       ...(series && { series: { ...series, id: series.id ?? ref.id } }),
+      ...(tournament && { tournament }),
     };
     return { id: ref.id, saved: setDoc(ref, game) };
   }

@@ -19,18 +19,18 @@ import {
   decidedWinner,
   formatDuration,
   Game,
+  lineupOf,
   modeName,
   modeOf,
   POSITIONS,
   Position,
   seriesScore,
-  Team,
   TEAM_COLORS,
   TeamColor,
   teamScore,
   timeLeft,
 } from '../game';
-import { GameService, TeamLineup } from '../game.service';
+import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 
 /** A decided game waits this long for an undo before its result is recorded. */
@@ -82,6 +82,13 @@ export class GameDetailComponent {
   protected readonly leagueId = computed(() => {
     const game = this.game();
     return game ? leagueOf(game) : null;
+  });
+
+  /** Where the back arrow leads: the tournament of the game, or its league. */
+  protected readonly backLink = computed(() => {
+    const game = this.game();
+    const leagueId = this.leagueId();
+    return game?.tournament ? ['/l', leagueId, 't', game.tournament] : ['/l', leagueId];
   });
 
   protected readonly canRematch = computed(() => {
@@ -234,16 +241,12 @@ export class GameDetailComponent {
     if (!game?.series || !next || !leagueId) {
       return;
     }
-    const lineup = (team: Team): TeamLineup => ({
-      defence: team.defence.player,
-      offence: team.offence.player,
-    });
     const { id, saved } = this._gameService.createGame(
       leagueId,
-      lineup(game.teams.blue),
-      lineup(game.teams.red),
+      lineupOf(game.teams.blue),
+      lineupOf(game.teams.red),
       modeOf(game),
-      { ...game.series, game: next },
+      { series: { ...game.series, game: next } },
     );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._router.navigate(['/game', id]);
@@ -263,12 +266,17 @@ export class GameDetailComponent {
     this._gameService
       .deleteGame(game.id)
       .catch((error) => this._notifier.error('error.remove', error));
-    openNewGameDialog(this._dialog, { leagueId, previousGame: game });
+    if (game.tournament) {
+      this._router.navigate(this.backLink());
+    } else {
+      openNewGameDialog(this._dialog, { leagueId, previousGame: game });
+    }
   }
 
   /**
    * Records the result once every goal from this device has reached the server. The device
-   * used for scoring then offers a rematch, unless a series goes on.
+   * used for scoring then goes back to the tournament, or offers a rematch unless a series
+   * goes on.
    */
   private async _closeDecided(gameId: string): Promise<void> {
     await this._gameService.whenSaved();
@@ -288,6 +296,11 @@ export class GameDetailComponent {
       return undefined;
     });
     if (!winner || this._scoredHere !== gameId) {
+      return;
+    }
+    // In a tournament the next game is set up on the tournament page.
+    if (game.tournament) {
+      this._router.navigate(this.backLink());
       return;
     }
     const played = (this._gameService.seriesGames(game) ?? []).map((other) =>

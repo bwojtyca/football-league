@@ -53,12 +53,19 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
     `{ at, type: 'swap', team }`, `at` in ms since the start. The goal totals in `teams` stay
     and change together with the log, so old views and the 2017 games need no log;
   - `series?` = `{ id, bestOf, game }`, `id` being the first game's id; teams swap colours
-    from game to game, the series score is counted from the games.
+    from game to game, the series score is counted from the games;
+  - `tournament?` = id of the tournament the game belongs to.
+- `tournaments/{id}`: `league`, `name`, `format` (`'king' | 'dyp' | 'roundRobin'`), `created`,
+  `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
+  `{ player, at, out? }`, append-only), `teams?` (round robin: fixed lineups), `end?`.
+  Queues, draws, fixtures and tables are computed from the tournament's games
+  (`tournament/tournament.ts`), so devices never have to agree on shared state.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
 - The database is publicly readable; `firestore.rules` allows only the writes the app makes
   (create leagues, rename or archive them and add players; create players; create games; one
   goal per update with its event, a swap of positions or undoing the last event; close a won
-  game; delete running games). Games without `events` keep the pre-2026 behaviour.
+  game; delete running games; create tournaments, append one entry at a time, rename and end
+  them). Games without `events` keep the pre-2026 behaviour.
   Every new kind of write needs a rules change, tested on the emulator first.
 - Do not bulk-read production data without asking the owner.
 
@@ -82,6 +89,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   scored the deciding goal offers a rematch, or the next game of a series. The game screen
   keeps the phone's screen on (Wake Lock API).
 - `LeagueService` lists leagues and remembers the last one (localStorage).
+- `TournamentService` lists tournaments; `tournament/tournament.ts` holds the pure logic: king
+  of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
+  even teams), round robin fixtures (circle method) and tables. A tournament game sends the
+  scoring device back to the tournament page, where the next game starts with one tap.
 - `game/game.ts`, `player/player.ts` and `player/rating.ts` hold the pure scoring, ranking and
   Elo functions.
 
@@ -109,16 +120,47 @@ Stages:
 2. (Done.) Match: event log in the game document (each goal with time, player and position), undo,
    swapping positions mid-game (ITSF allows it between goals), modes (to 5/8/10, win by 2,
    timed, best-of series with colour swap), rematch.
-3. Tournaments inside leagues.
+3. Tournaments inside leagues. Done: king of the table, draw your partner, round robin.
+   Next: group stage with a knockout cup (prefer brackets-manager / brackets-viewer).
 
-Owner feedback after stage 1, to do later (not yet scheduled):
+Owner feedback, to do at the end (after the planned stages):
 - Redesign: the current look feels like a generic generated app. A real redesign comes later;
   until then do not spend effort polishing visuals.
-- League ids are generated; the 2017 league should not depend on the fixed id `legacy`. Options:
-  give it a generated id and mark it with a field (e.g. "holds games without `league`"), or tag
-  the 2017 games with its id by an admin script (adds a field, keeps everything else).
+- The 2017 league: the owner prefers a regular league with a generated id and a one-off
+  migration that sets `league` on all 2017 games, so the code needs no special case for games
+  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). The rules
+  forbid changing finished games, so run it as an admin script (service account) and only
+  add the field.
 - "Najdroższa Liga Świata" should not be archived. Later, league management: a league moderator
   can rename and configure a league, including blocking new games.
 - A global ranking and a global player profile across all leagues, next to the per-league ones.
 - Deleting games (today only running games can be deleted, from the game screen) and deleting
   leagues. Decide who may do it before sign-in exists.
+- Win by two: a toggle that combines with any target (and the timed mode), not a mode of its
+  own. Rule: at (target - 1):(target - 1) the game needs a two-goal lead and has no cap, so
+  7:7 at "to 8" goes on to 9:7, or 8:8, 9:9... until e.g. 90:88. (Stage 2 shipped it as a
+  separate mode "to 8, lead by 2, max 11"; old games keep their stored `mode`.)
+- Timed games: let people set the time (today fixed at 5 minutes).
+- Pause a game and come back to it later to finish it.
+- New game dialog: drop the "2 vs 2" subtitle at the top. Under all the settings show a summary
+  instead: the rules, who plays with whom and what the game is called, laid out together with
+  the win chance.
+- The undo bar on the game screen is always shown: a placeholder before the first event, then
+  the last event described precisely, e.g. "Jerzy scores from defence", "Bartek scores an own
+  goal from attack".
+- More rankings: win % next to Elo, and a configurable minimum number of games to appear in a
+  ranking (hide players with fewer than X games).
+- A fun "yolo" ranking (working name) about who is the "ziemniak" (potato: the one who loses
+  everything). The group plays for fun and the drive is not to stay the potato, so it is about
+  mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
+  proposal: losing to the current potato costs a lot of points (not necessarily the potato
+  title at once).
+- End of a game: instead of the small bottom bar, a large summary panel with a victory
+  animation, a "Next" button with a countdown spinner (moves on by itself after 5-10 s) and a
+  clear "Undo last event" button. It shows better that the game is over, makes undo obvious
+  and gets people into the rematch (or the next game of a tournament) faster.
+- Best of 3/5 feel like tournaments rather than games. Possible levels: game (played to a win)
+  -> series (several games, an overall winner, or loser for the "yolo" ranking) ->
+  tournament. The owner leans towards modelling everything as tournaments: best-of-N as a
+  tournament format, plus an "open" tournament (play as many games as you like, grouped at the
+  end). Address together with the rest of this feedback after stage 3.

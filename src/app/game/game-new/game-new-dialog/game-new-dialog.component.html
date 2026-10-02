@@ -10,7 +10,7 @@
         <mat-chip-option
           [selected]="modeName() === name"
           [selectable]="modeName() !== name"
-          (selectionChange)="$event.selected && modeName.set(name)"
+          (selectionChange)="$event.isUserInput && $event.selected && modeName.set(name)"
           >{{ 'modes.' + name | transloco }}</mat-chip-option
         >
       }
@@ -20,7 +20,7 @@
         <mat-chip-option
           [selected]="bestOf() === length"
           [selectable]="bestOf() !== length"
-          (selectionChange)="$event.selected && bestOf.set(length)"
+          (selectionChange)="$event.isUserInput && $event.selected && bestOf.set(length)"
           >{{ 'series.bestOf' + length | transloco }}</mat-chip-option
         >
       }

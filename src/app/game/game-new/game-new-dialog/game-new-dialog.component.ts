@@ -31,8 +31,17 @@ import { AvatarComponent } from '../../../player/avatar/avatar.component';
 import { compareNames, Player } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
 import { START_RATING, winChance } from '../../../player/rating';
-import { Game, MODES, ModeName, modeName, modeOf, TEAM_COLORS, TeamColor } from '../../game';
-import { GameService, TeamLineup } from '../../game.service';
+import {
+  Game,
+  Lineup,
+  MODES,
+  ModeName,
+  modeName,
+  modeOf,
+  TEAM_COLORS,
+  TeamColor,
+} from '../../game';
+import { GameService } from '../../game.service';
 import { HighlightPipe } from '../../highlight.pipe';
 
 export interface GameNewDialogData {
@@ -228,14 +237,14 @@ export class GameNewDialogComponent {
       red,
       blue,
       MODES[this.modeName()],
-      bestOf > 1 ? { bestOf, game: 1 } : undefined,
+      bestOf > 1 ? { series: { bestOf, game: 1 } } : {},
     );
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);
   }
 
-  private _lineup(color: TeamColor): TeamLineup | undefined {
+  private _lineup(color: TeamColor): Lineup | undefined {
     const { singlePlayer, defence, offence } = this.teams[color].form.getRawValue();
     const attacker = singlePlayer ? defence : offence;
     return isPlayer(defence) && isPlayer(attacker)

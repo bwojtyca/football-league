@@ -1,0 +1,262 @@
+@let current = tournament();
+<fl-top-bar [title]="current?.name ?? ''" [back]="'/l/' + leagueId()">
+  @if (current && !current.end) {
+    <button matIconButton (click)="finish()" [attr.aria-label]="'tournament.finish' | transloco">
+      <mat-icon>sports_score</mat-icon>
+    </button>
+  }
+</fl-top-bar>
+
+<main class="page">
+  @if (current === null) {
+    <p class="empty">{{ 'tournament.notFound' | transloco }}</p>
+  } @else if (!current || !games()) {
+    <div class="loader"><mat-spinner [diameter]="40" /></div>
+  } @else {
+    <p class="meta">
+      {{ 'tournament.format.' + current.format | transloco }} ·
+      {{ modeKey() | transloco: { target: current.mode.target } }} ·
+      {{ (current.teamSize === 2 ? 'newGame.mode2v2' : 'newGame.mode1v1') | transloco }}
+    </p>
+
+    @if (current.end) {
+      <p class="note">
+        {{ 'tournament.ended' | transloco }}
+        @if (winner(); as winner) {
+          <b>{{ 'tournament.winner' | transloco: { name: winner } }}</b>
+        }
+      </p>
+    }
+
+    <!-- What is played now, or what comes next. -->
+    @if (running(); as game) {
+      <a class="card now" [routerLink]="['/game', game.id]">
+        <h2>{{ 'tournament.playing' | transloco }}</h2>
+        <span class="matchup">
+          <span class="side r">{{ gameSide(game, 'red') }}</span>
+          <b class="vs">{{ score(game) }}</b>
+          <span class="side b">{{ gameSide(game, 'blue') }}</span>
+        </span>
+      </a>
+    } @else if (!current.end) {
+      @switch (current.format) {
+        @case ('king') {
+          @if (king()?.next; as next) {
+            <section class="card now">
+              <h2>{{ 'tournament.next' | transloco }}</h2>
+              <span class="matchup">
+                <span class="side r">
+                  @if (king()?.champions?.color === 'red') {
+                    <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
+                      >emoji_events</mat-icon
+                    >
+                  }
+                  {{ lineupName(next.red) }}
+                </span>
+                <b class="vs">{{ 'tournament.vs' | transloco }}</b>
+                <span class="side b">
+                  @if (king()?.champions?.color === 'blue') {
+                    <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
+                      >emoji_events</mat-icon
+                    >
+                  }
+                  {{ lineupName(next.blue) }}
+                </span>
+              </span>
+              <button matButton="filled" (click)="start(next.red, next.blue)">
+                {{ 'newGame.start' | transloco }}
+              </button>
+            </section>
+          } @else {
+            <p class="note">{{ 'tournament.waitingKing' | transloco }}</p>
+          }
+        }
+        @case ('dyp') {
+          @if (draw(); as draw) {
+            <section class="card now">
+              <h2>{{ 'tournament.drawn' | transloco }}</h2>
+              <span class="matchup">
+                <span class="side r">{{ lineupName(draw.red) }}</span>
+                <b class="vs">{{ 'tournament.vs' | transloco }}</b>
+                <span class="side b">{{ lineupName(draw.blue) }}</span>
+              </span>
+              <div class="actions">
+                <button matButton (click)="redraw()">
+                  <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
+                </button>
+                <button matButton="filled" (click)="start(draw.red, draw.blue)">
+                  {{ 'newGame.start' | transloco }}
+                </button>
+              </div>
+            </section>
+          } @else {
+            <p class="note">{{ 'tournament.needDyp' | transloco }}</p>
+          }
+        }
+      }
+    }
+
+    @switch (current.format) {
+      @case ('king') {
+        @let state = king();
+        @if (state?.champions; as champions) {
+          <p class="line">
+            <mat-icon class="crown">emoji_events</mat-icon>
+            {{ 'tournament.kingIs' | transloco: { name: lineupName(champions.lineup) } }} ·
+            {{ 'tournament.streak' | transloco: { n: champions.streak } }}
+          </p>
+        }
+        @if (state?.record; as record) {
+          <p class="line">
+            <mat-icon>military_tech</mat-icon>
+            {{
+              'tournament.record' | transloco: { name: lineupName(record.lineup), n: record.streak }
+            }}
+          </p>
+        }
+        <section>
+          <h2>{{ 'tournament.queue' | transloco }}</h2>
+          <ol class="people">
+            @for (player of state?.queue; track player) {
+              <li>
+                <fl-avatar [playerId]="player" [name]="name(player)" [size]="32" />
+                <span class="who">{{ name(player) }}</span>
+                @if (!current.end) {
+                  <button
+                    matIconButton
+                    (click)="leave(player)"
+                    [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
+                  >
+                    <mat-icon>logout</mat-icon>
+                  </button>
+                }
+              </li>
+            } @empty {
+              <li class="empty">{{ 'tournament.queueEmpty' | transloco }}</li>
+            }
+          </ol>
+        </section>
+      }
+      @case ('dyp') {
+        <section>
+          <h2>{{ 'tournament.table' | transloco }}</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col" class="name">{{ 'tournament.player' | transloco }}</th>
+                <th scope="col">{{ 'tournament.gamesShort' | transloco }}</th>
+                <th scope="col">{{ 'tournament.winsShort' | transloco }}</th>
+                <th scope="col">{{ 'tournament.goalsShort' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of standings(); track row.player; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <th scope="row" class="name">{{ name(row.player) }}</th>
+                  <td>{{ row.games }}</td>
+                  <td>
+                    <b>{{ row.wins }}</b>
+                  </td>
+                  <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h2>{{ 'tournament.playersNow' | transloco: { n: present().length } }}</h2>
+          <ul class="people">
+            @for (player of present(); track player) {
+              <li>
+                <fl-avatar [playerId]="player" [name]="name(player)" [size]="32" />
+                <span class="who">{{ name(player) }}</span>
+                @if (!current.end) {
+                  <button
+                    matIconButton
+                    (click)="leave(player)"
+                    [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
+                  >
+                    <mat-icon>logout</mat-icon>
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
+      @case ('roundRobin') {
+        <section>
+          <h2>{{ 'tournament.table' | transloco }}</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col" class="name">{{ 'tournament.team' | transloco }}</th>
+                <th scope="col">{{ 'tournament.gamesShort' | transloco }}</th>
+                <th scope="col">{{ 'tournament.winsShort' | transloco }}</th>
+                <th scope="col">{{ 'tournament.goalsShort' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of table(); track row.team; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <th scope="row" class="name">{{ teamName(row.team) }}</th>
+                  <td>{{ row.games }}</td>
+                  <td>
+                    <b>{{ row.wins }}</b>
+                  </td>
+                  <td>{{ row.goalsFor }}:{{ row.goalsAgainst }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h2>{{ 'tournament.fixtures' | transloco }}</h2>
+          <ol class="fixtures">
+            @for (fixture of fixtures(); track $index) {
+              <li>
+                <span class="side r">{{ teamName(fixture.red) }}</span>
+                @if (fixture.game; as game) {
+                  <a class="vs" [routerLink]="['/game', game.id]">{{
+                    game.end ? score(game) : ('tournament.live' | transloco)
+                  }}</a>
+                } @else if (!current.end && !running()) {
+                  <button
+                    matButton="tonal"
+                    class="vs"
+                    (click)="start(current.teams![fixture.red], current.teams![fixture.blue])"
+                  >
+                    {{ 'tournament.play' | transloco }}
+                  </button>
+                } @else {
+                  <span class="vs">{{ 'tournament.vs' | transloco }}</span>
+                }
+                <span class="side b">{{ teamName(fixture.blue) }}</span>
+              </li>
+            }
+          </ol>
+        </section>
+      }
+    }
+
+    @if (current.format !== 'roundRobin' && !current.end && absent().length) {
+      <button matButton class="join" [matMenuTriggerFor]="joinMenu">
+        <mat-icon>person_add</mat-icon>{{ 'tournament.join' | transloco }}
+      </button>
+      <mat-menu #joinMenu="matMenu">
+        @for (player of absent(); track player) {
+          <button mat-menu-item (click)="join(player)">{{ name(player) }}</button>
+        }
+      </mat-menu>
+    }
+
+    <section>
+      <h2>{{ 'tournament.games' | transloco }}</h2>
+      <fl-game-list [leagueId]="current.league" [tournamentId]="current.id" [pageSize]="30" />
+    </section>
+  }
+</main>

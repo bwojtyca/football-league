@@ -25,6 +25,9 @@
           @if (game.mode; as mode) {
             <span>{{ mode.key | transloco: { target: mode.target } }}</span>
           }
+          @if (game.tournament; as tournament) {
+            <span>{{ tournament }}</span>
+          }
           @if (game.seriesGame; as n) {
             <span>{{ 'series.game' | transloco: { n } }}</span>
           }

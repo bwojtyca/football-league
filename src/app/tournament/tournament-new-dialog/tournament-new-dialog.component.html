@@ -1,0 +1,106 @@
+<h2 mat-dialog-title>{{ 'tournament.new' | transloco }}</h2>
+
+<mat-dialog-content>
+  <div class="section">
+    <mat-chip-listbox
+      [attr.aria-label]="'tournament.formatLabel' | transloco"
+      hideSingleSelectionIndicator
+    >
+      @for (option of formats; track option) {
+        <mat-chip-option
+          [selected]="format() === option"
+          [selectable]="format() !== option"
+          (selectionChange)="$event.isUserInput && $event.selected && setFormat(option)"
+          >{{ 'tournament.format.' + option | transloco }}</mat-chip-option
+        >
+      }
+    </mat-chip-listbox>
+    <p class="hint">{{ 'tournament.formatHint.' + format() | transloco }}</p>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>{{ 'tournament.name' | transloco }}</mat-label>
+    <input
+      matInput
+      [ngModel]="name()"
+      (ngModelChange)="name.set($event)"
+      maxlength="60"
+      autocomplete="off"
+      [placeholder]="'tournament.format.' + format() | transloco"
+    />
+  </mat-form-field>
+
+  <div class="section">
+    <h3>{{ 'modes.title' | transloco }}</h3>
+    <mat-chip-listbox [attr.aria-label]="'modes.title' | transloco" hideSingleSelectionIndicator>
+      @for (name of modes; track name) {
+        <mat-chip-option
+          [selected]="modeName() === name"
+          [selectable]="modeName() !== name"
+          (selectionChange)="$event.isUserInput && $event.selected && setMode(name)"
+          >{{ 'modes.' + name | transloco }}</mat-chip-option
+        >
+      }
+    </mat-chip-listbox>
+    @if (format() !== 'dyp') {
+      <mat-chip-listbox
+        [attr.aria-label]="'tournament.teamSize' | transloco"
+        hideSingleSelectionIndicator
+      >
+        @for (option of [2, 1]; track option) {
+          <mat-chip-option
+            [selected]="teamSize() === option"
+            [selectable]="teamSize() !== option"
+            (selectionChange)="$event.isUserInput && $event.selected && teamSize.set(option)"
+            >{{
+              (option === 2 ? 'newGame.mode2v2' : 'newGame.mode1v1') | transloco
+            }}</mat-chip-option
+          >
+        }
+      </mat-chip-listbox>
+    }
+  </div>
+
+  <div class="section">
+    <h3>{{ 'tournament.players' | transloco: { n: selected().length } }}</h3>
+    <mat-chip-listbox multiple [attr.aria-label]="'tournament.playersLabel' | transloco">
+      @for (player of members(); track player.id) {
+        <mat-chip-option
+          [selected]="selected().includes(player.id)"
+          (selectionChange)="$event.isUserInput && toggle(player.id, $event.selected)"
+          >{{ player.name }}</mat-chip-option
+        >
+      }
+    </mat-chip-listbox>
+  </div>
+
+  @if (format() === 'roundRobin' && teams().length) {
+    <div class="section">
+      <div class="teams-head">
+        <h3>{{ 'tournament.teams' | transloco }}</h3>
+        <button matButton (click)="redraw()">
+          <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
+        </button>
+      </div>
+      <ol class="teams">
+        @for (team of teams(); track $index) {
+          <li>{{ teamName(team) }}</li>
+        }
+      </ol>
+      @if (benched(); as names) {
+        <p class="hint">{{ 'tournament.benched' | transloco: { names } }}</p>
+      }
+    </div>
+  }
+
+  @if (problem(); as problem) {
+    <p class="problem">{{ problem | transloco }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
+  <button matButton="filled" (click)="create()" [disabled]="!!problem()">
+    {{ 'tournament.start' | transloco }}
+  </button>
+</mat-dialog-actions>

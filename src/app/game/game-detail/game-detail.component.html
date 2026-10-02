@@ -2,11 +2,7 @@
   @let winner = decided();
   <div class="screen" [class.ended]="!!game.end" [class.decided]="!!winner">
     <header class="top">
-      <a
-        matIconButton
-        [routerLink]="['/l', leagueId()]"
-        [attr.aria-label]="'common.back' | transloco"
-      >
+      <a matIconButton [routerLink]="backLink()" [attr.aria-label]="'common.back' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </a>
       <div class="score">
@@ -27,6 +23,8 @@
         <button matIconButton (click)="remove()" [attr.aria-label]="'game.remove' | transloco">
           <mat-icon>delete_outline</mat-icon>
         </button>
+      } @else if (game.tournament) {
+        <a matButton="filled" [routerLink]="backLink()">{{ 'tournament.back' | transloco }}</a>
       } @else if (series()?.next; as next) {
         <button matButton="filled" (click)="nextInSeries()">
           {{ 'series.next' | transloco: { n: next } }}

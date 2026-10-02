@@ -68,6 +68,6 @@ export function rankPlayers(players: Player[], games: Game[], ratings: Ratings):
     .sort((a, b) => (b.rating ?? -Infinity) - (a.rating ?? -Infinity) || compareNames(a, b));
 }
 
-export function compareNames(a: Player, b: Player): number {
+export function compareNames(a: Pick<Player, 'name'>, b: Pick<Player, 'name'>): number {
   return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 }

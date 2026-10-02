@@ -55,7 +55,8 @@
     "provisional": "Ocena tymczasowa: mniej niż {n} meczów",
     "notFound": "Nie ma takiej ligi.",
     "showMore": "Pokaż więcej",
-    "unrated": "jeszcze bez meczów"
+    "unrated": "jeszcze bez meczów",
+    "tournaments": "Turnieje"
   },
   "addPlayer": {
     "title": "Dodaj gracza",
@@ -143,6 +144,63 @@
     "won": "Serię wygrywają {team}",
     "next": "Mecz {n}"
   },
+  "tournament": {
+    "new": "Nowy turniej",
+    "formatLabel": "Format",
+    "format": {
+      "king": "Król stołu",
+      "dyp": "Losuj partnera",
+      "roundRobin": "Każdy z każdym"
+    },
+    "formatHint": {
+      "king": "Zwycięzcy zostają przy stole, przegrani wracają na koniec kolejki. Liczymy wygrane z rzędu.",
+      "dyp": "Co mecz losujemy, kto gra i z kim: najpierw ci, którzy grali najmniej, w parach, które jeszcze ze sobą nie grały. Ranking indywidualny.",
+      "roundRobin": "Stałe drużyny, każda gra z każdą raz. Tabela i lista meczów do rozegrania."
+    },
+    "name": "Nazwa (nieobowiązkowa)",
+    "teamSize": "Wielkość drużyny",
+    "players": "Gracze ({n})",
+    "playersLabel": "Gracze",
+    "teams": "Drużyny",
+    "redraw": "Losuj ponownie",
+    "benched": "Bez drużyny: {names}",
+    "needKing": "Potrzeba co najmniej 4 graczy (przy grze 1 na 1: 3).",
+    "needDyp": "Potrzeba co najmniej 4 graczy.",
+    "needRoundRobin": "Potrzeba co najmniej 3 drużyn.",
+    "start": "Zacznij turniej",
+    "notFound": "Nie ma takiego turnieju.",
+    "finish": "Zakończ turniej",
+    "finishConfirm": "Zakończyć turniej? Potem nie da się już grać w nim meczów.",
+    "ended": "Turniej zakończony.",
+    "winner": "Wygrywa: {name}",
+    "playing": "Teraz gra",
+    "next": "Następny mecz",
+    "vs": "vs",
+    "champions": "Przy stole",
+    "waitingKing": "Za mało osób w kolejce. Dopisz kogoś, żeby grać dalej.",
+    "drawn": "Wylosowany mecz",
+    "kingIs": "Przy stole: {name}",
+    "streak": "{n, plural, one {pierwsza wygrana} few {# wygrane z rzędu} many {# wygranych z rzędu} other {# wygranej z rzędu}}",
+    "record": "Rekord: {name}, {n, plural, one {# wygrana} few {# wygrane} many {# wygranych} other {# wygranej}} z rzędu",
+    "queue": "Kolejka",
+    "queueEmpty": "Nikt nie czeka.",
+    "leave": "{name} wychodzi z turnieju",
+    "table": "Tabela",
+    "player": "Gracz",
+    "team": "Drużyna",
+    "gamesShort": "M",
+    "winsShort": "W",
+    "goalsShort": "Bramki",
+    "playersNow": "W grze ({n})",
+    "fixtures": "Terminarz",
+    "live": "trwa",
+    "play": "Graj",
+    "join": "Dopisz gracza",
+    "games": "Mecze turnieju",
+    "running": "trwa",
+    "none": "Nie ma jeszcze turniejów.",
+    "back": "Turniej"
+  },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
     "createLeague": "Nie udało się utworzyć ligi. Sprawdź połączenie i spróbuj ponownie.",
@@ -151,6 +209,8 @@
     "result": "Nie udało się zapisać wyniku. Sprawdź połączenie i spróbuj ponownie.",
     "remove": "Nie udało się usunąć meczu. Sprawdź połączenie i spróbuj ponownie.",
     "swap": "Nie udało się zamienić pozycji. Sprawdź połączenie i spróbuj ponownie.",
-    "undo": "Nie udało się cofnąć. Ktoś mógł w międzyczasie zapisać kolejnego gola."
+    "undo": "Nie udało się cofnąć. Ktoś mógł w międzyczasie zapisać kolejnego gola.",
+    "newTournament": "Nie udało się utworzyć turnieju. Sprawdź połączenie i spróbuj ponownie.",
+    "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie."
   }
 }

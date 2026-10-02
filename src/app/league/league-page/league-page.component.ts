@@ -19,10 +19,12 @@ import { PROVISIONAL_GAMES } from '../../player/rating';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
+import { openTournamentNewDialog } from '../../tournament/tournament-new-dialog/tournament-new-dialog.component';
+import { TournamentService } from '../../tournament/tournament.service';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { LeagueService } from '../league.service';
 
-type Tab = 'ranking' | 'games';
+type Tab = 'ranking' | 'games' | 'tournaments';
 
 @Component({
   selector: 'fl-league-page',
@@ -47,6 +49,7 @@ export class LeaguePageComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _tournamentService = inject(TournamentService);
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
   protected readonly tab = signal<Tab>('ranking');
@@ -75,6 +78,13 @@ export class LeaguePageComponent {
     );
   });
 
+  protected readonly tournaments = computed(() =>
+    this._tournamentService.leagueTournaments(this.leagueId())?.map((tournament) => ({
+      ...tournament,
+      games: this._gameService.tournamentGames(this.leagueId(), tournament.id)?.length ?? 0,
+    })),
+  );
+
   protected readonly canPlay = computed(() => (this.league()?.players.length ?? 0) >= 2);
 
   constructor() {
@@ -87,6 +97,10 @@ export class LeaguePageComponent {
 
   protected addPlayer(): void {
     openAddPlayerDialog(this._dialog, { leagueId: this.leagueId() });
+  }
+
+  protected newTournament(): void {
+    openTournamentNewDialog(this._dialog, { leagueId: this.leagueId() });
   }
 
   protected newGame(): void {
