@@ -41,6 +41,8 @@
               "@fontsource/barlow/700.css",
               "@fontsource/barlow-condensed/600.css",
               "@fontsource/barlow-condensed/700.css",
+              "@fontsource/barlow-condensed/800.css",
+              "@fontsource/barlow-condensed/800-italic.css",
               "material-icons/iconfont/filled.css",
               "src/styles.scss"
             ],

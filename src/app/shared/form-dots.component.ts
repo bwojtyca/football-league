@@ -3,7 +3,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { Result } from '../player/player';
 
-/** Last results as dots: filled for a win, hollow for a loss; spelled out for screen readers. */
+/** Last results as bars: tall for a win, short for a loss; spelled out for screen readers. */
 @Component({
   selector: 'fl-form',
   imports: [TranslocoPipe],
@@ -19,21 +19,21 @@ import { Result } from '../player/player';
     }
   `,
   styles: `
+    /* Tall green bars for wins, short grey ones for losses, oldest first. */
     :host {
       display: inline-flex;
       gap: 3px;
-      align-items: center;
+      align-items: flex-end;
+      height: 16px;
     }
     i {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      border: 1.5px solid var(--mat-sys-outline);
+      width: 5px;
+      height: 6px;
+      border-radius: 2px;
+      background: var(--fl-line);
     }
     i.w {
-      width: 7px;
-      height: 7px;
-      border: 0;
+      height: 16px;
       background: var(--fl-win);
     }
   `,

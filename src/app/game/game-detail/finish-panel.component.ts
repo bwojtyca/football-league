@@ -27,7 +27,7 @@ import { TeamColor } from '../game';
           <mat-icon>undo</mat-icon>{{ 'game.undoLast' | transloco }}
         </button>
       }
-      <button matButton="filled" (click)="next.emit()">
+      <button matButton="filled" class="fl-cta" (click)="next.emit()">
         <svg class="countdown" viewBox="0 0 20 20" aria-hidden="true">
           <circle cx="10" cy="10" r="8" />
         </svg>

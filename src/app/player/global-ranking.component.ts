@@ -28,7 +28,7 @@ import { RankingComponent } from './ranking/ranking.component';
     .hint {
       margin: 0 0 8px;
       font-size: 0.85rem;
-      color: var(--mat-sys-on-surface-variant);
+      color: var(--fl-ink-2);
     }
   `,
 })

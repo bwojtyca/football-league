@@ -1,11 +1,14 @@
 section {
   padding: 12px 0;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--fl-line);
 }
 
 h3 {
   margin: 0 0 8px;
-  font: 600 1.05rem/1.2 var(--fl-display);
+  font: 700 0.85rem/1.2 var(--fl-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
 }
 
 dl {
@@ -16,7 +19,7 @@ dl {
 }
 
 dt {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   font-size: 0.8rem;
 }
 
@@ -26,7 +29,7 @@ dd {
 }
 
 dd b {
-  font: 700 1.25rem/1.2 var(--fl-display);
+  font: 800 1.35rem/1.2 var(--fl-display);
   margin-right: 4px;
 }
 
@@ -40,7 +43,7 @@ th,
 td {
   padding: 5px 4px;
   text-align: right;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--fl-line);
 }
 
 tr:last-child th,
@@ -51,7 +54,7 @@ tr:last-child td {
 th:first-child {
   text-align: left;
   font-weight: 500;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 tbody th:first-child {
@@ -67,5 +70,5 @@ thead th {
 }
 
 .empty {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }

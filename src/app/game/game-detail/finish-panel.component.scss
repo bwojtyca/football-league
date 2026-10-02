@@ -8,52 +8,64 @@
   display: grid;
   justify-items: center;
   gap: 4px;
-  padding: 24px 16px calc(20px + env(safe-area-inset-bottom, 0px));
-  border-radius: 28px 28px 0 0;
-  background: var(--mat-sys-surface-container-high);
-  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.25);
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+  border-top: 6px solid;
+  border-radius: 22px 22px 0 0;
+  background: var(--fl-card);
+  box-shadow: 0 -12px 40px rgb(0 0 0 / 0.5);
   text-align: center;
   animation: rise 280ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
+:host(.red) {
+  border-color: var(--fl-red);
+}
+
+:host(.blue) {
+  border-color: var(--fl-blue);
+}
+
 .trophy {
-  width: 72px;
-  height: 72px;
-  font-size: 72px;
-  color: var(--fl-gold);
+  width: 64px;
+  height: 64px;
+  font-size: 64px;
+  color: var(--fl-ball);
   animation: pop 700ms cubic-bezier(0.3, 1.6, 0.5, 1) 120ms both;
 }
 
 h2 {
   margin: 0;
-  font: 700 2rem/1.1 var(--fl-display);
+  font: italic 800 2.1rem/1.05 var(--fl-display);
+  text-transform: uppercase;
 }
 
 :host(.red) h2 {
-  color: var(--fl-red-text);
+  color: var(--fl-red-board);
 }
 
 :host(.blue) h2 {
-  color: var(--fl-blue-text);
+  color: var(--fl-blue-board);
 }
 
 .final {
   margin: 0;
-  font: 700 3rem/1 var(--fl-display);
+  font: 800 3.6rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
 .final .r {
-  color: var(--fl-red-text);
+  color: var(--fl-red-board);
 }
 
 .final .b {
-  color: var(--fl-blue-text);
+  color: var(--fl-blue-board);
 }
 
 .names {
   margin: 0 0 12px;
-  font-weight: 600;
+  font: 700 1.1rem/1.2 var(--fl-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .finish-actions {
@@ -64,8 +76,9 @@ h2 {
 }
 
 .finish-actions button {
-  min-height: 48px;
-  padding: 0 20px;
+  --mat-button-filled-container-height: 52px;
+  --mat-button-outlined-container-height: 52px;
+  padding: 0 22px;
 }
 
 /* "Next" fills up over the time the panel waits before moving on by itself. */
@@ -79,7 +92,7 @@ h2 {
 .countdown circle {
   fill: none;
   stroke: currentColor;
-  stroke-width: 3;
+  stroke-width: 3.5;
   stroke-dasharray: 50.3;
   stroke-dashoffset: 50.3;
   animation: countdown 8s linear forwards;

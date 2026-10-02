@@ -63,7 +63,7 @@
                   {{ lineupName(next.blue) }}
                 </span>
               </span>
-              <button matButton="filled" (click)="start(next.red, next.blue)">
+              <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
                 {{ 'newGame.start' | transloco }}
               </button>
             </section>
@@ -84,7 +84,7 @@
                 <button matButton (click)="redraw()">
                   <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
                 </button>
-                <button matButton="filled" (click)="start(draw.red, draw.blue)">
+                <button matButton="filled" class="fl-cta" (click)="start(draw.red, draw.blue)">
                   {{ 'newGame.start' | transloco }}
                 </button>
               </div>
@@ -159,7 +159,7 @@
                 {{ 'tournament.seriesWinner' | transloco: { name: teamName(state.winner) } }}
               </p>
             } @else if (state.next; as next) {
-              <button matButton="filled" (click)="start(next.red, next.blue)">
+              <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
                 {{ 'tournament.startGame' | transloco: { n: state.number } }}
               </button>
             }
@@ -174,7 +174,7 @@
                 {{ 'game.rematch' | transloco }}
               </button>
             }
-            <button matButton="filled" (click)="newOpenGame()">
+            <button matButton="filled" class="fl-cta" (click)="newOpenGame()">
               <mat-icon>add</mat-icon>{{ 'league.newGame' | transloco }}
             </button>
           </div>

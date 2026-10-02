@@ -1,8 +1,10 @@
 <fl-top-bar [title]="'leagues.title' | transloco" />
 
 <main class="page">
-  <a matButton="tonal" routerLink="/ranking" class="global">
-    <mat-icon>leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
+  <a routerLink="/ranking" class="global">
+    <mat-icon aria-hidden="true">leaderboard</mat-icon>
+    <span>{{ 'ranking.global' | transloco }}</span>
+    <mat-icon aria-hidden="true">chevron_right</mat-icon>
   </a>
   @if (leagues(); as leagues) {
     @if (onlyArchive()) {
@@ -42,7 +44,7 @@
   }
 
   <form class="new" [formGroup]="form" (ngSubmit)="create()">
-    <h2>{{ 'leagues.new' | transloco }}</h2>
+    <h2 class="fl-kicker">{{ 'leagues.new' | transloco }}</h2>
     <mat-form-field appearance="outline">
       <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
       <input matInput formControlName="name" maxlength="60" autocomplete="off" />

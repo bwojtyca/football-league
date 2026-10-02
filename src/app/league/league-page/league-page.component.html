@@ -46,8 +46,14 @@
         {{ 'league.tournaments' | transloco }}
       </button>
       @if (!current.archived) {
-        <button matButton class="add" (click)="addPlayer()">
-          <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
+        <button
+          matIconButton
+          class="add"
+          (click)="addPlayer()"
+          [attr.aria-label]="'league.addPlayer' | transloco"
+          [matTooltip]="'league.addPlayer' | transloco"
+        >
+          <mat-icon>person_add</mat-icon>
         </button>
       }
     </div>
@@ -78,7 +84,11 @@
       <ul class="tournaments">
         @for (tournament of tournaments(); track tournament.id) {
           <li>
-            <a [routerLink]="['/l', current.id, 't', tournament.id]" class="tournament">
+            <a
+              [routerLink]="['/l', current.id, 't', tournament.id]"
+              class="tournament"
+              [class.running]="!tournament.end"
+            >
               <span class="name">
                 {{ tournament.name }}
                 @if (!tournament.end) {

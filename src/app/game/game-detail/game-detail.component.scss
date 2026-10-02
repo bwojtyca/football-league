@@ -1,10 +1,13 @@
+/* The game screen is a scoreboard: dark in both colour schemes, the teams in their colours. */
 .screen {
   position: fixed;
   inset: 0;
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
-  background: var(--mat-sys-surface);
+  color-scheme: dark;
+  background: var(--fl-board);
+  color: var(--fl-on-board);
 }
 
 .top {
@@ -12,38 +15,48 @@
   grid-template-columns: 48px 1fr auto auto;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px 2px;
+  padding: 6px 8px 4px;
 }
 
 .score {
-  text-align: center;
-  font: 700 2.4rem/1 var(--fl-display);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+/* The score as a broadcast score bug: red block, blue block. */
+.bug {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  font: 800 2.3rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
-.score .r {
-  color: var(--fl-red-text);
+.bug .r,
+.bug .b {
+  min-width: 1.35em;
+  padding: 5px 8px 3px;
+  text-align: center;
+  color: #fff;
 }
 
-.score .b {
-  color: var(--fl-blue-text);
-}
-
-.score .sep {
-  margin: 0 6px;
-  color: var(--mat-sys-on-surface-variant);
+.bug .sep {
+  width: 0;
+  overflow: hidden;
 }
 
 .score small {
-  display: block;
-  margin-top: 2px;
-  font: 500 0.8rem/1 var(--mat-sys-body-small-font, inherit);
-  color: var(--mat-sys-on-surface-variant);
+  font: 600 0.82rem/1 var(--fl-display);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--fl-ink-2);
 }
 
 .score .golden {
-  color: var(--fl-gold);
-  font-weight: 700;
+  color: var(--fl-ball);
+  font-weight: 800;
 }
 
 .spacer {
@@ -52,70 +65,57 @@
 
 .series {
   margin: 0;
-  padding: 0 16px 2px;
+  padding: 0 16px 4px;
   text-align: center;
-  font-size: 0.85rem;
-  color: var(--mat-sys-on-surface-variant);
+  font: 600 0.85rem/1.2 var(--fl-display);
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
 }
 
 .series b {
   margin-left: 6px;
-  font: 700 1rem/1 var(--fl-display);
-  color: var(--mat-sys-on-surface);
+  font: 800 1rem/1 var(--fl-display);
+  color: var(--fl-on-board);
 }
 
 .series .r {
-  color: var(--fl-red-text);
+  color: var(--fl-red-board);
 }
 
 .series .b {
-  color: var(--fl-blue-text);
-}
-
-.bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 56px;
-  margin: 0 8px 8px;
-  padding: 4px 6px 4px 16px;
-  border-radius: 16px;
-  background: var(--mat-sys-surface-container);
-}
-
-.bar .text {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.bar--decided {
-  background: var(--mat-sys-primary-container);
-  color: var(--mat-sys-on-primary-container);
-}
-
-.bar--decided .text {
-  font: 700 1.15rem/1.2 var(--fl-display);
+  color: var(--fl-blue-board);
 }
 
 .teams {
+  position: relative;
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-rows: 1fr 1fr;
-  gap: 8px;
-  padding: 6px 8px 8px;
+  gap: 6px;
+  padding: 4px 6px 6px;
 }
 
+/* Each half of the table in its team's colour. */
 .team {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 6px 8px 8px;
-  border-radius: 20px;
-  background: var(--mat-sys-surface-container-low);
+  padding: 4px 8px 8px;
+  border-radius: 16px;
+  color: #fff;
+  --mat-button-text-label-text-color: #fff;
+  --mat-button-text-state-layer-color: #fff;
+}
+
+.team--red,
+.bug .r {
+  background: var(--fl-red);
+}
+
+.team--blue,
+.bug .b {
+  background: var(--fl-blue);
 }
 
 .team-head {
@@ -124,29 +124,24 @@
   justify-content: space-between;
   gap: 8px;
   min-height: 36px;
-  margin: 0 0 4px 4px;
+  margin: 0 0 2px 4px;
 }
 
 .team h2 {
   margin: 0;
-  font: 700 1rem/1.2 var(--fl-display);
+  font: italic 800 1.15rem/1.2 var(--fl-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .swap {
-  --mat-button-text-container-height: 36px;
-}
-
-.team--red h2 {
-  color: var(--fl-red-text);
-}
-
-.team--blue h2 {
-  color: var(--fl-blue-text);
+  --mat-button-text-container-height: 34px;
+  --mat-button-text-label-text-size: 0.9rem;
 }
 
 .team.won h2::after {
   content: ' ★';
-  color: var(--fl-gold);
+  color: var(--fl-ball);
 }
 
 .slots {
@@ -154,7 +149,7 @@
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .slot {
@@ -172,31 +167,46 @@
   min-width: 0;
 }
 
+.who fl-avatar {
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85);
+}
+
+.who fl-change {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.45);
+}
+
 .name {
   display: grid;
   min-width: 0;
   flex: 1;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 
 .name b {
-  font-weight: 600;
+  font: 700 1.1rem/1.15 var(--fl-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .name small {
-  color: var(--mat-sys-on-surface-variant);
+  color: rgb(255 255 255 / 0.75);
   font-size: 0.75rem;
 }
 
+/* The tap zone of a player: a darker panel with the goals in big numbers. */
 .goal {
   min-height: 64px;
   border: 0;
-  border-radius: 16px;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
   color: #fff;
-  font: 700 clamp(2.4rem, 9vh, 4.5rem)/1 var(--fl-display);
+  font: 800 clamp(2.6rem, 10vh, 5rem)/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   touch-action: manipulation;
@@ -205,30 +215,25 @@
 
 .goal:active {
   transform: scale(0.97);
-}
-
-.team--red .goal {
-  background: var(--fl-red);
-}
-
-.team--blue .goal {
-  background: var(--fl-blue);
+  background: rgb(0 0 0 / 0.26);
 }
 
 .own {
   min-height: 44px;
-  border-radius: 12px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: transparent;
-  color: var(--mat-sys-on-surface-variant);
-  font: 500 0.85rem/1 inherit;
+  border: 0;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 0.24);
+  color: rgb(255 255 255 / 0.85);
+  font: 600 0.9rem/1 var(--fl-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
 }
 
 .own b {
-  color: var(--mat-sys-on-surface);
   margin-left: 4px;
+  color: #fff;
 }
 
 .ended .goal,
@@ -248,7 +253,7 @@
 }
 
 :focus-visible {
-  outline: 3px solid var(--mat-sys-primary);
+  outline: 3px solid var(--fl-ball);
   outline-offset: 2px;
 }
 
@@ -259,30 +264,44 @@
   }
 }
 
-.empty {
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.deleted-note {
-  margin: 0 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: var(--mat-sys-error-container);
-  color: var(--mat-sys-on-error-container);
-  font-size: 0.9rem;
-}
-
-.teams {
-  position: relative;
-}
-
 .teams.paused .team {
-  opacity: 0.35;
+  opacity: 0.3;
   pointer-events: none;
 }
 
+/* The last move and its undo, always at the bottom. */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  margin: 0 6px 6px;
+  padding: 4px 6px 4px 16px;
+  border-radius: 12px;
+  background: var(--fl-card);
+}
+
+.bar .text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
 .bar .text.placeholder {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   font-size: 0.85rem;
+  font-weight: 400;
   white-space: normal;
+}
+
+.deleted-note {
+  margin: 0 8px 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  font-size: 0.9rem;
 }

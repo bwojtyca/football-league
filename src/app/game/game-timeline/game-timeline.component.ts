@@ -97,7 +97,8 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     }
     h2 {
       margin: 4px 0 8px;
-      font: 700 1.2rem/1.2 var(--fl-display);
+      font: italic 800 1.35rem/1.2 var(--fl-display);
+      text-transform: uppercase;
     }
     .canvas {
       position: relative;

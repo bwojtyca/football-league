@@ -1,16 +1,33 @@
+/* The player's card: who, where and the main numbers, on the dark scoreboard. */
+.hero {
+  margin-bottom: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  color-scheme: dark;
+  background: var(--fl-board);
+  color: var(--fl-on-board);
+}
+
 .head {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 14px;
+}
+
+.head fl-avatar {
+  box-shadow: 0 0 0 3px var(--fl-ball);
 }
 
 .league {
   font-weight: 600;
 }
 
+.league a {
+  color: var(--fl-ball);
+}
+
 .sub {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   font-size: 0.9rem;
 }
 
@@ -20,10 +37,13 @@
   gap: 8px;
 }
 
+.hero .tiles {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--fl-line);
+}
+
 .tiles div {
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: var(--mat-sys-surface-container);
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -31,30 +51,50 @@
 }
 
 .tiles b {
-  font: 700 1.5rem/1.1 var(--fl-display);
+  font: 800 1.9rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
 .tiles small {
   flex-basis: 100%;
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 0.75rem;
+  font: 700 0.72rem/1.2 var(--fl-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
+}
+
+.tiles--positions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tiles--positions div {
+  padding: 10px 12px;
+  border: 1px solid var(--fl-line);
+  border-radius: 12px;
+  background: var(--fl-card);
+}
+
+.tiles--positions b {
+  font-size: 1.5rem;
 }
 
 .form-row {
-  margin: 10px 2px 0;
+  margin: 12px 2px 0;
 }
 
 .chart {
   margin: 16px 0 0;
   padding: 10px 12px 6px;
-  border-radius: 14px;
-  background: var(--mat-sys-surface-container-low);
+  border: 1px solid var(--fl-line);
+  border-radius: 12px;
+  background: var(--fl-card);
 }
 
 .chart figcaption {
-  font-size: 0.8rem;
-  color: var(--mat-sys-on-surface-variant);
+  font: 700 0.75rem/1.2 var(--fl-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
 }
 
 .canvas {
@@ -63,17 +103,13 @@
 }
 
 h2 {
-  margin: 24px 0 4px;
-  font: 600 1.3rem/1.2 var(--fl-display);
+  margin: 28px 0 8px;
+  font: italic 800 1.4rem/1.1 var(--fl-display);
+  text-transform: uppercase;
 }
 
 .empty {
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.tiles--positions {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 8px;
+  color: var(--fl-ink-2);
 }
 
 .records {
@@ -85,18 +121,19 @@ h2 {
 
 .records div {
   padding: 8px 12px;
+  border: 1px solid var(--fl-line);
   border-radius: 12px;
-  background: var(--mat-sys-surface-container-low);
+  background: var(--fl-card);
 }
 
 .records dt {
   font-size: 0.75rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .records dd {
   margin: 0;
-  font: 700 1.3rem/1.2 var(--fl-display);
+  font: 800 1.4rem/1.2 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -114,20 +151,33 @@ h2 {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+  border: 1px dashed var(--fl-line);
   border-radius: 12px;
-  background: var(--mat-sys-surface-container-low);
-  color: var(--mat-sys-on-surface-variant);
-  opacity: 0.6;
+  color: var(--fl-ink-2);
 }
 
+.achievements li mat-icon {
+  flex: none;
+  opacity: 0.5;
+}
+
+/* An earned badge: the icon on the yellow ball. */
 .achievements li.earned {
-  opacity: 1;
-  background: var(--mat-sys-secondary-container);
-  color: var(--mat-sys-on-secondary-container);
+  border-style: solid;
+  background: var(--fl-card);
+  color: var(--fl-ink);
 }
 
 .achievements li.earned mat-icon {
-  color: var(--fl-gold);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
+  font-size: 20px;
+  opacity: 1;
 }
 
 .achievements span {

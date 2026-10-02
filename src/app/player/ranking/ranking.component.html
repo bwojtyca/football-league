@@ -123,7 +123,12 @@
 }
 
 <ng-template #row let-player let-position="position">
-  <a [routerLink]="playerLink()(player.id)" class="row" [class.unrated]="position === null">
+  <a
+    [routerLink]="playerLink()(player.id)"
+    class="row"
+    [class.unrated]="position === null"
+    [class.first]="position === 1"
+  >
     <span class="pos">{{ position }}</span>
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">

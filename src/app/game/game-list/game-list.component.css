@@ -8,22 +8,23 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  column-gap: 10px;
-  padding: 10px 8px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  column-gap: 12px;
+  padding: 12px 8px 10px;
+  border-bottom: 1px solid var(--fl-line);
   color: inherit;
   text-decoration: none;
 }
 
 .game:hover,
 .game:focus-visible {
-  background: var(--mat-sys-surface-container-low);
+  background: var(--fl-card);
 }
 
 .team {
   display: grid;
   min-width: 0;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
+  line-height: 1.3;
 }
 
 .team span {
@@ -37,7 +38,7 @@
 }
 
 .team.won {
-  color: var(--mat-sys-on-surface);
+  color: var(--fl-ink);
   font-weight: 600;
 }
 
@@ -46,45 +47,58 @@
   text-underline-offset: 3px;
 }
 
+/* The score on a small dark scoreboard. */
 .score {
-  font: 700 1.3rem/1 var(--fl-display);
+  min-width: 3.4em;
+  padding: 5px 8px 4px;
+  border-radius: 6px;
+  background: var(--fl-board);
+  color: var(--fl-on-board);
+  text-align: center;
+  font: 800 1.35rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
 .score .r {
-  color: var(--fl-red-text);
+  color: var(--fl-red-board);
 }
 
 .score .b {
-  color: var(--fl-blue-text);
+  color: var(--fl-blue-board);
+}
+
+.in-progress .score {
+  box-shadow: 0 0 0 2px var(--fl-ball);
 }
 
 .meta {
   grid-column: 1 / -1;
   justify-self: center;
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 0.78rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 8px;
 }
 
 .in-progress .meta::before {
   content: '●';
-  color: var(--fl-win);
+  color: var(--fl-red);
 }
 
 .win {
-  box-shadow: inset 3px 0 0 var(--fl-win);
+  box-shadow: inset 4px 0 0 var(--fl-win);
 }
 
 .lost {
-  box-shadow: inset 3px 0 0 var(--fl-loss);
+  box-shadow: inset 4px 0 0 var(--fl-loss);
 }
 
 .empty {
   padding: 16px 8px;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .more {

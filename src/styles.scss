@@ -1,5 +1,11 @@
 @use '@angular/material' as mat;
 
+/*
+ * The look: a foosball table and its score sheet. Warm paper and black ink for pages, the green
+ * felt of the table, the yellow ball for the main action of a screen, red and blue for the teams,
+ * and a dark scoreboard for scores. Headings are condensed, upper case and slanted like a sports
+ * broadcast; numbers are condensed and tabular.
+ */
 html {
   color-scheme: light dark;
   @include mat.theme(
@@ -15,13 +21,120 @@ html {
   );
 
   --fl-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  --fl-red: light-dark(#d33a3a, #c44545);
-  --fl-blue: light-dark(#2c59cf, #4669dd);
-  --fl-red-text: light-dark(#c22f2f, #f07c7c);
-  --fl-blue-text: light-dark(#2a55c4, #8ea6f6);
-  --fl-win: light-dark(#1f7a4d, #3fae74);
-  --fl-loss: light-dark(#b3261e, #f2b8b5);
-  --fl-gold: light-dark(#a86a12, #e2ac45);
+
+  --fl-paper: light-dark(#f2eee5, #111412);
+  --fl-card: light-dark(#fbf9f4, #1a1e1b);
+  --fl-card-2: light-dark(#e8e2d4, #252b27);
+  --fl-ink: light-dark(#18170f, #efece4);
+  --fl-ink-2: light-dark(#625d51, #a9a598);
+  --fl-line: light-dark(#dcd4c4, #2f3531);
+  --fl-ball: #ffc629;
+  --fl-on-ball: #18170f;
+  --fl-felt: light-dark(#0f6a3c, #155e39);
+  --fl-board: #161916;
+  --fl-on-board: #f2eee5;
+
+  --fl-red: light-dark(#d8352a, #d0433a);
+  --fl-blue: light-dark(#2156d8, #3a64d6);
+  --fl-red-text: light-dark(#c42d22, #ff8178);
+  --fl-blue-text: light-dark(#1f4fc8, #8eaaff);
+  /* Team colours on the dark scoreboard. */
+  --fl-red-board: #ff6b5f;
+  --fl-blue-board: #7da0ff;
+  --fl-win: light-dark(#14763f, #4cc483);
+  --fl-loss: light-dark(#b3261e, #ff8f87);
+  --fl-gold: light-dark(#9a6200, #ffc629);
+
+  /* Material's system colours, mapped onto the palette above. */
+  --mat-sys-background: var(--fl-paper);
+  --mat-sys-surface: var(--fl-paper);
+  --mat-sys-on-surface: var(--fl-ink);
+  --mat-sys-on-background: var(--fl-ink);
+  --mat-sys-on-surface-variant: var(--fl-ink-2);
+  --mat-sys-outline: light-dark(#8d8676, #6f6b61);
+  --mat-sys-outline-variant: var(--fl-line);
+  --mat-sys-surface-container-lowest: var(--fl-card);
+  --mat-sys-surface-container-low: var(--fl-card);
+  --mat-sys-surface-container: var(--fl-card);
+  --mat-sys-surface-container-high: light-dark(#f7f4ed, #20251f);
+  --mat-sys-surface-container-highest: var(--fl-card-2);
+  --mat-sys-surface-variant: var(--fl-card-2);
+  --mat-sys-primary: var(--fl-ink);
+  --mat-sys-on-primary: var(--fl-paper);
+  --mat-sys-primary-container: var(--fl-ball);
+  --mat-sys-on-primary-container: var(--fl-on-ball);
+  --mat-sys-secondary-container: var(--fl-card-2);
+  --mat-sys-on-secondary-container: var(--fl-ink);
+  --mat-sys-tertiary-container: light-dark(#d9eadc, #1d3a2a);
+  --mat-sys-on-tertiary-container: light-dark(#0b4a29, #bfe8cd);
+  --mat-sys-inverse-surface: var(--fl-board);
+  --mat-sys-inverse-on-surface: var(--fl-on-board);
+  --mat-sys-inverse-primary: var(--fl-ball);
+
+  /* Buttons: condensed capitals, squarer corners. */
+  @each $kind in filled, outlined, text, tonal, protected {
+    --mat-button-#{$kind}-container-shape: 10px;
+    --mat-button-#{$kind}-label-text-font: var(--fl-display);
+    --mat-button-#{$kind}-label-text-size: 1rem;
+    --mat-button-#{$kind}-label-text-weight: 700;
+    --mat-button-#{$kind}-label-text-tracking: 0.04em;
+    --mat-button-#{$kind}-label-text-transform: uppercase;
+  }
+  --mat-button-outlined-outline-color: var(--fl-ink);
+
+  /* The floating "new game" button is the yellow ball. */
+  --mat-fab-container-color: var(--fl-ball);
+  --mat-fab-foreground-color: var(--fl-on-ball);
+  --mat-fab-state-layer-color: var(--fl-on-ball);
+  --mat-fab-ripple-color: rgb(0 0 0 / 0.12);
+  --mat-fab-container-shape: 16px;
+  --mat-fab-extended-container-shape: 16px;
+  --mat-fab-extended-label-text-font: var(--fl-display);
+  --mat-fab-extended-label-text-size: 1.1rem;
+  --mat-fab-extended-label-text-weight: 800;
+  --mat-fab-extended-label-text-tracking: 0.05em;
+
+  /* Chips: square corners, a selected chip is black ink. */
+  --mat-chip-container-shape-radius: 8px;
+  --mat-chip-outline-color: var(--fl-line);
+  --mat-chip-elevated-selected-container-color: var(--fl-ink);
+  --mat-chip-selected-label-text-color: var(--fl-paper);
+  --mat-chip-with-icon-selected-icon-color: var(--fl-paper);
+  --mat-chip-selected-trailing-icon-color: var(--fl-paper);
+  --mat-chip-selected-hover-state-layer-color: var(--fl-paper);
+  --mat-chip-selected-focus-state-layer-color: var(--fl-paper);
+
+  --mat-dialog-container-shape: 18px;
+  --mat-dialog-container-color: var(--fl-paper);
+  --mat-dialog-subhead-font: var(--fl-display);
+  --mat-dialog-subhead-weight: 800;
+  --mat-bottom-sheet-container-shape: 18px;
+  --mat-bottom-sheet-container-background-color: var(--fl-paper);
+  --mat-form-field-outlined-container-shape: 10px;
+  --mat-menu-container-shape: 12px;
+  --mat-menu-container-color: var(--fl-card);
+  --mat-select-panel-background-color: var(--fl-card);
+  --mat-snack-bar-container-shape: 10px;
+  --mat-button-toggle-shape: 10px;
+  --mat-button-toggle-selected-state-background-color: var(--fl-ink);
+  --mat-button-toggle-selected-state-text-color: var(--fl-paper);
+  --mat-progress-spinner-active-indicator-color: var(--fl-felt);
+  --mat-slide-toggle-selected-track-color: var(--fl-felt);
+  --mat-slide-toggle-selected-hover-track-color: var(--fl-felt);
+  --mat-slide-toggle-selected-focus-track-color: var(--fl-felt);
+  --mat-slide-toggle-selected-pressed-track-color: var(--fl-felt);
+  --mat-slide-toggle-selected-handle-color: #fff;
+  --mat-slide-toggle-selected-hover-handle-color: #fff;
+  --mat-slide-toggle-selected-focus-handle-color: #fff;
+  --mat-slide-toggle-selected-pressed-handle-color: #fff;
+  --mat-slide-toggle-selected-icon-color: var(--fl-felt);
+}
+
+/* On a dark page the scoreboard is lifted a little, so that it still stands out. */
+@media (prefers-color-scheme: dark) {
+  html {
+    --fl-board: #1f2520;
+  }
 }
 
 html,
@@ -31,9 +144,14 @@ body {
 
 body {
   margin: 0;
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background: var(--fl-paper);
+  color: var(--fl-ink);
   font: var(--mat-sys-body-large);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
 }
 
 /* Content column of every page; the game screen fills the whole viewport instead. */
@@ -60,6 +178,36 @@ body {
 
 .highlight {
   font-weight: bold;
+}
+
+/* A heading in the broadcast style: condensed, slanted capitals. */
+.fl-title {
+  margin: 0;
+  font: italic 800 1.5rem/1.05 var(--fl-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* A small label above a section or a number. */
+.fl-kicker {
+  margin: 0;
+  font: 700 0.78rem/1.2 var(--fl-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
+}
+
+/* The one main action of a screen: the yellow ball. */
+.mat-mdc-button-base.fl-cta {
+  --mat-button-filled-container-color: var(--fl-ball);
+  --mat-button-filled-label-text-color: var(--fl-on-ball);
+  --mat-button-filled-state-layer-color: var(--fl-on-ball);
+  --mat-button-filled-ripple-color: rgb(0 0 0 / 0.12);
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  font-style: italic;
+  text-transform: uppercase;
 }
 
 /* brackets-viewer prints the stage name above a bracket; the page has its own heading. */

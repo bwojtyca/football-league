@@ -1,3 +1,42 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+
+/* A segmented switch: the chosen segment is black ink. */
+.switch {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--fl-line);
+  border-radius: 10px;
+  background: var(--fl-card);
+}
+
+.switch button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fl-ink-2);
+  font: 700 0.95rem/1 var(--fl-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.switch button[aria-checked='true'] {
+  background: var(--fl-ink);
+  color: var(--fl-paper);
+}
+
+.switch button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .ranking {
   list-style: none;
   margin: 0;
@@ -8,24 +47,34 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 56px;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  min-height: 60px;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--fl-line);
   color: inherit;
   text-decoration: none;
 }
 
 .row:hover,
 .row:focus-visible {
-  background: var(--mat-sys-surface-container-low);
+  background: var(--fl-card);
 }
 
 .pos {
-  width: 18px;
-  text-align: right;
-  color: var(--mat-sys-on-surface-variant);
-  font-weight: 600;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--fl-ink-2);
+  font: italic 800 1.35rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
+}
+
+/* The leader holds the ball. */
+.first .pos {
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
 }
 
 .who {
@@ -36,29 +85,30 @@
 
 .who b {
   font-weight: 600;
+  font-size: 1.05rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .who small {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   font-variant-numeric: tabular-nums;
 }
 
 .rating {
   display: grid;
   justify-items: end;
-  min-width: 48px;
+  min-width: 52px;
 }
 
 .rating b {
-  font: 700 1.25rem/1 var(--fl-display);
+  font: 800 1.5rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
 .rating b.provisional {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .rating b.provisional::after {
@@ -67,31 +117,13 @@
   vertical-align: super;
 }
 
+.rating small {
+  font-size: 0.7rem;
+  color: var(--fl-ink-2);
+}
+
 .unrated .who b {
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.switch {
-  display: inline-flex;
-  margin: 4px 0 4px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-.switch button {
-  min-height: 34px;
-  padding: 0 14px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: 500 0.85rem/1 inherit;
-  cursor: pointer;
-}
-
-.switch button[aria-checked='true'] {
-  background: var(--mat-sys-secondary-container);
-  color: var(--mat-sys-on-secondary-container);
+  color: var(--fl-ink-2);
 }
 
 .avatars {
@@ -100,35 +132,21 @@
 
 .avatars fl-avatar + fl-avatar {
   margin-left: -8px;
+  box-shadow: 0 0 0 2px var(--fl-paper);
 }
 
 .hint {
   margin: 8px 0 88px;
   font-size: 0.8rem;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 4px 0;
-}
-
-.switch button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.rating small {
-  font-size: 0.7rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .others {
-  margin: 16px 0 0;
-  font: 600 0.85rem/1.2 inherit;
-  color: var(--mat-sys-on-surface-variant);
+  margin: 20px 0 0;
+  font: 700 0.8rem/1.2 var(--fl-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
 }
 
 ul.ranking {
@@ -136,20 +154,27 @@ ul.ranking {
 }
 
 .row.potato {
-  background: var(--mat-sys-tertiary-container);
-  color: var(--mat-sys-on-tertiary-container);
-  border-radius: 12px;
+  border-radius: 10px;
+  border-bottom-color: transparent;
+  background: light-dark(#f1dfb8, #3b2f1b);
+  color: light-dark(#4a3410, #f3dfb5);
+}
+
+.row.potato .pos {
+  color: inherit;
 }
 
 .rules {
   margin: 12px 0 88px;
   font-size: 0.85rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .rules summary {
   cursor: pointer;
-  font-weight: 600;
+  font: 700 0.9rem/1.4 var(--fl-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .rules ul {

@@ -6,8 +6,10 @@
         <mat-icon>arrow_back</mat-icon>
       </a>
       <div class="score">
-        <span class="r">{{ score().red }}</span
-        ><span class="sep">:</span><span class="b">{{ score().blue }}</span>
+        <span class="bug"
+          ><span class="r">{{ score().red }}</span
+          ><span class="sep">:</span><span class="b">{{ score().blue }}</span></span
+        >
         <small>
           @if (clock().golden) {
             <b class="golden">{{ 'game.goldenGoal' | transloco }}</b>
@@ -39,11 +41,13 @@
       } @else if (game.tournament) {
         <a matButton="filled" [routerLink]="backLink()">{{ 'tournament.back' | transloco }}</a>
       } @else if (series()?.next; as next) {
-        <button matButton="filled" (click)="nextInSeries()">
+        <button matButton="filled" class="fl-cta" (click)="nextInSeries()">
           {{ 'series.next' | transloco: { n: next } }}
         </button>
       } @else if (canRematch()) {
-        <button matButton="tonal" (click)="rematch()">{{ 'game.rematch' | transloco }}</button>
+        <button matButton="filled" class="fl-cta" (click)="rematch()">
+          {{ 'game.rematch' | transloco }}
+        </button>
       } @else {
         <span class="spacer"></span>
       }

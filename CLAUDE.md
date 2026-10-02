@@ -88,6 +88,14 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Firestore observables, ng2-charts (Chart.js) for the rating chart, Fontsource and
   `material-icons` for self-hosted fonts, `@angular/service-worker` for offline use and
   installing on phones (a snackbar offers to reload when a new deploy is ready).
+- The look (`src/styles.scss`): a foosball table and its score sheet. `--fl-*` tokens: warm
+  paper and black ink for pages, the yellow ball (`--fl-ball`, class `fl-cta` on a button) for
+  the one main action of a screen, the green felt for the Today card and the overall ranking,
+  the dark scoreboard (`--fl-board`) for scores, the game screen and summaries (such blocks set
+  `color-scheme: dark`, so every `light-dark()` token inside takes its dark value). Material's
+  `--mat-sys-*` colours and component tokens are mapped onto them. Headings are Barlow
+  Condensed 800 italic in capitals (`fl-title`, small labels `fl-kicker`); end-to-end checks
+  must compare texts case-insensitively, since `innerText` returns the capitals.
 - `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
 - `GameService` keeps one live listener on all games; per-league lists, Elo ratings
   (`player/rating.ts`), rankings, series and stats all derive from it. `scoreGoal()` writes an
@@ -150,8 +158,8 @@ most even lineups, the match timeline, pairs ranking, defence/attack ratings, re
 achievements on the profile. Next: the owner's feedback below.
 
 Owner feedback, to do at the end (after the planned stages):
-- Redesign: the current look feels like a generic generated app. A real redesign comes later;
-  until then do not spend effort polishing visuals.
+- (Done: redesign, "the table and its score sheet"; see the look in the code map. Waiting for
+  the owner's opinion.)
 - The 2017 league: the owner prefers a regular league with a generated id and a one-off
   migration that sets `league` on all 2017 games, so the code needs no special case for games
   without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). Not done yet:
@@ -182,5 +190,5 @@ Owner feedback, to do at the end (after the planned stages):
   Formats: series (best of 3/5, moved out of the new game dialog; old `series` games still show
   their series), open, king of the table, draw your partner, round robin with fixed teams or
   rotating partners ("Americano"), cup. The setup dialog states each format's needs and its
-  number of games.) Tournament visuals wait for the redesign.
+  number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)

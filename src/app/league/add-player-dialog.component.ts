@@ -96,7 +96,7 @@ export function openAddPlayerDialog(dialog: MatDialog, data: AddPlayerData) {
     .option small {
       display: block;
       font-size: 11px;
-      color: var(--mat-sys-on-surface-variant);
+      color: var(--fl-ink-2);
     }
   `,
 })

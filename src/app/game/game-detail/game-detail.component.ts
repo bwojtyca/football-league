@@ -366,7 +366,7 @@ export class GameDetailComponent {
       particleCount: 140,
       spread: 80,
       origin: { y: 0.65 },
-      colors: [cssColor(winner === 'red' ? '--fl-red' : '--fl-blue'), cssColor('--fl-gold')],
+      colors: [cssColor(winner === 'red' ? '--fl-red' : '--fl-blue'), cssColor('--fl-ball')],
       disableForReducedMotion: true,
     });
   }

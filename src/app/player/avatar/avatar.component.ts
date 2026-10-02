@@ -1,20 +1,19 @@
 import { Component, computed, input } from '@angular/core';
 
+// Jersey colours that sit well on the paper and the dark background.
 const COLORS = [
-  '#d32f2f',
-  '#c2185b',
-  '#7b1fa2',
-  '#512da8',
-  '#303f9f',
-  '#1976d2',
-  '#0288d1',
-  '#0097a7',
-  '#00796b',
-  '#388e3c',
-  '#689f38',
-  '#e64a19',
-  '#5d4037',
-  '#455a64',
+  '#b8322a',
+  '#c4581d',
+  '#a77a0e',
+  '#6b7d1f',
+  '#2f7d3c',
+  '#11786f',
+  '#1f6a93',
+  '#28479c',
+  '#5a3c9e',
+  '#8e3478',
+  '#7a4b2a',
+  '#4b5a63',
 ];
 
 /**
@@ -32,7 +31,9 @@ const COLORS = [
       flex-shrink: 0;
       border-radius: 50%;
       color: #fff;
-      font-weight: 500;
+      font-family: var(--fl-display);
+      font-weight: 700;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       user-select: none;
     }
@@ -43,7 +44,7 @@ const COLORS = [
     '[style.background-color]': 'color()',
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',
-    '[style.font-size.px]': 'size() * 0.4',
+    '[style.font-size.px]': 'size() * 0.44',
   },
 })
 export class AvatarComponent {

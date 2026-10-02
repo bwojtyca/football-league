@@ -1,11 +1,15 @@
 :host {
   position: absolute;
-  inset: 0;
+  inset: 4px 6px 6px;
   z-index: 1;
   display: grid;
   place-content: center;
   justify-items: center;
   gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(3px);
   text-align: center;
 }
 
@@ -13,14 +17,15 @@ mat-icon {
   width: 64px;
   height: 64px;
   font-size: 64px;
-  color: var(--mat-sys-primary);
+  color: var(--fl-ball);
 }
 
 b {
-  font: 700 1.6rem/1.1 var(--fl-display);
+  font: italic 800 1.8rem/1.1 var(--fl-display);
+  text-transform: uppercase;
 }
 
 small {
   max-width: 260px;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }

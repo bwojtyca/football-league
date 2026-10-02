@@ -11,7 +11,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
     <mat-icon aria-hidden="true">pause_circle</mat-icon>
     <b>{{ 'game.pausedTitle' | transloco }}</b>
     <small>{{ 'game.pausedHint' | transloco }}</small>
-    <button matButton="filled" (click)="resume.emit()">
+    <button matButton="filled" class="fl-cta" (click)="resume.emit()">
       <mat-icon>play_arrow</mat-icon>{{ 'game.resume' | transloco }}
     </button>
   `,

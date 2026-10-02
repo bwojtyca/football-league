@@ -7,43 +7,47 @@
   } @else if (!p) {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   } @else {
-    <div class="head">
-      <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
-      <div>
-        <div class="league">
-          @if (overall()) {
-            {{ 'ranking.allLeagues' | transloco }}
-          } @else {
-            {{ league()?.name }} ·
-            <a [routerLink]="['/player', p.id]">{{ 'ranking.overallProfile' | transloco }}</a>
+    <section class="hero">
+      <div class="head">
+        <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
+        <div>
+          <div class="league">
+            @if (overall()) {
+              {{ 'ranking.allLeagues' | transloco }}
+            } @else {
+              {{ league()?.name }} ·
+              <a [routerLink]="['/player', p.id]">{{ 'ranking.overallProfile' | transloco }}</a>
+            }
+          </div>
+          @if (mainPosition(); as position) {
+            <div class="sub">{{ position | transloco }}</div>
           }
         </div>
-        @if (mainPosition(); as position) {
-          <div class="sub">{{ position | transloco }}</div>
-        }
       </div>
-    </div>
+      @if (p.games > 0) {
+        <div class="tiles">
+          <div>
+            <b>{{ p.rating }}</b>
+            @if (p.change !== null) {
+              <fl-change [value]="p.change" />
+            }
+            <small>{{ 'player.rating' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ p.wins }}–{{ p.loses }}</b>
+            <small>{{ 'player.record' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ p.winRatio | translocoDecimal: { maximumFractionDigits: 0 } }}%</b>
+            <small>{{ 'player.winRate' | transloco }}</small>
+          </div>
+        </div>
+      }
+    </section>
 
     @if (p.games === 0) {
       <p class="empty">{{ 'player.noGames' | transloco }}</p>
     } @else {
-      <div class="tiles">
-        <div>
-          <b>{{ p.rating }}</b>
-          @if (p.change !== null) {
-            <fl-change [value]="p.change" />
-          }
-          <small>{{ 'player.rating' | transloco }}</small>
-        </div>
-        <div>
-          <b>{{ p.wins }}–{{ p.loses }}</b>
-          <small>{{ 'player.record' | transloco }}</small>
-        </div>
-        <div>
-          <b>{{ p.winRatio | translocoDecimal: { maximumFractionDigits: 0 } }}%</b>
-          <small>{{ 'player.winRate' | transloco }}</small>
-        </div>
-      </div>
       @if (positionRatings().length) {
         <div class="tiles tiles--positions">
           @for (position of positionRatings(); track position.key) {

@@ -61,7 +61,7 @@ import { GameMode, MINUTES, TARGETS } from '../game';
     .hint {
       margin: -4px 0 0;
       font-size: 0.85rem;
-      color: var(--mat-sys-on-surface-variant);
+      color: var(--fl-ink-2);
     }
   `,
 })

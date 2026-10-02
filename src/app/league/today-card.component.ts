@@ -29,61 +29,109 @@ function sameDay(a: Date, b: Date): boolean {
                     date: (now | translocoDate: { weekday: 'long', day: 'numeric', month: 'long' }),
                   }
           }}
-          <small>{{ 'count.games' | transloco: { n: today.count } }}</small>
+          · {{ 'count.games' | transloco: { n: today.count } }}
         </h2>
         <p class="run">
-          <span class="side">{{ today.sides[0] }}</span>
-          <b>{{ today.wins[0] }} : {{ today.wins[1] }}</b>
-          <span class="side">{{ today.sides[1] }}</span>
+          <span class="side red">{{ today.sides[0] }}</span>
+          <b>{{ today.wins[0] }}<span class="sep">:</span>{{ today.wins[1] }}</b>
+          <span class="side blue">{{ today.sides[1] }}</span>
         </p>
         <div class="actions">
           @if (today.running; as running) {
-            <a matButton="filled" [routerLink]="['/game', running]">{{
-              'today.playing' | transloco
-            }}</a>
+            <a matButton="filled" class="fl-cta" [routerLink]="['/game', running]">
+              <span class="live" aria-hidden="true"></span>{{ 'today.playing' | transloco }}
+            </a>
           } @else {
-            <button matButton="filled" (click)="rematch()">{{ 'game.rematch' | transloco }}</button>
+            <button matButton="filled" class="fl-cta" (click)="rematch()">
+              {{ 'game.rematch' | transloco }}
+            </button>
           }
         </div>
       </section>
     }
   `,
   styles: `
+    /* The table's felt, with its centre line and circle. */
     .today {
       display: grid;
-      gap: 6px;
+      gap: 10px;
       margin: 0 0 12px;
-      padding: 12px 16px 14px;
-      border-radius: 20px;
-      background: var(--mat-sys-primary-container);
-      color: var(--mat-sys-on-primary-container);
+      padding: 12px 14px 14px;
+      border-radius: 14px;
+      background:
+        radial-gradient(
+          circle at 50% 54%,
+          transparent 33px,
+          rgb(255 255 255 / 0.14) 34px 35px,
+          transparent 36px
+        ),
+        linear-gradient(
+          90deg,
+          transparent calc(50% - 1px),
+          rgb(255 255 255 / 0.14) calc(50% - 1px) calc(50% + 1px),
+          transparent calc(50% + 1px)
+        ),
+        var(--fl-felt);
+      color: #fff;
     }
     h2 {
       margin: 0;
-      font: 700 1.05rem/1.2 var(--fl-display);
-    }
-    h2 small {
-      margin-left: 6px;
-      font: 400 0.85rem/1 inherit;
+      font: 700 0.8rem/1.2 var(--fl-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgb(255 255 255 / 0.75);
     }
     .run {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       margin: 0;
       font-weight: 600;
+      line-height: 1.2;
     }
-    .run .side:first-child {
+    .side {
+      padding-bottom: 2px;
+      border-bottom: 3px solid;
+    }
+    .side.red {
+      justify-self: end;
       text-align: right;
+      border-color: var(--fl-red-board);
+    }
+    .side.blue {
+      justify-self: start;
+      border-color: var(--fl-blue-board);
     }
     .run b {
-      font: 700 1.6rem/1 var(--fl-display);
+      font: 800 2.4rem/1 var(--fl-display);
       font-variant-numeric: tabular-nums;
+    }
+    .sep {
+      margin: 0 4px;
+      opacity: 0.6;
     }
     .actions {
       display: flex;
-      justify-content: flex-end;
+      justify-content: center;
+    }
+    .live {
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--fl-red);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      50% {
+        opacity: 0.25;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .live {
+        animation: none;
+      }
     }
   `,
 })

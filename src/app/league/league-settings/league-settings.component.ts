@@ -136,7 +136,12 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
   `,
   styles: `
     section {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--fl-line);
+    }
+    section:last-child {
+      border-bottom: 0;
     }
     .full {
       width: 100%;
@@ -149,12 +154,14 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
     }
     h2 {
       margin: 0 0 4px;
-      font: 600 1rem/1.3 inherit;
+      font: 800 1.15rem/1.3 var(--fl-display);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
     .hint {
       margin: 0 0 8px;
       font-size: 0.85rem;
-      color: var(--mat-sys-on-surface-variant);
+      color: var(--fl-ink-2);
     }
     .danger > button {
       color: var(--mat-sys-error);
@@ -163,7 +170,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       display: grid;
       gap: 8px;
       padding: 12px 14px;
-      border-radius: 16px;
+      border-radius: 12px;
       background: var(--mat-sys-error-container);
       color: var(--mat-sys-on-error-container);
     }

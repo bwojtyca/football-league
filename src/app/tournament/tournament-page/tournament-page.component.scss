@@ -1,18 +1,34 @@
 .meta {
   margin: 0 0 12px;
-  color: var(--mat-sys-on-surface-variant);
+  font: 700 0.8rem/1.3 var(--fl-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
 }
 
 .note {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: var(--mat-sys-surface-container);
   margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--fl-card-2);
 }
 
 .note b {
   display: block;
   margin-top: 4px;
+  font: italic 800 1.3rem/1.15 var(--fl-display);
+  text-transform: uppercase;
+}
+
+.note.champion {
+  background: var(--fl-felt);
+  color: #fff;
+  font: italic 800 1.15rem/1.2 var(--fl-display);
+  text-transform: uppercase;
+}
+
+.note.champion .crown {
+  color: var(--fl-ball);
 }
 
 section {
@@ -21,21 +37,31 @@ section {
 
 h2 {
   margin: 0 0 8px;
-  font: 700 1.1rem/1.2 var(--fl-display);
+  font: italic 800 1.3rem/1.15 var(--fl-display);
+  text-transform: uppercase;
 }
 
+/* What is played now or next, on the dark scoreboard. */
 .card {
   display: grid;
   gap: 12px;
   padding: 14px 16px 16px;
-  border-radius: 20px;
-  background: var(--mat-sys-surface-container);
-  color: inherit;
+  border-radius: 14px;
+  color-scheme: dark;
+  background: var(--fl-board);
+  color: var(--fl-on-board);
   text-decoration: none;
 }
 
 .card h2 {
   margin: 0;
+  font: 700 0.8rem/1.2 var(--fl-display);
+  letter-spacing: 0.08em;
+  color: var(--fl-ink-2);
+}
+
+a.card.now {
+  box-shadow: 0 0 0 2px var(--fl-ball);
 }
 
 .matchup {
@@ -62,9 +88,9 @@ h2 {
 
 .vs {
   justify-self: center;
-  font: 700 1.1rem/1 var(--fl-display);
+  font: 800 1.3rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .crown {
@@ -103,7 +129,7 @@ ol.people {
   align-items: center;
   gap: 10px;
   min-height: 48px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--fl-line);
 }
 
 ol.people li::before {
@@ -111,7 +137,7 @@ ol.people li::before {
   content: counter(queue);
   width: 18px;
   text-align: right;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -133,7 +159,7 @@ ol.people li.empty::before {
 .table th,
 .table td {
   padding: 8px 4px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--fl-line);
   text-align: center;
 }
 
@@ -143,9 +169,15 @@ ol.people li.empty::before {
 }
 
 .table thead th {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--mat-sys-on-surface-variant);
+  font: 700 0.75rem/1.2 var(--fl-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fl-ink-2);
+}
+
+.table tbody tr:first-child .name {
+  box-shadow: inset 4px 0 0 var(--fl-ball);
+  padding-left: 10px;
 }
 
 .fixtures {
@@ -160,7 +192,7 @@ ol.people li.empty::before {
   align-items: center;
   gap: 8px;
   min-height: 52px;
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  border-bottom: 1px solid var(--fl-line);
 }
 
 .fixtures a.vs {
@@ -172,7 +204,7 @@ ol.people li.empty::before {
 }
 
 .empty {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 .champion {
@@ -185,7 +217,7 @@ ol.people li.empty::before {
 .hint {
   margin: -8px 0 16px;
   font-size: 0.85rem;
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--fl-ink-2);
 }
 
 /* brackets-viewer, themed with the app's colours; scrolls sideways on phones. */
@@ -196,10 +228,10 @@ ol.people li.empty::before {
   --font-color: var(--mat-sys-on-surface);
   --win-color: var(--fl-win);
   --loss-color: var(--fl-loss);
-  --label-color: var(--mat-sys-on-surface-variant);
-  --hint-color: var(--mat-sys-on-surface-variant);
-  --connector-color: var(--mat-sys-outline-variant);
-  --border-color: var(--mat-sys-outline-variant);
+  --label-color: var(--fl-ink-2);
+  --hint-color: var(--fl-ink-2);
+  --connector-color: var(--fl-line);
+  --border-color: var(--fl-line);
   --border-hover-color: var(--mat-sys-primary);
   --border-selected-color: var(--mat-sys-primary);
   --text-size: 14px;
@@ -220,8 +252,8 @@ ol.people li.empty::before {
 }
 
 .vs.big {
-  font-size: 2rem;
-  color: var(--mat-sys-on-surface);
+  font-size: 2.4rem;
+  color: var(--fl-on-board);
 }
 
 .actions.start {

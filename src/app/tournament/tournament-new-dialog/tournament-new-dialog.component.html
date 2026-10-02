@@ -148,7 +148,7 @@
 
 <mat-dialog-actions align="end">
   <button matButton mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
-  <button matButton="filled" (click)="create()" [disabled]="!!problem()">
+  <button matButton="filled" class="fl-cta" (click)="create()" [disabled]="!!problem()">
     {{ 'tournament.start' | transloco }}
   </button>
 </mat-dialog-actions>

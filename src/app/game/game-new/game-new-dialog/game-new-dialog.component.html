@@ -70,7 +70,7 @@
         }
       </div>
       <section class="rules">
-        <h3>{{ 'newGame.rules' | transloco }}</h3>
+        <h3 class="fl-kicker">{{ 'newGame.rules' | transloco }}</h3>
         <fl-mode-picker [(mode)]="mode" />
       </section>
 
@@ -123,7 +123,12 @@
 
 <mat-dialog-actions align="end">
   <button matButton (click)="close()">{{ 'common.cancel' | transloco }}</button>
-  <button matButton="filled" (click)="startGame()" [disabled]="(players()?.length ?? 0) < 2">
+  <button
+    matButton="filled"
+    class="fl-cta"
+    (click)="startGame()"
+    [disabled]="(players()?.length ?? 0) < 2"
+  >
     {{ 'newGame.start' | transloco }}
   </button>
 </mat-dialog-actions>
