@@ -66,12 +66,12 @@ service cloud.firestore {
     match /tournaments/{tournamentId} {
       allow read: if true;
 
-      allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams'])
+      allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams', 'groups'])
         && request.resource.data.league is string
         && request.resource.data.league.size() > 0
         && request.resource.data.league.size() <= 64
         && tournamentName(request.resource.data.name)
-        && request.resource.data.format in ['king', 'dyp', 'roundRobin']
+        && request.resource.data.format in ['king', 'dyp', 'roundRobin', 'cup']
         && request.resource.data.created is string
         && validMode(request.resource.data.mode)
         && request.resource.data.teamSize in [1, 2]
@@ -80,7 +80,8 @@ service cloud.firestore {
         && (!('teams' in request.resource.data)
           || (request.resource.data.teams is list
             && request.resource.data.teams.size() >= 2
-            && request.resource.data.teams.size() <= 16));
+            && request.resource.data.teams.size() <= 16))
+        && (!('groups' in request.resource.data) || request.resource.data.groups in [0, 2]);
 
       // While it runs, a tournament can be renamed and ended, and players join or leave it one
       // at a time; how it is played never changes.
