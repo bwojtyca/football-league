@@ -101,9 +101,11 @@ export async function pickTeams(page: Page, teams: Teams): Promise<Locator> {
   return dialog;
 }
 
+/** Types a name and picks it in the list of this field (other fields' lists may be open). */
 async function pick(page: Page, input: Locator, name: string): Promise<void> {
   await input.fill(name);
-  await page.getByRole('option', { name }).click();
+  const list = await input.getAttribute('aria-controls');
+  await page.locator(`[id="${list}"]`).getByRole('option', { name }).click();
   await expect(input).toHaveValue(name);
 }
 
