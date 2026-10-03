@@ -262,13 +262,15 @@ session can pick up where the last one stopped:
   top right red defence, bottom left blue defence, bottom right blue offence. Cells keep the DOM
   order (red offence, red defence, blue offence, blue defence) and get their grid area from
   `area()`; each team's swap button sits on the line between its two cells (`swapSpot()`).
-- (Done, e2e `stats.spec.ts`, branch `claude/stats`) Statistics in four parts, as proposed to
+- (Done, e2e `stats.spec.ts`, deployed) Statistics in four parts, as proposed to
   and approved by the owner: league statistics, two players compared, more on the profile
   (time, rules, goal moments, tournaments), tournaments and games against the league (see the
   code map). Next proposal to the owner: recording the rod each goal came from (see the
   session's message), which needs a rules change for the goal events.
 - (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
 - (Done) The Playwright scenarios live in `e2e/` and run in CI on every branch (see "Working on
-  it"); all pass on `claude/feedback-f`. To deploy it: merge to `master` after the owner's OK
-  (the rules change deploys with it).
-- Open question to the owner: the 2017 migration (see above) still waits for an explicit go-ahead.
+  it"). Round F and the statistics were deployed on 3 Oct 2026 (rules first, then the app).
+- The 2017 migration (see above) is ready on `claude/migration-2017`; the owner postponed it
+  (3 Oct 2026: "the database doesn't bother us for now").
+- A parallel session on the owner's machine works on the redesign concepts (A: the table as the
+  interface, C liked visually); it must not change code yet, so leave the visuals to it.
