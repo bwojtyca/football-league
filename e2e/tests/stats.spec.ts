@@ -61,7 +61,7 @@ test('statistics: the league, two players compared, a profile and a game against
   await page.getByRole('button', { name: t('compare.with') }).click();
   await page.getByRole('menuitem', { name: d }).click();
   await expect(page).toHaveURL(/\/compare\/[^/]+\/[^/]+$/);
-  await expect(page.locator('.score')).toHaveText('1 : 1');
+  await expect(page.locator('p.score')).toHaveText('1 : 1');
   await expect(page.getByText(t('compare.neverTogether'))).toBeVisible();
   await shot(page, 'stats-compare');
 
