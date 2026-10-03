@@ -29,6 +29,14 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 - The `emulator` build configuration only swaps the environment, so it combines with others:
   `ng build -c production,emulator` is the production bundle (with the service worker) against
   the emulator.
+- The owner's own machine (an LXC: 2 CPUs, 3 GB RAM, no Java) is too weak for builds, the
+  emulator or Playwright: there, only edit, read and run light scripts, and ask before anything
+  heavy. Heavy checks run in CI: a push to any branch but `master` runs
+  `.github/workflows/check.yml` (unit tests, `ng build -c production,emulator`, then the
+  Playwright scenarios in `e2e/` against the emulator with the branch's rules). Read the result
+  with `gh run list` / `gh run view --log-failed`, and the screenshots with
+  `gh run download <run> -n e2e`. Scenarios run on a Pixel 7 in Polish and take their texts from
+  `public/i18n/pl.json` (`t()` in `e2e/tests/helpers.ts`); each creates a league of its own.
 
 ## Deploys (everything goes out from `master`)
 

@@ -1,0 +1,11 @@
+{
+  "name": "football-league-e2e",
+  "private": true,
+  "description": "End-to-end scenarios, run in CI against the Firestore emulator (.github/workflows/check.yml)",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
