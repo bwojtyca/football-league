@@ -113,9 +113,11 @@ export function score(page: Page): Locator {
   return page.locator('header.top .bug');
 }
 
-/** Scores goals for a player on the game screen. */
+/** Scores goals for a player on the game screen (one playing alone has two goal buttons). */
 export async function goal(page: Page, name: string, times = 1): Promise<void> {
-  const button = page.getByRole('button', { name: t('game.goalAria', { name }), exact: true });
+  const button = page
+    .getByRole('button', { name: t('game.goalAria', { name }), exact: true })
+    .first();
   for (let i = 0; i < times; i++) {
     await button.click();
   }

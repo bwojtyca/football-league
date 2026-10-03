@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
   addPlayers,
   createLeague,
+  goal,
   newPlay,
   pickTeams,
   players,
@@ -76,4 +77,37 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
   await expect(card.locator('.vs')).toHaveText('2 : 0');
   await expect(card).toContainText(t('tournament.seriesWinner', { name: `${a} & ${b}` }));
   await shot(page, 'series-won');
+});
+
+test('an open tournament: cancelling a new game and removing a running one stay in it', async ({
+  page,
+}) => {
+  const id = tag();
+  const [a, b] = players(id);
+  await createLeague(page, `E2E usuń ${id}`);
+  await addPlayers(page, [a, b]);
+  await newPlay(page, 'tournament');
+  await page
+    .locator('fl-tournament-new-dialog')
+    .getByRole('button', { name: t('tournament.start') })
+    .click();
+  await expect(page).toHaveURL(TOURNAMENT_URL);
+  const tournament = page.url();
+
+  await page.getByRole('button', { name: t('league.newGame') }).click();
+  await page.locator('fl-game-new-dialog').getByRole('button', { name: t('common.cancel') }).click();
+  await expect(page.locator('fl-game-new-dialog')).toBeHidden();
+  expect(page.url()).toBe(tournament);
+
+  await page.getByRole('button', { name: t('league.newGame') }).click();
+  const dialog = await pickTeams(page, { red: [a], blue: [b] });
+  await dialog.getByRole('button', { name: t('newGame.start') }).click();
+  await expect(page).toHaveURL(/#\/game\//);
+  await goal(page, a);
+  page.once('dialog', (confirm) => confirm.accept());
+  await page.locator('header.top button.more').click();
+  await page.getByRole('menuitem', { name: t('game.remove') }).click();
+  await expect(page).toHaveURL(TOURNAMENT_URL);
+  await expect(page.locator('fl-leave-dialog')).toHaveCount(0);
+  await expect(page.locator('fl-game-list a.game')).toHaveCount(0);
 });
