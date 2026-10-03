@@ -29,8 +29,8 @@ test('what the app shows of the 2017 league', async ({ page }) => {
   await rankingViews(page, 'league', keep);
 
   // Each player's profile in the league and overall.
-  await page.getByRole('radio', { name: 'Gracze' }).click();
-  await page.getByRole('radio', { name: 'Elo' }).click();
+  await choose(page.getByRole('radio', { name: 'Gracze' }));
+  await choose(page.getByRole('radio', { name: 'Elo' }));
   const profiles = await rows.evaluateAll((links) =>
     links.map((link) => link.getAttribute('href') ?? ''),
   );
@@ -74,11 +74,17 @@ async function rankingViews(
   ]) {
     const option = page.getByRole('radio', { name });
     if (await option.isEnabled()) {
-      await option.click();
+      await choose(option);
       await keep(`${prefix}: ranking ${key}`, ranking);
     }
     if (key !== 'pairs') {
-      await page.getByRole('radio', { name: 'Elo' }).click();
+      await choose(page.getByRole('radio', { name: 'Elo' }));
     }
   }
+}
+
+/** Picks an option of a switch and waits until the page shows it. */
+async function choose(option: Locator): Promise<void> {
+  await option.click();
+  await expect(option).toHaveAttribute('aria-checked', 'true');
 }
