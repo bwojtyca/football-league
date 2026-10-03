@@ -9,7 +9,8 @@
     "cancel": "Cancel",
     "ok": "OK",
     "menu": "Menu",
-    "restore": "Restore"
+    "restore": "Restore",
+    "save": "Save"
   },
   "menu": {
     "leagues": "All leagues",
@@ -280,7 +281,18 @@
     "seriesWinner": "Series winners: {name}",
     "startGame": "Start game {n}",
     "teamsHint": "Teams are made in the order players are picked: the first with the second, the third with the fourth and so on. You can also draw them or even them out by Elo.",
-    "everyone": "Everyone"
+    "everyone": "Everyone",
+    "edit": "Name and rules",
+    "nameLabel": "Name",
+    "nextRules": "Rules of the next games",
+    "nextRulesHint": "Games played or running keep their rules.",
+    "delete": "Delete tournament",
+    "deleteConfirm": "Delete the tournament “{name}”?",
+    "deleteGames": "Also delete its games ({n})",
+    "deleteGamesHint": "The games disappear from rankings and stats. Restoring the tournament brings them back.",
+    "keepGamesHint": "The games stay in rankings and stats.",
+    "deleted": "Tournament deleted",
+    "deletedNote": "This tournament is deleted. You can restore it."
   },
   "timeline": {
     "title": "How it went",

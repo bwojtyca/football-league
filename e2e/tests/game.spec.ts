@@ -1,16 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import {
-  addPlayers,
-  createLeague,
-  goal,
-  players,
-  score,
-  shot,
-  startGame,
-  t,
-  tag,
-} from './helpers';
+import { addPlayers, createLeague, goal, players, score, shot, startGame, t, tag } from './helpers';
 
 test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a rematch', async ({
   page,
@@ -59,7 +49,10 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await back.click();
   await leave.getByRole('button', { name: t('game.leavePause') }).click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
-  await page.locator('fl-today-card').getByRole('link', { name: t('today.playing') }).click();
+  await page
+    .locator('fl-today-card')
+    .getByRole('link', { name: t('today.playing') })
+    .click();
   await expect(overlay).toBeVisible();
   await overlay.getByRole('button').click();
 
@@ -86,7 +79,10 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await rematch.getByRole('button', { name: t('common.cancel') }).click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
 
-  await page.locator('nav.tabs').getByRole('link', { name: t('nav.games') }).click();
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
   await expect(page.locator('fl-game-list a.game')).toHaveCount(1);
   await expect(page.locator('fl-game-list a.game .score')).toHaveText('8:0');
 });
@@ -105,8 +101,14 @@ test('one on one, and a game that is removed while it runs', async ({ page }) =>
   await page.getByRole('menuitem', { name: t('game.remove') }).click();
   // Removing a running game offers a new one instead.
   await expect(page.locator('fl-game-new-dialog')).toBeVisible();
-  await page.locator('fl-game-new-dialog').getByRole('button', { name: t('common.cancel') }).click();
+  await page
+    .locator('fl-game-new-dialog')
+    .getByRole('button', { name: t('common.cancel') })
+    .click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
-  await page.locator('nav.tabs').getByRole('link', { name: t('nav.games') }).click();
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
   await expect(page.locator('fl-game-list a.game')).toHaveCount(0);
 });

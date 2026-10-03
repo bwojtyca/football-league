@@ -45,9 +45,15 @@ test('cancelling a new game from "+" stays on the page', async ({ page }) => {
   const id = tag();
   await createLeague(page, `E2E anuluj ${id}`);
   await addPlayers(page, players(id).slice(0, 2));
-  await page.locator('nav.tabs').getByRole('link', { name: t('nav.games') }).click();
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
   await newPlay(page, 'game');
-  await page.locator('fl-game-new-dialog').getByRole('button', { name: t('common.cancel') }).click();
+  await page
+    .locator('fl-game-new-dialog')
+    .getByRole('button', { name: t('common.cancel') })
+    .click();
   await expect(page.locator('fl-game-new-dialog')).toBeHidden();
   await expect(page).toHaveURL(/\/games$/);
 });

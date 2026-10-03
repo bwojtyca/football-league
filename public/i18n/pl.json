@@ -9,7 +9,8 @@
     "cancel": "Anuluj",
     "ok": "OK",
     "menu": "Menu",
-    "restore": "Przywróć"
+    "restore": "Przywróć",
+    "save": "Zapisz"
   },
   "menu": {
     "leagues": "Wszystkie ligi",
@@ -280,7 +281,18 @@
     "seriesWinner": "Serię wygrywają: {name}",
     "startGame": "Zacznij mecz {n}",
     "teamsHint": "Drużyny powstają w kolejności wybierania graczy: pierwszy z drugim, trzeci z czwartym i tak dalej. Możesz też je wylosować albo wyrównać według Elo.",
-    "everyone": "Wszyscy"
+    "everyone": "Wszyscy",
+    "edit": "Nazwa i zasady",
+    "nameLabel": "Nazwa",
+    "nextRules": "Zasady następnych meczów",
+    "nextRulesHint": "Rozegrane i trwające mecze zostają przy swoich zasadach.",
+    "delete": "Usuń turniej",
+    "deleteConfirm": "Usunąć turniej „{name}”?",
+    "deleteGames": "Usuń też jego mecze ({n})",
+    "deleteGamesHint": "Mecze znikną z rankingów i statystyk. Przywrócenie turnieju przywróci jego mecze.",
+    "keepGamesHint": "Mecze zostaną w rankingach i statystykach.",
+    "deleted": "Turniej usunięty",
+    "deletedNote": "Ten turniej jest usunięty. Możesz go przywrócić."
   },
   "timeline": {
     "title": "Przebieg meczu",

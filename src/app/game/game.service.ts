@@ -262,9 +262,18 @@ export class GameService {
   }
 
   /** Hides (or brings back) every game of a league, deleted ones included when restoring. */
-  public async setLeagueGamesDeleted(leagueId: string, deleted: boolean): Promise<void> {
+  public setLeagueGamesDeleted(leagueId: string, deleted: boolean): Promise<void> {
+    return this._setAllDeleted((game) => leagueOf(game) === leagueId, deleted);
+  }
+
+  /** Hides (or brings back) every game of a tournament, deleted ones included when restoring. */
+  public setTournamentGamesDeleted(tournamentId: string, deleted: boolean): Promise<void> {
+    return this._setAllDeleted((game) => game.tournament === tournamentId, deleted);
+  }
+
+  private async _setAllDeleted(belongs: (game: Game) => boolean, deleted: boolean): Promise<void> {
     const games = (this._stored() ?? []).filter(
-      (game) => leagueOf(game) === leagueId && !!game.deleted !== deleted,
+      (game) => belongs(game) && !!game.deleted !== deleted,
     );
     // A batch takes at most 500 writes.
     for (let i = 0; i < games.length; i += 500) {

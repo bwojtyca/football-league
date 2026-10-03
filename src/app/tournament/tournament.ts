@@ -63,6 +63,9 @@ export interface Tournament {
   /** Series: best of 3 or 5. */
   bestOf?: number;
   end?: string;
+  /** Deleted (hidden from the league, can be restored), with its games when `gamesDeleted`. */
+  deleted?: boolean;
+  gamesDeleted?: boolean;
 }
 
 /** Players taking part now, with the time they (last) joined, in joining order. */

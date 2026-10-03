@@ -1,9 +1,26 @@
 @let current = tournament();
 <fl-top-bar [title]="current?.name ?? ''" [back]="'/l/' + leagueId()">
-  @if (current && !current.end) {
-    <button matIconButton (click)="finish()" [attr.aria-label]="'tournament.finish' | transloco">
-      <mat-icon>sports_score</mat-icon>
+  @if (current && !current.deleted) {
+    <button
+      matIconButton
+      [matMenuTriggerFor]="tournamentMenu"
+      [attr.aria-label]="'common.menu' | transloco"
+    >
+      <mat-icon>more_vert</mat-icon>
     </button>
+    <mat-menu #tournamentMenu="matMenu">
+      <button mat-menu-item (click)="edit()">
+        <mat-icon>edit</mat-icon>{{ 'tournament.edit' | transloco }}
+      </button>
+      @if (!current.end) {
+        <button mat-menu-item (click)="finish()">
+          <mat-icon>sports_score</mat-icon>{{ 'tournament.finish' | transloco }}
+        </button>
+      }
+      <button mat-menu-item (click)="remove()">
+        <mat-icon>delete_outline</mat-icon>{{ 'tournament.delete' | transloco }}
+      </button>
+    </mat-menu>
   }
 </fl-top-bar>
 
@@ -12,6 +29,9 @@
     <p class="empty">{{ 'tournament.notFound' | transloco }}</p>
   } @else if (!current || !games()) {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
+  } @else if (current.deleted) {
+    <p class="note">{{ 'tournament.deletedNote' | transloco }}</p>
+    <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
   } @else {
     <p class="meta">
       {{ 'tournament.format.' + current.format | transloco }} ·

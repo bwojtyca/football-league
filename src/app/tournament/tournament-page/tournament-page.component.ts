@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
@@ -52,6 +53,8 @@ import {
   teamStandings,
 } from '../tournament';
 import { TournamentService } from '../tournament.service';
+import { openTournamentDeleteDialog } from './tournament-delete-dialog.component';
+import { openTournamentEditDialog } from './tournament-edit-dialog.component';
 
 @Component({
   selector: 'fl-tournament-page',
@@ -80,6 +83,7 @@ export class TournamentPageComponent {
   private readonly _notifier = inject(Notifier);
   private readonly _router = inject(Router);
   private readonly _dialog = inject(MatDialog);
+  private readonly _snackBar = inject(MatSnackBar);
 
   private readonly _params = toSignal(inject(ActivatedRoute).paramMap, { requireSync: true });
   protected readonly leagueId = computed(() => this._params().get('leagueId') ?? '');
@@ -230,7 +234,7 @@ export class TournamentPageComponent {
   private readonly _decidedAt = computed(() => {
     const tournament = this.tournament();
     const games = this.games();
-    if (!tournament || tournament.end || !games?.length || this.running()) {
+    if (!tournament || tournament.end || tournament.deleted || !games?.length || this.running()) {
       return null;
     }
     const played = (fixtures: { game?: Game }[]) =>
@@ -242,7 +246,12 @@ export class TournamentPageComponent {
         this.cup()?.champion !== undefined) ||
       (tournament.format === 'roundRobin' && played(this.fixtures())) ||
       (tournament.format === 'rotation' && played(this.rotation()));
-    return decided ? (games.map((game) => game.end ?? '').sort().at(-1) ?? null) : null;
+    return decided
+      ? (games
+          .map((game) => game.end ?? '')
+          .sort()
+          .at(-1) ?? null)
+      : null;
   });
   /** Tournament this page is already ending, so it is ended only once. */
   private _settling?: string;
@@ -339,7 +348,7 @@ export class TournamentPageComponent {
 
   protected start(red: Lineup, blue: Lineup): void {
     const tournament = this.tournament();
-    if (!tournament || tournament.end) {
+    if (!tournament || tournament.end || tournament.deleted) {
       return;
     }
     const { id, saved } = this._gameService.createGame(
@@ -427,6 +436,59 @@ export class TournamentPageComponent {
     if (tournament) {
       this._tournamentService
         .leave(tournament.id, playerId)
+        .catch((error) => this._notifier.error('error.tournament', error));
+    }
+  }
+
+  /** Its name, and the rules of the next games while it runs. */
+  protected edit(): void {
+    const tournament = this.tournament();
+    if (tournament) {
+      openTournamentEditDialog(this._dialog, tournament);
+    }
+  }
+
+  /** Deletes the tournament (it can be restored), with its games if asked, and undo at once. */
+  protected remove(): void {
+    const tournament = this.tournament();
+    if (!tournament) {
+      return;
+    }
+    openTournamentDeleteDialog(this._dialog, {
+      name: tournament.name,
+      games: this.games()?.length ?? 0,
+    })
+      .afterClosed()
+      .subscribe((choice) => {
+        if (!choice) {
+          return;
+        }
+        const service = this._tournamentService;
+        const notifier = this._notifier;
+        service
+          .remove(tournament.id, choice.withGames)
+          .catch((error) => notifier.error('error.tournament', error));
+        this._router.navigate(['/l', tournament.league, 'tournaments']);
+        this._snackBar
+          .open(
+            this._transloco.translate('tournament.deleted'),
+            this._transloco.translate('game.undo'),
+            { duration: 8000 },
+          )
+          .onAction()
+          .subscribe(() =>
+            service
+              .restore(tournament.id)
+              .catch((error) => notifier.error('error.tournament', error)),
+          );
+      });
+  }
+
+  protected restore(): void {
+    const tournament = this.tournament();
+    if (tournament) {
+      this._tournamentService
+        .restore(tournament.id)
         .catch((error) => this._notifier.error('error.tournament', error));
     }
   }
