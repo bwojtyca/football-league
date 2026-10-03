@@ -81,7 +81,7 @@ export async function pickTeams(page: Page, teams: Teams): Promise<Locator> {
     const team = dialog.locator(`.team--${color}`);
     await team.getByRole('checkbox', { name: t('newGame.onePlayer') }).uncheck();
     for (const position of [t('position.defence'), t('position.offence')]) {
-      await team.getByLabel(position).fill('');
+      await team.getByRole('combobox', { name: position }).fill('');
     }
   }
   for (const color of ['red', 'blue'] as const) {
@@ -93,9 +93,9 @@ export async function pickTeams(page: Page, teams: Teams): Promise<Locator> {
     } else {
       await single.check();
     }
-    await pick(page, team.getByLabel(t('position.defence')), defence);
+    await pick(page, team.getByRole('combobox', { name: t('position.defence') }), defence);
     if (offence) {
-      await pick(page, team.getByLabel(t('position.offence')), offence);
+      await pick(page, team.getByRole('combobox', { name: t('position.offence') }), offence);
     }
   }
   return dialog;
