@@ -1,0 +1,78 @@
+import { expect, test } from '@playwright/test';
+
+import { addPlayers, createLeague, goal, players, shot, startGame, t, tag, win } from './helpers';
+
+test('statistics: the league, two players compared, a profile and a game against the league', async ({
+  page,
+}) => {
+  const id = tag();
+  const [a, b, c, d] = players(id);
+  await createLeague(page, `E2E statystyki ${id}`);
+  await addPlayers(page, [a, b, c, d]);
+
+  // Two games with a log: Ala's team wins 8:0, then Darek's team wins 8:1.
+  await startGame(page, { red: [a, b], blue: [c, d] });
+  await win(page, a);
+  await page
+    .locator('fl-game-new-dialog')
+    .getByRole('button', { name: t('common.cancel') })
+    .click();
+  await startGame(page, { red: [a, b], blue: [c, d] });
+  await goal(page, a);
+  await win(page, d);
+  await page
+    .locator('fl-game-new-dialog')
+    .getByRole('button', { name: t('common.cancel') })
+    .click();
+
+  // The league's statistics, next to its list of games.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
+  await page.getByRole('link', { name: t('leagueStats.stats') }).click();
+  await expect(page).toHaveURL(/\/stats$/);
+  const stats = page.locator('fl-league-stats');
+  await expect(stats.getByRole('heading', { name: t('leagueStats.numbers') })).toBeVisible();
+  await expect(stats.locator('.fl-tiles').first()).toContainText('2');
+  await expect(stats.locator('table.heat')).toBeVisible();
+  await expect(stats.getByRole('heading', { name: t('leagueStats.records') })).toBeVisible();
+  await expect(stats.locator('.fl-records dt')).toContainText([t('leagueStats.longest')]);
+  await expect(stats.getByRole('option')).toHaveCount(4);
+  await expect(stats.getByRole('heading', { name: t('leagueStats.goalTimes') })).toBeVisible();
+  await shot(page, 'stats-league');
+  await stats.getByRole('option', { name: d }).click();
+  await expect(stats.getByRole('option', { name: d })).toHaveAttribute('aria-selected', 'true');
+  await page.locator('fl-league-stats canvas').last().scrollIntoViewIfNeeded();
+  await shot(page, 'stats-league-elo');
+
+  // Ala against Darek, from Ala's profile.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.ranking') })
+    .click();
+  await page.locator('fl-ranking').getByText(a).click();
+  await expect(page.locator('main .hero')).toBeVisible();
+  await expect(page.getByRole('heading', { name: t('stats.moments') })).toBeVisible();
+  await page.getByRole('heading', { name: t('stats.moments') }).scrollIntoViewIfNeeded();
+  await shot(page, 'stats-profile');
+  await page.getByRole('button', { name: t('compare.with') }).click();
+  await page.getByRole('menuitem', { name: d }).click();
+  await expect(page).toHaveURL(/\/compare\/[^/]+\/[^/]+$/);
+  await expect(page.locator('.score')).toHaveText('1 : 1');
+  await expect(page.getByText(t('compare.neverTogether'))).toBeVisible();
+  await shot(page, 'stats-compare');
+
+  // A game against the league's other games.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
+  await page.locator('fl-game-list a.game').last().click();
+  await expect(page).toHaveURL(/#\/game\//);
+  await page.locator('footer.bar').getByRole('button').click();
+  const sheet = page.locator('fl-game-timeline');
+  await expect(sheet.getByRole('heading', { name: t('facts.title') })).toBeVisible();
+  await expect(sheet.locator('.facts.league li').last()).toContainText(':');
+  await shot(page, 'stats-game-facts');
+});

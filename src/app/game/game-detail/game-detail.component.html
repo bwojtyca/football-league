@@ -158,11 +158,12 @@
         (undo)="undo()"
         (next)="next()"
       />
-    } @else if (game.end && game.events?.length) {
+    } @else if (game.end) {
       <footer class="bar">
         <span class="text">{{ 'timeline.prompt' | transloco }}</span>
         <button matButton (click)="showTimeline()">
-          <mat-icon>timeline</mat-icon>{{ 'timeline.title' | transloco }}
+          <mat-icon>timeline</mat-icon
+          >{{ (game.events?.length ? 'timeline.title' : 'facts.title') | transloco }}
         </button>
       </footer>
     } @else if (!game.end && game.events) {

@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 
 import { GameService } from '../game/game.service';
 import { TopBarComponent } from '../shared/top-bar.component';
+import { TournamentsTableComponent } from '../stats/tournaments-table.component';
 import { openTournamentNewDialog } from '../tournament/tournament-new-dialog/tournament-new-dialog.component';
 import { TournamentService } from '../tournament/tournament.service';
 import { LeagueService } from './league.service';
@@ -16,7 +17,14 @@ import { LeagueService } from './league.service';
 /** A league's tournaments and series: running ones first. */
 @Component({
   selector: 'fl-league-tournaments',
-  imports: [MatButtonModule, MatIconModule, RouterLink, TopBarComponent, TranslocoPipe],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    RouterLink,
+    TopBarComponent,
+    TournamentsTableComponent,
+    TranslocoPipe,
+  ],
   template: `
     @let current = league();
     <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
@@ -56,6 +64,7 @@ import { LeagueService } from './league.service';
           <li class="empty">{{ 'tournament.none' | transloco }}</li>
         }
       </ul>
+      <fl-tournaments-table [leagueId]="leagueId()" />
     </main>
   `,
   styles: `

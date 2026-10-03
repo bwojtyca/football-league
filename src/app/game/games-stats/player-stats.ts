@@ -1,4 +1,5 @@
 import { Game, opponent, teamOf, teamPlayers } from '../game';
+import { gameSeconds } from '../../stats/stats';
 
 export interface ResultStats {
   games: number;
@@ -73,7 +74,7 @@ export function calculateStats(games: Game[], playerId: string): PlayerStats {
     }
     const team = game.teams[color];
     const won = color === game.win;
-    const time = (new Date(game.end).getTime() - new Date(game.start).getTime()) / 1000;
+    const time = gameSeconds(game);
 
     ++stats.games.total;
     stats.time.total += time;

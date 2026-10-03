@@ -35,6 +35,8 @@ export class GameListComponent {
   public readonly playerId = input<string | null>(null);
   /** Shows only the games of this tournament. */
   public readonly tournamentId = input<string | null>(null);
+  /** With `playerId`: only the games this player played too, with or against them. */
+  public readonly versus = input<string | null>(null);
   public readonly pageSize = input(20);
 
   private readonly _pages = signal(1);
@@ -42,11 +44,16 @@ export class GameListComponent {
   private readonly _games = computed(() => {
     const playerId = this.playerId();
     const tournamentId = this.tournamentId();
+    const versus = this.versus();
     const games =
       (playerId
         ? this._gameService.playerGames(this.leagueId(), playerId)
         : this._gameService.leagueGames(this.leagueId())) ?? [];
-    return tournamentId ? games.filter((game) => game.tournament === tournamentId) : games;
+    return games.filter(
+      (game) =>
+        (!tournamentId || game.tournament === tournamentId) &&
+        (!versus || game.players.includes(versus)),
+    );
   });
 
   protected readonly more = computed(() => this._games().length > this._pages() * this.pageSize());

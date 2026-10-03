@@ -39,6 +39,7 @@ import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { compareNames } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
+import { TournamentSummaryComponent } from '../../stats/tournament-summary.component';
 import { loadBracketsViewer } from '../brackets-viewer';
 import { CupState, cupState } from '../cup';
 import {
@@ -69,6 +70,7 @@ import { openTournamentEditDialog } from './tournament-edit-dialog.component';
     GameListComponent,
     ModeLabelComponent,
     TopBarComponent,
+    TournamentSummaryComponent,
     TranslocoPipe,
   ],
   templateUrl: './tournament-page.component.html',

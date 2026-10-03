@@ -44,6 +44,9 @@ html {
   --fl-win: light-dark(#14763f, #4cc483);
   --fl-loss: light-dark(#b3261e, #ff8f87);
   --fl-gold: light-dark(#9a6200, #ffc629);
+  /* Two players side by side in a chart (validated for colour blindness on the cards). */
+  --fl-series-1: light-dark(#2a78d6, #3987e5);
+  --fl-series-2: light-dark(#eb6834, #d95926);
 
   /* Material's system colours, mapped onto the palette above. */
   --mat-sys-background: var(--fl-paper);
@@ -224,6 +227,25 @@ a {
   color: var(--fl-paper);
 }
 
+/* The same switch made of links, for views with an address of their own. */
+.fl-switch a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--fl-ink-2);
+  font: 700 0.95rem/1 var(--fl-display);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.fl-switch a[aria-current='page'] {
+  background: var(--fl-ink);
+  color: var(--fl-paper);
+}
+
 .fl-switch button:disabled {
   opacity: 0.45;
   cursor: default;
@@ -257,4 +279,117 @@ a {
 
 .bracket.brackets-viewer .participant.loss .name {
   opacity: 0.5;
+}
+
+/* Statistics: sections with a heading, numbers as tiles, shares as split bars, records as rows. */
+.fl-stats > section {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--fl-line);
+}
+
+.fl-stats > section:last-child {
+  border-bottom: 0;
+}
+
+.fl-stats h2 {
+  margin: 0 0 10px;
+  font: italic 800 1.25rem/1.2 var(--fl-display);
+  text-transform: uppercase;
+}
+
+.fl-stats .hint {
+  margin: -4px 0 10px;
+  color: var(--fl-ink-2);
+  font-size: 0.85rem;
+}
+
+.fl-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.fl-tiles > div {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--fl-line);
+  border-radius: 12px;
+  background: var(--fl-card);
+}
+
+.fl-tiles b {
+  font: 800 1.5rem/1.1 var(--fl-display);
+}
+
+.fl-tiles small {
+  color: var(--fl-ink-2);
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+
+.fl-split {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.fl-split .labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.fl-split .bar {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+}
+
+.fl-split .bar i {
+  min-width: 4px;
+  border-radius: 4px;
+}
+
+.fl-records {
+  display: grid;
+  margin: 0;
+}
+
+.fl-records > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--fl-line);
+}
+
+.fl-records > div:last-child {
+  border-bottom: 0;
+}
+
+.fl-records dt {
+  font-weight: 600;
+}
+
+.fl-records dd {
+  margin: 0;
+  font: 800 1.2rem/1.2 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.fl-records .about {
+  grid-column: 1 / -1;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--fl-ink-2);
+}
+
+.fl-chart {
+  position: relative;
+  height: 200px;
 }

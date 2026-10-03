@@ -1,0 +1,66 @@
+.empty {
+  color: var(--fl-ink-2);
+}
+
+/* When the league plays: one hue, darker for more games. */
+.heat {
+  width: 100%;
+  margin-bottom: 6px;
+  border-collapse: separate;
+  border-spacing: 2px;
+  table-layout: fixed;
+  font-size: 0.72rem;
+  color: var(--fl-ink-2);
+}
+
+.heat th {
+  padding: 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.heat tbody th {
+  width: 3.4em;
+  text-align: left;
+}
+
+.heat td {
+  height: 24px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fl-felt) calc(12% + var(--share) * 88%), transparent);
+}
+
+.heat td.empty {
+  background: var(--fl-card-2);
+}
+
+.labels .what {
+  color: var(--fl-ink-2);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.bar .red {
+  background: var(--fl-red);
+}
+
+.bar .blue {
+  background: var(--fl-blue);
+}
+
+.bar .defence {
+  background: var(--fl-ink);
+}
+
+.bar .offence {
+  background: var(--fl-ink-2);
+}
+
+.players {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.thirds {
+  margin: 14px 0 6px;
+}

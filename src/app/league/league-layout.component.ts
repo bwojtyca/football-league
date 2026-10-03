@@ -192,10 +192,10 @@ export class LeagueLayoutComponent {
     { initialValue: this._router.url },
   );
 
-  /** The section the page belongs to: profiles to the ranking, tournaments to tournaments. */
+  /** The section the page belongs to: profiles to the ranking, statistics to the games. */
   protected readonly section = computed<Section>(() => {
     const part = this._url().split('?')[0].split('/')[3] ?? '';
-    return part === 'games'
+    return part === 'games' || part === 'stats'
       ? 'games'
       : part === 'tournaments' || part === 't'
         ? 'tournaments'

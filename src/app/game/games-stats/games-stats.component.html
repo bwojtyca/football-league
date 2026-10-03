@@ -42,6 +42,19 @@
       <h3>{{ 'stats.time' | transloco }}</h3>
       <dl>
         <div>
+          <dt>{{ 'stats.totalTime' | transloco }}</dt>
+          <dd>
+            <b>{{ 'leagueStats.hours' | transloco: hours(time().seconds) }}</b>
+          </dd>
+        </div>
+        <div>
+          <dt>{{ 'stats.thisMonth' | transloco }}</dt>
+          <dd>
+            <b>{{ 'leagueStats.hours' | transloco: hours(time().month.seconds) }}</b>
+            {{ 'count.games' | transloco: { n: time().month.games } }}
+          </dd>
+        </div>
+        <div>
           <dt>{{ 'stats.avgGame' | transloco }}</dt>
           <dd>
             <b>{{ duration(s.time.total, s.games.total) }}</b>
@@ -67,6 +80,93 @@
         </div>
       </dl>
     </section>
+
+    @if (moments().games) {
+      <section>
+        <h3>{{ 'stats.moments' | transloco }}</h3>
+        <p class="hint">{{ 'leagueStats.fromLog' | transloco: { n: moments().games } }}</p>
+        <dl>
+          <div>
+            <dt>{{ 'stats.firstGoals' | transloco }}</dt>
+            <dd>
+              <b>{{ moments().first }}</b>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ 'stats.goAhead' | transloco }}</dt>
+            <dd>
+              <b>{{ moments().goAhead }}</b>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ 'stats.equalizers' | transloco }}</dt>
+            <dd>
+              <b>{{ moments().equalizers }}</b>
+            </dd>
+          </div>
+          <div>
+            <dt>{{ 'stats.winners' | transloco }}</dt>
+            <dd>
+              <b>{{ moments().winners }}</b>
+            </dd>
+          </div>
+          @if (moments().minute; as minute) {
+            <div>
+              <dt>{{ 'stats.avgMinute' | transloco }}</dt>
+              <dd>
+                <b>{{ duration(minute * 60, 1) }}</b>
+              </dd>
+            </div>
+          }
+        </dl>
+        <h3 class="thirds">{{ 'thirds.title' | transloco }}</h3>
+        <fl-thirds [thirds]="moments().thirds" />
+      </section>
+    }
+
+    @if (modes().length > 1) {
+      <section>
+        <h3>{{ 'stats.modes' | transloco }}</h3>
+        <table>
+          <tbody>
+            @for (row of modes(); track $index) {
+              <tr>
+                <th><fl-mode-label [mode]="row.mode" /></th>
+                <td>{{ 'count.games' | transloco: { n: row.games } }}</td>
+                <td>
+                  {{
+                    percent(row.wins, row.games) | translocoDecimal: { maximumFractionDigits: 0 }
+                  }}%
+                  {{ 'stats.winRate' | transloco }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @if (tournaments(); as t) {
+      @if (t.played) {
+        <section>
+          <h3>{{ 'stats.tournaments' | transloco }}</h3>
+          <dl>
+            <div>
+              <dt>{{ 'stats.tournamentsPlayed' | transloco }}</dt>
+              <dd>
+                <b>{{ t.played }}</b>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ 'stats.tournamentsWon' | transloco }}</dt>
+              <dd>
+                <b>{{ t.won }}</b>
+              </dd>
+            </div>
+          </dl>
+        </section>
+      }
+    }
 
     <section>
       <h3>{{ 'stats.positions' | transloco }}</h3>
@@ -148,7 +248,11 @@
     <tbody>
       @for (rival of list; track rival.playerId) {
         <tr>
-          <th>{{ playerService.getPlayerName(rival.playerId) }}</th>
+          <th>
+            <a [routerLink]="compare(rival.playerId)">{{
+              playerService.getPlayerName(rival.playerId)
+            }}</a>
+          </th>
           <td>{{ 'count.games' | transloco: { n: rival.games } }}</td>
           <td>
             {{ percent(rival.wins, rival.games) | translocoDecimal: { maximumFractionDigits: 0 } }}%

@@ -2,6 +2,8 @@ import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from
 import { provideRouter, withHashLocation, withRouterConfig } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import {
+  BarController,
+  BarElement,
   CategoryScale,
   Filler,
   LinearScale,
@@ -26,9 +28,11 @@ export const appConfig: ApplicationConfig = {
       withRouterConfig({ paramsInheritanceStrategy: 'always' }),
     ),
     ...provideI18n(),
-    // Only what the rating line chart needs.
+    // Only what the line charts (ratings, a game's score) and the bar charts need.
     provideCharts({
       registerables: [
+        BarController,
+        BarElement,
         LineController,
         LineElement,
         PointElement,

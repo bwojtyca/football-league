@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
+import { ALL_LEAGUES } from '../league/league';
 import { Entry, Tournament } from './tournament';
 
 @Injectable({ providedIn: 'root' })
@@ -30,10 +31,11 @@ export class TournamentService {
     for (const tournament of sorted) {
       byLeague.set(tournament.league, [...(byLeague.get(tournament.league) ?? []), tournament]);
     }
+    byLeague.set(ALL_LEAGUES, sorted);
     return byLeague;
   });
 
-  /** `undefined` while loading. */
+  /** `undefined` while loading; `ALL_LEAGUES` has every league's. */
   public leagueTournaments(leagueId: string): Tournament[] | undefined {
     return this._all() && (this._byLeague().get(leagueId) ?? []);
   }

@@ -311,6 +311,8 @@
       </mat-menu>
     }
 
+    <fl-tournament-summary [games]="games()!" />
+
     <section>
       <h2>{{ 'tournament.games' | transloco }}</h2>
       <fl-game-list [leagueId]="current.league" [tournamentId]="current.id" [pageSize]="30" />

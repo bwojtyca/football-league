@@ -58,7 +58,21 @@
           }
         </div>
       }
-      <div class="form-row"><fl-form [results]="p.form" /></div>
+      <div class="form-row">
+        <fl-form [results]="p.form" />
+        @if (comparable().length) {
+          <button matButton class="compare" [matMenuTriggerFor]="compareMenu">
+            <mat-icon>compare_arrows</mat-icon>{{ 'compare.with' | transloco }}
+          </button>
+          <mat-menu #compareMenu="matMenu">
+            @for (other of comparable(); track other.id) {
+              <a mat-menu-item [routerLink]="compareLink(leagueId(), p.id, other.id)">{{
+                other.name
+              }}</a>
+            }
+          </mat-menu>
+        }
+      </div>
 
       @if (chart(); as data) {
         <figure class="chart">

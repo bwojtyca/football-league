@@ -3,24 +3,24 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
-import { GameListComponent } from '../game/game-list/game-list.component';
 import { TopBarComponent } from '../shared/top-bar.component';
+import { LeagueStatsComponent } from '../stats/league-stats.component';
 import { GamesSwitchComponent } from './games-switch.component';
 import { LeagueService } from './league.service';
 
-/** A league's games, newest first; its statistics are one tap away. */
+/** A league's statistics, next to its list of games. */
 @Component({
-  selector: 'fl-league-games',
-  imports: [GameListComponent, GamesSwitchComponent, TopBarComponent],
+  selector: 'fl-league-stats-page',
+  imports: [GamesSwitchComponent, LeagueStatsComponent, TopBarComponent],
   template: `
     <fl-top-bar [title]="league()?.name ?? ''" [switcher]="leagueId()" />
     <main class="page">
-      <fl-games-switch [leagueId]="leagueId()" current="list" />
-      <fl-game-list [leagueId]="leagueId()" [pageSize]="30" />
+      <fl-games-switch [leagueId]="leagueId()" current="stats" />
+      <fl-league-stats [leagueId]="leagueId()" />
     </main>
   `,
 })
-export class LeagueGamesComponent {
+export class LeagueStatsPageComponent {
   private readonly _leagueService = inject(LeagueService);
 
   protected readonly leagueId = toSignal(

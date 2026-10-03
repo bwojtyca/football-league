@@ -135,6 +135,19 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Elo functions; `rating.ts` also rates defence and attack separately (2 vs 2 games only).
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
   down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
+- Statistics: `stats/stats.ts` holds the pure functions (league totals, months, weekday ×
+  hour, colour and position shares, league records, goal times from the logs, Elo timeline,
+  head to head, a player's rules, goal moments and time, tournament summary, a game's place
+  among the league's games); `stats/format.ts` the shared formatting. Views: the games tab
+  switches between the list and `l/:id/stats` (`league-stats.component`); the comparison of
+  two players `l/:id/compare/:a/:b` and `compare/:a/:b` overall (from the profile's "Compare
+  with…" and the partners/opponents lists); the profile's stats section; the tournament
+  page's summary and the tournaments tab's table (`tournament/winners.ts` names the winners of
+  any format, a cup through brackets-manager loaded on demand); the finished game's sheet
+  ("Against the league", for 2017 games too). Charts follow the dataviz rules: one hue for
+  magnitudes (felt green), emphasis for everyone's Elo (the chosen player in ink, the rest
+  grey), `--fl-series-1/2` (validated for colour blindness) for two players. Time counts play
+  time without pauses (`gameSeconds()`).
 
 ## Plan (October 2026)
 
@@ -249,9 +262,11 @@ session can pick up where the last one stopped:
   top right red defence, bottom left blue defence, bottom right blue offence. Cells keep the DOM
   order (red offence, red defence, blue offence, blue defence) and get their grid area from
   `area()`; each team's swap button sits on the line between its two cells (`swapSpot()`).
-- To do (new, larger): league statistics; play time in player statistics; more statistics from
-  the data we have (events with times, positions, modes, tournaments) shown with better charts;
-  comparing players (head to head), games and tournaments.
+- (Done, e2e `stats.spec.ts`, branch `claude/stats`) Statistics in four parts, as proposed to
+  and approved by the owner: league statistics, two players compared, more on the profile
+  (time, rules, goal moments, tournaments), tournaments and games against the league (see the
+  code map). Next proposal to the owner: recording the rod each goal came from (see the
+  session's message), which needs a rules change for the goal events.
 - (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
 - (Done) The Playwright scenarios live in `e2e/` and run in CI on every branch (see "Working on
   it"); all pass on `claude/feedback-f`. To deploy it: merge to `master` after the owner's OK

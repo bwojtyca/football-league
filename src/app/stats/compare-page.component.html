@@ -1,0 +1,140 @@
+@let p = players();
+<fl-top-bar [title]="'compare.title' | transloco" [back]="playerLink(a())" />
+
+<main class="page">
+  @if (p === null) {
+    <p class="empty">{{ 'player.notFound' | transloco }}</p>
+  } @else if (!p || !h2h()) {
+    <div class="loader"><mat-spinner [diameter]="40" /></div>
+  } @else {
+    @let h = h2h()!;
+    <section class="duel">
+      <a class="side" [routerLink]="playerLink(p.a.id)">
+        <fl-avatar [playerId]="p.a.id" [name]="p.a.name" [size]="48" />
+        <b><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</b>
+        <small>{{ p.a.rating ?? '–' }} Elo · {{ p.a.wins }}–{{ p.a.loses }}</small>
+      </a>
+      <a
+        matIconButton
+        class="swap"
+        [routerLink]="compareLink(leagueId(), b(), a())"
+        [attr.aria-label]="'compare.swap' | transloco"
+      >
+        <mat-icon>swap_horiz</mat-icon>
+      </a>
+      <div class="side">
+        <a class="who" [routerLink]="playerLink(p.b.id)">
+          <fl-avatar [playerId]="p.b.id" [name]="p.b.name" [size]="48" />
+          <b><i class="swatch b" aria-hidden="true"></i>{{ p.b.name }}</b>
+          <small>{{ p.b.rating ?? '–' }} Elo · {{ p.b.wins }}–{{ p.b.loses }}</small>
+        </a>
+        @if (others().length) {
+          <button matButton class="change" [matMenuTriggerFor]="pick">
+            {{ 'compare.change' | transloco }}
+          </button>
+          <mat-menu #pick="matMenu">
+            @for (other of others(); track other.id) {
+              <a mat-menu-item [routerLink]="compareLink(leagueId(), a(), other.id)">{{
+                other.name
+              }}</a>
+            }
+          </mat-menu>
+        }
+      </div>
+    </section>
+
+    <div class="fl-stats">
+      <section>
+        <h2>{{ 'compare.chance' | transloco }}</h2>
+        <div class="fl-split">
+          <div class="labels">
+            <span
+              >{{ p.a.name }} <b>{{ chance() }}%</b></span
+            >
+            <span
+              ><b>{{ 100 - chance()! }}%</b> {{ p.b.name }}</span
+            >
+          </div>
+          <div class="bar" aria-hidden="true">
+            <i class="a" [style.flex]="chance()"></i>
+            <i class="b" [style.flex]="100 - chance()!"></i>
+          </div>
+        </div>
+        <p class="hint">{{ 'compare.chanceHint' | transloco }}</p>
+      </section>
+
+      <section>
+        <h2>{{ 'compare.against' | transloco }}</h2>
+        @if (h.against.games) {
+          <p class="score">
+            <b>{{ h.against.wins[0] }}</b> : <b>{{ h.against.wins[1] }}</b>
+          </p>
+          <p class="hint centre">
+            {{
+              'compare.againstGames'
+                | transloco: { n: h.against.games, a: h.against.goals[0], b: h.against.goals[1] }
+            }}
+          </p>
+          <p class="form-row">
+            <span>{{ 'compare.latest' | transloco: { name: p.a.name } }}</span>
+            <fl-form [results]="form()" />
+          </p>
+        } @else {
+          <p class="hint">{{ 'compare.neverAgainst' | transloco }}</p>
+        }
+      </section>
+
+      <section>
+        <h2>{{ 'compare.together' | transloco }}</h2>
+        @if (h.together.games) {
+          <div class="fl-tiles">
+            <div>
+              <b>{{ h.together.games }}</b>
+              <small>{{ 'compare.games' | transloco }}</small>
+            </div>
+            <div>
+              <b>{{ percent(h.together.wins, h.together.games) }}%</b>
+              <small
+                >{{ 'compare.won' | transloco }} · {{ h.together.wins }}–{{
+                  h.together.games - h.together.wins
+                }}</small
+              >
+            </div>
+            <div>
+              <b>{{ h.together.goals }}:{{ h.together.conceded }}</b>
+              <small>{{ 'compare.goals' | transloco }}</small>
+            </div>
+          </div>
+        } @else {
+          <p class="hint">{{ 'compare.neverTogether' | transloco }}</p>
+        }
+      </section>
+
+      @if (chart(); as chart) {
+        <section>
+          <h2>{{ 'leagueStats.elo' | transloco }}</h2>
+          <p class="legend">
+            <span><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</span>
+            <span><i class="swatch b" aria-hidden="true"></i>{{ p.b.name }}</span>
+          </p>
+          <div class="fl-chart">
+            <canvas
+              baseChart
+              type="line"
+              [data]="chart"
+              [options]="chartOptions"
+              [attr.aria-label]="'leagueStats.elo' | transloco"
+            ></canvas>
+          </div>
+        </section>
+      }
+
+      @if (h.against.games + h.together.games) {
+        <section>
+          <h2>{{ 'compare.shared' | transloco }}</h2>
+          <fl-game-list [leagueId]="leagueId()" [playerId]="a()" [versus]="b()" [pageSize]="10" />
+        </section>
+      }
+    </div>
+  }
+</main>

@@ -1,0 +1,236 @@
+@if (stats(); as s) {
+  @if (!s.games) {
+    <p class="empty">{{ 'leagueStats.none' | transloco }}</p>
+  } @else {
+    <div class="fl-stats">
+      <section>
+        <h2>{{ 'leagueStats.numbers' | transloco }}</h2>
+        <div class="fl-tiles">
+          <div>
+            <b>{{ s.games }}</b>
+            <small>{{ 'leagueStats.games' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ s.goals }}</b>
+            <small
+              >{{ 'leagueStats.goals' | transloco }} ·
+              {{ s.goals / s.games | translocoDecimal: { maximumFractionDigits: 1 } }}
+              {{ 'leagueStats.perGame' | transloco }}</small
+            >
+          </div>
+          <div>
+            <b>{{ 'leagueStats.hours' | transloco: hours(s.seconds) }}</b>
+            <small>{{ 'leagueStats.time' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ time(s.seconds / s.games) }}</b>
+            <small>{{ 'leagueStats.avgGame' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ s.shutouts }}</b>
+            <small
+              >{{ 'leagueStats.shutouts' | transloco }} · {{ percent(s.shutouts, s.games) }}%</small
+            >
+          </div>
+          <div>
+            <b>{{ s.ownGoals }}</b>
+            <small>{{ 'leagueStats.ownGoals' | transloco }}</small>
+          </div>
+          <div>
+            <b>{{ s.players }}</b>
+            <small>{{ 'leagueStats.players' | transloco }}</small>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>{{ 'leagueStats.months' | transloco }}</h2>
+        <div class="fl-chart">
+          <canvas
+            baseChart
+            type="bar"
+            [data]="monthsChart()"
+            [options]="barOptions"
+            [attr.aria-label]="'leagueStats.months' | transloco"
+          ></canvas>
+        </div>
+        <table class="sr-only">
+          <caption>
+            {{
+              'leagueStats.months' | transloco
+            }}
+          </caption>
+          @for (month of months(); track month.label) {
+            <tr>
+              <th scope="row">{{ month.label }}</th>
+              <td>{{ month.games }}</td>
+            </tr>
+          }
+        </table>
+      </section>
+
+      @if (week(); as week) {
+        <section>
+          <h2>{{ 'leagueStats.when' | transloco }}</h2>
+          <p class="hint">
+            {{
+              'leagueStats.busiest'
+                | transloco
+                  : {
+                      day: week.busiest.day,
+                      from: week.busiest.hour,
+                      to: week.busiest.hour + 1,
+                      n: week.busiest.games,
+                    }
+            }}
+          </p>
+          <table class="heat">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span class="sr-only">{{ 'leagueStats.day' | transloco }}</span>
+                </th>
+                @for (hour of week.hours; track hour) {
+                  <th scope="col">{{ hour }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (day of week.days; track day.name) {
+                <tr>
+                  <th scope="row">{{ day.name }}</th>
+                  @for (cell of day.cells; track cell.hour) {
+                    <td
+                      [style.--share]="cell.share"
+                      [class.empty]="!cell.games"
+                      [attr.title]="day.name + ' ' + cell.hour + ':00 · ' + cell.games"
+                    >
+                      <span class="sr-only">{{ cell.games }}</span>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+          <p class="hint">{{ 'leagueStats.whenHint' | transloco }}</p>
+        </section>
+      }
+
+      <section>
+        <h2>{{ 'leagueStats.table' | transloco }}</h2>
+        <div class="fl-split">
+          <div class="labels">
+            <span
+              >{{ 'team.red' | transloco }} <b>{{ percent(s.colors.red, s.games) }}%</b></span
+            >
+            <span class="what">{{ 'leagueStats.colorWins' | transloco }}</span>
+            <span
+              ><b>{{ percent(s.colors.blue, s.games) }}%</b> {{ 'team.blue' | transloco }}</span
+            >
+          </div>
+          <div class="bar" aria-hidden="true">
+            <i class="red" [style.flex]="s.colors.red || 0.0001"></i>
+            <i class="blue" [style.flex]="s.colors.blue || 0.0001"></i>
+          </div>
+        </div>
+        @if (s.positions.games) {
+          @let goals = s.positions.defence + s.positions.offence;
+          <div class="fl-split">
+            <div class="labels">
+              <span
+                >{{ 'position.defence' | transloco }}
+                <b>{{ percent(s.positions.defence, goals) }}%</b></span
+              >
+              <span class="what">{{ 'leagueStats.positionGoals' | transloco }}</span>
+              <span
+                ><b>{{ percent(s.positions.offence, goals) }}%</b>
+                {{ 'position.offence' | transloco }}</span
+              >
+            </div>
+            <div class="bar" aria-hidden="true">
+              <i class="defence" [style.flex]="s.positions.defence || 0.0001"></i>
+              <i class="offence" [style.flex]="s.positions.offence || 0.0001"></i>
+            </div>
+          </div>
+        }
+      </section>
+
+      @if (records().length) {
+        <section>
+          <h2>{{ 'leagueStats.records' | transloco }}</h2>
+          <dl class="fl-records">
+            @for (row of records(); track row.key) {
+              <div>
+                <dt>{{ row.key | transloco }}</dt>
+                <dd>{{ row.value }}</dd>
+                <dd class="about">
+                  @if (row.game; as game) {
+                    <a [routerLink]="['/game', game.id]">{{ sides(game) }}</a>
+                    · {{ game.start | translocoDate: { dateStyle: 'medium' } }}
+                  } @else if (row.player; as player) {
+                    <a [routerLink]="['/l', leagueId(), 'player', player]">{{ name(player) }}</a>
+                  }
+                </dd>
+              </div>
+            }
+          </dl>
+        </section>
+      }
+
+      @if (ratingChart(); as chart) {
+        <section>
+          <h2>{{ 'leagueStats.elo' | transloco }}</h2>
+          <p class="hint">{{ 'leagueStats.eloHint' | transloco }}</p>
+          <mat-chip-listbox
+            class="players"
+            [attr.aria-label]="'leagueStats.eloPlayer' | transloco"
+            hideSingleSelectionIndicator
+          >
+            @for (player of rated(); track player.id) {
+              <mat-chip-option
+                [selected]="focus() === player.id"
+                [selectable]="focus() !== player.id"
+                (selectionChange)="$event.isUserInput && $event.selected && chosen.set(player.id)"
+                >{{ player.name }}</mat-chip-option
+              >
+            }
+          </mat-chip-listbox>
+          <div class="fl-chart">
+            <canvas
+              baseChart
+              type="line"
+              [data]="chart"
+              [options]="ratingOptions"
+              [attr.aria-label]="'leagueStats.elo' | transloco"
+            ></canvas>
+          </div>
+        </section>
+      }
+
+      @if (s.log.games) {
+        <section>
+          <h2>{{ 'leagueStats.goalTimes' | transloco }}</h2>
+          <p class="hint">{{ 'leagueStats.fromLog' | transloco: { n: s.log.games } }}</p>
+          <div class="fl-tiles">
+            @if (s.log.firstGoal !== undefined) {
+              <div>
+                <b>{{ time(s.log.firstGoal / 1000) }}</b>
+                <small>{{ 'leagueStats.firstGoal' | transloco }}</small>
+              </div>
+            }
+            @if (s.log.gap !== undefined) {
+              <div>
+                <b>{{ time(s.log.gap / 1000) }}</b>
+                <small>{{ 'leagueStats.goalGap' | transloco }}</small>
+              </div>
+            }
+          </div>
+          <h3 class="fl-kicker thirds">{{ 'thirds.title' | transloco }}</h3>
+          <fl-thirds [thirds]="s.log.thirds" />
+        </section>
+      }
+    </div>
+  }
+} @else {
+  <div class="loader"><mat-spinner [diameter]="40" /></div>
+}

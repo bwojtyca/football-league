@@ -36,6 +36,11 @@ export const routes: Routes = [
           import('./league/league-games.component').then((m) => m.LeagueGamesComponent),
       },
       {
+        path: 'stats',
+        loadComponent: () =>
+          import('./league/league-stats-page.component').then((m) => m.LeagueStatsPageComponent),
+      },
+      {
         path: 'tournaments',
         loadComponent: () =>
           import('./league/league-tournaments.component').then((m) => m.LeagueTournamentsComponent),
@@ -52,6 +57,11 @@ export const routes: Routes = [
         path: 'player/:playerId',
         loadComponent: () =>
           import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
+      },
+      {
+        path: 'compare/:a/:b',
+        loadComponent: () =>
+          import('./stats/compare-page.component').then((m) => m.ComparePageComponent),
       },
       {
         path: 't/:tournamentId',
@@ -71,6 +81,11 @@ export const routes: Routes = [
     path: 'player/:playerId',
     loadComponent: () =>
       import('./player/player-page/player-page.component').then((m) => m.PlayerPageComponent),
+  },
+  {
+    path: 'compare/:a/:b',
+    loadComponent: () =>
+      import('./stats/compare-page.component').then((m) => m.ComparePageComponent),
   },
   {
     path: 'game/:gameId',

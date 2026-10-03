@@ -363,9 +363,10 @@ export class GameDetailComponent implements LeaveGuarded {
     }
   }
 
+  /** How a finished game went (from its log) and where it stands among the league's games. */
   protected showTimeline(): void {
     const game = this.game();
-    if (game?.events) {
+    if (game?.end) {
       openGameTimeline(this._bottomSheet, game);
     }
   }

@@ -8,9 +8,12 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
+import { leagueOf } from '../../league/league';
 import { PlayerService } from '../../player/player.service';
+import { gameFacts } from '../../stats/stats';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { formatDuration, Game, TEAM_COLORS } from '../game';
+import { GameService } from '../game.service';
 import { timelineOf } from '../timeline';
 
 export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
@@ -22,7 +25,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
   selector: 'fl-game-timeline',
   imports: [BaseChartDirective, MatBottomSheetModule, TranslocoPipe],
   template: `
-    <h2>{{ 'timeline.title' | transloco }}</h2>
+    <h2>{{ (timeline ? 'timeline.title' : 'facts.title') | transloco }}</h2>
     @if (timeline; as story) {
       <div class="canvas">
         <canvas
@@ -89,6 +92,16 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
         }
       </ol>
     }
+    @if (facts().length) {
+      @if (timeline) {
+        <h3>{{ 'facts.title' | transloco }}</h3>
+      }
+      <ul class="facts league">
+        @for (fact of facts(); track fact.key) {
+          <li>{{ fact.key | transloco: fact.params }}</li>
+        }
+      </ul>
+    }
   `,
   styles: `
     :host {
@@ -109,6 +122,13 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
       padding-left: 20px;
       display: grid;
       gap: 4px;
+    }
+    h3 {
+      margin: 16px 0 0;
+      font: 700 0.85rem/1.2 var(--fl-display);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--mat-sys-on-surface-variant);
     }
     .goals {
       list-style: none;
@@ -156,6 +176,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
 export class GameTimelineComponent {
   private readonly _game = inject<Game>(MAT_BOTTOM_SHEET_DATA);
   private readonly _playerService = inject(PlayerService);
+  private readonly _gameService = inject(GameService);
 
   protected readonly colors = TEAM_COLORS;
   protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
@@ -164,6 +185,21 @@ export class GameTimelineComponent {
     defence: 'position.defence',
   } as const;
   protected readonly timeline = timelineOf(this._game);
+
+  /** Where the game stands among its league's games, e.g. "the 2nd longest". */
+  protected readonly facts = computed(() =>
+    gameFacts(this._game, this._gameService.leagueGames(leagueOf(this._game)) ?? []).map((fact) =>
+      fact.key === 'facts.duration'
+        ? {
+            key: fact.key,
+            params: {
+              time: formatDuration(Number(fact.params['time'])),
+              average: formatDuration(Number(fact.params['average'])),
+            },
+          }
+        : fact,
+    ),
+  );
 
   /** Goals of each team over time, as steps. */
   protected readonly chart = computed<ChartConfiguration<'line'>['data']>(() => {

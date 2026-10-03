@@ -1,0 +1,87 @@
+.empty {
+  color: var(--fl-ink-2);
+}
+
+/* The two players face to face. */
+.duel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 8px 0 12px;
+  border-bottom: 1px solid var(--fl-line);
+}
+
+.side,
+.who {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.side b {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 800 1.15rem/1.2 var(--fl-display);
+}
+
+.side small {
+  color: var(--fl-ink-2);
+}
+
+.swap {
+  margin-top: 8px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: 1px;
+}
+
+.swatch.a,
+.bar .a {
+  background: var(--fl-series-1);
+}
+
+.swatch.b,
+.bar .b {
+  background: var(--fl-series-2);
+}
+
+.score {
+  margin: 0;
+  text-align: center;
+  font: 800 2.4rem/1 var(--fl-display);
+}
+
+.centre {
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 0;
+  color: var(--fl-ink-2);
+  font-size: 0.85rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+}

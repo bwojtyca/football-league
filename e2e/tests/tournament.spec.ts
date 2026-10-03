@@ -79,8 +79,9 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
   await expect(page).toHaveURL(TOURNAMENT_URL);
   await expect(card.locator('.vs')).toHaveText('2 : 0');
   await expect(card).toContainText(t('tournament.seriesWinner', { name: `${a} & ${b}` }));
-  // A decided series ends by itself.
+  // A decided series ends by itself, with a summary of its games.
   await expect(page.locator('.note')).toContainText(t('tournament.ended'));
+  await expect(page.locator('fl-tournament-summary')).toContainText(t('tournamentStats.scorer'));
   await expect(page.getByRole('button', { name: t('tournament.finish') })).toHaveCount(0);
   await shot(page, 'series-won');
 });

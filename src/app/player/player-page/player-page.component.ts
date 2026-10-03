@@ -1,6 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -18,17 +20,20 @@ import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { COMEBACK_GOALS, MILESTONE_GAMES, playerRecords, STREAK_WINS } from '../records';
 import { ALL_LEAGUES } from '../../league/league';
+import { compareLink } from '../../stats/compare-link';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { AvatarComponent } from '../avatar/avatar.component';
-import { rankPlayers } from '../player';
+import { compareNames, rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
 import { START_RATING } from '../rating';
 
 @Component({
   selector: 'fl-player-page',
   imports: [
+    MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     RouterLink,
     AvatarComponent,
@@ -79,6 +84,18 @@ export class PlayerPageComponent {
     const player = this._playerService.player(this.playerId());
     return player ? rankPlayers([player], games, ratings)[0] : null;
   });
+
+  /** Players to compare with: the league's (everyone rated, overall), by name. */
+  protected readonly comparable = computed(() => {
+    const ids = this.overall()
+      ? [...(this._gameService.ratings(ALL_LEAGUES)?.current.keys() ?? [])]
+      : (this.league()?.players ?? []);
+    return ids
+      .filter((id) => id !== this.playerId())
+      .map((id) => ({ id, name: this._playerService.getPlayerName(id) }))
+      .sort(compareNames);
+  });
+  protected readonly compareLink = compareLink;
 
   /** Translation key of the position the player plays most, if any. */
   protected readonly mainPosition = computed(() => {
