@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 
 import {
   addPlayers,
@@ -11,6 +11,7 @@ import {
   t,
   tag,
   win,
+  winAs,
 } from './helpers';
 
 const TOURNAMENT_URL = /#\/l\/[^/]+\/t\/[^/]+$/;
@@ -76,6 +77,9 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
   await expect(page).toHaveURL(TOURNAMENT_URL);
   await expect(card.locator('.vs')).toHaveText('2 : 0');
   await expect(card).toContainText(t('tournament.seriesWinner', { name: `${a} & ${b}` }));
+  // A decided series ends by itself.
+  await expect(page.locator('.note')).toContainText(t('tournament.ended'));
+  await expect(page.getByRole('button', { name: t('tournament.finish') })).toHaveCount(0);
   await shot(page, 'series-won');
 });
 
@@ -110,4 +114,55 @@ test('an open tournament: cancelling a new game and removing a running one stay 
   await expect(page).toHaveURL(TOURNAMENT_URL);
   await expect(page.locator('fl-leave-dialog')).toHaveCount(0);
   await expect(page.locator('fl-game-list a.game')).toHaveCount(0);
+});
+
+/** Sets up a one-on-one tournament of everyone in the league, in a format with fixed teams. */
+async function oneOnOne(page: Page, format: string): Promise<void> {
+  await newPlay(page, 'tournament');
+  const setup = page.locator('fl-tournament-new-dialog');
+  await setup.getByRole('option', { name: format, exact: true }).click();
+  await setup.getByRole('option', { name: t('newGame.mode1v1') }).click();
+  await setup.getByRole('button', { name: t('tournament.everyone') }).click();
+  await shot(page, `tournament-new-${format}`);
+  await setup.getByRole('button', { name: t('tournament.start') }).click();
+  await expect(page).toHaveURL(TOURNAMENT_URL);
+}
+
+/** Plays the fixtures offered on the tournament page, red winning each, until none is left. */
+async function playAll(page: Page, games: number): Promise<void> {
+  for (let i = 0; i < games; i++) {
+    await page.getByRole('button', { name: t('tournament.play') }).first().click();
+    await expect(page).toHaveURL(/#\/game\//);
+    await winAs(page, 'red');
+    await expect(page).toHaveURL(TOURNAMENT_URL);
+  }
+}
+
+test('a cup of three ends by itself when the final is won', async ({ page }) => {
+  const id = tag();
+  await createLeague(page, `E2E puchar ${id}`);
+  await addPlayers(page, players(id).slice(0, 3));
+  await oneOnOne(page, t('tournament.format.cup'));
+  await expect(page.locator('#cup-bracket .match').first()).toBeVisible();
+  await shot(page, 'cup-start');
+
+  await playAll(page, 2);
+  await expect(page.locator('.note')).toContainText(t('tournament.ended'));
+  await expect(page.getByRole('button', { name: t('tournament.finish') })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: t('tournament.play') })).toHaveCount(0);
+  await shot(page, 'cup-won');
+});
+
+test('a round robin ends by itself when every fixture is played', async ({ page }) => {
+  const id = tag();
+  await createLeague(page, `E2E każdy ${id}`);
+  await addPlayers(page, players(id).slice(0, 3));
+  await oneOnOne(page, t('tournament.format.roundRobin'));
+
+  await playAll(page, 2);
+  await expect(page.locator('.note')).toHaveCount(0);
+  await playAll(page, 1);
+  await expect(page.locator('.note')).toContainText(t('tournament.ended'));
+  await expect(page.locator('table.table tbody tr')).toHaveCount(3);
+  await shot(page, 'round-robin-done');
 });

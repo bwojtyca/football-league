@@ -259,6 +259,7 @@
     "semiFinal": "Semi-final",
     "quarterFinal": "Quarter-final",
     "round": "Round {n}",
+    "now": "now",
     "cupWinner": "Cup winners: {name}",
     "noGames": "No games in this tournament yet.",
     "variant": "Variant",

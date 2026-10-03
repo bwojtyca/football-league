@@ -186,8 +186,8 @@ export class TournamentPageComponent {
     return tournament?.format === 'roundRobin' ? teamStandings(tournament, this.fixtures()) : [];
   });
 
-  /** Cup: worked out with brackets-manager, which is asynchronous. */
-  protected readonly cup = signal<CupState | undefined>(undefined);
+  /** Cup: worked out with brackets-manager, which is asynchronous; `of` is the tournament id. */
+  protected readonly cup = signal<(CupState & { of: string }) | undefined>(undefined);
   private readonly _bracket = viewChild<ElementRef<HTMLElement>>('bracket');
   private readonly _document = inject(DOCUMENT);
 
@@ -223,7 +223,42 @@ export class TournamentPageComponent {
     }
   });
 
+  /**
+   * When the games have decided the tournament (the final, the series, every fixture of a round
+   * robin), the end of its last game; it then ends by itself.
+   */
+  private readonly _decidedAt = computed(() => {
+    const tournament = this.tournament();
+    const games = this.games();
+    if (!tournament || tournament.end || !games?.length || this.running()) {
+      return null;
+    }
+    const played = (fixtures: { game?: Game }[]) =>
+      fixtures.length > 0 && fixtures.every((fixture) => fixture.game?.end);
+    const decided =
+      (tournament.format === 'series' && this.series()?.winner !== undefined) ||
+      (tournament.format === 'cup' &&
+        this.cup()?.of === tournament.id &&
+        this.cup()?.champion !== undefined) ||
+      (tournament.format === 'roundRobin' && played(this.fixtures())) ||
+      (tournament.format === 'rotation' && played(this.rotation()));
+    return decided ? (games.map((game) => game.end ?? '').sort().at(-1) ?? null) : null;
+  });
+  /** Tournament this page is already ending, so it is ended only once. */
+  private _settling?: string;
+
   constructor() {
+    effect(() => {
+      const tournament = this.tournament();
+      const end = this._decidedAt();
+      if (tournament && end && this._settling !== tournament.id) {
+        this._settling = tournament.id;
+        this._tournamentService.settle(tournament.id, end).catch((error) => {
+          this._settling = undefined;
+          this._notifier.error('error.tournament', error);
+        });
+      }
+    });
     effect((onCleanup) => {
       const tournament = this.tournament();
       const games = this.games();
@@ -233,17 +268,28 @@ export class TournamentPageComponent {
       let current = true;
       onCleanup(() => (current = false));
       cupState(tournament, games).then(
-        (state) => current && this.cup.set(state),
+        (state) => current && this.cup.set({ ...state, of: tournament.id }),
         (error) => this._notifier.error('error.tournament', error),
       );
     });
     // Draws the knockout bracket with brackets-viewer whenever it changes.
     effect(() => {
-      const bracket = this.cup()?.bracket;
+      const cup = this.cup();
+      const bracket = cup?.bracket;
       const element = this._bracket()?.nativeElement;
       if (!bracket || !element) {
         return;
       }
+      // Rounds with a game to play now (by number, from 1) are marked "now".
+      const roundIds = [...new Set(bracket.matches.map((m) => Number(m.round_id)))].sort(
+        (a, b) => a - b,
+      );
+      const ready = new Set(cup.ready.map((match) => match.matchId));
+      const now = new Set(
+        bracket.matches
+          .filter((m) => ready.has(Number(m.id)))
+          .map((m) => roundIds.indexOf(Number(m.round_id)) + 1),
+      );
       const data = {
         ...bracket,
         participants: bracket.participants.map((p) => ({
@@ -258,7 +304,7 @@ export class TournamentPageComponent {
             clear: true,
             showSlotsOrigin: false,
             highlightParticipantOnHover: true,
-            customRoundName: (info) => this._roundName(info),
+            customRoundName: (info) => this._roundName(info, now),
             onMatchClick: (match) => this._openMatch(Number(match.id)),
           }),
         )
@@ -309,7 +355,10 @@ export class TournamentPageComponent {
     this._router.navigate(['/game', id]);
   }
 
-  private _roundName(info: { roundNumber: number; fractionOfFinal?: number }): string {
+  private _roundName(
+    info: { roundNumber: number; fractionOfFinal?: number },
+    now: Set<number>,
+  ): string {
     const fraction = info.fractionOfFinal;
     const key =
       fraction === 1
@@ -319,7 +368,10 @@ export class TournamentPageComponent {
           : fraction === 1 / 4
             ? 'tournament.quarterFinal'
             : 'tournament.round';
-    return this._transloco.translate(key, { n: info.roundNumber });
+    const name = this._transloco.translate(key, { n: info.roundNumber });
+    return now.has(info.roundNumber)
+      ? `${name} · ${this._transloco.translate('tournament.now')}`
+      : name;
   }
 
   /** A tap on a bracket match: its game, or a new one when both teams are known. */

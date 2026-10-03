@@ -259,6 +259,7 @@
     "semiFinal": "Półfinał",
     "quarterFinal": "Ćwierćfinał",
     "round": "Runda {n}",
+    "now": "teraz",
     "cupWinner": "Puchar wygrywają: {name}",
     "noGames": "Nie ma jeszcze meczów w tym turnieju.",
     "variant": "Wariant",

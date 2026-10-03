@@ -246,3 +246,15 @@ a {
 .bracket.brackets-viewer h1 {
   display: none;
 }
+
+/* Games to play now stand out (a tap starts them); teams knocked out fade. */
+.bracket.brackets-viewer .match[data-match-status='2'] .opponents,
+.bracket.brackets-viewer .match[data-match-status='3'] .opponents {
+  border-radius: var(--match-border-radius);
+  outline: 3px solid var(--fl-ball);
+  cursor: pointer;
+}
+
+.bracket.brackets-viewer .participant.loss .name {
+  opacity: 0.5;
+}

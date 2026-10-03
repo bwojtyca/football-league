@@ -1,6 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayUnion, collection, doc, runTransaction, setDoc, updateDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,8 @@ import { Entry, Tournament } from './tournament';
 
 @Injectable({ providedIn: 'root' })
 export class TournamentService {
-  private readonly _tournaments = collection(inject(FIRESTORE), 'tournaments');
+  private readonly _db = inject(FIRESTORE);
+  private readonly _tournaments = collection(this._db, 'tournaments');
   private readonly _all = toSignal(
     collectionData(this._tournaments, { idField: 'id' }) as Observable<Tournament[]>,
   );
@@ -60,6 +61,20 @@ export class TournamentService {
 
   public finish(tournamentId: string): Promise<void> {
     return updateDoc(doc(this._tournaments, tournamentId), { end: new Date().toISOString() });
+  }
+
+  /**
+   * Ends a tournament its games have decided (a final, a series, every fixture played), at the
+   * end of its last game. Every device showing it may try; only the first one writes.
+   */
+  public settle(tournamentId: string, end: string): Promise<void> {
+    const ref = doc(this._tournaments, tournamentId);
+    return runTransaction(this._db, async (transaction) => {
+      const tournament = await transaction.get(ref);
+      if (tournament.exists() && !tournament.get('end')) {
+        transaction.update(ref, { end });
+      }
+    });
   }
 
   private _addEntry(tournamentId: string, entry: Entry): Promise<void> {

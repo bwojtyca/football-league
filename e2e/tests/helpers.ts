@@ -126,6 +126,21 @@ export async function goal(page: Page, name: string, times = 1): Promise<void> {
 /** Scores the goals a player needs to win a game to 8 at 0, then taps "Next". */
 export async function win(page: Page, name: string, goals = 8): Promise<void> {
   await goal(page, name, goals);
+  await next(page);
+}
+
+/** Red or blue wins a game to 8 at 0 (goals of its defender), then "Next". */
+export async function winAs(page: Page, color: 'red' | 'blue'): Promise<void> {
+  const goal = page
+    .getByRole('region', { name: `${t(`team.${color}`)}, ${t('position.defence')}` })
+    .locator('button.goal');
+  for (let i = 0; i < 8; i++) {
+    await goal.click();
+  }
+  await next(page);
+}
+
+async function next(page: Page): Promise<void> {
   const finish = page.locator('fl-finish-panel');
   await expect(finish).toBeVisible();
   await finish.getByRole('button', { name: t('game.next') }).click();
