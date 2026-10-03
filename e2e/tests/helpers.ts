@@ -74,9 +74,16 @@ export async function newPlay(page: Page, kind: 'game' | 'series' | 'tournament'
 /** Defence, then offence; one name plays alone. */
 export type Teams = Record<'red' | 'blue', [string] | [string, string]>;
 
-/** Fills in the teams of the new game dialog. */
+/** Fills in the teams of the new game dialog, emptied first (it may come filled in). */
 export async function pickTeams(page: Page, teams: Teams): Promise<Locator> {
   const dialog = page.locator('fl-game-new-dialog');
+  for (const color of ['red', 'blue'] as const) {
+    const team = dialog.locator(`.team--${color}`);
+    await team.getByRole('checkbox', { name: t('newGame.onePlayer') }).uncheck();
+    for (const position of [t('position.defence'), t('position.offence')]) {
+      await team.getByLabel(position).fill('');
+    }
+  }
   for (const color of ['red', 'blue'] as const) {
     const [defence, offence] = teams[color];
     const team = dialog.locator(`.team--${color}`);
