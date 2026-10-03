@@ -1,11 +1,12 @@
 rules_version = '2';
 
 // The app has no sign-in, so anyone may play. These rules only allow the writes the
-// app itself makes: creating, renaming and archiving leagues and adding players to them,
-// adding players, creating tournaments and joining, leaving or ending them, starting games,
-// scoring one goal at a time, swapping positions, undoing the last event of a game,
-// closing a game once it is won and removing unfinished games. Nobody can change or delete players, remove anyone from a league,
-// rewrite results or touch finished games.
+// app itself makes: creating, renaming, locking and deleting (softly) leagues and adding
+// players to them, adding players, creating tournaments, joining, leaving, editing, ending
+// and deleting (softly) them, starting and pausing games, scoring one goal at a time,
+// swapping positions, undoing the last event of a game, closing a game once it is won,
+// removing unfinished games and marking any game as deleted. Nobody can change or erase
+// players, remove anyone from a league or rewrite results.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -93,11 +94,18 @@ service cloud.firestore {
         && (!('groups' in request.resource.data) || request.resource.data.groups in [0, 2])
         && (!('bestOf' in request.resource.data) || request.resource.data.bestOf in [3, 5]);
 
-      // While it runs, a tournament can be renamed and ended, and players join or leave it one
-      // at a time; how it is played never changes.
-      allow update: if !('end' in resource.data)
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'entries', 'end'])
+      // While it runs, a tournament can be renamed, given new rules for its next games and
+      // ended, and players join or leave it one at a time; its format and teams never change.
+      // Running or ended, it can be renamed and deleted or restored (`deleted`, nothing is
+      // erased); `gamesDeleted` remembers that its games were deleted with it.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+          'end' in resource.data
+            ? ['name', 'deleted', 'gamesDeleted']
+            : ['name', 'mode', 'entries', 'end', 'deleted', 'gamesDeleted'])
         && tournamentName(request.resource.data.name)
+        && validMode(request.resource.data.mode)
+        && request.resource.data.get('deleted', false) is bool
+        && request.resource.data.get('gamesDeleted', false) is bool
         && (request.resource.data.entries == resource.data.entries
           || (request.resource.data.entries.size() == resource.data.entries.size() + 1
             && request.resource.data.entries.size() <= 100
