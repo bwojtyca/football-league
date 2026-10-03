@@ -74,7 +74,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 - `tournaments/{id}`: `league`, `name`, `format` (`'series' | 'open' | 'king' | 'dyp' |
   'roundRobin' | 'rotation' | 'cup'`), `created`, `groups?` (cup: 0 or 2), `bestOf?` (series),
   `mode` (as in games), `teamSize` (1 or 2), `entries` (who joined or left, in order:
-  `{ player, at, out? }`, append-only), `teams?` (round robin: fixed lineups), `end?`.
+  `{ player, at, out? }`, append-only), `teams?` (round robin: fixed lineups), `end?`,
+  `deleted?` and `gamesDeleted?` (soft delete, as for leagues). `mode` may change while the
+  tournament runs and applies to its next games (each game keeps its own `mode`).
   Queues, draws, fixtures and tables are computed from the tournament's games
   (`tournament/tournament.ts`), so devices never have to agree on shared state.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
@@ -82,7 +84,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   (create leagues, rename or archive them and add players; create players; create games; one
   goal per update with its event, a swap of positions or undoing the last event; close a won
   game; delete running games; create tournaments, append one entry at a time, rename and end
-  them). Games without `events` keep the pre-2026 behaviour.
+  them, change the rules of their next games while they run, delete and restore them softly).
+  Games without `events` keep the pre-2026 behaviour.
   Every new kind of write needs a rules change, tested on the emulator first.
 - Do not bulk-read production data without asking the owner.
 
@@ -215,8 +218,8 @@ session can pick up where the last one stopped:
   holds a league's pages (`l/:id` ranking, `games`, `tournaments`, `more`, `player/:id`,
   `t/:id`; `settings` redirects to `more`) with a bottom bar Ranking / Games / + / Tournaments /
   More. The title of a league page opens the league switcher (bottom sheet). The 3-dot menu is
-  gone; the language is in More (`shared/language-switch.component.ts`) and on the leagues page
-  (to do).
+  gone; the language is in More (`shared/language-switch.component.ts`) and at the bottom of
+  the leagues page.
 - (Done, checked) "+" opens "What are we playing?" (`league/new-play-sheet.component.ts`):
   a game (teams of the latest game filled in), a series (the new game dialog with `series: true`
   creates a `series` tournament of the two chosen teams and starts game 1) or a tournament.
@@ -229,11 +232,18 @@ session can pick up where the last one stopped:
   (`shared/leave-guard.ts` on `game/:gameId`, `leave-dialog.component.ts`: pause and leave /
   leave / stay), and closing the tab warns (`beforeunload`) while the clock runs. End-to-end
   scenarios that `page.goto` away from a running game must answer that dialog.
-- To do: edit and delete a tournament after it started (rename, rules for the next games,
-  finish, delete with or without its games): needs a rules change (`deleted`, `mode`), tested
-  on the emulator first.
-- To do: a cup ends by itself when the final is won (a series too); the bracket shows the
-  current round, the games played and who went through more clearly.
+- (Done, e2e `tournament-edit.spec.ts`, rules checked in `rules.spec.ts`) The tournament page's
+  3-dot menu: "Name and rules" (`tournament-edit-dialog.component.ts`: rename; while running,
+  the rules of the next games), "End tournament", "Delete tournament"
+  (`tournament-delete-dialog.component.ts`: with or without its games; undo in a snackbar,
+  "Restore" on the deleted tournament's page).
+- (Done, e2e) Tournaments decided by their games end by themselves: the final of a cup, a series,
+  every fixture of a round robin or rotating partners (`_decidedAt` on the tournament page,
+  `TournamentService.settle()`: a transaction, `end` = the end of the last game). In the bracket
+  the games to play now are outlined (`data-match-status` 2/3, styles in `src/styles.scss`),
+  their round is named "... · now", and teams knocked out fade.
+- (Done, e2e) "Cancel" in the new game dialog goes back to the league only from the game screen;
+  removing a running game does not ask whether to pause it first.
 - (Done, checked with `rotateF.js`) Game screen as a 2x2 table turned in quarter steps (button
   next to back, kept in localStorage `fl.rotation`). From the blue side: top left red offence,
   top right red defence, bottom left blue defence, bottom right blue offence. Cells keep the DOM
@@ -243,12 +253,7 @@ session can pick up where the last one stopped:
   the data we have (events with times, positions, modes, tournaments) shown with better charts;
   comparing players (head to head), games and tournaments.
 - (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
-- Deployed to master untested by the full regression (the owner asked to ship before the
-  session ran out). Scenario files in the old session's scratchpad were being updated: tabs
-  are `nav.tabs a` links, "+" is `nav.tabs button.play` then `fl-new-play-sheet button.option`,
-  dialogs come pre-filled (clear inputs with `fill('')`), win by 2 is on by default, round robin
-  and cup need "Everyone", a series starts from "+" → "Seria".
-- To do: update the Playwright scenarios for the new navigation (no `button.fab`: the "+" in
-  the bottom bar, then "Mecz"; potato is a sort option, back to players with "Elo"), run them
-  all, deploy (rules first if changed).
+- (Done) The Playwright scenarios live in `e2e/` and run in CI on every branch (see "Working on
+  it"); all pass on `claude/feedback-f`. To deploy it: merge to `master` after the owner's OK
+  (the rules change deploys with it).
 - Open question to the owner: the 2017 migration (see above) still waits for an explicit go-ahead.
