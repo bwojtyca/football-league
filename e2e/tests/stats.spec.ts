@@ -42,7 +42,9 @@ test('statistics: the league, two players compared, a profile and a game against
   await expect(stats.getByRole('heading', { name: t('leagueStats.goalTimes') })).toBeVisible();
   await shot(page, 'stats-league');
   await stats.getByRole('option', { name: d }).click();
-  await expect(stats.getByRole('option', { name: d })).toHaveAttribute('aria-selected', 'true');
+  await expect(stats.locator('mat-chip-option', { hasText: d })).toHaveClass(
+    /mat-mdc-chip-selected/,
+  );
   await page.locator('fl-league-stats canvas').last().scrollIntoViewIfNeeded();
   await shot(page, 'stats-league-elo');
 
