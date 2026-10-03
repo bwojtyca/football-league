@@ -276,9 +276,12 @@ export class GameNewDialogComponent {
     return isPlayer(value) ? value.name : (value ?? '');
   }
 
+  /** Cancel: a rematch offered on the game screen leads back to the league, elsewhere it stays. */
   protected close(): void {
     this._dialogRef.close();
-    this._router.navigate(['/l', this._data.leagueId]);
+    if (this._router.url.startsWith('/game/')) {
+      this._router.navigate(['/l', this._data.leagueId]);
+    }
   }
 
   protected useSuggestion(suggestion: {

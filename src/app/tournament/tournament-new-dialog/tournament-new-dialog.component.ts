@@ -23,6 +23,7 @@ import { PlayerService } from '../../player/player.service';
 import { GameService } from '../../game/game.service';
 import { START_RATING } from '../../player/rating';
 import { drawTeams, FORMATS, TournamentFormat } from '../tournament';
+import { TournamentService } from '../tournament.service';
 
 /** Games of a group stage: two groups sharing `teams`, everyone in a group plays once. */
 function groupGames(teams: number): number {
@@ -30,7 +31,6 @@ function groupGames(teams: number): number {
   const large = teams - small;
   return (small * (small - 1)) / 2 + (large * (large - 1)) / 2;
 }
-import { TournamentService } from '../tournament.service';
 
 export interface TournamentNewDialogData {
   leagueId: string;

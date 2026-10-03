@@ -11,6 +11,7 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
+import { LanguageSwitchComponent } from '../../shared/language-switch.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { LeagueService } from '../league.service';
 
@@ -24,6 +25,7 @@ import { LeagueService } from '../league.service';
     MatInputModule,
     MatProgressSpinnerModule,
     RouterLink,
+    LanguageSwitchComponent,
     TopBarComponent,
     TranslocoDatePipe,
     TranslocoPipe,

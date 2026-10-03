@@ -105,6 +105,8 @@ export class GameDetailComponent implements LeaveGuarded {
   private _scoredHere?: string;
   /** Game whose win was already celebrated on this device. */
   private _celebrated?: string;
+  /** Game removed on this device: leaving it needs no question. */
+  private _removed?: string;
 
   protected readonly colors = TEAM_COLORS;
   protected readonly positions = POSITIONS;
@@ -300,7 +302,7 @@ export class GameDetailComponent implements LeaveGuarded {
 
   /** Leaving a running game asks whether to pause it first. */
   public canLeave(): boolean | Promise<boolean> {
-    if (!this._running()) {
+    if (!this._running() || this._removed === this.game()?.id) {
       return true;
     }
     return firstValueFrom(openLeaveDialog(this._dialog).afterClosed()).then((choice) => {
@@ -406,6 +408,7 @@ export class GameDetailComponent implements LeaveGuarded {
     ) {
       return;
     }
+    this._removed = game.id;
     this._gameService
       .deleteGame(game.id)
       .catch((error) => this._notifier.error('error.remove', error));
