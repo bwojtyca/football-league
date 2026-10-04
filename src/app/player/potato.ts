@@ -80,8 +80,7 @@ export function potatoRanking(games: Game[]): PotatoRow[] {
         change += POTATO_POINTS.upsetLoss;
       }
       if (!won && currentPotato && teams[other].includes(currentPotato)) {
-        change +=
-          POTATO_POINTS.lossToPotato + Math.ceil(potatoPoints * POTATO_POINTS.potatoShare);
+        change += POTATO_POINTS.lossToPotato + Math.ceil(potatoPoints * POTATO_POINTS.potatoShare);
       }
       const delta = K_FACTOR * ((won ? 1 : 0) - chance);
       for (const id of teams[color]) {

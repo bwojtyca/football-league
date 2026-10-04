@@ -34,12 +34,8 @@ describe('potatoRanking', () => {
     // c+d lost three times: 3 points each, c is the potato. Then a+b, the leaders (best Elo
     // after three wins), lose to them: favourites, but not clear ones.
     const loss =
-      POTATO_POINTS.loss +
-      POTATO_POINTS.lossToPotato +
-      Math.ceil(3 * POTATO_POINTS.potatoShare);
-    expect(ranking.find((row) => row.player === 'a')?.points).toBe(
-      loss * POTATO_POINTS.leaderLoss,
-    );
+      POTATO_POINTS.loss + POTATO_POINTS.lossToPotato + Math.ceil(3 * POTATO_POINTS.potatoShare);
+    expect(ranking.find((row) => row.player === 'a')?.points).toBe(loss * POTATO_POINTS.leaderLoss);
     expect(ranking[0].player).toBe('a');
   });
 
