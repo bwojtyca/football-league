@@ -1,6 +1,6 @@
 import { Game } from '../game/game';
 import { makeGame } from '../game/game.testing';
-import { POTATO_POINTS, potatoRanking } from './potato';
+import { POTATO_GAMES, POTATO_POINTS, potatoRanking } from './potato';
 
 /** a+b (red) against c+d (blue). */
 function game(minute: number, red: number, blue: number): Game {
@@ -17,6 +17,14 @@ function game(minute: number, red: number, blue: number): Game {
   return g;
 }
 
+/** a+b beat c+d three times: c is the potato (3 points). */
+const opening = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3)];
+
+function points(games: Game[]) {
+  const ranking = potatoRanking(games);
+  return (id: string) => ranking.find((row) => row.player === id)?.points;
+}
+
 describe('potatoRanking', () => {
   it('makes the team that keeps losing the potato', () => {
     const games = [game(0, 8, 3), game(10, 8, 0), game(20, 8, 5)];
@@ -28,29 +36,25 @@ describe('potatoRanking', () => {
     expect(ranking.find((row) => row.player === 'a')?.points).toBe(0);
   });
 
-  it('makes losing to a big potato hurt, three times over for the leaders', () => {
-    const games = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3), game(30, 2, 8)];
-    const ranking = potatoRanking(games);
-    // c+d lost three times: 3 points each, c is the potato. Then a+b, the leaders (best Elo
-    // after three wins), lose to them: favourites, but not clear ones.
-    const loss =
-      POTATO_POINTS.loss + POTATO_POINTS.lossToPotato + Math.ceil(3 * POTATO_POINTS.potatoShare);
-    expect(ranking.find((row) => row.player === 'a')?.points).toBe(loss * POTATO_POINTS.leaderLoss);
-    expect(ranking[0].player).toBe('a');
+  it('makes a loss to the potato hurt', () => {
+    // a+b lose to the potato's team (favourites, but not clear ones: no extra for that).
+    const score = points([...opening, game(30, 2, 8)]);
+    const toPotato = POTATO_POINTS.lossToPotato + Math.ceil(3 * POTATO_POINTS.potatoShare);
+    expect(score('a')).toBe(3 * POTATO_POINTS.win + POTATO_POINTS.loss + toPotato);
   });
 
-  it('does not triple the loss of a teammate who is not a leader', () => {
-    // a and b lead after three wins, c is the potato; then a and d beat b and c.
-    const games = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3)];
-    const mixed = game(30, 8, 2);
-    mixed.teams.red.offence.player = 'd';
-    mixed.teams.blue.defence.player = 'b';
-    mixed.teams.blue.offence.player = 'c';
-    mixed.players = ['a', 'd', 'b', 'c'];
-    const ranking = potatoRanking([...games, mixed]);
-    const points = (id: string) => ranking.find((row) => row.player === id)?.points;
-    // c's loss is plain, b's (a leader) three times as much.
-    expect(points('c')).toBe(3 + POTATO_POINTS.loss);
-    expect(points('b')).toBe(POTATO_POINTS.loss * POTATO_POINTS.leaderLoss);
+  it('makes clear favourites pay for losing', () => {
+    // After six wins a+b have a 67% chance; they lose 5:8 to the potato's team.
+    const wins = Array.from({ length: 6 }, (_, i) => game(i * 10, 8, 3));
+    const score = points([...wins, game(60, 5, 8)]);
+    const toPotato = POTATO_POINTS.lossToPotato + Math.ceil(6 * POTATO_POINTS.potatoShare);
+    expect(score('a')).toBe(
+      6 * POTATO_POINTS.win + POTATO_POINTS.loss + POTATO_POINTS.upsetLoss + toPotato,
+    );
+  });
+
+  it('counts only the last games of each player', () => {
+    const games = Array.from({ length: POTATO_GAMES + 5 }, (_, i) => game(i * 10, 8, 3));
+    expect(points(games)('c')).toBe(POTATO_GAMES * POTATO_POINTS.loss);
   });
 });

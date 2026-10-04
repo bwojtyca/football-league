@@ -68,16 +68,21 @@
   <details class="rules">
     <summary>{{ 'potato.rules' | transloco }}</summary>
     <ul>
+      <li>{{ 'potato.ruleWindow' | transloco: { n: potatoGames } }}</li>
       <li>{{ 'potato.ruleLoss' | transloco: { n: potatoPoints.loss, m: -potatoPoints.win } }}</li>
       <li>{{ 'potato.ruleShutout' | transloco: { n: potatoPoints.shutoutLoss } }}</li>
       <li>{{ 'potato.ruleUpset' | transloco: { n: potatoPoints.upsetLoss } }}</li>
       <li>
         {{
           'potato.ruleLossToPotato'
-            | transloco: { n: potatoPoints.lossToPotato, share: potatoPoints.potatoShare * 100 }
+            | transloco
+              : {
+                  n: potatoPoints.lossToPotato,
+                  share: potatoPoints.potatoShare * 100,
+                  max: potatoPoints.potatoShareMax,
+                }
         }}
       </li>
-      <li>{{ 'potato.ruleLeaderLoss' | transloco: { n: potatoPoints.leaderLoss } }}</li>
       <li>{{ 'potato.ruleTitle' | transloco: { n: potatoMinGames } }}</li>
     </ul>
   </details>

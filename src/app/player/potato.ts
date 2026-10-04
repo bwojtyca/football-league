@@ -2,25 +2,33 @@ import { Game, lineupPlayers, opponent, TEAM_COLORS, teamScore } from '../game/g
 import { K_FACTOR, START_RATING, winChance } from './rating';
 
 /**
- * Points of the "potato" ranking (the one nobody wants to top), tuned with the players (4 Oct
- * 2026): every number is here.
+ * Points of the "potato" ranking (the one nobody wants to top): the weak get mocked, the strong
+ * pay for losing as favourites. Tuned with the players and checked against the 421 games of
+ * 2017 with `scripts/simulate-potato.mjs` (4 Oct 2026): the potato is one of the two weakest
+ * two thirds of the time, one of the two strongest a sixth. Every number is here.
  */
 export const POTATO_POINTS = {
   /** Every lost game. */
   loss: 1,
-  /** Every won game takes a point off (never below zero). */
+  /** Every won game takes a point off. */
   win: -1,
   /** Lost without scoring a goal. */
   shutoutLoss: 2,
-  /** Lost as clear favourites (a win chance of at least `FAVOURITE`). */
-  upsetLoss: 1,
+  /** Lost as clear favourites (a win chance of at least `FAVOURITE`): the strong pay for it. */
+  upsetLoss: 3,
   /** Lost to a team with the current potato in it... */
-  lossToPotato: 3,
-  /** ...plus this share of the potato's own points (rounded up): the bigger the potato, the more it hurts. */
-  potatoShare: 0.2,
-  /** A leader (best Elo now) who loses gets every point of the loss this many times. */
-  leaderLoss: 3,
+  lossToPotato: 2,
+  /** ...plus this share of the potato's own points (rounded up)... */
+  potatoShare: 0.1,
+  /** ...up to this much: the bigger the potato, the more it hurts. */
+  potatoShareMax: 5,
 };
+
+/**
+ * Only each player's last games count, so the numbers stay small and the title moves with
+ * the form (adding up every game, losses to the potato fed on each other without end).
+ */
+export const POTATO_GAMES = 20;
 
 /** A win chance from this up makes a team the clear favourite. */
 export const FAVOURITE = 0.65;
@@ -38,6 +46,8 @@ export interface PotatoRow {
 
 /** The potato ranking of a set of games: most points first. */
 export function potatoRanking(games: Game[]): PotatoRow[] {
+  /** Each player's points in their last `POTATO_GAMES` games, newest last. */
+  const recent = new Map<string, number[]>();
   const points = new Map<string, number>();
   const played = new Map<string, number>();
   const asPotato = new Map<string, number>();
@@ -48,18 +58,11 @@ export function potatoRanking(games: Game[]): PotatoRow[] {
     [...points.entries()]
       .filter(([id]) => eligible(id))
       .sort((a, b) => b[1] - a[1] || (played.get(b[0]) ?? 0) - (played.get(a[0]) ?? 0))[0]?.[0];
-  /** The leaders: everyone eligible with the best rating now. */
-  const leaders = () => {
-    const rated = [...ratings.entries()].filter(([id]) => eligible(id));
-    const best = Math.max(...rated.map(([, value]) => value));
-    return new Set(rated.filter(([, value]) => value === best).map(([id]) => id));
-  };
 
   const finished = games.filter((game) => game.win).sort((a, b) => (a.start < b.start ? -1 : 1));
   for (const game of finished) {
     const currentPotato = potato();
     const potatoPoints = currentPotato ? (points.get(currentPotato) ?? 0) : 0;
-    const currentLeaders = leaders();
     const teams = {
       red: lineupPlayers(game.teams.red),
       blue: lineupPlayers(game.teams.blue),
@@ -79,13 +82,22 @@ export function potatoRanking(games: Game[]): PotatoRow[] {
       if (!won && chance >= FAVOURITE) {
         change += POTATO_POINTS.upsetLoss;
       }
-      if (!won && currentPotato && teams[other].includes(currentPotato)) {
-        change += POTATO_POINTS.lossToPotato + Math.ceil(potatoPoints * POTATO_POINTS.potatoShare);
-      }
+      const share = Math.ceil(potatoPoints * POTATO_POINTS.potatoShare);
+      const toPotato =
+        !won && currentPotato && teams[other].includes(currentPotato)
+          ? POTATO_POINTS.lossToPotato + Math.min(POTATO_POINTS.potatoShareMax, share)
+          : 0;
       const delta = K_FACTOR * ((won ? 1 : 0) - chance);
       for (const id of teams[color]) {
-        const own = !won && currentLeaders.has(id) ? change * POTATO_POINTS.leaderLoss : change;
-        points.set(id, Math.max(0, (points.get(id) ?? 0) + own));
+        const last = [...(recent.get(id) ?? []), change + toPotato].slice(-POTATO_GAMES);
+        recent.set(id, last);
+        points.set(
+          id,
+          Math.max(
+            0,
+            last.reduce((sum, n) => sum + n, 0),
+          ),
+        );
         played.set(id, (played.get(id) ?? 0) + 1);
         ratings.set(id, rating(id) + delta);
         if (id === currentPotato) {

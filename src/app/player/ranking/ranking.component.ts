@@ -12,7 +12,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { RankedPlayer } from '../player';
 import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
-import { POTATO_MIN_GAMES, POTATO_POINTS, potatoRanking } from '../potato';
+import { POTATO_GAMES, POTATO_MIN_GAMES, POTATO_POINTS, potatoRanking } from '../potato';
 import { duets } from '../records';
 import { Title } from '../../stats/titles';
 
@@ -82,6 +82,7 @@ export class RankingComponent {
   );
 
   protected readonly potatoPoints = POTATO_POINTS;
+  protected readonly potatoGames = POTATO_GAMES;
   protected readonly potatoMinGames = POTATO_MIN_GAMES;
   protected readonly potatoes = computed(() =>
     potatoRanking(this.games()).map((row) => ({

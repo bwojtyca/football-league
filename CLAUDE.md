@@ -232,10 +232,15 @@ Owner feedback, to do at the end (after the planned stages):
   everything). The group plays for fun and the drive is not to stay the potato, so it is about
   mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
   proposal: losing to the current potato costs a lot of points (not necessarily the potato
-  title at once). (Live as a ranking view, rules in `POTATO_POINTS` in `player/potato.ts`
-  and shown in the app. Tuned on 4 Oct 2026 with the owner: a leader (best Elo) who loses
-  gets the loss's points 3 times; losing to the potato costs +3 and 20% of the potato's own
-  points, so the bigger the potato, the more it hurts; the old "beat the leader: −2" is gone.)
+  title at once). (Live as a ranking view, rules in `POTATO_POINTS` and `POTATO_GAMES` in
+  `player/potato.ts`, shown in the app. The owner's aim (4 Oct 2026): "the weak get mocked,
+  the strong cannot get cocky". Now: each player's last 20 games count; loss +1, win −1,
+  shutout loss +2, a loss as clear favourite +3, a loss to the potato +2 and 10% of its points
+  (at most +5). On the 2017 games (`node scripts/simulate-potato.mjs <backup dir>`): the
+  potato is one of the two weakest 66% of the time, one of the two strongest 16%, the leader
+  10%; record 56. A version deployed earlier that day (leader ×3, +20% of the potato's points
+  with no cap, all games) blew up to 10^15 points: losses to the potato fed on each other.
+  Simulate every rule change before it goes live.)
 - (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
   fills up and moves on by itself after 8 s.)
 - (Done, the model: a game is one match to a win under its rules; a tournament is a set of
@@ -251,9 +256,9 @@ Owner feedback, round G (4 October 2026):
   one tap per goal, undo as before, the detail chosen on the game screen and kept on the
   device; a game may mix all three. Statistics: goals by rod and figure with how many are
   known (profile, league statistics).
-- The potato rules: the owner asked for a leader's losses to count 3 times and for losses to
-  the potato to hurt more the bigger the potato is (done, see above). The redesign is done
-  in another window.
+- The potato rules: the owner asked for losses of the strong to cost more and for losses to
+  the potato to hurt more the bigger the potato is; after a first version blew up, balanced
+  by simulation (see above). The redesign is done in another window.
 - (Done) Everything deployed on 4 Oct 2026, the migration tools merged to `master`; only
   `master` is left on GitHub.
 - The 2017 migration: the owner asked whether the agent can run it itself. It needs owner
