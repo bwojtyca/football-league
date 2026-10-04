@@ -401,12 +401,12 @@
     "title": "Potato",
     "points": "pts",
     "asPotato": "potato for {n, plural, one {# game} other {# games}}",
-    "rules": "Rules (to be tuned together)",
+    "rules": "Rules",
     "ruleLoss": "A loss: +{n} pt, a win: −{m} pt (never below 0).",
     "ruleShutout": "A loss without scoring: +{n} more.",
     "ruleUpset": "A loss as clear favourites (a win chance of 65% or more): +{n} more.",
-    "ruleLossToPotato": "Losing to the current potato: +{n} more.",
-    "ruleBeatKing": "Beating the Elo leader (some hate for the strongest): −{n}.",
+    "ruleLossToPotato": "Losing to the current potato: +{n} more and {share}% of the potato's points (rounded up), so the bigger the potato, the more it hurts.",
+    "ruleLeaderLoss": "The Elo leader loses: every point of the loss counts {n} times.",
     "ruleTitle": "The potato is the player with the most points and at least {n} games."
   },
   "error": {

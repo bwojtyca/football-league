@@ -28,12 +28,33 @@ describe('potatoRanking', () => {
     expect(ranking.find((row) => row.player === 'a')?.points).toBe(0);
   });
 
-  it('punishes losing to the potato', () => {
+  it('makes losing to a big potato hurt, three times over for the leaders', () => {
     const games = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3), game(30, 2, 8)];
     const ranking = potatoRanking(games);
-    const a = ranking.find((row) => row.player === 'a')!;
-    // Lost to c+d, the potatoes (after three wins a+b are favourites, but not clear ones).
-    expect(a.points).toBe(POTATO_POINTS.loss + POTATO_POINTS.lossToPotato);
+    // c+d lost three times: 3 points each, c is the potato. Then a+b, the leaders (best Elo
+    // after three wins), lose to them: favourites, but not clear ones.
+    const loss =
+      POTATO_POINTS.loss +
+      POTATO_POINTS.lossToPotato +
+      Math.ceil(3 * POTATO_POINTS.potatoShare);
+    expect(ranking.find((row) => row.player === 'a')?.points).toBe(
+      loss * POTATO_POINTS.leaderLoss,
+    );
     expect(ranking[0].player).toBe('a');
+  });
+
+  it('does not triple the loss of a teammate who is not a leader', () => {
+    // a and b lead after three wins, c is the potato; then a and d beat b and c.
+    const games = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3)];
+    const mixed = game(30, 8, 2);
+    mixed.teams.red.offence.player = 'd';
+    mixed.teams.blue.defence.player = 'b';
+    mixed.teams.blue.offence.player = 'c';
+    mixed.players = ['a', 'd', 'b', 'c'];
+    const ranking = potatoRanking([...games, mixed]);
+    const points = (id: string) => ranking.find((row) => row.player === id)?.points;
+    // c's loss is plain, b's (a leader) three times as much.
+    expect(points('c')).toBe(3 + POTATO_POINTS.loss);
+    expect(points('b')).toBe(POTATO_POINTS.loss * POTATO_POINTS.leaderLoss);
   });
 });

@@ -71,8 +71,13 @@
       <li>{{ 'potato.ruleLoss' | transloco: { n: potatoPoints.loss, m: -potatoPoints.win } }}</li>
       <li>{{ 'potato.ruleShutout' | transloco: { n: potatoPoints.shutoutLoss } }}</li>
       <li>{{ 'potato.ruleUpset' | transloco: { n: potatoPoints.upsetLoss } }}</li>
-      <li>{{ 'potato.ruleLossToPotato' | transloco: { n: potatoPoints.lossToPotato } }}</li>
-      <li>{{ 'potato.ruleBeatKing' | transloco: { n: -potatoPoints.beatKing } }}</li>
+      <li>
+        {{
+          'potato.ruleLossToPotato'
+            | transloco: { n: potatoPoints.lossToPotato, share: potatoPoints.potatoShare * 100 }
+        }}
+      </li>
+      <li>{{ 'potato.ruleLeaderLoss' | transloco: { n: potatoPoints.leaderLoss } }}</li>
       <li>{{ 'potato.ruleTitle' | transloco: { n: potatoMinGames } }}</li>
     </ul>
   </details>

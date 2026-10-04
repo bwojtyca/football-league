@@ -401,12 +401,12 @@
     "title": "Ziemniak",
     "points": "pkt",
     "asPotato": "ziemniakiem przez {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
-    "rules": "Zasady (do wspólnego dopracowania)",
+    "rules": "Zasady",
     "ruleLoss": "Porażka: +{n} pkt, wygrana: −{m} pkt (nie mniej niż 0).",
     "ruleShutout": "Porażka bez strzelonego gola: dodatkowo +{n}.",
     "ruleUpset": "Porażka mimo wyraźnej przewagi (szansa co najmniej 65%): dodatkowo +{n}.",
-    "ruleLossToPotato": "Przegrana z aktualnym ziemniakiem: dodatkowo +{n}.",
-    "ruleBeatKing": "Wygrana z liderem Elo (hejt na najmocniejszego): −{n}.",
+    "ruleLossToPotato": "Przegrana z aktualnym ziemniakiem: dodatkowo +{n} i {share}% jego punktów (zaokrąglone w górę), więc im większy ziemniak, tym bardziej boli.",
+    "ruleLeaderLoss": "Lider Elo przegrywa: wszystkie jego punkty za porażkę liczą się {n} razy.",
     "ruleTitle": "Ziemniakiem jest gracz z największą liczbą punktów, który ma co najmniej {n} mecze."
   },
   "error": {

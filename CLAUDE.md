@@ -232,8 +232,10 @@ Owner feedback, to do at the end (after the planned stages):
   everything). The group plays for fun and the drive is not to stay the potato, so it is about
   mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
   proposal: losing to the current potato costs a lot of points (not necessarily the potato
-  title at once). (A first version is live as a ranking view, rules in `POTATO_POINTS` in
-  `player/potato.ts` and shown in the app; tune them with the owner.)
+  title at once). (Live as a ranking view, rules in `POTATO_POINTS` in `player/potato.ts`
+  and shown in the app. Tuned on 4 Oct 2026 with the owner: a leader (best Elo) who loses
+  gets the loss's points 3 times; losing to the potato costs +3 and 20% of the potato's own
+  points, so the bigger the potato, the more it hurts; the old "beat the leader: −2" is gone.)
 - (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
   fills up and moves on by itself after 8 s.)
 - (Done, the model: a game is one match to a win under its rules; a tournament is a set of
@@ -249,7 +251,11 @@ Owner feedback, round G (4 October 2026):
   one tap per goal, undo as before, the detail chosen on the game screen and kept on the
   device; a game may mix all three. Statistics: goals by rod and figure with how many are
   known (profile, league statistics).
-- The potato rules stay as they are for now. The redesign is done in another window.
+- The potato rules: the owner asked for a leader's losses to count 3 times and for losses to
+  the potato to hurt more the bigger the potato is (done, see above). The redesign is done
+  in another window.
+- (Done) Everything deployed on 4 Oct 2026, the migration tools merged to `master`; only
+  `master` is left on GitHub.
 - The 2017 migration: the owner asked whether the agent can run it itself. It needs owner
   credentials (none on the LXC): either the owner runs the script with a gcloud token, or
   gives the rules-deploy service account the "Cloud Datastore User" role, after which a
