@@ -55,7 +55,7 @@ export async function addPlayers(page: Page, names: string[]): Promise<void> {
   const dialog = page.locator('fl-add-player-dialog');
   for (const name of names) {
     await page.getByRole('button', { name: t('league.addPlayer') }).click();
-    await dialog.getByLabel(t('addPlayer.name')).fill(name);
+    await dialog.getByRole('combobox', { name: t('addPlayer.name') }).fill(name);
     await dialog.getByRole('button', { name: t('addPlayer.add'), exact: true }).click();
     await expect(dialog).toBeHidden();
     await expect(page.locator('fl-ranking').getByText(name)).toBeVisible();
