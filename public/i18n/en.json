@@ -165,14 +165,25 @@
       "goal": "{name} scores {from}",
       "own": "{name} scores an own goal {from}",
       "swap": "{team} swap positions",
-      "none": "Every goal shows up here. Undo a mistake with one tap."
+      "none": "Every goal shows up here. Undo a mistake with one tap.",
+      "goalRod": "{name} scores with {rod}",
+      "goalMan": "{name} scores with {rod} (no. {n})",
+      "ownRod": "{name} scores an own goal with {rod}",
+      "ownMan": "{name} scores an own goal with {rod} (no. {n})"
     },
     "leaveTitle": "The game is on",
     "leaveText": "Stop the clock before you leave? You can finish the game later.",
     "leavePause": "Pause and leave",
     "leaveRunning": "Leave, the game goes on",
     "leaveStay": "Stay",
-    "rotate": "Turn the table layout"
+    "rotate": "Turn the table layout",
+    "detail": "Goal detail: {level}",
+    "detailLevel": {
+      "position": "position",
+      "rod": "rod",
+      "man": "figure"
+    },
+    "ownPick": "Tap who scored it"
   },
   "modes": {
     "title": "Mode",
@@ -325,7 +336,42 @@
     "streak": "{n} wins in a row",
     "milestone": "Game number {n}",
     "times": "{n} times",
-    "locked": "not yet"
+    "locked": "not yet",
+    "firstWin": "First win",
+    "giantKiller": "David and Goliath",
+    "hatTrick": "Hat-trick",
+    "solo": "Solo",
+    "goalieGoal": "Goalkeeper goal",
+    "goldenGoal": "Golden goal",
+    "marathon": "Never give up",
+    "revenge": "Sweet revenge",
+    "mishaps": "Mishaps",
+    "underTable": "Under the table",
+    "ownGoal": "Own goal",
+    "lossStreak": "{n} losses in a row",
+    "how": {
+      "firstWin": "Win your first game.",
+      "shutout": "Win without conceding.",
+      "comeback": "Win after being {n} goals down.",
+      "bigComeback": "Win after being {n} goals down.",
+      "streak3": "Win {n} games in a row.",
+      "streak": "Win {n} games in a row.",
+      "streak10": "Win {n} games in a row.",
+      "giantKiller": "Win with an Elo chance of {n}% or less.",
+      "hatTrick": "Score 3 goals in a row in one game.",
+      "solo": "Score all of your team's goals in a 2 vs 2 win.",
+      "goalieGoal": "Score with the goalkeeper (rod detail on the game screen).",
+      "goldenGoal": "Win a timed game with a golden goal after the time is up.",
+      "marathon": "Win scoring at least 2 goals past the game's target.",
+      "revenge": "Beat the team that beat you in your previous game.",
+      "games10": "Play {n} games.",
+      "games50": "Play {n} games.",
+      "milestone": "Play {n} games.",
+      "games250": "Play {n} games.",
+      "underTable": "Lose without scoring.",
+      "ownGoal": "Score an own goal.",
+      "lossStreak": "Lose {n} games in a row."
+    }
   },
   "settings": {
     "title": "League settings",
@@ -487,5 +533,78 @@
     "comeback": "{n, plural, =1 {The biggest comeback in the league} other {The {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} biggest comeback in the league}}",
     "fastestGoal": "{n, plural, =1 {The fastest goal in the league} other {The {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} fastest goal in the league}}",
     "duration": "The game took {time}; the league's average game takes {average}."
+  },
+  "rods": {
+    "goalie": "Goalkeeper",
+    "defence": "Defenders",
+    "midfield": "Midfielders",
+    "attack": "Forwards",
+    "with": {
+      "goalie": "the goalkeeper",
+      "defence": "a defender",
+      "midfield": "a midfielder",
+      "attack": "a forward"
+    }
+  },
+  "lines": {
+    "title": "Goals by rod",
+    "known": "Rod known for {n} of {total} logged goals.",
+    "rod": "Rod",
+    "goals": "Goals",
+    "own": "Own goals",
+    "men": "Figures (from the player's side)"
+  },
+  "titles": {
+    "title": "Titles",
+    "leader": {
+      "name": "Leader",
+      "hint": "highest Elo",
+      "value": "{n} Elo"
+    },
+    "potato": {
+      "name": "Potato",
+      "hint": "most potato points",
+      "value": "{n} pts"
+    },
+    "sniper": {
+      "name": "Sniper",
+      "hint": "most goals per game (from {n} games)",
+      "value": "{n} per game"
+    },
+    "wall": {
+      "name": "The Wall",
+      "hint": "fewest goals conceded per game in defence (from {n} games)",
+      "value": "{n} per game"
+    },
+    "onFire": {
+      "name": "On fire",
+      "hint": "longest current winning streak",
+      "value": "{count, plural, one {# win} other {# wins}} in a row"
+    },
+    "veteran": {
+      "name": "Veteran",
+      "hint": "most games",
+      "value": "{count, plural, one {# game} other {# games}}"
+    },
+    "marathoner": {
+      "name": "Marathoner",
+      "hint": "most time at the table",
+      "value": "{n}"
+    },
+    "comebackKing": {
+      "name": "Comeback king",
+      "hint": "most wins after being 2 or more goals down",
+      "value": "{count, plural, one {# comeback} other {# comebacks}}"
+    },
+    "duo": {
+      "name": "Dream team",
+      "hint": "best win rate as a pair (from {n} games together)",
+      "value": "{n}%"
+    },
+    "goalieScorer": {
+      "name": "Scoring keeper",
+      "hint": "most goals with the goalkeeper",
+      "value": "{count, plural, one {# goal} other {# goals}}"
+    }
   }
 }

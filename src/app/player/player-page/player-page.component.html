@@ -22,6 +22,15 @@
           @if (mainPosition(); as position) {
             <div class="sub">{{ position | transloco }}</div>
           }
+          @if (titles().length) {
+            <div class="titles">
+              @for (title of titles(); track title.id) {
+                <span class="title"
+                  >{{ title.icon }} {{ 'titles.' + title.id + '.name' | transloco }}</span
+                >
+              }
+            </div>
+          }
         </div>
       </div>
       @if (p.games > 0) {
@@ -115,28 +124,9 @@
         </dl>
 
         <h2>{{ 'achievements.title' | transloco }}</h2>
-        <ul class="achievements">
-          @for (badge of achievements(); track badge.id) {
-            <li [class.earned]="badge.count > 0">
-              <mat-icon aria-hidden="true">{{ badge.icon }}</mat-icon>
-              <span>
-                <b>{{ 'achievements.' + badge.id | transloco: badge.params }}</b>
-                <small>
-                  @if (badge.count > 0) {
-                    @if (badge.count > 1) {
-                      {{ 'achievements.times' | transloco: { n: badge.count } }} ·
-                    }
-                    @if (badge.date; as date) {
-                      {{ date | translocoDate: { dateStyle: 'medium' } }}
-                    }
-                  } @else {
-                    {{ 'achievements.locked' | transloco }}
-                  }
-                </small>
-              </span>
-            </li>
-          }
-        </ul>
+        <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
+        <h2>{{ 'achievements.mishaps' | transloco }}</h2>
+        <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
       }
 
       <h2>{{ 'player.stats' | transloco }}</h2>
@@ -147,3 +137,28 @@
     <fl-game-list [leagueId]="leagueId()" [playerId]="p.id" [pageSize]="20" />
   }
 </main>
+
+<ng-template #badges let-list>
+  <ul class="achievements">
+    @for (badge of list; track badge.id) {
+      <li [class.earned]="badge.count > 0">
+        <mat-icon aria-hidden="true">{{ badge.icon }}</mat-icon>
+        <span>
+          <b>{{ 'achievements.' + badge.key | transloco: badge.params }}</b>
+          <small>
+            @if (badge.count > 0) {
+              @if (badge.count > 1) {
+                {{ 'achievements.times' | transloco: { n: badge.count } }} ·
+              }
+              @if (badge.date; as date) {
+                {{ date | translocoDate: { dateStyle: 'medium' } }}
+              }
+            } @else {
+              {{ 'achievements.how.' + badge.id | transloco: badge.params }}
+            }
+          </small>
+        </span>
+      </li>
+    }
+  </ul>
+</ng-template>

@@ -43,9 +43,39 @@ export interface Series {
   game: number;
 }
 
-/** What happened in a game, in order; `at` is milliseconds since the start. */
+/**
+ * The rods (lines) of a team, from its own goal: the defender plays the goalkeeper and the
+ * defenders, the attacker the midfielders and the forwards.
+ */
+export type Rod = 'goalie' | 'defence' | 'midfield' | 'attack';
+export const RODS: Record<Position, readonly [Rod, Rod]> = {
+  defence: ['goalie', 'defence'],
+  offence: ['midfield', 'attack'],
+};
+/** Figures on each rod, numbered from 1 on the side of the team's handles. */
+export const FIGURES: Record<Rod, number> = { goalie: 1, defence: 2, midfield: 5, attack: 3 };
+
+/**
+ * How much a goal tells, chosen on the game screen: the position (as always), the rod, or
+ * the figure on the rod. One game can mix them.
+ */
+export type GoalDetail = 'position' | 'rod' | 'man';
+export const GOAL_DETAILS: readonly GoalDetail[] = ['position', 'rod', 'man'];
+
+/**
+ * What happened in a game, in order; `at` is milliseconds since the start. A goal may tell
+ * its rod and the figure on it (`man`, from 1), when it was entered in that detail.
+ */
 export type GameEvent =
-  | { at: number; type: 'goal' | 'own'; team: TeamColor; position: Position; player: string }
+  | {
+      at: number;
+      type: 'goal' | 'own';
+      team: TeamColor;
+      position: Position;
+      player: string;
+      rod?: Rod;
+      man?: number;
+    }
   | { at: number; type: 'swap'; team: TeamColor };
 
 export interface PlayerScore {
@@ -80,6 +110,11 @@ export interface Game {
   tournament?: string;
   /** Deleted games are left out everywhere; nothing is erased and they can be restored. */
   deleted?: boolean;
+  /**
+   * What the game was deleted with, `league:<id>` or `tournament:<id>`: restoring that brings
+   * it back, while games deleted one by one before stay deleted.
+   */
+  deletedWith?: string;
   /** When the running game was paused (ISO time); absent while it is played. */
   paused?: string;
   /** Milliseconds spent in earlier pauses. */

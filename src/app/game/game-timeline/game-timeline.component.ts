@@ -77,8 +77,12 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
             <span class="time">{{ time(goal.at) }}</span>
             <span class="who">
               {{ name(goal.player) }}
-              <small
-                >{{ positionNames[goal.position] | transloco }}
+              <small>
+                @if (goal.rod) {
+                  {{ 'rods.' + goal.rod | transloco }}{{ goal.man ? ' ' + goal.man : '' }}
+                } @else {
+                  {{ positionNames[goal.position] | transloco }}
+                }
                 @if (goal.own) {
                   · {{ 'game.ownGoal' | transloco }}
                 }

@@ -198,3 +198,20 @@ h2 {
 .achievements small {
   font-size: 0.75rem;
 }
+
+/* Titles held now, on the scoreboard. */
+.titles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.title {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  font: 700 0.78rem/1.4 var(--fl-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}

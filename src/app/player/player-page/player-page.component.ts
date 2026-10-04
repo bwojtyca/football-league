@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +19,21 @@ import { GameService } from '../../game/game.service';
 import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
-import { COMEBACK_GOALS, MILESTONE_GAMES, playerRecords, STREAK_WINS } from '../records';
+import {
+  ACHIEVEMENTS,
+  AchievementId,
+  BIG_COMEBACK_GOALS,
+  COMEBACK_GOALS,
+  GAME_MILESTONES,
+  LONG_STREAK_WINS,
+  LOSS_STREAK,
+  MISHAPS,
+  playerRecords,
+  SHORT_STREAK_WINS,
+  STREAK_WINS,
+  UNDERDOG_CHANCE,
+} from '../records';
+import { leagueTitles, titlesByPlayer } from '../../stats/titles';
 import { ALL_LEAGUES } from '../../league/league';
 import { compareLink } from '../../stats/compare-link';
 import { cssColor, withAlpha } from '../../shared/css-color';
@@ -28,9 +43,43 @@ import { compareNames, rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
 import { START_RATING } from '../rating';
 
+/** How each achievement looks: its icon, its name (`key`) and the numbers in it. */
+const BADGES: Record<AchievementId, { icon: string; key: string; params: object }> = {
+  firstWin: { icon: 'star', key: 'firstWin', params: {} },
+  shutout: { icon: 'block', key: 'shutout', params: {} },
+  comeback: { icon: 'trending_up', key: 'comeback', params: { n: COMEBACK_GOALS } },
+  bigComeback: { icon: 'rocket_launch', key: 'comeback', params: { n: BIG_COMEBACK_GOALS } },
+  streak3: { icon: 'whatshot', key: 'streak', params: { n: SHORT_STREAK_WINS } },
+  streak: { icon: 'local_fire_department', key: 'streak', params: { n: STREAK_WINS } },
+  streak10: { icon: 'auto_awesome', key: 'streak', params: { n: LONG_STREAK_WINS } },
+  giantKiller: {
+    icon: 'bolt',
+    key: 'giantKiller',
+    params: { n: Math.round(UNDERDOG_CHANCE * 100) },
+  },
+  hatTrick: { icon: 'filter_3', key: 'hatTrick', params: {} },
+  solo: { icon: 'person', key: 'solo', params: {} },
+  goalieGoal: { icon: 'sports_handball', key: 'goalieGoal', params: {} },
+  goldenGoal: { icon: 'timer', key: 'goldenGoal', params: {} },
+  marathon: { icon: 'directions_run', key: 'marathon', params: {} },
+  revenge: { icon: 'replay', key: 'revenge', params: {} },
+  games10: { icon: 'military_tech', key: 'milestone', params: { n: GAME_MILESTONES.games10 } },
+  games50: { icon: 'military_tech', key: 'milestone', params: { n: GAME_MILESTONES.games50 } },
+  milestone: {
+    icon: 'military_tech',
+    key: 'milestone',
+    params: { n: GAME_MILESTONES.milestone },
+  },
+  games250: { icon: 'military_tech', key: 'milestone', params: { n: GAME_MILESTONES.games250 } },
+  underTable: { icon: 'table_restaurant', key: 'underTable', params: {} },
+  ownGoal: { icon: 'sports_soccer', key: 'ownGoal', params: {} },
+  lossStreak: { icon: 'trending_down', key: 'lossStreak', params: { n: LOSS_STREAK } },
+};
+
 @Component({
   selector: 'fl-player-page',
   imports: [
+    NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
@@ -130,28 +179,29 @@ export class PlayerPageComponent {
 
   protected readonly records = computed(() => {
     const games = this._gameService.leagueGames(this.leagueId());
-    const history = this._gameService.ratings(this.leagueId())?.history.get(this.playerId());
-    return games ? playerRecords(this.playerId(), games, history) : null;
+    const ratings = this._gameService.ratings(this.leagueId());
+    const history = ratings?.history.get(this.playerId());
+    return games ? playerRecords(this.playerId(), games, history, ratings?.changes) : null;
   });
 
-  /** Achievements in display order, earned ones lit. */
-  protected readonly achievements = computed(() => {
-    const earned = this.records()?.achievements;
-    if (!earned) {
-      return [];
-    }
-    return [
-      { id: 'shutout', icon: 'block', ...earned.shutout, params: {} },
-      { id: 'comeback', icon: 'trending_up', ...earned.comeback, params: { n: COMEBACK_GOALS } },
-      { id: 'streak', icon: 'local_fire_department', ...earned.streak, params: { n: STREAK_WINS } },
-      {
-        id: 'milestone',
-        icon: 'military_tech',
-        ...earned.milestone,
-        params: { n: MILESTONE_GAMES },
-      },
-    ];
+  /** Titles the player holds now in this league (or overall). */
+  protected readonly titles = computed(() => {
+    const games = this._gameService.leagueGames(this.leagueId());
+    const ratings = this._gameService.ratings(this.leagueId());
+    const minGames = this.overall() ? 0 : (this.league()?.minGames ?? 0);
+    return games && ratings
+      ? (titlesByPlayer(leagueTitles(games, ratings, minGames)).get(this.playerId()) ?? [])
+      : [];
   });
+
+  /** Achievements, then mishaps, in display order; earned ones lit. */
+  protected readonly achievements = computed(() => this._badges(ACHIEVEMENTS));
+  protected readonly mishaps = computed(() => this._badges(MISHAPS));
+
+  private _badges(ids: readonly AchievementId[]) {
+    const earned = this.records()?.achievements;
+    return earned ? ids.map((id) => ({ id, ...BADGES[id], ...earned[id] })) : [];
+  }
 
   /** Rating after each game, starting from the initial rating. */
   protected readonly chart = computed((): ChartConfiguration<'line'>['data'] | null => {

@@ -13,8 +13,12 @@ import { timelineOf } from '../game/timeline';
 import { PlayerService } from '../player/player.service';
 import { cssColor, withAlpha } from '../shared/css-color';
 import { hoursAndMinutes, scoreOf, sidesOf } from './format';
-import { leagueStats, ratingTimeline } from './stats';
+import { LeagueService } from '../league/league.service';
+import { LinesComponent } from './lines.component';
+import { leagueStats, lineStats, ratingTimeline } from './stats';
 import { ThirdsComponent } from './thirds.component';
+import { leagueTitles } from './titles';
+import { TitlesListComponent } from './titles-list.component';
 
 /** A league record: what it is, its value, and the game or player holding it. */
 interface RecordRow {
@@ -29,10 +33,12 @@ interface RecordRow {
   selector: 'fl-league-stats',
   imports: [
     BaseChartDirective,
+    LinesComponent,
     MatChipsModule,
     MatProgressSpinnerModule,
     RouterLink,
     ThirdsComponent,
+    TitlesListComponent,
     TranslocoDatePipe,
     TranslocoDecimalPipe,
     TranslocoPipe,
@@ -44,6 +50,7 @@ export class LeagueStatsComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _transloco = inject(TranslocoService);
+  private readonly _leagueService = inject(LeagueService);
 
   public readonly leagueId = input.required<string>();
 
@@ -52,6 +59,16 @@ export class LeagueStatsComponent {
     const games = this._games();
     return games && leagueStats(games);
   });
+
+  protected readonly lines = computed(() => lineStats(this._games() ?? []));
+
+  protected readonly titles = computed(() => {
+    const games = this._games();
+    const ratings = this._gameService.ratings(this.leagueId());
+    const minGames = this._leagueService.league(this.leagueId())?.minGames ?? 0;
+    return games && ratings ? leagueTitles(games, ratings, minGames) : [];
+  });
+  protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
 
   /** The locale of the language in use, for month and weekday names. */
   private readonly _locale = computed(() =>

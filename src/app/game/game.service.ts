@@ -29,6 +29,7 @@ import {
   GameMode,
   Lineup,
   Position,
+  Rod,
   Series,
   swapPositions,
   Team,
@@ -165,6 +166,7 @@ export class GameService {
     color: TeamColor,
     position: Position,
     ownGoal: boolean,
+    { rod, man }: { rod?: Rod; man?: number } = {},
   ): Promise<void> {
     const field = ownGoal ? 'ownGoals' : 'goals';
     const event: GameEvent = {
@@ -173,6 +175,8 @@ export class GameService {
       team: color,
       position,
       player: game.teams[color][position].player,
+      ...(rod && { rod }),
+      ...(rod && man && { man }),
     };
     return updateDoc(doc(this._games, game.id), {
       [`teams.${color}.${position}.${field}`]: increment(1),
@@ -261,33 +265,58 @@ export class GameService {
     }
   }
 
-  /** Hides (or brings back) every game of a league, deleted ones included when restoring. */
+  /** Hides a league's games with it, or brings back the games hidden with it. */
   public setLeagueGamesDeleted(leagueId: string, deleted: boolean): Promise<void> {
-    return this._setAllDeleted((game) => leagueOf(game) === leagueId, deleted);
+    return this._setDeletedWith(`league:${leagueId}`, (g) => leagueOf(g) === leagueId, deleted);
   }
 
-  /** Hides (or brings back) every game of a tournament, deleted ones included when restoring. */
+  /** Hides a tournament's games with it, or brings back the games hidden with it. */
   public setTournamentGamesDeleted(tournamentId: string, deleted: boolean): Promise<void> {
-    return this._setAllDeleted((game) => game.tournament === tournamentId, deleted);
+    return this._setDeletedWith(
+      `tournament:${tournamentId}`,
+      (game) => game.tournament === tournamentId,
+      deleted,
+    );
   }
 
-  private async _setAllDeleted(belongs: (game: Game) => boolean, deleted: boolean): Promise<void> {
-    const games = (this._stored() ?? []).filter(
-      (game) => belongs(game) && !!game.deleted !== deleted,
-    );
+  /**
+   * Deleting marks the games that were still there with `key`; restoring brings back only
+   * those, so a game deleted on its own before stays deleted. Games deleted before October
+   * 2026's change carry no mark: then every deleted game comes back, as it used to.
+   */
+  private async _setDeletedWith(
+    key: string,
+    belongs: (game: Game) => boolean,
+    deleted: boolean,
+  ): Promise<void> {
+    const games = (this._stored() ?? []).filter(belongs);
+    const marked = games.filter((game) => game.deleted && game.deletedWith === key);
+    const changed = deleted
+      ? games.filter((game) => !game.deleted)
+      : marked.length || games.some((game) => game.deletedWith)
+        ? marked
+        : games.filter((game) => game.deleted);
     // A batch takes at most 500 writes.
-    for (let i = 0; i < games.length; i += 500) {
+    for (let i = 0; i < changed.length; i += 500) {
       const batch = writeBatch(this._db);
-      for (const game of games.slice(i, i + 500)) {
-        batch.update(doc(this._games, game.id), { deleted });
+      for (const game of changed.slice(i, i + 500)) {
+        batch.update(
+          doc(this._games, game.id),
+          deleted
+            ? { deleted: true, deletedWith: key }
+            : { deleted: false, deletedWith: deleteField() },
+        );
       }
       await batch.commit();
     }
   }
 
-  /** Hides a game from rankings and stats, or brings it back. */
+  /** Hides a game from rankings and stats, or brings it back (on its own). */
   public setDeleted(gameId: string, deleted: boolean): Promise<void> {
-    return updateDoc(doc(this._games, gameId), { deleted });
+    return updateDoc(
+      doc(this._games, gameId),
+      deleted ? { deleted } : { deleted, deletedWith: deleteField() },
+    );
   }
 
   public deleteGame(gameId: string): Promise<void> {

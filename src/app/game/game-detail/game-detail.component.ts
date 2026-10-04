@@ -24,6 +24,9 @@ import {
   decidedWinner,
   formatDuration,
   Game,
+  GameEvent,
+  GOAL_DETAILS,
+  GoalDetail,
   isDefaultMode,
   lineupOf,
   lineupPlayers,
@@ -31,6 +34,7 @@ import {
   playTime,
   POSITIONS,
   Position,
+  Rod,
   seriesScore,
   TEAM_COLORS,
   TeamColor,
@@ -42,6 +46,7 @@ import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.c
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent } from './finish-panel.component';
+import { GoalPadComponent } from './goal-pad.component';
 import { openLeaveDialog } from './leave-dialog.component';
 import { PauseOverlayComponent } from './pause-overlay.component';
 
@@ -49,6 +54,9 @@ import { PauseOverlayComponent } from './pause-overlay.component';
 const FINISH_AFTER_MS = 8000;
 
 const ROTATION_KEY = 'fl.rotation';
+const DETAIL_KEY = 'fl.goalDetail';
+/** An own goal waits this long for the rod or figure that scored it. */
+const OWN_GOAL_PICK_MS = 6000;
 
 /** Cells clockwise from the top left when the table is not turned. */
 const CELL_ORDER = ['red-offence', 'red-defence', 'blue-offence', 'blue-defence'];
@@ -70,6 +78,15 @@ function readRotation(): number {
   }
 }
 
+function readDetail(): GoalDetail {
+  try {
+    const detail = localStorage.getItem(DETAIL_KEY) as GoalDetail;
+    return GOAL_DETAILS.includes(detail) ? detail : 'position';
+  } catch {
+    return 'position';
+  }
+}
+
 @Component({
   selector: 'fl-game-detail',
   imports: [
@@ -80,6 +97,7 @@ function readRotation(): number {
     RouterLink,
     AvatarComponent,
     FinishPanelComponent,
+    GoalPadComponent,
     ModeLabelComponent,
     PauseOverlayComponent,
     RatingChangeComponent,
@@ -268,6 +286,74 @@ export class GameDetailComponent implements LeaveGuarded {
     }
   }
 
+  /**
+   * How much a goal tells: the position, the rod or the figure (kept on this device, so the
+   * next game opens the same way). A game can mix them.
+   */
+  protected readonly detail = signal<GoalDetail>(readDetail());
+  protected readonly detailIcons = { position: 'person', rod: 'view_week', man: 'groups' };
+
+  protected cycleDetail(): void {
+    const detail = GOAL_DETAILS[(GOAL_DETAILS.indexOf(this.detail()) + 1) % GOAL_DETAILS.length];
+    this.detail.set(detail);
+    this.armed.set(null);
+    try {
+      localStorage.setItem(DETAIL_KEY, detail);
+    } catch {
+      // Not remembered: private mode or storage blocked.
+    }
+    this._snackBar.open(
+      this._transloco.translate('game.detail', {
+        level: this._transloco.translate(`game.detailLevel.${detail}`),
+      }),
+      undefined,
+      { duration: 1500 },
+    );
+  }
+
+  /** The cell (`red-offence`...) whose next tap is an own goal, told by rod or figure. */
+  protected readonly armed = signal<string | null>(null);
+  private _armedTimer?: ReturnType<typeof setTimeout>;
+
+  protected armOwn(color: TeamColor, position: Position): void {
+    const cell = `${color}-${position}`;
+    clearTimeout(this._armedTimer);
+    this.armed.set(this.armed() === cell ? null : cell);
+    if (this.armed()) {
+      this._armedTimer = setTimeout(() => this.armed.set(null), OWN_GOAL_PICK_MS);
+    }
+  }
+
+  /** A goal told by rod or figure; an own goal when the cell was armed for one. */
+  protected detailedGoal(
+    color: TeamColor,
+    position: Position,
+    where: { rod: Rod; man?: number },
+  ): void {
+    const own = this.armed() === `${color}-${position}`;
+    this.armed.set(null);
+    clearTimeout(this._armedTimer);
+    this.goal(color, position, own, where);
+  }
+
+  /** Goals of each rod of each cell in this game (`red-offence` → rod → goals). */
+  protected readonly rodCounts = computed(() => {
+    const counts: Record<string, Partial<Record<Rod, number>>> = {};
+    for (const event of this.game()?.events ?? []) {
+      if (event.type === 'goal' && event.rod) {
+        const cell = (counts[`${event.team}-${event.position}`] ??= {});
+        cell[event.rod] = (cell[event.rod] ?? 0) + 1;
+      }
+    }
+    return counts;
+  });
+
+  /** The translation key that tells the last goal, as precisely as it was entered. */
+  protected eventKey(event: Exclude<GameEvent, { type: 'swap' }>): string {
+    const kind = event.type === 'own' ? 'own' : 'goal';
+    return `game.event.${kind}${event.man ? 'Man' : event.rod ? 'Rod' : ''}`;
+  }
+
   /** The grid cell of a player: the corners clockwise from the top left, turned. */
   protected area(color: TeamColor, position: Position): string {
     const start = CELL_ORDER.indexOf(`${color}-${position}`);
@@ -336,14 +422,19 @@ export class GameDetailComponent implements LeaveGuarded {
     }
   }
 
-  protected goal(color: TeamColor, position: Position, ownGoal = false): void {
+  protected goal(
+    color: TeamColor,
+    position: Position,
+    ownGoal = false,
+    where: { rod?: Rod; man?: number } = {},
+  ): void {
     const game = this.game();
     if (!game || game.end || game.paused || this.decided()) {
       return;
     }
     this._scoredHere = game.id;
     this._gameService
-      .scoreGoal(game, color, position, ownGoal)
+      .scoreGoal(game, color, position, ownGoal, where)
       .catch((error) => this._notifier.error('error.goal', error));
   }
 

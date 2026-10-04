@@ -86,3 +86,56 @@ test('tournaments: what may change while running and after the end', async ({ re
   expect(await update(request, path, { end: new Date().toISOString() })).toBe(403);
   expect(await update(request, path, { deleted: true, gamesDeleted: false })).toBe(200);
 });
+
+test('goal events: a rod and a figure only where they fit', async ({ request }) => {
+  const id = `rods-${tag()}`;
+  const team = (player: string, goals = 0): Value => ({
+    defence: { player, goals, ownGoals: 0 },
+    offence: { player, goals: 0, ownGoals: 0 },
+  });
+  expect(
+    await create(request, `games/${id}`, {
+      league: 'rules-league',
+      players: ['p1', 'p2'],
+      start: new Date().toISOString(),
+      teams: { red: team('p1'), blue: team('p2') },
+      mode: { target: 8 },
+      events: [],
+    }),
+  ).toBe(200);
+  /** The first goal of the game, by the red defender, told as `event`. */
+  const goal = (event: Record<string, Value>) =>
+    update(request, `games/${id}`, {
+      teams: { red: team('p1', 1), blue: team('p2') },
+      events: [
+        { at: 1000, type: 'goal', team: 'red', position: 'defence', player: 'p1', ...event },
+      ],
+    });
+  expect(await goal({ rod: 'midfield' })).toBe(403);
+  expect(await goal({ rod: 'goalie', man: 2 })).toBe(403);
+  expect(await goal({ man: 1 })).toBe(403);
+  expect(await goal({ rod: 'defence', man: 3 })).toBe(403);
+  expect(await goal({ rod: 'defence', man: 2 })).toBe(200);
+});
+
+test('games deleted with a league or tournament remember it', async ({ request }) => {
+  const id = `deleted-${tag()}`;
+  const team = (player: string): Value => ({
+    defence: { player, goals: 0, ownGoals: 0 },
+    offence: { player, goals: 0, ownGoals: 0 },
+  });
+  expect(
+    await create(request, `games/${id}`, {
+      league: 'rules-league',
+      players: ['p1', 'p2'],
+      start: new Date().toISOString(),
+      teams: { red: team('p1'), blue: team('p2') },
+      events: [],
+    }),
+  ).toBe(200);
+  expect(await update(request, `games/${id}`, { deleted: true, deletedWith: 'league:x' })).toBe(
+    200,
+  );
+  expect(await update(request, `games/${id}`, { deletedWith: 5 })).toBe(403);
+  expect(await update(request, `games/${id}`, { deleted: false, start: 'x' })).toBe(403);
+});

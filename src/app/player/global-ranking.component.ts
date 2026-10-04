@@ -4,6 +4,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 
 import { GameService } from '../game/game.service';
 import { ALL_LEAGUES } from '../league/league';
+import { leagueTitles, titlesByPlayer } from '../stats/titles';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { rankPlayers } from './player';
 import { PlayerService } from './player.service';
@@ -18,7 +19,12 @@ import { RankingComponent } from './ranking/ranking.component';
     <main class="page">
       <p class="hint">{{ 'ranking.globalHint' | transloco }}</p>
       @if (players(); as players) {
-        <fl-ranking [players]="players" [games]="games()" [playerLink]="playerLink" />
+        <fl-ranking
+          [players]="players"
+          [games]="games()"
+          [playerLink]="playerLink"
+          [titles]="titles()"
+        />
       } @else {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       }
@@ -38,6 +44,12 @@ export class GlobalRankingComponent {
 
   protected readonly games = computed(() => this._gameService.leagueGames(ALL_LEAGUES) ?? []);
   protected readonly playerLink = (playerId: string) => ['/player', playerId];
+
+  /** Titles over all leagues, shown next to the names. */
+  protected readonly titles = computed(() => {
+    const ratings = this._gameService.ratings(ALL_LEAGUES);
+    return ratings ? titlesByPlayer(leagueTitles(this.games(), ratings)) : new Map();
+  });
 
   /** Everyone who played at least once, ranked across leagues. */
   protected readonly players = computed(() => {

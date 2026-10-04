@@ -1,10 +1,12 @@
 import {
+  FIGURES,
   Game,
   GameEvent,
   GameMode,
   modeOf,
   opponent,
   playTime,
+  Rod,
   TEAM_COLORS,
   TeamColor,
   teamOf,
@@ -494,4 +496,48 @@ export function tournamentSummary(games: Game[]): TournamentSummary {
     longest: best(played, gameSeconds),
     biggestWin: best(played, margin),
   };
+}
+
+/** Goals told down to the rod (and figure), of a player or of everyone, from the logs. */
+export interface LineStats {
+  /** Logged goals and own goals: told by rod, and told by position only. */
+  known: number;
+  unknown: number;
+  /** By rod: goals, own goals, and goals by figure (index 0 is figure 1) when told. */
+  rods: Record<Rod, { goals: number; own: number; men: number[] }>;
+}
+
+export function lineStats(games: Game[], player?: string): LineStats {
+  const stats: LineStats = {
+    known: 0,
+    unknown: 0,
+    rods: {
+      goalie: { goals: 0, own: 0, men: [0] },
+      defence: { goals: 0, own: 0, men: [0, 0] },
+      midfield: { goals: 0, own: 0, men: [0, 0, 0, 0, 0] },
+      attack: { goals: 0, own: 0, men: [0, 0, 0] },
+    },
+  };
+  for (const game of finished(games)) {
+    for (const event of game.events ?? []) {
+      if (event.type === 'swap' || (player && event.player !== player)) {
+        continue;
+      }
+      if (!event.rod) {
+        stats.unknown++;
+        continue;
+      }
+      stats.known++;
+      const rod = stats.rods[event.rod];
+      if (event.type === 'own') {
+        rod.own++;
+      } else {
+        rod.goals++;
+        if (event.man && event.man <= FIGURES[event.rod]) {
+          rod.men[event.man - 1]++;
+        }
+      }
+    }
+  }
+  return stats;
 }

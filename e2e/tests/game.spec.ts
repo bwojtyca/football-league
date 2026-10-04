@@ -112,3 +112,66 @@ test('one on one, and a game that is removed while it runs', async ({ page }) =>
     .click();
   await expect(page.locator('fl-game-list a.game')).toHaveCount(0);
 });
+
+test('goals told by rod and by figure, an own goal, a mixed log and the choice kept', async ({
+  page,
+}) => {
+  const id = tag();
+  const [a, b, c, d] = players(id);
+  await createLeague(page, `E2E linie ${id}`);
+  await addPlayers(page, [a, b, c, d]);
+  await startGame(page, { red: [a, b], blue: [c, d] });
+  const cell = (team: 'red' | 'blue', position: 'defence' | 'offence') =>
+    page.getByRole('region', { name: `${t(`team.${team}`)}, ${t(`position.${position}`)}` });
+  const bar = page.locator('footer.bar');
+  const detail = page.locator('header.top button.detail');
+
+  // By rod: Bartek scores with a forward. The choice stays on the device.
+  await detail.click();
+  expect(await page.evaluate(() => localStorage.getItem('fl.goalDetail'))).toBe('rod');
+  await page.reload();
+  const forwards = cell('red', 'offence').getByRole('button', {
+    name: `${t('game.goalAria', { name: b })} · ${t('rods.attack')}`,
+  });
+  await forwards.click();
+  await expect(score(page)).toHaveText('1:0');
+  await expect(bar).toContainText(t('game.event.goalRod', { name: b, rod: t('rods.with.attack') }));
+  await shot(page, 'game-detail-rod');
+
+  // By figure: Celina scores with her goalkeeper; Ala's own goal with defender 2, undone.
+  await detail.click();
+  await cell('blue', 'defence')
+    .getByRole('button', { name: `${t('game.goalAria', { name: c })} · ${t('rods.goalie')} 1` })
+    .click();
+  await expect(score(page)).toHaveText('1:1');
+  await expect(bar).toContainText(
+    t('game.event.goalMan', { name: c, rod: t('rods.with.goalie'), n: 1 }),
+  );
+  const own = t('game.ownGoalAria', { name: a });
+  await cell('red', 'defence').getByRole('button', { name: own, exact: true }).click();
+  await shot(page, 'game-detail-man');
+  await cell('red', 'defence')
+    .getByRole('button', { name: `${own} · ${t('rods.defence')} 2` })
+    .click();
+  await expect(score(page)).toHaveText('1:2');
+  await expect(bar).toContainText(
+    t('game.event.ownMan', { name: a, rod: t('rods.with.defence'), n: 2 }),
+  );
+  await bar.getByRole('button', { name: t('game.undo'), exact: true }).click();
+  await expect(score(page)).toHaveText('1:1');
+
+  // Back to positions: the log mixes all three; the profile counts what it knows.
+  await detail.click();
+  await goal(page, a, 7);
+  await page
+    .locator('fl-finish-panel')
+    .getByRole('button', { name: t('game.next') })
+    .click();
+  await page
+    .locator('fl-game-new-dialog')
+    .getByRole('button', { name: t('common.cancel') })
+    .click();
+  await page.locator('fl-ranking').getByText(b).click();
+  await expect(page.getByRole('heading', { name: t('lines.title') })).toBeVisible();
+  await expect(page.locator('fl-lines')).toContainText(t('lines.known', { n: 1, total: 1 }));
+});

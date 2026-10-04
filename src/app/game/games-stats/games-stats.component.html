@@ -124,6 +124,13 @@
       </section>
     }
 
+    @if (lines().known) {
+      <section>
+        <h3>{{ 'lines.title' | transloco }}</h3>
+        <fl-lines [stats]="lines()" />
+      </section>
+    }
+
     @if (modes().length > 1) {
       <section>
         <h3>{{ 'stats.modes' | transloco }}</h3>

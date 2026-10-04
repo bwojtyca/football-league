@@ -5,9 +5,23 @@
       <a matIconButton [routerLink]="backLink()" [attr.aria-label]="'common.back' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </a>
-      <button matIconButton (click)="rotate()" [attr.aria-label]="'game.rotate' | transloco">
-        <mat-icon>rotate_right</mat-icon>
-      </button>
+      <span class="tools">
+        <button matIconButton (click)="rotate()" [attr.aria-label]="'game.rotate' | transloco">
+          <mat-icon>rotate_right</mat-icon>
+        </button>
+        @if (!game.end && game.events) {
+          <button
+            matIconButton
+            class="detail"
+            (click)="cycleDetail()"
+            [attr.aria-label]="
+              'game.detail' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
+            "
+          >
+            <mat-icon>{{ detailIcons[detail()] }}</mat-icon>
+          </button>
+        }
+      </span>
       <div class="score">
         <span class="bug"
           ><span class="r">{{ score().red }}</span
@@ -106,6 +120,8 @@
               (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
             "
           >
+            @let cell = color + '-' + position;
+            @let detailed = detail() !== 'position' && !game.end && !!game.events;
             <div class="who">
               <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
               <span class="name">
@@ -115,21 +131,52 @@
               @if (delta !== null) {
                 <fl-change [value]="delta" />
               }
+              @if (detailed) {
+                <b class="tally">{{ slot.goals }}</b>
+              }
             </div>
-            <button
-              class="goal"
-              (click)="goal(color, position)"
-              [attr.aria-label]="'game.goalAria' | transloco: { name }"
-            >
-              {{ slot.goals }}
-            </button>
-            <button
-              class="own"
-              (click)="goal(color, position, true)"
-              [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
-            >
-              {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
-            </button>
+            @if (detailed) {
+              <fl-goal-pad
+                [detail]="$any(detail())"
+                [color]="color"
+                [position]="position"
+                [rotation]="rotation()"
+                [counts]="rodCounts()[cell] ?? {}"
+                [armed]="armed() === cell"
+                [label]="
+                  (armed() === cell ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }
+                "
+                (score)="detailedGoal(color, position, $event)"
+              />
+              <button
+                class="own"
+                [class.armed]="armed() === cell"
+                [attr.aria-pressed]="armed() === cell"
+                (click)="armOwn(color, position)"
+                [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
+              >
+                @if (armed() === cell) {
+                  {{ 'game.ownPick' | transloco }}
+                } @else {
+                  {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
+                }
+              </button>
+            } @else {
+              <button
+                class="goal"
+                (click)="goal(color, position)"
+                [attr.aria-label]="'game.goalAria' | transloco: { name }"
+              >
+                {{ slot.goals }}
+              </button>
+              <button
+                class="own"
+                (click)="goal(color, position, true)"
+                [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
+              >
+                {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
+              </button>
+            }
           </section>
         }
         @if (canSwap(game, color)) {
@@ -177,7 +224,7 @@
               }
               @default {
                 {{
-                  (last.type === 'own' ? 'game.event.own' : 'game.event.goal')
+                  eventKey($any(last))
                     | transloco
                       : {
                           name: playerService.getPlayerName($any(last).player),
@@ -186,6 +233,8 @@
                               ? 'position.fromDefence'
                               : 'position.fromOffence'
                             ) | transloco,
+                          rod: $any(last).rod ? ('rods.with.' + $any(last).rod | transloco) : '',
+                          n: $any(last).man ?? '',
                         }
                 }}
               }

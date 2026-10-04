@@ -1,4 +1,4 @@
-import { Game, GameEvent, opponent, Position, TeamColor } from './game';
+import { Game, GameEvent, opponent, Position, Rod, TeamColor } from './game';
 
 /** A goal of the log with the score right after it; `team` is the team credited. */
 export interface TimelineGoal {
@@ -7,6 +7,9 @@ export interface TimelineGoal {
   /** Who scored, and from where; an own goal is scored by the other team's player. */
   player: string;
   position: Position;
+  /** The rod and the figure, when the goal was told in that detail. */
+  rod?: Rod;
+  man?: number;
   own: boolean;
   score: Record<TeamColor, number>;
 }
@@ -39,6 +42,7 @@ export function timelineOf(game: Pick<Game, 'events' | 'win'>): Timeline | undef
       team,
       player: event.player,
       position: event.position,
+      ...(event.rod && { rod: event.rod, man: event.man }),
       own: event.type === 'own',
       score: { ...score },
     });

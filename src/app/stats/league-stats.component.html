@@ -43,6 +43,13 @@
         </div>
       </section>
 
+      @if (titles().length) {
+        <section>
+          <h2>{{ 'titles.title' | transloco }}</h2>
+          <fl-titles-list [titles]="titles()" [playerLink]="playerLink" />
+        </section>
+      }
+
       <section>
         <h2>{{ 'leagueStats.months' | transloco }}</h2>
         <div class="fl-chart">
@@ -154,6 +161,13 @@
           </div>
         }
       </section>
+
+      @if (lines().known) {
+        <section>
+          <h2>{{ 'lines.title' | transloco }}</h2>
+          <fl-lines [stats]="lines()" />
+        </section>
+      }
 
       @if (records().length) {
         <section>

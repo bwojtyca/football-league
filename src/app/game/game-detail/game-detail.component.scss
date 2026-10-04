@@ -63,6 +63,10 @@
   width: 48px;
 }
 
+.tools {
+  display: flex;
+}
+
 .series {
   margin: 0;
   padding: 0 16px 4px;
@@ -206,6 +210,17 @@
 .own b {
   margin-left: 4px;
   color: #fff;
+}
+
+/* Waiting for the rod or figure that scored the own goal. */
+.own.armed {
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
+}
+
+.tally {
+  font: 800 1.4rem/1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
 }
 
 .ended .goal,

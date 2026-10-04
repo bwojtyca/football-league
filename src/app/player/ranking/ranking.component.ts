@@ -14,6 +14,7 @@ import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
 import { POTATO_MIN_GAMES, POTATO_POINTS, potatoRanking } from '../potato';
 import { duets } from '../records';
+import { Title } from '../../stats/titles';
 
 /** Fewest games together for a pair to be ranked. */
 const DUET_GAMES = 3;
@@ -46,6 +47,8 @@ export class RankingComponent {
   /** Link to a player's profile. */
   public readonly playerLink = input.required<(playerId: string) => unknown[]>();
   public readonly minGames = input(0);
+  /** Titles each player holds now, shown as icons next to their name. */
+  public readonly titles = input<Map<string, Title[]>>(new Map());
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
   /** Who is ranked, and (players) by what: Elo, win rate or potato points. */

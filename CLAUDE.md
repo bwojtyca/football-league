@@ -61,14 +61,18 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   - `mode` = `{ target, winBy?, max?, minutes? }` (no mode = to 8). The picker combines a
     target (5/8/10), win by 2 without a cap and a time limit (3/5/7/10 min); `max` only
     exists in stage 2 games;
-  - `events` = list of `{ at, type: 'goal' | 'own', team, position, player }` and
+  - `events` = list of `{ at, type: 'goal' | 'own', team, position, player, rod?, man? }` and
     `{ at, type: 'swap', team }`, `at` in ms since the start. The goal totals in `teams` stay
-    and change together with the log, so old views and the 2017 games need no log;
+    and change together with the log, so old views and the 2017 games need no log. `rod`
+    (`goalie | defence | midfield | attack`, fitting the position) and `man` (the figure on
+    it, from 1 at the team's handles: 1, 2, 5, 3 of them) are there only when the goal was
+    entered in that detail, so statistics count what is known and what is not;
   - `series?` = `{ id, bestOf, game }`, `id` being the first game's id; teams swap colours
     from game to game, the series score is counted from the games;
   - `tournament?` = id of the tournament the game belongs to;
   - `deleted?`: hidden from rankings and stats, restorable (any game can be marked; only running
-    games are erased for good);
+    games are erased for good); `deletedWith?` = `league:<id>` or `tournament:<id>` when it
+    was deleted together with one, so restoring that brings back only those games;
   - `paused?` (ISO time the clock stopped) and `pausedFor?` (ms of earlier pauses): the clock,
     time limits and event times count play time only (`playTime()`).
 - `tournaments/{id}`: `league`, `name`, `format` (`'series' | 'open' | 'king' | 'dyp' |
@@ -135,6 +139,14 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Elo functions; `rating.ts` also rates defence and attack separately (2 vs 2 games only).
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
   down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
+- Goal detail: the game screen's button next to "turn" cycles the detail of new goals
+  (`fl.goalDetail` in localStorage: position, rod, figure); `goal-pad.component.ts` splits a
+  player's cell into their two rods (laid out as on the table and turned with it) or their
+  figures; an own goal in that detail arms the cell's "own goal" button first, then the rod
+  or figure. Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
+  veteran, marathoner, comeback king, dream team, scoring keeper) show as icons in the
+  rankings, on the profile and in the league's statistics; `player/records.ts` has the
+  achievements and the mishaps shown on the profile.
 - Statistics: `stats/stats.ts` holds the pure functions (league totals, months, weekday ×
   hour, colour and position shares, league records, goal times from the logs, Elo timeline,
   head to head, a player's rules, goal moments and time, tournament summary, a game's place
@@ -217,6 +229,24 @@ Owner feedback, to do at the end (after the planned stages):
   rotating partners ("Americano"), cup. The setup dialog states each format's needs and its
   number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)
+
+Owner feedback, round G (4 October 2026):
+- (Done, e2e) Goals can tell their rod or figure, besides the position (see the code map);
+  one tap per goal, undo as before, the detail chosen on the game screen and kept on the
+  device; a game may mix all three. Statistics: goals by rod and figure with how many are
+  known (profile, league statistics).
+- The potato rules stay as they are for now. The redesign is done in another window.
+- The 2017 migration: the owner asked whether the agent can run it itself. It needs owner
+  credentials (none on the LXC): either the owner runs the script with a gcloud token, or
+  gives the rules-deploy service account the "Cloud Datastore User" role, after which a
+  workflow can run it (on the owner's explicit go).
+- (Done) Merged branches deleted; `claude/next` is the working branch.
+- (Done, e2e, rules) Restoring a league or tournament with its games brings back only the
+  games deleted with it (`deletedWith`); older deletions restore everything as before.
+- (Done, e2e) More achievements (first win, big comeback, 3/5/10 in a row, David and Goliath,
+  hat-trick, solo, goalkeeper goal, golden goal, never give up, sweet revenge, 10/50/100/250
+  games) and mishaps (under the table, own goal, 5 losses in a row); league titles.
+- Sign-in later.
 
 Owner feedback, round F (October 2026). Status is kept here after every commit, so a new
 session can pick up where the last one stopped:

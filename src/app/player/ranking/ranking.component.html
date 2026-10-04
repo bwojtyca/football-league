@@ -134,7 +134,18 @@
     <span class="pos">{{ position }}</span>
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">
-      <b>{{ player.name }}</b>
+      <b
+        >{{ player.name }}
+        @for (title of titles().get(player.id) ?? []; track title.id) {
+          <span
+            class="title"
+            role="img"
+            [attr.aria-label]="'titles.' + title.id + '.name' | transloco"
+            [attr.title]="'titles.' + title.id + '.name' | transloco"
+            >{{ title.icon }}</span
+          >
+        }
+      </b>
       @if (player.games === 0) {
         <small>{{ 'league.unrated' | transloco }}</small>
       } @else {

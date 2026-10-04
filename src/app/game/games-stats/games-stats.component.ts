@@ -7,7 +7,8 @@ import { TranslocoDecimalPipe } from '@jsverse/transloco-locale';
 import { PlayerService } from '../../player/player.service';
 import { compareLink } from '../../stats/compare-link';
 import { hoursAndMinutes } from '../../stats/format';
-import { goalMoments, modeRecords, playerTime } from '../../stats/stats';
+import { LinesComponent } from '../../stats/lines.component';
+import { goalMoments, lineStats, modeRecords, playerTime } from '../../stats/stats';
 import { ThirdsComponent } from '../../stats/thirds.component';
 import { TournamentService } from '../../tournament/tournament.service';
 import { tournamentWinners } from '../../tournament/winners';
@@ -21,6 +22,7 @@ import { calculateStats, ratio } from './player-stats';
   imports: [
     NgTemplateOutlet,
     RouterLink,
+    LinesComponent,
     ModeLabelComponent,
     ThirdsComponent,
     TranslocoDecimalPipe,
@@ -49,6 +51,7 @@ export class GamesStatsComponent {
   protected readonly time = computed(() => playerTime(this._games() ?? [], this.playerId()));
   protected readonly modes = computed(() => modeRecords(this._games() ?? [], this.playerId()));
   protected readonly moments = computed(() => goalMoments(this._games() ?? [], this.playerId()));
+  protected readonly lines = computed(() => lineStats(this._games() ?? [], this.playerId()));
 
   /** Tournaments the player played a game in, and those they won (worked out asynchronously). */
   protected readonly tournaments = signal<{ played: number; won: number } | null>(null);

@@ -13,6 +13,7 @@ import { GameService } from '../../game/game.service';
 import { rankPlayers } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { RankingComponent } from '../../player/ranking/ranking.component';
+import { leagueTitles, titlesByPlayer } from '../../stats/titles';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { TodayCardComponent } from '../today-card.component';
@@ -66,6 +67,14 @@ export class LeaguePageComponent {
   });
 
   protected readonly games = computed(() => this._gameService.leagueGames(this.leagueId()) ?? []);
+
+  /** Titles held now, shown next to the names. */
+  protected readonly titles = computed(() => {
+    const ratings = this._gameService.ratings(this.leagueId());
+    return ratings
+      ? titlesByPlayer(leagueTitles(this.games(), ratings, this.league()?.minGames ?? 0))
+      : new Map();
+  });
 
   protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
 

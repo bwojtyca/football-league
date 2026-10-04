@@ -165,14 +165,25 @@
       "goal": "{name} strzela gola {from}",
       "own": "{name} strzela samobója {from}",
       "swap": "{team} zamieniają pozycje",
-      "none": "Tu pojawi się każdy gol. Pomyłkę cofniesz jednym tapnięciem."
+      "none": "Tu pojawi się każdy gol. Pomyłkę cofniesz jednym tapnięciem.",
+      "goalRod": "{name} strzela gola {rod}",
+      "goalMan": "{name} strzela gola {rod} nr {n}",
+      "ownRod": "{name} strzela samobója {rod}",
+      "ownMan": "{name} strzela samobója {rod} nr {n}"
     },
     "leaveTitle": "Mecz trwa",
     "leaveText": "Wstrzymać zegar, zanim wyjdziesz? Mecz dokończysz później.",
     "leavePause": "Wstrzymaj i wyjdź",
     "leaveRunning": "Wyjdź, mecz trwa dalej",
     "leaveStay": "Zostań",
-    "rotate": "Obróć układ stołu"
+    "rotate": "Obróć układ stołu",
+    "detail": "Szczegóły goli: {level}",
+    "detailLevel": {
+      "position": "pozycja",
+      "rod": "linia",
+      "man": "zawodnik"
+    },
+    "ownPick": "Wskaż, kto strzelił"
   },
   "modes": {
     "title": "Tryb",
@@ -325,7 +336,42 @@
     "streak": "{n} wygranych z rzędu",
     "milestone": "{n}. mecz",
     "times": "{n} razy",
-    "locked": "jeszcze nie"
+    "locked": "jeszcze nie",
+    "firstWin": "Pierwsza wygrana",
+    "giantKiller": "Dawid i Goliat",
+    "hatTrick": "Hat-trick",
+    "solo": "Solista",
+    "goalieGoal": "Gol bramkarzem",
+    "goldenGoal": "Złoty gol",
+    "marathon": "Do upadłego",
+    "revenge": "Słodka zemsta",
+    "mishaps": "Wpadki",
+    "underTable": "Pod stołem",
+    "ownGoal": "Samobój",
+    "lossStreak": "{n} porażek z rzędu",
+    "how": {
+      "firstWin": "Wygraj pierwszy mecz.",
+      "shutout": "Wygraj, nie tracąc gola.",
+      "comeback": "Wygraj po {n} golach straty.",
+      "bigComeback": "Wygraj po {n} golach straty.",
+      "streak3": "Wygraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu.",
+      "streak": "Wygraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu.",
+      "streak10": "Wygraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu.",
+      "giantKiller": "Wygraj, mając najwyżej {n}% szans według Elo.",
+      "hatTrick": "Strzel 3 gole z rzędu w jednym meczu.",
+      "solo": "Strzel wszystkie gole drużyny w wygranym meczu 2 na 2.",
+      "goalieGoal": "Strzel gola bramkarzem (zapis linii na ekranie meczu).",
+      "goldenGoal": "Wygraj mecz na czas złotym golem po końcu czasu.",
+      "marathon": "Wygraj, strzelając co najmniej 2 gole ponad cel meczu.",
+      "revenge": "Pokonaj drużynę, która wygrała z Tobą poprzedni mecz.",
+      "games10": "Rozegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}.",
+      "games50": "Rozegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}.",
+      "milestone": "Rozegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}.",
+      "games250": "Rozegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}.",
+      "underTable": "Przegraj, nie strzelając gola.",
+      "ownGoal": "Strzel samobója.",
+      "lossStreak": "Przegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu."
+    }
   },
   "settings": {
     "title": "Ustawienia ligi",
@@ -487,5 +533,78 @@
     "comeback": "{n, plural, =1 {Największy powrót w lidze} other {#. największy powrót w lidze}}",
     "fastestGoal": "{n, plural, =1 {Najszybszy gol w lidze} other {#. najszybszy gol w lidze}}",
     "duration": "Mecz trwał {time}, średni mecz w lidze: {average}."
+  },
+  "rods": {
+    "goalie": "Bramkarz",
+    "defence": "Obrońcy",
+    "midfield": "Pomocnicy",
+    "attack": "Napastnicy",
+    "with": {
+      "goalie": "bramkarzem",
+      "defence": "obrońcą",
+      "midfield": "pomocnikiem",
+      "attack": "napastnikiem"
+    }
+  },
+  "lines": {
+    "title": "Gole według linii",
+    "known": "Linia znana dla {n} z {total} goli z zapisem.",
+    "rod": "Linia",
+    "goals": "Gole",
+    "own": "Samobóje",
+    "men": "Zawodnicy (od strony gracza)"
+  },
+  "titles": {
+    "title": "Tytuły",
+    "leader": {
+      "name": "Lider",
+      "hint": "najwyższe Elo",
+      "value": "{n} Elo"
+    },
+    "potato": {
+      "name": "Ziemniak",
+      "hint": "najwięcej punktów ziemniaka",
+      "value": "{n} pkt"
+    },
+    "sniper": {
+      "name": "Snajper",
+      "hint": "najwięcej goli na mecz (od {n} meczów)",
+      "value": "{n} na mecz"
+    },
+    "wall": {
+      "name": "Mur",
+      "hint": "najmniej straconych goli na mecz w obronie (od {n} meczów)",
+      "value": "{n} na mecz"
+    },
+    "onFire": {
+      "name": "Na fali",
+      "hint": "najdłuższa trwająca seria wygranych",
+      "value": "{count, plural, one {# wygrana} few {# wygrane} many {# wygranych} other {# wygranej}} z rzędu"
+    },
+    "veteran": {
+      "name": "Weteran",
+      "hint": "najwięcej meczów",
+      "value": "{count, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}"
+    },
+    "marathoner": {
+      "name": "Maratończyk",
+      "hint": "najdłużej przy stole",
+      "value": "{n}"
+    },
+    "comebackKing": {
+      "name": "Król powrotów",
+      "hint": "najwięcej wygranych po odrobieniu co najmniej 2 goli",
+      "value": "{count, plural, one {# powrót} few {# powroty} many {# powrotów} other {# powrotu}}"
+    },
+    "duo": {
+      "name": "Zgrany duet",
+      "hint": "najwyższy procent wygranych w parze (od {n} meczów razem)",
+      "value": "{n}%"
+    },
+    "goalieScorer": {
+      "name": "Strzelający bramkarz",
+      "hint": "najwięcej goli bramkarzem",
+      "value": "{count, plural, one {# gol} few {# gole} many {# goli} other {# gola}}"
+    }
   }
 }

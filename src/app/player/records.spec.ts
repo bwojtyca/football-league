@@ -68,3 +68,48 @@ describe('duets', () => {
     ]);
   });
 });
+
+describe('more achievements and the mishaps', () => {
+  const goal = (at: number, player: string, extra: Partial<GameEvent> = {}): GameEvent =>
+    ({
+      at: at * 60_000,
+      type: 'goal',
+      team: player === 'a' || player === 'b' ? 'red' : 'blue',
+      position: 'defence',
+      player,
+      ...extra,
+    }) as GameEvent;
+  // a loses 0:8, then beats the same team: three goals in a row (one with the goalkeeper),
+  // all of the team's goals; a 10:8 marathon; a timed win on a golden goal after 3 minutes.
+  const lost = game(0, 0, 8);
+  const revenge = game(10, 3, 1, [
+    goal(1, 'c'),
+    goal(2, 'a'),
+    goal(3, 'a', { rod: 'goalie' }),
+    goal(4, 'a'),
+  ]);
+  revenge.mode = { target: 3 };
+  revenge.teams.red.defence.ownGoals = 1;
+  const marathon = game(20, 10, 8);
+  marathon.mode = { target: 8, winBy: 2 };
+  const golden = game(30, 1, 0, [goal(3.5, 'a')]);
+  golden.mode = { target: 8, minutes: 3 };
+  const games = [lost, revenge, marathon, golden];
+  const changes = new Map([[revenge.id, new Map([['a', 20]])]]);
+  const { achievements } = playerRecords('a', games, [], changes);
+
+  it('counts each of them', () => {
+    expect(achievements.firstWin).toEqual({ count: 1, date: revenge.start });
+    expect(achievements.underTable.count).toBe(1);
+    expect(achievements.revenge.count).toBe(1);
+    expect(achievements.hatTrick.count).toBe(1);
+    expect(achievements.goalieGoal.count).toBe(1);
+    expect(achievements.solo.count).toBe(4 - 1);
+    expect(achievements.giantKiller.count).toBe(1);
+    expect(achievements.marathon.count).toBe(1);
+    expect(achievements.goldenGoal.count).toBe(1);
+    expect(achievements.streak3).toEqual({ count: 1, date: golden.start });
+    expect(achievements.ownGoal.count).toBe(1);
+    expect(achievements.lossStreak.count).toBe(0);
+  });
+});

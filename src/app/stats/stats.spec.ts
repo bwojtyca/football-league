@@ -7,6 +7,7 @@ import {
   goalMoments,
   headToHead,
   leagueStats,
+  lineStats,
   modeRecords,
   playerTime,
   ratingTimeline,
@@ -191,5 +192,42 @@ describe('tournamentSummary', () => {
     expect(summary.defence).toEqual({ players: ['a'], conceded: 14 / 3 });
     expect(summary.longest?.game.id).toBe('t2');
     expect(summary.biggestWin?.game.id).toBe('t1');
+  });
+});
+
+describe('lineStats', () => {
+  // Red a+b against blue c+d; goals told by position, by rod and by figure, one own goal.
+  const game = played('lines', 6, [3, 1], 5, {
+    events: [
+      goal(1, 'red', 'a'),
+      { ...goal(2, 'red', 'a'), rod: 'goalie' },
+      {
+        at: 180_000,
+        type: 'goal',
+        team: 'red',
+        position: 'offence',
+        player: 'b',
+        rod: 'attack',
+        man: 2,
+      },
+      {
+        at: 240_000,
+        type: 'own',
+        team: 'red',
+        position: 'defence',
+        player: 'a',
+        rod: 'defence',
+        man: 1,
+      },
+    ],
+  });
+
+  it('counts what is known and what is not', () => {
+    const all = lineStats([game]);
+    expect(all).toMatchObject({ known: 3, unknown: 1 });
+    expect(all.rods.goalie).toEqual({ goals: 1, own: 0, men: [0] });
+    expect(all.rods.attack).toEqual({ goals: 1, own: 0, men: [0, 1, 0] });
+    expect(all.rods.defence).toEqual({ goals: 0, own: 1, men: [0, 0] });
+    expect(lineStats([game], 'b')).toMatchObject({ known: 1, unknown: 0 });
   });
 });

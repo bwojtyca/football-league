@@ -40,6 +40,8 @@ test('statistics: the league, two players compared, a profile and a game against
   await expect(stats.locator('.fl-records dt')).toContainText([t('leagueStats.longest')]);
   await expect(stats.getByRole('option')).toHaveCount(4);
   await expect(stats.getByRole('heading', { name: t('leagueStats.goalTimes') })).toBeVisible();
+  await expect(stats.getByRole('heading', { name: t('titles.title') })).toBeVisible();
+  await expect(stats.locator('fl-titles-list dt').first()).toContainText(t('titles.leader.name'));
   await shot(page, 'stats-league');
   await stats.getByRole('option', { name: d }).click();
   await expect(stats.locator('mat-chip-option', { hasText: d })).toHaveClass(
@@ -53,9 +55,13 @@ test('statistics: the league, two players compared, a profile and a game against
     .locator('nav.tabs')
     .getByRole('link', { name: t('nav.ranking') })
     .click();
+  await expect(page.locator('fl-ranking .title').first()).toBeVisible();
+  await shot(page, 'stats-ranking-titles');
   await page.locator('fl-ranking').getByText(a).click();
   await expect(page.locator('main .hero')).toBeVisible();
   await expect(page.getByRole('heading', { name: t('stats.moments') })).toBeVisible();
+  await expect(page.getByRole('heading', { name: t('achievements.mishaps') })).toBeVisible();
+  await expect(page.locator('.achievements li.earned').first()).toBeVisible();
   await page.getByRole('heading', { name: t('stats.moments') }).scrollIntoViewIfNeeded();
   await shot(page, 'stats-profile');
   await page.getByRole('button', { name: t('compare.with') }).click();

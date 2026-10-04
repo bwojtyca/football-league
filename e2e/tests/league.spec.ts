@@ -1,6 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, newPlay, players, shot, t, tag } from './helpers';
+import {
+  addPlayers,
+  createLeague,
+  newPlay,
+  players,
+  shot,
+  startGame,
+  t,
+  tag,
+  win,
+} from './helpers';
 
 test('a new league: players, the bottom navigation, language and the league switcher', async ({
   page,
@@ -56,4 +66,48 @@ test('cancelling a new game from "+" stays on the page', async ({ page }) => {
     .click();
   await expect(page.locator('fl-game-new-dialog')).toBeHidden();
   await expect(page).toHaveURL(/\/games$/);
+});
+
+test('restoring a league with its games leaves a game deleted on its own deleted', async ({
+  page,
+}) => {
+  const id = tag();
+  const [a, b] = players(id);
+  await createLeague(page, `E2E przywróć ${id}`);
+  await addPlayers(page, [a, b]);
+  for (let i = 0; i < 2; i++) {
+    await startGame(page, { red: [a], blue: [b] });
+    await win(page, a);
+    await page
+      .locator('fl-game-new-dialog')
+      .getByRole('button', { name: t('common.cancel') })
+      .click();
+  }
+  const nav = page.locator('nav.tabs');
+  const games = page.locator('fl-game-list a.game');
+  await nav.getByRole('link', { name: t('nav.games') }).click();
+  await expect(games).toHaveCount(2);
+
+  // One game deleted on its own...
+  await games.first().click();
+  page.once('dialog', (confirm) => confirm.accept());
+  await page.locator('header.top button.more').click();
+  await page.getByRole('menuitem', { name: t('game.remove') }).click();
+  await expect(page.locator('.deleted-note')).toBeVisible();
+  await page.goBack();
+  await expect(games).toHaveCount(1);
+
+  // ...then the league with its games, and back again.
+  await nav.getByRole('link', { name: t('nav.more') }).click();
+  await page.getByRole('button', { name: t('settings.delete') }).click();
+  await page.getByRole('checkbox').check();
+  await page
+    .locator('.confirm')
+    .getByRole('button', { name: t('settings.delete') })
+    .click();
+  await expect(page).toHaveURL(/#\/leagues$/);
+  await page.getByRole('button', { name: t('game.undo') }).click();
+  await page.getByRole('link', { name: `E2E przywróć ${id}` }).click();
+  await nav.getByRole('link', { name: t('nav.games') }).click();
+  await expect(games).toHaveCount(1);
 });
