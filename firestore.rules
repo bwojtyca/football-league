@@ -157,10 +157,14 @@ service cloud.firestore {
         && (scored() || swapped() || undone() || closed() || scoredAndClosed() || pausedOrResumed());
 
       // Only games that are still being played can be removed. Any game can be marked as
-      // deleted (hidden from rankings and stats) and restored; nothing else changes with it.
+      // deleted (hidden from rankings and stats) and restored; nothing else changes with it
+      // but `deletedWith`, the league or tournament it was deleted together with.
       allow delete: if !('win' in resource.data);
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted'])
-        && request.resource.data.deleted is bool;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted', 'deletedWith'])
+        && request.resource.data.deleted is bool
+        && (!('deletedWith' in request.resource.data)
+          || (request.resource.data.deletedWith is string
+            && request.resource.data.deletedWith.size() <= 80));
 
       function before() {
         return resource.data;
@@ -243,9 +247,11 @@ service cloud.firestore {
         return events[events.size() - 1];
       }
 
-      // `at`: milliseconds since the start of the game.
+      // `at`: milliseconds since the start of the game. A goal may also tell its rod and the
+      // figure on it (see `validRod`).
       function goalEvent(event) {
-        return event.keys().hasOnly(['at', 'type', 'team', 'position', 'player'])
+        return event.keys().hasOnly(['at', 'type', 'team', 'position', 'player', 'rod', 'man'])
+          && validRod(event)
           && event.at is int
           && event.at >= 0
           && event.team in ['red', 'blue']
@@ -257,6 +263,21 @@ service cloud.firestore {
             || (event.type == 'own'
               && after().teams[event.team][event.position].ownGoals
                 == before().teams[event.team][event.position].ownGoals + 1));
+      }
+
+      // The defender plays the goalkeeper and the defenders, the attacker the midfielders and
+      // the forwards; figures are numbered from 1 (1, 2, 5 and 3 of them). The figure needs the
+      // rod.
+      function validRod(event) {
+        return (!('rod' in event) && !('man' in event))
+          || (event.get('rod', '') in (event.position == 'defence' ? ['goalie', 'defence'] : ['midfield', 'attack'])
+            && (!('man' in event)
+              || (event.man is int
+                && event.man >= 1
+                && event.man <= (event.rod == 'goalie' ? 1
+                  : event.rod == 'defence' ? 2
+                  : event.rod == 'midfield' ? 5
+                  : 3))));
       }
 
       function swapEvent(event) {
