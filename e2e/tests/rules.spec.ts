@@ -1,50 +1,10 @@
-import { APIRequestContext, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { tag } from './helpers';
+import { create, DOCUMENTS, fields, update, Value } from './rest';
 
-/**
- * Writes the app never makes, straight to the emulator's REST API without credentials, so
- * `firestore.rules` decides them like for any visitor.
- */
-const DOCUMENTS =
-  'http://127.0.0.1:8080/v1/projects/demo-football-league/databases/(default)/documents';
-
-type Value = string | number | boolean | Value[] | { [key: string]: Value };
-
-function encode(value: Value): object {
-  if (typeof value === 'string') {
-    return { stringValue: value };
-  }
-  if (typeof value === 'boolean') {
-    return { booleanValue: value };
-  }
-  if (typeof value === 'number') {
-    return { integerValue: String(value) };
-  }
-  if (Array.isArray(value)) {
-    return { arrayValue: { values: value.map(encode) } };
-  }
-  return { mapValue: { fields: fields(value) } };
-}
-
-function fields(data: Record<string, Value>): Record<string, object> {
-  return Object.fromEntries(Object.entries(data).map(([key, value]) => [key, encode(value)]));
-}
-
-/** Updates the given fields of a document; returns the HTTP status (403 when refused). */
-async function update(
-  request: APIRequestContext,
-  path: string,
-  data: Record<string, Value>,
-): Promise<number> {
-  const mask = Object.keys(data)
-    .map((key) => `updateMask.fieldPaths=${key}`)
-    .join('&');
-  const response = await request.patch(`${DOCUMENTS}/${path}?${mask}`, {
-    data: { fields: fields(data) },
-  });
-  return response.status();
-}
+// Writes the app never makes, straight to the emulator without credentials, so
+// `firestore.rules` decides them like for any visitor.
 
 test('tournaments: what may change while running and after the end', async ({ request }) => {
   const id = `rules-${tag()}`;
