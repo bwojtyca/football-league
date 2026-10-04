@@ -35,7 +35,11 @@ function played(
   return game;
 }
 
-const goal = (at: number, team: 'red' | 'blue', player: string): GameEvent => ({
+const goal = (
+  at: number,
+  team: 'red' | 'blue',
+  player: string,
+): Exclude<GameEvent, { type: 'swap' }> => ({
   at: at * 60_000,
   type: 'goal',
   team,
