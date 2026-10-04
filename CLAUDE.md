@@ -199,11 +199,25 @@ Owner feedback, to do at the end (after the planned stages):
   the owner's opinion.)
 - The 2017 league: the owner prefers a regular league with a generated id and a one-off
   migration that sets `league` on all 2017 games, so the code needs no special case for games
-  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). Not done yet:
-  writing production data in bulk needs the owner's explicit go-ahead in the session (the
-  agent's permission check blocked it). Options: a temporary narrow rule that only lets games
-  without a league get the new league id (plus deleting `leagues/legacy`), then run a REST
-  script; or give the service account the Cloud Datastore User role and run it from Actions.
+  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). The owner
+  agreed (3 Oct 2026) on condition of a backup first, and of closing it (dropping the
+  fallbacks) only once the app shows the same after the move as before. Ready (merged to
+  `master` on 4 Oct 2026, not run yet):
+  - `scripts/backup.mjs` (public REST, raw documents; taken 3 Oct 2026 06:25 UTC into
+    `../football-league-backups/`: 5 leagues, 7 players, 442 games, 8 tournaments).
+  - `scripts/migrate-2017.mjs`: new league `TPaiV5gUYtE68s5MFQsD` (copy of `leagues/legacy`:
+    name, created, players, archived), `league` added to the 421 games without one, `legacy`
+    deleted softly; one atomic commit of 423 writes, `--rollback` reverses it. It writes with
+    the owner's token (`gcloud auth print-access-token`), so no rule is loosened (the agent's
+    permission check refuses temporary rules and production writes). Tested on the emulator
+    (`e2e/tests/migration-2017.spec.ts`); a dry run on production matches (421 games).
+  - `.github/workflows/snapshot.yml` + `e2e/snapshot/`: what the live app shows of the 2017
+    league (leagues entry, every ranking view, each profile in the league and overall, games,
+    overall ranking) as text; run it (`gh workflow run snapshot.yml`) before and after the move and
+    compare the JSON files (they must be equal). Take "before" with the app version that will
+    be live during the move.
+  - Steps: owner runs `--apply` → rerun the snapshot → compare → if equal, close: drop the
+    fallbacks, the migration scenario and the snapshot workflow; else `--rollback`.
 - (Done: league settings page with rename, lock new games, ranking threshold, delete/restore;
   anyone may use it until sign-in brings a moderator. The owner can unlock "Najdroższa Liga
   Świata" there.)
@@ -300,7 +314,7 @@ session can pick up where the last one stopped:
 - (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
 - (Done) The Playwright scenarios live in `e2e/` and run in CI on every branch (see "Working on
   it"). Round F and the statistics were deployed on 3 Oct 2026 (rules first, then the app).
-- The 2017 migration (see above) is ready on `claude/migration-2017`; the owner postponed it
-  (3 Oct 2026: "the database doesn't bother us for now").
+- The 2017 migration (see above) is ready; the owner postponed it (3 Oct 2026: "the database
+  doesn't bother us for now").
 - A parallel session on the owner's machine works on the redesign concepts (A: the table as the
   interface, C liked visually); it must not change code yet, so leave the visuals to it.

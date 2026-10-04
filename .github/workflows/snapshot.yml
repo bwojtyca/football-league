@@ -1,0 +1,39 @@
+name: Snapshot
+
+# Reads what the live app shows of the 2017 league (rankings, profiles, games) and keeps it
+# as text in the "snapshot" artifact, to compare before and after the 2017 migration
+# (scripts/migrate-2017.mjs). It writes nothing. Run it with `gh workflow run snapshot.yml`.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+        working-directory: e2e
+      - run: npx playwright install --with-deps chromium
+        working-directory: e2e
+      - run: npx playwright test -c snapshot.config.ts
+        working-directory: e2e
+        env:
+          SNAPSHOT: snapshot-${{ github.run_id }}-${{ github.run_attempt }}
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-${{ github.run_attempt }}
+          path: |
+            e2e/snapshots
+            e2e/test-results
+          retention-days: 30
+          if-no-files-found: ignore
