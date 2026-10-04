@@ -32,7 +32,8 @@ describe('leagueTitles', () => {
     expect(holder('sniper')).toEqual(['a']);
     expect(holder('wall')).toEqual(['a']);
     expect(holder('onFire')).toEqual(['a', 'b']);
-    expect(holder('veteran')).toEqual(['a', 'b', 'c', 'd']);
+    // Everyone played every game: a title nobody stands out for is not given.
+    expect(holder('veteran')).toBeUndefined();
     expect(holder('duo')).toEqual(['a', 'b']);
     expect(holder('goalieScorer')).toBeUndefined();
     expect(

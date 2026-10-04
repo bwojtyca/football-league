@@ -43,18 +43,18 @@ export function leagueTitles(games: Game[], ratings: Ratings, minGames = 0): Tit
   const counts = results(played);
   const enough = (player: string, needed: number) => (counts.get(player)?.length ?? 0) >= needed;
   const titles: Title[] = [];
+  /** The title goes to the best value, unless everyone measured shares it. */
   const add = (id: TitleId, values: Map<string, number>, lowest = false, floor = 0) => {
     const list = [...values].filter(([, v]) => lowest || v > floor);
     if (!list.length) {
       return;
     }
     const value = (lowest ? Math.min : Math.max)(...list.map(([, v]) => v));
-    titles.push({
-      id,
-      icon: TITLES[id],
-      players: list.filter(([, v]) => v === value).map(([player]) => player),
-      value,
-    });
+    const players = list.filter(([, v]) => v === value).map(([player]) => player);
+    if (players.length > 1 && players.length === values.size) {
+      return;
+    }
+    titles.push({ id, icon: TITLES[id], players, value });
   };
 
   const ranked = Math.max(1, minGames);
