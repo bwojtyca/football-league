@@ -114,9 +114,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   colours and component tokens are mapped onto them. Text and headings are Archivo
   (`--fl-display`) in sentence case (`fl-title`, small labels `fl-kicker`); numbers from about
   18 px are Doto LED digits (`--fl-led`, class `.fl-led`; the `Doto Digits` face covers only
-  digits and signs, so units and the colon stay Archivo). Fonts come from Fontsource. The game
-  table's halfway line runs between the teams and its rails take their colours (`data-turn`).
-  The mockups of this look and of the next phases (UX, then kits and sign-in) are on the canvas
+  digits and signs, so units and the colon stay Archivo). Fonts come from Fontsource. The
+  mockups of this look and of the next phases (UX, then kits and sign-in) are on the canvas
   https://claude.ai/artifact/As2G6VoRzAPeEkLxmbC8Kx; the UI phase's plan is
   `docs/superpowers/plans/2026-10-05-ui-noca.md`.
 - `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
@@ -136,8 +135,18 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   leads, comeback); the finished game screen opens it in a bottom sheet with a step chart.
 - The new game dialog suggests the most even split of four players (Elo) when it is clearly
   more even than the chosen one. `game/mode/` has the shared rules picker and label.
-- Game screen: a decided game shows `FinishPanelComponent` for 8 s (`FINISH_AFTER_MS`), then
-  any device records the result; the scoring device (or whoever taps "Next") moves on.
+- Game screen (canvas P40–P49): a header (back, turn, goal detail, series or rules over an LED
+  clock, pause, menu), the score on an LED board, the table, and a "Last" bar with the undo.
+  Two layouts from one template: portrait (2x2 cells, each cell its player's goal button) and
+  landscape (`.landscape`: the table beside a panel; the far team's cells face them). Quarter
+  turns (`fl.rotation`): on a portrait screen 0/2 are the portrait layout from the blue/red
+  side and 1/3 the landscape layout turned a quarter by CSS (`.turn-cw`/`.turn-ccw`, for a
+  phone lying flat or locked); a landscape screen always shows the landscape layout and a turn
+  swaps sides (`tableTurn()`). The halfway line runs between the teams, the rails take their
+  colours (`data-turn`). Pausing offers resume, leave for later or remove. A decided game
+  shows `FinishPanelComponent` (the blinking score, an Elo preview from the current ratings,
+  the series, how it went, "Next" with an LED countdown, undo) for 8 s (`FINISH_AFTER_MS`),
+  then any device records the result; the scoring device (or whoever taps "Next") moves on.
 - `TournamentService` lists tournaments; `tournament/tournament.ts` holds the pure logic: king
   of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the
@@ -147,10 +156,11 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
   down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
 - Goal detail: the game screen's button next to "turn" cycles the detail of new goals
-  (`fl.goalDetail` in localStorage: position, rod, figure); `goal-pad.component.ts` splits a
-  player's cell into their two rods (laid out as on the table and turned with it) or their
-  figures; an own goal in that detail arms the cell's "own goal" button first, then the rod
-  or figure. Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
+  (`fl.goalDetail` in localStorage: position, rod, figure). Rod and figure are tapped on the
+  whole table (`table.component.ts`: an SVG of the eight rods in table order with figures,
+  handles and name plates, and a hit zone per rod or figure), which needs the landscape
+  layout: a portrait screen asks to turn the phone ("record only who scored" is the way out).
+  "Own goal…" in the panel arms the next tap. Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
   veteran, marathoner, comeback king, dream team, scoring keeper) show as icons in the
   rankings, on the profile and in the league's statistics; `player/records.ts` has the
   achievements and the mishaps shown on the profile.
@@ -323,11 +333,12 @@ session can pick up where the last one stopped:
   their round is named "... · now", and teams knocked out fade.
 - (Done, e2e) "Cancel" in the new game dialog goes back to the league only from the game screen;
   removing a running game does not ask whether to pause it first.
-- (Done, checked with `rotateF.js`) Game screen as a 2x2 table turned in quarter steps (button
-  next to back, kept in localStorage `fl.rotation`). From the blue side: top left red offence,
-  top right red defence, bottom left blue defence, bottom right blue offence. Cells keep the DOM
-  order (red offence, red defence, blue offence, blue defence) and get their grid area from
-  `area()`; each team's swap button sits on the line between its two cells (`swapSpot()`).
+- (Done, checked with `rotateF.js`; reworked in the UX phase, see the code map) Game screen as
+  a 2x2 table turned in quarter steps (button next to back, kept in localStorage
+  `fl.rotation`). From the blue side: top left red offence, top right red defence, bottom left
+  blue defence, bottom right blue offence. Cells keep the DOM order (red offence, red defence,
+  blue offence, blue defence) and get their grid area from `area()`; each team's swap button
+  sits on the line between its two cells (`swapSpot()`).
 - (Done, e2e `stats.spec.ts`, deployed) Statistics in four parts, as proposed to
   and approved by the owner: league statistics, two players compared, more on the profile
   (time, rules, goal moments, tournaments), tournaments and games against the league (see the
@@ -338,6 +349,11 @@ session can pick up where the last one stopped:
   it"). Round F and the statistics were deployed on 3 Oct 2026 (rules first, then the app).
 - The 2017 migration (see above) is ready; the owner postponed it (3 Oct 2026: "the database
   doesn't bother us for now").
-- The redesign (owner, 5 Oct 2026): first the UI ("Nocą", branch `claude/ui-noca`, plan in
+- The redesign (owner, 5 Oct 2026): first the UI ("Nocą", live 5 Oct, plan in
   `docs/superpowers/plans/2026-10-05-ui-noca.md`), then the UX (navigation and screens from the
-  canvas's "Flow aplikacji" page), then new features (kits, sign-in) on the new UI and UX.
+  canvas's "Flow aplikacji" page), then new features (kits, sign-in) on the new UI and UX. The
+  owner lets finished work with a green Check go to `master` (5 Oct). UX steps, in order:
+  1. game screen (live 5 Oct, `docs/superpowers/plans/2026-10-05-ux-game.md`); 2. starting a
+  game ("What are we playing?", the new game with a player picker); 3. the league's skeleton
+  (league hub instead of "More", lists, players, settings); 4. leagues, the new league wizard,
+  app settings; 5. profile, comparison, game details; 6. tournaments; 7. the desktop layout.
