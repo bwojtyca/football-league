@@ -1,52 +1,62 @@
 @use '@angular/material' as mat;
 
 /*
- * The look: a foosball table and its score sheet. Warm paper and black ink for pages, the green
- * felt of the table, the yellow ball for the main action of a screen, red and blue for the teams,
- * and a dark scoreboard for scores. Headings are condensed, upper case and slanted like a sports
- * broadcast; numbers are condensed and tabular.
+ * The look, "Nocą": a foosball table at night. Black around the table, the green felt where
+ * the game happens, LED dot-matrix numbers for scores and ratings, the yellow ball for the main
+ * action of a screen, red and blue for the teams. Text and headings are Archivo, in sentence
+ * case; numbers of some size are Doto (`.fl-led`). One dark scheme for the whole app.
  */
 html {
-  color-scheme: light dark;
+  color-scheme: dark;
   @include mat.theme(
     (
       color: (
         primary: mat.$green-palette,
         tertiary: mat.$blue-palette,
-        theme-type: color-scheme,
+        theme-type: dark,
       ),
-      typography: Barlow,
+      typography: Archivo,
       density: 0,
     )
   );
 
-  --fl-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fl-display: 'Archivo', system-ui, sans-serif;
+  /* LED dot-matrix numbers: only from about 18px, smaller numbers stay Archivo. */
+  --fl-led: 'Doto', 'Archivo', monospace;
 
-  --fl-paper: light-dark(#f2eee5, #111412);
-  --fl-card: light-dark(#fbf9f4, #1a1e1b);
-  --fl-card-2: light-dark(#e8e2d4, #252b27);
-  --fl-ink: light-dark(#18170f, #efece4);
-  --fl-ink-2: light-dark(#625d51, #a9a598);
-  --fl-line: light-dark(#dcd4c4, #2f3531);
+  --fl-paper: #000000;
+  --fl-card: #0b0c0d;
+  --fl-card-2: #17191c;
+  --fl-dialog: #16181a;
+  --fl-sheet: #121416;
+  --fl-ink: #f2f4f0;
+  --fl-ink-2: #9aa39d;
+  --fl-line: #232623;
+  --fl-line-2: #4a4f4b;
   --fl-ball: #ffc629;
-  --fl-on-ball: #18170f;
-  --fl-felt: light-dark(#0f6a3c, #155e39);
-  --fl-board: #161916;
-  --fl-on-board: #f2eee5;
+  --fl-on-ball: #1b1410;
+  --fl-felt: #0d5a31;
+  /* The felt under a lamp: lighter in the middle. */
+  --fl-felt-bg: radial-gradient(ellipse 80% 90% at 50% 50%, #157a42 0%, #0d5a31 60%, #083d21 100%);
+  --fl-felt-line: rgb(225 255 235 / 0.35);
+  --fl-board: #0a0b0a;
+  /* An LED panel: a grid of unlit dots. */
+  --fl-board-bg: radial-gradient(circle, #1c1e1c 1.1px, transparent 1.5px) 0 0 / 5px 5px, #0a0b0a;
+  --fl-on-board: #f2f4f0;
 
-  --fl-red: light-dark(#d8352a, #d0433a);
-  --fl-blue: light-dark(#2156d8, #3a64d6);
-  --fl-red-text: light-dark(#c42d22, #ff8178);
-  --fl-blue-text: light-dark(#1f4fc8, #8eaaff);
-  /* Team colours on the dark scoreboard. */
-  --fl-red-board: #ff6b5f;
-  --fl-blue-board: #7da0ff;
-  --fl-win: light-dark(#14763f, #4cc483);
-  --fl-loss: light-dark(#b3261e, #ff8f87);
-  --fl-gold: light-dark(#9a6200, #ffc629);
+  /* Team fills (white text on them) and team colours as text or LED on black. */
+  --fl-red: #d0433a;
+  --fl-blue: #3a64d6;
+  --fl-red-text: #ff5a4e;
+  --fl-blue-text: #5c8cff;
+  --fl-red-board: #ff5a4e;
+  --fl-blue-board: #5c8cff;
+  --fl-win: #5be394;
+  --fl-loss: #ff8a80;
+  --fl-gold: #ffc629;
   /* Two players side by side in a chart (validated for colour blindness on the cards). */
-  --fl-series-1: light-dark(#2a78d6, #3987e5);
-  --fl-series-2: light-dark(#eb6834, #d95926);
+  --fl-series-1: #3987e5;
+  --fl-series-2: #d95926;
 
   /* Material's system colours, mapped onto the palette above. */
   --mat-sys-background: var(--fl-paper);
@@ -54,90 +64,110 @@ html {
   --mat-sys-on-surface: var(--fl-ink);
   --mat-sys-on-background: var(--fl-ink);
   --mat-sys-on-surface-variant: var(--fl-ink-2);
-  --mat-sys-outline: light-dark(#8d8676, #6f6b61);
+  --mat-sys-outline: var(--fl-line-2);
   --mat-sys-outline-variant: var(--fl-line);
-  --mat-sys-surface-container-lowest: var(--fl-card);
+  --mat-sys-surface-container-lowest: var(--fl-paper);
   --mat-sys-surface-container-low: var(--fl-card);
   --mat-sys-surface-container: var(--fl-card);
-  --mat-sys-surface-container-high: light-dark(#f7f4ed, #20251f);
+  --mat-sys-surface-container-high: var(--fl-dialog);
   --mat-sys-surface-container-highest: var(--fl-card-2);
   --mat-sys-surface-variant: var(--fl-card-2);
   --mat-sys-primary: var(--fl-ink);
-  --mat-sys-on-primary: var(--fl-paper);
+  --mat-sys-on-primary: #000000;
   --mat-sys-primary-container: var(--fl-ball);
   --mat-sys-on-primary-container: var(--fl-on-ball);
   --mat-sys-secondary-container: var(--fl-card-2);
   --mat-sys-on-secondary-container: var(--fl-ink);
-  --mat-sys-tertiary-container: light-dark(#d9eadc, #1d3a2a);
-  --mat-sys-on-tertiary-container: light-dark(#0b4a29, #bfe8cd);
-  --mat-sys-inverse-surface: var(--fl-board);
-  --mat-sys-inverse-on-surface: var(--fl-on-board);
-  --mat-sys-inverse-primary: var(--fl-ball);
+  --mat-sys-tertiary-container: #1d3a2a;
+  --mat-sys-on-tertiary-container: #bfe8cd;
+  --mat-sys-error: var(--fl-loss);
+  --mat-sys-error-container: #2a1614;
+  --mat-sys-on-error-container: #ffb4ac;
+  --mat-sys-inverse-surface: var(--fl-ink);
+  --mat-sys-inverse-on-surface: #000000;
+  --mat-sys-inverse-primary: #7a5a00;
 
-  /* Buttons: condensed capitals, squarer corners. */
+  /* Buttons: Archivo, no capitals, pill-shaped like the rest. */
   @each $kind in filled, outlined, text, tonal, protected {
-    --mat-button-#{$kind}-container-shape: 10px;
+    --mat-button-#{$kind}-container-shape: 22px;
     --mat-button-#{$kind}-label-text-font: var(--fl-display);
-    --mat-button-#{$kind}-label-text-size: 1rem;
+    --mat-button-#{$kind}-label-text-size: 0.95rem;
     --mat-button-#{$kind}-label-text-weight: 700;
-    --mat-button-#{$kind}-label-text-tracking: 0.04em;
-    --mat-button-#{$kind}-label-text-transform: uppercase;
+    --mat-button-#{$kind}-label-text-tracking: 0.01em;
+    --mat-button-#{$kind}-label-text-transform: none;
   }
-  --mat-button-outlined-outline-color: var(--fl-ink);
+  --mat-button-outlined-outline-color: var(--fl-line-2);
 
   /* The floating "new game" button is the yellow ball. */
   --mat-fab-container-color: var(--fl-ball);
   --mat-fab-foreground-color: var(--fl-on-ball);
   --mat-fab-state-layer-color: var(--fl-on-ball);
   --mat-fab-ripple-color: rgb(0 0 0 / 0.12);
-  --mat-fab-container-shape: 16px;
-  --mat-fab-extended-container-shape: 16px;
+  --mat-fab-container-shape: 50%;
+  --mat-fab-extended-container-shape: 28px;
   --mat-fab-extended-label-text-font: var(--fl-display);
-  --mat-fab-extended-label-text-size: 1.1rem;
+  --mat-fab-extended-label-text-size: 1rem;
   --mat-fab-extended-label-text-weight: 800;
-  --mat-fab-extended-label-text-tracking: 0.05em;
+  --mat-fab-extended-label-text-tracking: 0.01em;
 
-  /* Chips: square corners, a selected chip is black ink. */
-  --mat-chip-container-shape-radius: 8px;
-  --mat-chip-outline-color: var(--fl-line);
+  /* Chips: a chosen chip is light on the dark page. */
+  --mat-chip-container-shape-radius: 20px;
+  --mat-chip-outline-color: var(--fl-line-2);
+  --mat-chip-label-text-color: var(--fl-ink);
   --mat-chip-elevated-selected-container-color: var(--fl-ink);
-  --mat-chip-selected-label-text-color: var(--fl-paper);
-  --mat-chip-with-icon-selected-icon-color: var(--fl-paper);
-  --mat-chip-selected-trailing-icon-color: var(--fl-paper);
-  --mat-chip-selected-hover-state-layer-color: var(--fl-paper);
-  --mat-chip-selected-focus-state-layer-color: var(--fl-paper);
+  --mat-chip-selected-label-text-color: #000000;
+  --mat-chip-with-icon-selected-icon-color: #000000;
+  --mat-chip-selected-trailing-icon-color: #000000;
+  --mat-chip-selected-hover-state-layer-color: #000000;
+  --mat-chip-selected-focus-state-layer-color: #000000;
 
-  --mat-dialog-container-shape: 18px;
-  --mat-dialog-container-color: var(--fl-paper);
+  --mat-dialog-container-shape: 20px;
+  --mat-dialog-container-color: var(--fl-dialog);
   --mat-dialog-subhead-font: var(--fl-display);
   --mat-dialog-subhead-weight: 800;
-  --mat-bottom-sheet-container-shape: 18px;
-  --mat-bottom-sheet-container-background-color: var(--fl-paper);
-  --mat-form-field-outlined-container-shape: 10px;
-  --mat-menu-container-shape: 12px;
-  --mat-menu-container-color: var(--fl-card);
-  --mat-select-panel-background-color: var(--fl-card);
-  --mat-snack-bar-container-shape: 10px;
-  --mat-button-toggle-shape: 10px;
+  --mat-dialog-subhead-color: var(--fl-ink);
+  --mat-dialog-supporting-text-color: var(--fl-ink-2);
+  --mat-bottom-sheet-container-shape: 22px;
+  --mat-bottom-sheet-container-background-color: var(--fl-sheet);
+  --mat-bottom-sheet-container-text-color: var(--fl-ink);
+  --mat-form-field-outlined-container-shape: 12px;
+  --mat-form-field-outlined-outline-color: var(--fl-line-2);
+  --mat-form-field-outlined-hover-outline-color: var(--fl-ink-2);
+  --mat-form-field-outlined-focus-outline-color: var(--fl-ball);
+  --mat-form-field-outlined-focus-label-text-color: var(--fl-ball);
+  --mat-form-field-filled-container-color: var(--fl-card-2);
+  --mat-autocomplete-background-color: var(--fl-dialog);
+  --mat-menu-container-shape: 14px;
+  --mat-menu-container-color: var(--fl-dialog);
+  --mat-select-panel-background-color: var(--fl-dialog);
+  --mat-snack-bar-container-shape: 12px;
+  --mat-snack-bar-container-color: var(--fl-ink);
+  --mat-snack-bar-supporting-text-color: #000000;
+  --mat-snack-bar-button-color: #7a5a00;
+  --mat-button-toggle-shape: 20px;
   --mat-button-toggle-selected-state-background-color: var(--fl-ink);
-  --mat-button-toggle-selected-state-text-color: var(--fl-paper);
-  --mat-progress-spinner-active-indicator-color: var(--fl-felt);
-  --mat-slide-toggle-selected-track-color: var(--fl-felt);
-  --mat-slide-toggle-selected-hover-track-color: var(--fl-felt);
-  --mat-slide-toggle-selected-focus-track-color: var(--fl-felt);
-  --mat-slide-toggle-selected-pressed-track-color: var(--fl-felt);
-  --mat-slide-toggle-selected-handle-color: #fff;
-  --mat-slide-toggle-selected-hover-handle-color: #fff;
-  --mat-slide-toggle-selected-focus-handle-color: #fff;
-  --mat-slide-toggle-selected-pressed-handle-color: #fff;
-  --mat-slide-toggle-selected-icon-color: var(--fl-felt);
-}
-
-/* On a dark page the scoreboard is lifted a little, so that it still stands out. */
-@media (prefers-color-scheme: dark) {
-  html {
-    --fl-board: #1f2520;
-  }
+  --mat-button-toggle-selected-state-text-color: #000000;
+  --mat-progress-spinner-active-indicator-color: var(--fl-ball);
+  --mat-slide-toggle-selected-track-color: var(--fl-ball);
+  --mat-slide-toggle-selected-hover-track-color: var(--fl-ball);
+  --mat-slide-toggle-selected-focus-track-color: var(--fl-ball);
+  --mat-slide-toggle-selected-pressed-track-color: var(--fl-ball);
+  --mat-slide-toggle-selected-handle-color: var(--fl-on-ball);
+  --mat-slide-toggle-selected-hover-handle-color: var(--fl-on-ball);
+  --mat-slide-toggle-selected-focus-handle-color: var(--fl-on-ball);
+  --mat-slide-toggle-selected-pressed-handle-color: var(--fl-on-ball);
+  --mat-slide-toggle-selected-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-hover-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-focus-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-pressed-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-checkmark-color: var(--fl-on-ball);
+  --mat-radio-selected-icon-color: var(--fl-ball);
+  --mat-radio-selected-hover-icon-color: var(--fl-ball);
+  --mat-radio-selected-focus-icon-color: var(--fl-ball);
+  --mat-radio-selected-pressed-icon-color: var(--fl-ball);
+  --mat-tooltip-container-color: var(--fl-ink);
+  --mat-tooltip-supporting-text-color: #000000;
 }
 
 html,
@@ -183,67 +213,68 @@ a {
   font-weight: bold;
 }
 
-/* A heading in the broadcast style: condensed, slanted capitals. */
+/* LED dot-matrix numbers. */
+.fl-led {
+  font-family: var(--fl-led);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* An LED panel: scores and times sit on it. */
+.fl-board {
+  background: var(--fl-board-bg);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
+  color: var(--fl-on-board);
+}
+
+/* The table's felt. */
+.fl-felt {
+  background: var(--fl-felt-bg);
+  color: #fff;
+}
+
+/* A heading. */
 .fl-title {
   margin: 0;
-  font: italic 800 1.5rem/1.05 var(--fl-display);
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
+  font: 800 1.5rem/1.15 var(--fl-display);
 }
 
 /* A small label above a section or a number. */
 .fl-kicker {
   margin: 0;
-  font: 700 0.78rem/1.2 var(--fl-display);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font: 700 0.82rem/1.2 var(--fl-display);
   color: var(--fl-ink-2);
 }
 
-/* A segmented switch: the chosen segment is black ink. */
+/* A segmented switch: the chosen segment is light on the dark track. */
 .fl-switch {
   display: inline-flex;
-  padding: 2px;
-  border: 1px solid var(--fl-line);
-  border-radius: 10px;
-  background: var(--fl-card);
+  padding: 3px;
+  border-radius: 22px;
+  background: var(--fl-card-2);
 }
 
-.fl-switch button {
-  min-height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--fl-ink-2);
-  font: 700 0.95rem/1 var(--fl-display);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.fl-switch button[aria-checked='true'] {
-  background: var(--fl-ink);
-  color: var(--fl-paper);
-}
-
-/* The same switch made of links, for views with an address of their own. */
+.fl-switch button,
 .fl-switch a {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
-  padding: 0 12px;
-  border-radius: 8px;
-  color: var(--fl-ink-2);
-  font: 700 0.95rem/1 var(--fl-display);
-  letter-spacing: 0.03em;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 19px;
+  background: transparent;
+  color: #b9c2bc;
+  font: 600 0.95rem/1 var(--fl-display);
   text-decoration: none;
-  text-transform: uppercase;
+  cursor: pointer;
 }
 
+.fl-switch button[aria-checked='true'],
 .fl-switch a[aria-current='page'] {
   background: var(--fl-ink);
-  color: var(--fl-paper);
+  color: #000000;
+  font-weight: 700;
 }
 
 .fl-switch button:disabled {
@@ -257,16 +288,34 @@ a {
   --mat-button-filled-label-text-color: var(--fl-on-ball);
   --mat-button-filled-state-layer-color: var(--fl-on-ball);
   --mat-button-filled-ripple-color: rgb(0 0 0 / 0.12);
+  --mat-button-filled-label-text-weight: 800;
 }
 
 .mat-mdc-dialog-container .mat-mdc-dialog-title {
-  font-style: italic;
-  text-transform: uppercase;
+  font: 800 1.4rem/1.2 var(--fl-display);
 }
 
 /* brackets-viewer prints the stage name above a bracket; the page has its own heading. */
 .bracket.brackets-viewer h1 {
   display: none;
+}
+
+/* brackets-viewer on the dark page. */
+.bracket.brackets-viewer {
+  --primary-background: var(--fl-paper);
+  --secondary-background: var(--fl-card-2);
+  --match-background: var(--fl-card);
+  --font-color: var(--fl-ink);
+  --win-color: var(--fl-win);
+  --loss-color: var(--fl-loss);
+  --label-color: var(--fl-ink-2);
+  --hint-color: var(--fl-ink-2);
+  --connector-color: var(--fl-line-2);
+  --border-color: var(--fl-line);
+  --border-hover-color: var(--fl-ink-2);
+  --border-selected-color: var(--fl-ball);
+  --text-size: 14px;
+  font-family: var(--fl-display);
 }
 
 /* Games to play now stand out (a tap starts them); teams knocked out fade. */
@@ -283,7 +332,7 @@ a {
 
 /* Statistics: sections with a heading, numbers as tiles, shares as split bars, records as rows. */
 .fl-stats > section {
-  padding: 14px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--fl-line);
 }
 
@@ -293,8 +342,7 @@ a {
 
 .fl-stats h2 {
   margin: 0 0 10px;
-  font: italic 800 1.25rem/1.2 var(--fl-display);
-  text-transform: uppercase;
+  font: 800 1.15rem/1.25 var(--fl-display);
 }
 
 .fl-stats .hint {
@@ -314,13 +362,14 @@ a {
   align-content: start;
   gap: 2px;
   padding: 10px 12px;
-  border: 1px solid var(--fl-line);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--fl-card);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
 }
 
 .fl-tiles b {
-  font: 800 1.5rem/1.1 var(--fl-display);
+  font: 900 1.6rem/1.1 var(--fl-led);
+  font-variant-numeric: tabular-nums;
 }
 
 .fl-tiles small {
@@ -361,8 +410,9 @@ a {
 .fl-records > div {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
   column-gap: 12px;
-  padding: 8px 0;
+  padding: 9px 0;
   border-bottom: 1px solid var(--fl-line);
 }
 
@@ -376,7 +426,7 @@ a {
 
 .fl-records dd {
   margin: 0;
-  font: 800 1.2rem/1.2 var(--fl-display);
+  font: 900 1.3rem/1.2 var(--fl-led);
   font-variant-numeric: tabular-nums;
   text-align: right;
 }

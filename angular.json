@@ -35,14 +35,12 @@
               }
             ],
             "styles": [
-              "@fontsource/barlow/400.css",
-              "@fontsource/barlow/500.css",
-              "@fontsource/barlow/600.css",
-              "@fontsource/barlow/700.css",
-              "@fontsource/barlow-condensed/600.css",
-              "@fontsource/barlow-condensed/700.css",
-              "@fontsource/barlow-condensed/800.css",
-              "@fontsource/barlow-condensed/800-italic.css",
+              "@fontsource/archivo/400.css",
+              "@fontsource/archivo/500.css",
+              "@fontsource/archivo/600.css",
+              "@fontsource/archivo/700.css",
+              "@fontsource/archivo/800.css",
+              "@fontsource/doto/900.css",
               "material-icons/iconfont/filled.css",
               "src/styles.scss"
             ],
