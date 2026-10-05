@@ -685,5 +685,11 @@
     "statsHint": "{games, plural, one {# game} other {# games}}, records, when we play",
     "settingsHint": "name, ranking, locking new games, deleting",
     "app": "App"
+  },
+  "gameList": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "running": "Live",
+    "paused": "Paused"
   }
 }

@@ -129,7 +129,12 @@
 }
 
 .others span {
+  display: inline-block;
   font-weight: 700;
+}
+
+.others span::first-letter {
+  text-transform: uppercase;
 }
 
 .others a {

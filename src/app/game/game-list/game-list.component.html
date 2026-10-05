@@ -1,51 +1,66 @@
-<ul class="games">
-  @for (game of games(); track game.id) {
-    <li>
-      <a [routerLink]="['/game', game.id]" class="game" [class]="game.result">
-        <span class="team red" [class.won]="game.win === 'red'">
-          @for (player of game.red; track $index) {
-            <span [class.current]="player.current">{{ player.name }}</span>
-          }
-        </span>
-        <span class="score">
-          <span class="r">{{ game.redScore }}</span
-          >:<span class="b">{{ game.blueScore }}</span>
-        </span>
-        <span class="team blue" [class.won]="game.win === 'blue'">
-          @for (player of game.blue; track $index) {
-            <span [class.current]="player.current">{{ player.name }}</span>
-          }
-        </span>
-        <span class="meta">
-          {{
-            game.start
-              | translocoDate
-                : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
-          }}
-          @if (game.mode; as mode) {
-            <fl-mode-label [mode]="mode" />
-          }
-          @if (game.tournament; as tournament) {
-            <span>{{ tournament }}</span>
-          }
-          @if (game.seriesGame; as n) {
-            <span>{{ 'series.game' | transloco: { n } }}</span>
-          }
-          @if (game.change !== undefined) {
-            <fl-change [value]="round(game.change)" />
-          }
-        </span>
-      </a>
-    </li>
-  } @empty {
-    <li class="empty">
+@for (day of days(); track day.key) {
+  <section class="day">
+    <h3 class="fl-kicker">
+      @if (day.name) {
+        {{ 'gameList.' + day.name | transloco }},
+      }
       {{
-        (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
-          | transloco
+        day.date
+          | translocoDate
+            : (day.sameYear
+                ? { weekday: 'long', day: 'numeric', month: 'long' }
+                : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
       }}
-    </li>
-  }
-</ul>
+    </h3>
+    <ul class="games">
+      @for (game of day.games; track game.id) {
+        <li>
+          <a [routerLink]="['/game', game.id]" class="game" [class]="game.result">
+            <span class="team red" [class.won]="game.win === 'red'">
+              @for (player of game.red; track $index) {
+                <span [class.current]="player.current">{{ player.name }}</span>
+              }
+            </span>
+            <span class="score">
+              <span class="r">{{ game.redScore }}</span
+              >:<span class="b">{{ game.blueScore }}</span>
+            </span>
+            <span class="team blue" [class.won]="game.win === 'blue'">
+              @for (player of game.blue; track $index) {
+                <span [class.current]="player.current">{{ player.name }}</span>
+              }
+            </span>
+            <span class="meta">
+              @if (game.status; as status) {
+                <b class="status status--{{ status }}">{{ 'gameList.' + status | transloco }}</b>
+              }
+              {{ game.start | translocoDate: { hour: '2-digit', minute: '2-digit' } }}
+              @if (game.mode; as mode) {
+                <fl-mode-label [mode]="mode" />
+              }
+              @if (game.tournament; as tournament) {
+                <span>{{ tournament }}</span>
+              }
+              @if (game.seriesGame; as n) {
+                <span>{{ 'series.game' | transloco: { n } }}</span>
+              }
+              @if (game.change !== undefined) {
+                <fl-change [value]="round(game.change)" />
+              }
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+} @empty {
+  <p class="empty">
+    {{
+      (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
+        | transloco
+    }}
+  </p>
+}
 @if (more()) {
   <button matButton class="more" (click)="showMore()">{{ 'league.showMore' | transloco }}</button>
 }

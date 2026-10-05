@@ -685,5 +685,11 @@
     "statsHint": "{games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, rekordy, kiedy gramy",
     "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
     "app": "Aplikacja"
+  },
+  "gameList": {
+    "today": "Dziś",
+    "yesterday": "Wczoraj",
+    "running": "Trwa",
+    "paused": "Wstrzymany"
   }
 }

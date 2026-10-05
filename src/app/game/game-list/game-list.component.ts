@@ -66,6 +66,7 @@ export class GameListComponent {
       .map((game) => ({
         id: game.id,
         result: this._result(game, playerId),
+        status: game.end ? null : game.paused ? ('paused' as const) : ('running' as const),
         start: game.start,
         red: this._names(game.teams.red, playerId),
         blue: this._names(game.teams.blue, playerId),
@@ -80,6 +81,40 @@ export class GameListComponent {
             ? this._tournamentService.tournament(game.tournament)?.name
             : undefined,
       }));
+  });
+
+  /** The games by day, newest first, each day named (today and yesterday by those words). */
+  protected readonly days = computed(() => {
+    const dayOf = (iso: string) => new Date(iso).toDateString();
+    const today = new Date();
+    const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    const games = this.games();
+    const groups: {
+      key: string;
+      date: string;
+      name: 'today' | 'yesterday' | null;
+      sameYear: boolean;
+      games: typeof games;
+    }[] = [];
+    for (const game of games) {
+      const key = dayOf(game.start);
+      if (groups.at(-1)?.key !== key) {
+        groups.push({
+          key,
+          date: game.start,
+          name:
+            key === today.toDateString()
+              ? 'today'
+              : key === yesterday.toDateString()
+                ? 'yesterday'
+                : null,
+          sameYear: new Date(game.start).getFullYear() === today.getFullYear(),
+          games: [],
+        });
+      }
+      groups.at(-1)!.games.push(game);
+    }
+    return groups;
   });
 
   protected showMore(): void {

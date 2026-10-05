@@ -93,6 +93,8 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
     .click();
   await expect(page.locator('fl-game-list a.game')).toHaveCount(1);
   await expect(page.locator('fl-game-list a.game .score')).toHaveText('8:0');
+  await expect(page.locator('fl-game-list .day h3')).toContainText(t('gameList.today'));
+  await shot(page, 'league-games');
 });
 
 test('one on one, and a game that is removed while it runs', async ({ page }) => {
