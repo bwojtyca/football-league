@@ -311,6 +311,7 @@ a {
 }
 
 .fl-switch button[aria-checked='true'],
+.fl-switch button[aria-selected='true'],
 .fl-switch a[aria-current='page'] {
   background: var(--fl-ink);
   color: #000000;
