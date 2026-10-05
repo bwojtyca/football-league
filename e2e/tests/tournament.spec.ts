@@ -84,6 +84,14 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
   await expect(page.locator('fl-tournament-summary')).toContainText(t('tournamentStats.scorer'));
   await expect(page.getByRole('button', { name: t('tournament.finish') })).toHaveCount(0);
   await shot(page, 'series-won');
+
+  // The tournaments tab lists it as finished, with its winners.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.tournaments') })
+    .click();
+  await expect(page.locator('.tournament .winners')).toContainText(`${a} & ${b}`);
+  await shot(page, 'league-tournaments');
 });
 
 test('an open tournament: cancelling a new game and removing a running one stay in it', async ({

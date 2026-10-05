@@ -372,7 +372,9 @@
     "deleteGamesHint": "Mecze znikną z rankingów i statystyk. Przywrócenie turnieju przywróci jego mecze.",
     "keepGamesHint": "Mecze zostaną w rankingach i statystykach.",
     "deleted": "Turniej usunięty",
-    "deletedNote": "Ten turniej jest usunięty. Możesz go przywrócić."
+    "deletedNote": "Ten turniej jest usunięty. Możesz go przywrócić.",
+    "runningList": "Trwa",
+    "finishedList": "Zakończone"
   },
   "timeline": {
     "title": "Przebieg meczu",

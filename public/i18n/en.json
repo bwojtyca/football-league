@@ -372,7 +372,9 @@
     "deleteGamesHint": "The games disappear from rankings and stats. Restoring the tournament brings them back.",
     "keepGamesHint": "The games stay in rankings and stats.",
     "deleted": "Tournament deleted",
-    "deletedNote": "This tournament is deleted. You can restore it."
+    "deletedNote": "This tournament is deleted. You can restore it.",
+    "runningList": "Running",
+    "finishedList": "Finished"
   },
   "timeline": {
     "title": "How it went",
