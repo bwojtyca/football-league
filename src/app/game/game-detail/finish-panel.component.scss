@@ -158,6 +158,54 @@ h2 {
   color: var(--fl-ink-2);
 }
 
+/* In the landscape layout (P45): the result and the Elo side by side, the buttons below. */
+:host-context(.landscape) {
+  padding: 16px 24px;
+}
+
+:host-context(.landscape) .card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px 22px;
+  padding: 16px 22px;
+}
+
+:host-context(.landscape) .head {
+  align-content: center;
+  justify-items: start;
+  text-align: left;
+}
+
+:host-context(.landscape) .final {
+  font-size: 5rem;
+}
+
+:host-context(.landscape) .how {
+  padding-left: 0;
+}
+
+:host-context(.landscape) .changes {
+  align-self: center;
+  margin: 0;
+}
+
+:host-context(.landscape) .actions {
+  grid-column: 1 / -1;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding-top: 0;
+}
+
+:host-context(.landscape) .next {
+  order: 1;
+}
+
+:host-context(.landscape) .last {
+  order: 2;
+  grid-column: 1 / -1;
+}
+
 @keyframes count {
   to {
     transform: translateY(-272px);

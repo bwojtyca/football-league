@@ -59,6 +59,12 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await page.getByRole('button', { name: t('game.rotate') }).click();
   expect(await page.evaluate(() => localStorage.getItem('fl.rotation'))).toBe('1');
   await shot(page, 'game-rotated');
+  // Held sideways, the screen shows the landscape layout upright.
+  const portrait = page.viewportSize()!;
+  await page.setViewportSize({ width: portrait.height, height: portrait.width });
+  await expect(page.locator('.screen.landscape:not(.turn-cw)')).toBeVisible();
+  await shot(page, 'game-landscape');
+  await page.setViewportSize(portrait);
 
   await goal(page, a, 6);
   const finish = page.locator('fl-finish-panel');

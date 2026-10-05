@@ -1,6 +1,13 @@
 @if (game(); as game) {
   @let winner = decided();
-  <div class="screen" [class.ended]="!!game.end" [class.decided]="!!winner">
+  <div
+    class="screen"
+    [class.ended]="!!game.end"
+    [class.decided]="!!winner"
+    [class.landscape]="landscape()"
+    [class.turn-cw]="turn() === 'cw'"
+    [class.turn-ccw]="turn() === 'ccw'"
+  >
     <header class="top">
       <a matIconButton [routerLink]="backLink()" [attr.aria-label]="'common.back' | transloco">
         <mat-icon>arrow_back</mat-icon>
@@ -110,7 +117,12 @@
     </section>
 
     <!-- The table seen from where the phone lies: four cells, turned in quarter steps. -->
-    <div class="teams fl-felt" [class.paused]="!!game.paused" [attr.data-turn]="rotation()">
+    <div
+      class="teams fl-felt"
+      [class.paused]="!!game.paused"
+      [class.from-red]="tableTurn() === 2"
+      [attr.data-turn]="tableTurn()"
+    >
       @if (game.paused) {
         <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
       }
@@ -143,7 +155,7 @@
                 [detail]="$any(detail())"
                 [color]="color"
                 [position]="position"
-                [rotation]="rotation()"
+                [rotation]="tableTurn()"
                 [counts]="rodCounts()[cell] ?? {}"
                 [armed]="armed() === cell"
                 [label]="

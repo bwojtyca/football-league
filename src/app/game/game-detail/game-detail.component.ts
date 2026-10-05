@@ -1,4 +1,12 @@
-import { Component, computed, effect, HostListener, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
@@ -282,6 +290,10 @@ export class GameDetailComponent implements LeaveGuarded {
   });
 
   constructor() {
+    const landscape = matchMedia('(orientation: landscape)');
+    const onTurn = (event: MediaQueryListEvent) => this._wide.set(event.matches);
+    landscape.addEventListener('change', onTurn);
+    inject(DestroyRef).onDestroy(() => landscape.removeEventListener('change', onTurn));
     // A decided game shows the finish panel for a few seconds (time to undo the last goal or
     // tap "Next"); then any device showing it records the result, and the device used for
     // scoring moves on.
@@ -317,12 +329,37 @@ export class GameDetailComponent implements LeaveGuarded {
 
   /**
    * How the table lies, in quarter turns clockwise (kept on this device). At 0 it is seen from
-   * the blue side: red offence and defence on top, blue defence and offence below.
+   * the blue side: red offence and defence on top, blue defence and offence below. On a phone
+   * lying flat, 1 and 3 show the landscape layout turned a quarter one way or the other.
    */
   protected readonly rotation = signal(readRotation());
 
+  /** The screen itself is landscape: a phone held sideways, a tablet, a computer. */
+  private readonly _wide = signal(matchMedia('(orientation: landscape)').matches);
+
+  /** The landscape layout (the table beside a panel): on a landscape screen, or turned. */
+  protected readonly landscape = computed(() => this._wide() || this.rotation() % 2 === 1);
+
+  /** On a portrait screen the landscape layout is turned a quarter, so it works lying flat. */
+  protected readonly turn = computed(() =>
+    this._wide() || this.rotation() % 2 === 0 ? null : this.rotation() === 1 ? 'cw' : 'ccw',
+  );
+
+  /**
+   * Quarter turns of the table inside the layout. The landscape layout always shows the table
+   * lengthwise, from the blue side (0) or, on a landscape screen turned once more, the red (2).
+   */
+  protected readonly tableTurn = computed(() => {
+    const rotation = this.rotation();
+    if (!this.landscape()) {
+      return rotation;
+    }
+    return this._wide() && rotation >= 2 ? 2 : 0;
+  });
+
+  /** A quarter turn on a portrait screen; on a landscape one, the other side of the table. */
   protected rotate(): void {
-    const rotation = (this.rotation() + 1) % 4;
+    const rotation = (this.rotation() + (this._wide() ? 2 : 1)) % 4;
     this.rotation.set(rotation);
     try {
       localStorage.setItem(ROTATION_KEY, String(rotation));
@@ -422,12 +459,12 @@ export class GameDetailComponent implements LeaveGuarded {
   /** The grid cell of a player: the corners clockwise from the top left, turned. */
   protected area(color: TeamColor, position: Position): string {
     const start = CELL_ORDER.indexOf(`${color}-${position}`);
-    return CORNERS[(start + this.rotation()) % 4];
+    return CORNERS[(start + this.tableTurn()) % 4];
   }
 
   /** Where a team's swap button sits: on the line between its two cells, in % of the table. */
   protected swapSpot(color: TeamColor): readonly [number, number] {
-    return EDGE_MIDDLES[(this.rotation() + (color === 'red' ? 0 : 2)) % 4];
+    return EDGE_MIDDLES[(this.tableTurn() + (color === 'red' ? 0 : 2)) % 4];
   }
 
   protected canSwap(game: Game, color: TeamColor): boolean {
