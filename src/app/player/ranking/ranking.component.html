@@ -37,6 +37,21 @@
 </div>
 
 @if (view() === 'players' && sortBy() === 'potato') {
+  @if (potatoToday().length) {
+    <section class="potato-today">
+      <h3 class="fl-kicker">{{ 'potato.today' | transloco }}</h3>
+      <ol>
+        @for (row of potatoToday(); track row.player; let first = $first) {
+          <li [class.next]="first">
+            <span>{{ row.name }}</span>
+            <small>{{ 'count.games' | transloco: { n: row.games } }}</small>
+            <b>{{ row.points }} {{ 'potato.points' | transloco }}</b>
+          </li>
+        }
+      </ol>
+      <p class="hint">{{ 'potato.todayHint' | transloco }}</p>
+    </section>
+  }
   <ol class="ranking">
     @for (row of potatoes(); track row.player; let i = $index) {
       <li>
@@ -52,14 +67,19 @@
             </b>
             <small>
               {{ 'count.games' | transloco: { n: row.games } }}
-              @if (row.gamesAsPotato) {
-                · {{ 'potato.asPotato' | transloco: { n: row.gamesAsPotato } }}
+              @if (row.since; as since) {
+                ·
+                {{
+                  'potato.since'
+                    | transloco
+                      : { date: (since | translocoDate: { day: 'numeric', month: 'short' }) }
+                }}
               }
             </small>
           </span>
           <span class="rating">
-            <b>{{ row.points }}</b>
-            <small>{{ 'potato.points' | transloco }}</small>
+            <b>{{ row.days }}</b>
+            <small>{{ 'potato.days' | transloco: { n: row.days } }}</small>
           </span>
         </a>
       </li>
@@ -68,22 +88,12 @@
   <details class="rules">
     <summary>{{ 'potato.rules' | transloco }}</summary>
     <ul>
-      <li>{{ 'potato.ruleWindow' | transloco: { n: potatoGames } }}</li>
+      <li>{{ 'potato.ruleDay' | transloco: { n: potatoDayGames } }}</li>
       <li>{{ 'potato.ruleLoss' | transloco: { n: potatoPoints.loss, m: -potatoPoints.win } }}</li>
       <li>{{ 'potato.ruleShutout' | transloco: { n: potatoPoints.shutoutLoss } }}</li>
       <li>{{ 'potato.ruleUpset' | transloco: { n: potatoPoints.upsetLoss } }}</li>
-      <li>
-        {{
-          'potato.ruleLossToPotato'
-            | transloco
-              : {
-                  n: potatoPoints.lossToPotato,
-                  share: potatoPoints.potatoShare * 100,
-                  max: potatoPoints.potatoShareMax,
-                }
-        }}
-      </li>
-      <li>{{ 'potato.ruleTitle' | transloco: { n: potatoMinGames } }}</li>
+      <li>{{ 'potato.ruleLossToPotato' | transloco: { n: potatoPoints.lossToPotato } }}</li>
+      <li>{{ 'potato.rulePotatoWin' | transloco: { n: -potatoPoints.potatoWin } }}</li>
     </ul>
   </details>
 } @else if (view() === 'duets') {

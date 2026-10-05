@@ -400,14 +400,17 @@
   "potato": {
     "title": "Ziemniak",
     "points": "pkt",
-    "asPotato": "ziemniakiem przez {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
+    "days": "{n, plural, one {dzień} other {dni}}",
+    "since": "ziemniak od {date}",
+    "today": "Dziś",
+    "todayHint": "Kto zbierze najwięcej punktów do końca dnia, zostanie ziemniakiem.",
     "rules": "Zasady",
-    "ruleWindow": "Liczy się 20 ostatnich meczów każdego gracza (suma nie spada poniżej 0), więc ziemniak zmienia się z formą.",
+    "ruleDay": "Ziemniakiem zostaje najsłabszy dnia: kto zbierze najwięcej punktów w meczach tego dnia (spośród grających co najmniej {n} mecze). Nosi tytuł, dopóki nie zagra dnia, w którym nie będzie najsłabszy; nieobecny go zachowuje, więc ziemniaków może być kilku.",
     "ruleLoss": "Porażka: +{n} pkt, wygrana: −{m} pkt.",
     "ruleShutout": "Porażka bez strzelonego gola: dodatkowo +{n}.",
     "ruleUpset": "Porażka faworyta (szansa co najmniej 65%): dodatkowo +{n}, żeby mocni nie cwaniakowali.",
-    "ruleLossToPotato": "Przegrana z aktualnym ziemniakiem: dodatkowo +{n} i {share}% jego punktów, najwyżej +{max}, więc im większy ziemniak, tym bardziej boli.",
-    "ruleTitle": "Ziemniakiem jest gracz z największą liczbą punktów, który ma co najmniej {n} mecze."
+    "ruleLossToPotato": "Przegrana z ziemniakiem: dodatkowo +{n}.",
+    "rulePotatoWin": "Wygrana ziemniaka: dla niego dodatkowo −{n}, żeby mógł się odkuć."
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",
@@ -563,8 +566,8 @@
     },
     "potato": {
       "name": "Ziemniak",
-      "hint": "najwięcej punktów ziemniaka",
-      "value": "{n} pkt"
+      "hint": "najsłabszy ostatniego dnia gry",
+      "value": "{count, plural, one {# dzień} other {# dni}} jako ziemniak"
     },
     "sniper": {
       "name": "Snajper",

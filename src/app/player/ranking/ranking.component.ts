@@ -3,6 +3,7 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { Game } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
@@ -12,7 +13,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 import { RankedPlayer } from '../player';
 import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
-import { POTATO_GAMES, POTATO_MIN_GAMES, POTATO_POINTS, potatoRanking } from '../potato';
+import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../potato';
 import { duets } from '../records';
 import { Title } from '../../stats/titles';
 
@@ -33,6 +34,7 @@ const DUET_GAMES = 3;
     AvatarComponent,
     FormDotsComponent,
     RatingChangeComponent,
+    TranslocoDatePipe,
     TranslocoPipe,
   ],
   templateUrl: './ranking.component.html',
@@ -82,17 +84,24 @@ export class RankingComponent {
   );
 
   protected readonly potatoPoints = POTATO_POINTS;
-  protected readonly potatoGames = POTATO_GAMES;
-  protected readonly potatoMinGames = POTATO_MIN_GAMES;
+  protected readonly potatoDayGames = POTATO_DAY_GAMES;
+  /** Days as the potato, the potatoes now marked. */
   protected readonly potatoes = computed(() =>
     potatoRanking(this.games()).map((row) => ({
       ...row,
       name: this._playerService.getPlayerName(row.player),
     })),
   );
+  /** Today's points, worst first: who would be the potato if the day ended now. */
+  protected readonly potatoToday = computed(() =>
+    potatoState(this.games()).today.map((row) => ({
+      ...row,
+      name: this._playerService.getPlayerName(row.player),
+    })),
+  );
 
   protected readonly potatoPlaces = computed(() =>
-    places(this.potatoes(), (a, b) => a.points === b.points),
+    places(this.potatoes(), (a, b) => a.days === b.days),
   );
 
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));

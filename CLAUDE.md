@@ -232,15 +232,19 @@ Owner feedback, to do at the end (after the planned stages):
   everything). The group plays for fun and the drive is not to stay the potato, so it is about
   mocking the weakest and sometimes "hating" the strongest. Rules to be designed together; one
   proposal: losing to the current potato costs a lot of points (not necessarily the potato
-  title at once). (Live as a ranking view, rules in `POTATO_POINTS` and `POTATO_GAMES` in
-  `player/potato.ts`, shown in the app. The owner's aim (4 Oct 2026): "the weak get mocked,
-  the strong cannot get cocky". Now: each player's last 20 games count; loss +1, win −1,
-  shutout loss +2, a loss as clear favourite +3, a loss to the potato +2 and 10% of its points
-  (at most +5). On the 2017 games (`node scripts/simulate-potato.mjs <backup dir>`): the
-  potato is one of the two weakest 66% of the time, one of the two strongest 16%, the leader
-  10%; record 56. A version deployed earlier that day (leader ×3, +20% of the potato's points
-  with no cap, all games) blew up to 10^15 points: losses to the potato fed on each other.
-  Simulate every rule change before it goes live.)
+  title at once). (Live as a ranking view, `player/potato.ts`. The owner's aim (4 Oct 2026):
+  "the weak get mocked, the strong cannot get cocky". Since 5 Oct 2026 it is the potato of the
+  day, as the group played it in 2017: the weakest of a day (most points in that day's games,
+  3+ games) becomes the potato and keeps it until they play a day without being the weakest;
+  an absent potato keeps it (several potatoes possible). Day points: loss +1, win −1, shutout
+  loss +2, loss as clear favourite +3, loss to a potato +3, a potato's win −2. The ranking
+  view shows today's points (the day in progress decides nothing) and days as the potato. On
+  the 42 days of 2017 (`node scripts/simulate-potato.mjs <backup dir>`): the potato of the day
+  is one of the two weakest 52% of the days, one of the two strongest 21%, the leader 12%;
+  yesterday's potato never stays one (they escape the next day they play). Earlier versions:
+  a points ranking over each player's last 20 games (4 Oct), and before it one that blew up
+  to 10^15 points (losses to the potato fed on each other). Simulate every rule change before
+  it goes live.)
 - (Done: the finish panel with confetti (canvas-confetti), "Undo last goal" and "Next", which
   fills up and moves on by itself after 8 s.)
 - (Done, the model: a game is one match to a win under its rules; a tournament is a set of

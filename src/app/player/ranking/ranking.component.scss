@@ -155,3 +155,46 @@ ul.ranking {
   margin-left: 4px;
   font-size: 0.85em;
 }
+
+/* Today's points in the potato view: the first is the potato if the day ended now. */
+.potato-today {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--fl-card-2);
+}
+
+.potato-today ol {
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.potato-today li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.potato-today li span {
+  flex: 1;
+}
+
+.potato-today li small,
+.potato-today .hint {
+  color: var(--fl-ink-2);
+  font-size: 0.8rem;
+}
+
+.potato-today li.next {
+  font-weight: 700;
+}
+
+.potato-today li.next span::after {
+  content: ' 🥔?';
+}
+
+.potato-today .hint {
+  margin: 0;
+}

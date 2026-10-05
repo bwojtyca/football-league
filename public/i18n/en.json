@@ -400,14 +400,17 @@
   "potato": {
     "title": "Potato",
     "points": "pts",
-    "asPotato": "potato for {n, plural, one {# game} other {# games}}",
+    "days": "{n, plural, one {day} other {days}}",
+    "since": "potato since {date}",
+    "today": "Today",
+    "todayHint": "Whoever has the most points at the end of the day becomes the potato.",
     "rules": "Rules",
-    "ruleWindow": "Each player's last 20 games count (the total never goes below 0), so the potato moves with the form.",
+    "ruleDay": "The potato is the weakest of the day: the most points in that day's games (among those with at least {n} games). They keep the title until they play a day without being the weakest; staying away keeps it, so there can be several potatoes.",
     "ruleLoss": "A loss: +{n} pt, a win: −{m} pt.",
     "ruleShutout": "A loss without scoring: +{n} more.",
     "ruleUpset": "A loss as clear favourites (a win chance of 65% or more): +{n} more, so the strong cannot get cocky.",
-    "ruleLossToPotato": "Losing to the current potato: +{n} more and {share}% of the potato's points, up to +{max}, so the bigger the potato, the more it hurts.",
-    "ruleTitle": "The potato is the player with the most points and at least {n} games."
+    "ruleLossToPotato": "Losing to a potato: +{n} more.",
+    "rulePotatoWin": "A potato's win: −{n} more for them, to dig their way out."
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
@@ -563,8 +566,8 @@
     },
     "potato": {
       "name": "Potato",
-      "hint": "most potato points",
-      "value": "{n} pts"
+      "hint": "the weakest of their last day of play",
+      "value": "{count, plural, one {# day} other {# days}} as the potato"
     },
     "sniper": {
       "name": "Sniper",

@@ -1,60 +1,88 @@
 import { Game } from '../game/game';
 import { makeGame } from '../game/game.testing';
-import { POTATO_GAMES, POTATO_POINTS, potatoRanking } from './potato';
+import { POTATO_POINTS, potatoRanking, potatoState } from './potato';
 
-/** a+b (red) against c+d (blue). */
-function game(minute: number, red: number, blue: number): Game {
-  const at = (m: number) =>
-    new Date(Date.parse('2026-10-02T10:00:00.000Z') + m * 60_000).toISOString();
+/** A game on day `day` of October 2026 (local time), `red` against `blue`. */
+function game(
+  day: number,
+  minute: number,
+  red: [string, string],
+  blue: [string, string],
+  [redGoals, blueGoals]: [number, number],
+): Game {
+  const start = new Date(2026, 9, day, 10, minute);
   const g = makeGame({
-    id: `g${minute}`,
-    start: at(minute),
-    end: at(minute + 5),
-    win: red > blue ? 'red' : 'blue',
+    id: `g${day}-${minute}`,
+    players: [...red, ...blue],
+    start: start.toISOString(),
+    end: new Date(start.getTime() + 5 * 60_000).toISOString(),
+    win: redGoals > blueGoals ? 'red' : 'blue',
   });
-  g.teams.red.defence.goals = red;
-  g.teams.blue.defence.goals = blue;
+  g.teams = {
+    red: {
+      defence: { player: red[0], goals: redGoals, ownGoals: 0 },
+      offence: { player: red[1], goals: 0, ownGoals: 0 },
+    },
+    blue: {
+      defence: { player: blue[0], goals: blueGoals, ownGoals: 0 },
+      offence: { player: blue[1], goals: 0, ownGoals: 0 },
+    },
+  };
   return g;
 }
 
-/** a+b beat c+d three times: c is the potato (3 points). */
-const opening = [game(0, 8, 3), game(10, 8, 3), game(20, 8, 3)];
+const day = (n: number) => new Date(2026, 9, n, 20);
+/** Day 1: a+b beat c+d three times; c ends it as the potato. */
+const dayOne = [0, 10, 20].map((m) => game(1, m, ['a', 'b'], ['c', 'd'], [8, 3]));
 
-function points(games: Game[]) {
-  const ranking = potatoRanking(games);
-  return (id: string) => ranking.find((row) => row.player === id)?.points;
-}
+describe('potatoState', () => {
+  it('shows the day in progress without deciding it', () => {
+    const state = potatoState(dayOne, day(1));
+    expect(state.holders).toEqual([]);
+    expect(state.today.map((row) => [row.player, row.points])).toEqual([
+      ['c', 3],
+      ['d', 3],
+      ['a', -3],
+      ['b', -3],
+    ]);
+  });
+
+  it('makes the weakest of a finished day the potato', () => {
+    const state = potatoState(dayOne, day(2));
+    expect(state.holders).toEqual([{ player: 'c', since: '2026-10-01' }]);
+    expect(state.days.get('c')).toBe(1);
+    expect(state.today).toEqual([]);
+  });
+
+  it('lets a potato who stays away keep it, so there can be two', () => {
+    const dayTwo = [0, 10, 20].map((m) => game(2, m, ['a', 'b'], ['d', 'e'], [8, 4]));
+    const state = potatoState([...dayOne, ...dayTwo], day(3));
+    expect(state.holders.map((holder) => holder.player).sort()).toEqual(['c', 'd']);
+  });
+
+  it("counts a potato's wins for them and losing to a potato against the losers", () => {
+    // Day 2: the potato c wins with d, then loses.
+    const dayTwo = [
+      game(2, 0, ['c', 'd'], ['a', 'b'], [8, 5]),
+      game(2, 10, ['a', 'b'], ['c', 'd'], [8, 6]),
+    ];
+    const points = new Map(
+      potatoState([...dayOne, ...dayTwo], day(2)).today.map((row) => [row.player, row.points]),
+    );
+    const { win, loss, potatoWin, lossToPotato } = POTATO_POINTS;
+    expect(points.get('c')).toBe(win + potatoWin + loss);
+    expect(points.get('d')).toBe(win + loss);
+    expect(points.get('a')).toBe(loss + lossToPotato + win);
+    // Not the weakest that day: c hands the title on.
+    const after = potatoState([...dayOne, ...dayTwo], day(3));
+    expect(after.holders.map((holder) => holder.player)).not.toContain('c');
+  });
+});
 
 describe('potatoRanking', () => {
-  it('makes the team that keeps losing the potato', () => {
-    const games = [game(0, 8, 3), game(10, 8, 0), game(20, 8, 5)];
-    const ranking = potatoRanking(games);
-    const c = ranking.find((row) => row.player === 'c')!;
-    // 1 + 1 (+2 for the 8:0) + 1.
-    expect(c.points).toBe(3 * POTATO_POINTS.loss + POTATO_POINTS.shutoutLoss);
-    expect(c.isPotato).toBe(true);
-    expect(ranking.find((row) => row.player === 'a')?.points).toBe(0);
-  });
-
-  it('makes a loss to the potato hurt', () => {
-    // a+b lose to the potato's team (favourites, but not clear ones: no extra for that).
-    const score = points([...opening, game(30, 2, 8)]);
-    const toPotato = POTATO_POINTS.lossToPotato + Math.ceil(3 * POTATO_POINTS.potatoShare);
-    expect(score('a')).toBe(3 * POTATO_POINTS.win + POTATO_POINTS.loss + toPotato);
-  });
-
-  it('makes clear favourites pay for losing', () => {
-    // After six wins a+b have a 67% chance; they lose 5:8 to the potato's team.
-    const wins = Array.from({ length: 6 }, (_, i) => game(i * 10, 8, 3));
-    const score = points([...wins, game(60, 5, 8)]);
-    const toPotato = POTATO_POINTS.lossToPotato + Math.ceil(6 * POTATO_POINTS.potatoShare);
-    expect(score('a')).toBe(
-      6 * POTATO_POINTS.win + POTATO_POINTS.loss + POTATO_POINTS.upsetLoss + toPotato,
-    );
-  });
-
-  it('counts only the last games of each player', () => {
-    const games = Array.from({ length: POTATO_GAMES + 5 }, (_, i) => game(i * 10, 8, 3));
-    expect(points(games)('c')).toBe(POTATO_GAMES * POTATO_POINTS.loss);
+  it('lists the days as the potato, the potatoes now marked', () => {
+    const rows = potatoRanking(dayOne, day(2));
+    expect(rows[0]).toMatchObject({ player: 'c', days: 1, games: 3, isPotato: true });
+    expect(rows.find((row) => row.player === 'a')).toMatchObject({ days: 0, isPotato: false });
   });
 });

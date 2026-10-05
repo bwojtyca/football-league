@@ -71,7 +71,7 @@ export function leagueTitles(games: Game[], ratings: Ratings, minGames = 0): Tit
       id: 'potato',
       icon: TITLES.potato,
       players: potatoes.map((row) => row.player),
-      value: potatoes[0].points,
+      value: Math.max(...potatoes.map((row) => row.days)),
     });
   }
 
