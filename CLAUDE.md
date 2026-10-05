@@ -363,5 +363,7 @@ session can pick up where the last one stopped:
   `league-hub.component.ts`), its players (`players`) and settings (`settings`, archive or
   delete in a dialog), the ranking with one switch (players, pairs, potato), games by day,
   tournaments running and finished with winners, jumps on the statistics (all live 5 Oct);
-  4. leagues, the new league wizard, app settings; 5. profile, comparison, game details;
+  4. the leagues page with crests, a running game and deleted leagues to restore, and the new
+  league in two steps (`league-new-dialog.component.ts`: name, then who plays) (live 5 Oct;
+  app settings P66 wait for more than the language); 5. profile, comparison, game details;
   6. tournaments; 7. the desktop layout.
