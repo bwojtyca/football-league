@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import {
   addPlayers,
+  chooseFormat,
   createLeague,
   goal,
   newPlay,
@@ -26,6 +27,8 @@ test('an open tournament: teams picked for each game, the table and a one-tap re
 
   await newPlay(page, 'tournament');
   const setup = page.locator('fl-tournament-new-dialog');
+  await shot(page, 'tournament-formats');
+  await chooseFormat(page, 'open');
   await expect(
     setup.getByRole('heading', { name: t('tournament.players', { n: 4 }) }),
   ).toBeVisible();
@@ -102,6 +105,7 @@ test('an open tournament: cancelling a new game and removing a running one stay 
   await createLeague(page, `E2E usuń ${id}`);
   await addPlayers(page, [a, b]);
   await newPlay(page, 'tournament');
+  await chooseFormat(page, 'open');
   await page
     .locator('fl-tournament-new-dialog')
     .getByRole('button', { name: t('tournament.start') })
@@ -131,10 +135,10 @@ test('an open tournament: cancelling a new game and removing a running one stay 
 });
 
 /** Sets up a one-on-one tournament of everyone in the league, in a format with fixed teams. */
-async function oneOnOne(page: Page, format: string): Promise<void> {
+async function oneOnOne(page: Page, format: 'cup' | 'roundRobin'): Promise<void> {
   await newPlay(page, 'tournament');
   const setup = page.locator('fl-tournament-new-dialog');
-  await setup.getByRole('option', { name: format, exact: true }).click();
+  await chooseFormat(page, format);
   await setup.getByRole('option', { name: t('newGame.mode1v1') }).click();
   await setup.getByRole('button', { name: t('tournament.everyone') }).click();
   await shot(page, `tournament-new-${format}`);
@@ -159,7 +163,7 @@ test('a cup of three ends by itself when the final is won', async ({ page }) => 
   const id = tag();
   await createLeague(page, `E2E puchar ${id}`);
   await addPlayers(page, players(id).slice(0, 3));
-  await oneOnOne(page, t('tournament.format.cup'));
+  await oneOnOne(page, 'cup');
   await expect(page.locator('#cup-bracket .match').first()).toBeVisible();
   await shot(page, 'cup-start');
 
@@ -174,7 +178,7 @@ test('a round robin ends by itself when every fixture is played', async ({ page 
   const id = tag();
   await createLeague(page, `E2E każdy ${id}`);
   await addPlayers(page, players(id).slice(0, 3));
-  await oneOnOne(page, t('tournament.format.roundRobin'));
+  await oneOnOne(page, 'roundRobin');
 
   await playAll(page, 2);
   await expect(page.locator('.note')).toHaveCount(0);

@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import {
   addPlayers,
+  chooseFormat,
   createLeague,
   goal,
   newPlay,
@@ -16,6 +17,7 @@ import {
 /** An open tournament of two players with one game won by the first, 8:0. */
 async function openTournamentWithAGame(page: Page, a: string, b: string): Promise<string> {
   await newPlay(page, 'tournament');
+  await chooseFormat(page, 'open');
   await page
     .locator('fl-tournament-new-dialog')
     .getByRole('button', { name: t('tournament.start') })

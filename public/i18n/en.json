@@ -386,7 +386,25 @@
     "deleted": "Tournament deleted",
     "deletedNote": "This tournament is deleted. You can restore it.",
     "runningList": "Running",
-    "finishedList": "Finished"
+    "finishedList": "Finished",
+    "pickIntro": "How do you play? The format decides who plays next and how the table is counted.",
+    "changeFormat": "Change format",
+    "pick": {
+      "series": "Two teams to 2 or 3 wins, swapping colours.",
+      "open": "Play as long as you like, picking the teams before each game.",
+      "king": "Winners stay at the table, losers go to the end of the queue. Wins in a row count.",
+      "dyp": "Before each game the app draws who plays and with whom.",
+      "roundRobin": "Fixed teams or new partners every game. A table.",
+      "cup": "The loser is out, up to the final. Can start with two groups."
+    },
+    "needs": {
+      "series": "2 or 4 people",
+      "open": "from 2 people",
+      "king": "from 3 people",
+      "dyp": "from 4 people",
+      "roundRobin": "from 3 teams",
+      "cup": "from 3 teams"
+    }
   },
   "timeline": {
     "title": "How it went",

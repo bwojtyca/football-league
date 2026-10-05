@@ -386,7 +386,25 @@
     "deleted": "Turniej usunięty",
     "deletedNote": "Ten turniej jest usunięty. Możesz go przywrócić.",
     "runningList": "Trwa",
-    "finishedList": "Zakończone"
+    "finishedList": "Zakończone",
+    "pickIntro": "Jak gracie? Format decyduje, kto gra następny i jak liczymy tabelę.",
+    "changeFormat": "Zmień format",
+    "pick": {
+      "series": "Dwie drużyny do 2 albo 3 wygranych, kolory na zmianę.",
+      "open": "Gracie, ile chcecie, składy ustalacie przed każdym meczem.",
+      "king": "Wygrani zostają przy stole, przegrani na koniec kolejki. Liczymy wygrane z rzędu.",
+      "dyp": "Przed każdym meczem aplikacja losuje, kto gra i z kim.",
+      "roundRobin": "Stałe drużyny albo zmiana partnerów co mecz. Tabela.",
+      "cup": "Przegrany odpada, aż do finału. Można zacząć od dwóch grup."
+    },
+    "needs": {
+      "series": "2 lub 4 osoby",
+      "open": "od 2 osób",
+      "king": "od 3 osób",
+      "dyp": "od 4 osób",
+      "roundRobin": "od 3 drużyn",
+      "cup": "od 3 drużyn"
+    }
   },
   "timeline": {
     "title": "Przebieg meczu",

@@ -156,3 +156,8 @@ async function next(page: Page): Promise<void> {
   await expect(finish).toBeVisible();
   await finish.getByRole('button', { name: t('game.next') }).click();
 }
+
+/** The first step of a new tournament: its format. */
+export async function chooseFormat(page: Page, format: string): Promise<void> {
+  await page.locator(`fl-tournament-new-dialog button.format[data-format="${format}"]`).click();
+}
