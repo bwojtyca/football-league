@@ -187,7 +187,13 @@
     "leaveLater": "Leave, finish later",
     "last": "Last",
     "lastGoal": "Last goal: {event}",
-    "score": "Score"
+    "score": "Score",
+    "ownArm": "Own goal…",
+    "ownCancel": "Cancel own goal",
+    "turnTitle": "Turn the phone sideways",
+    "turnText": "Rod and figure show the whole table with its eight rods. Lay the phone by the table, its long side along the table.",
+    "turnDone": "Done, it’s sideways",
+    "turnWho": "Record only who scored (upright)"
   },
   "modes": {
     "title": "Mode",

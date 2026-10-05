@@ -295,63 +295,6 @@
   color: #fff;
 }
 
-/* Rod or figure: the player's row on top, the pad, the own goal below. */
-.team.detailed {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  align-items: stretch;
-  gap: 8px;
-  padding: 10px;
-  text-align: left;
-}
-
-.detailed .own {
-  position: static;
-}
-
-/* Waiting for the rod or figure that scored the own goal. */
-.own.armed {
-  border-color: var(--fl-ball);
-  background: var(--fl-ball);
-  color: var(--fl-on-ball);
-}
-
-.who {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.who fl-avatar {
-  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85);
-  border-radius: 50%;
-}
-
-.who .name {
-  display: grid;
-  flex: 1;
-  min-width: 0;
-  line-height: 1.15;
-}
-
-.who .name b {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font: 700 1.05rem/1.2 var(--fl-display);
-}
-
-.who .name small {
-  color: var(--team-text);
-  font-size: 0.75rem;
-}
-
-.tally {
-  font: 900 1.5rem/1 var(--fl-led);
-  font-variant-numeric: tabular-nums;
-}
-
 /* A team's swap of positions, on the line between its two cells. */
 .swap {
   position: absolute;
@@ -404,6 +347,127 @@
 
 .teams.paused .swap {
   display: none;
+}
+
+/* Goals told by rod or figure: the whole table (its own component) in the table's place. */
+.table-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  margin: 10px;
+}
+
+.table-area fl-pause-overlay {
+  z-index: 4;
+}
+
+/* "Own goal…" and the swaps, in the panel beside the whole table. */
+.own-arm {
+  --mat-button-outlined-container-height: 44px;
+}
+
+.own-arm.armed {
+  --mat-button-outlined-label-text-color: var(--fl-on-ball);
+  --mat-button-outlined-outline-color: var(--fl-ball);
+  background: var(--fl-ball);
+}
+
+.bar .event.armed {
+  color: var(--fl-ball);
+}
+
+.swaps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swaps span {
+  flex: none;
+  max-width: 64px;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  color: var(--fl-ink-2);
+}
+
+.swap-dot {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border: 1.5px solid var(--fl-line-2);
+  border-radius: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.swap-dot i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.swap-dot--red i {
+  background: var(--fl-red-board);
+}
+
+.swap-dot--blue i {
+  background: var(--fl-blue-board);
+}
+
+.swap-dot:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Rod and figure need the phone sideways (P49). */
+.turn-prompt {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 32px;
+  background: var(--fl-paper);
+  text-align: center;
+}
+
+.turn-prompt h2 {
+  margin: 0;
+  font: 800 1.6rem/1.2 var(--fl-display);
+}
+
+.turn-prompt p {
+  margin: 0;
+  max-width: 340px;
+  line-height: 1.5;
+  color: var(--fl-ink-2);
+}
+
+.turn-prompt .fl-cta {
+  width: min(320px, 100%);
+  --mat-button-filled-container-height: 52px;
+}
+
+.turn-prompt svg {
+  animation: turn-phone 2.4s ease-in-out infinite;
+}
+
+@keyframes turn-phone {
+  30%,
+  70% {
+    transform: rotate(-90deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .turn-prompt svg {
+    animation: none;
+  }
 }
 
 /* The last move and its undo, always at the bottom. */
@@ -506,7 +570,8 @@
   font-size: 1.6rem;
 }
 
-.landscape .teams {
+.landscape .teams,
+.landscape .table-area {
   grid-area: table;
   margin: 10px;
   --halfway: 90deg;
@@ -532,7 +597,7 @@
 }
 
 /* A cell lengthwise: face, name and position, goals on the right, the own goal below. */
-.landscape .team:not(.detailed) {
+.landscape .team {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
@@ -568,7 +633,7 @@
   font-size: 3.6rem;
 }
 
-.landscape .team:not(.detailed) .own {
+.landscape .team .own {
   position: static;
   grid-area: own;
   justify-self: end;

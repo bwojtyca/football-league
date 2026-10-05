@@ -187,7 +187,13 @@
     "leaveLater": "Wyjdź, dokończę później",
     "last": "Ostatnio",
     "lastGoal": "Ostatni gol: {event}",
-    "score": "Wynik"
+    "score": "Wynik",
+    "ownArm": "Samobój…",
+    "ownCancel": "Anuluj samobój",
+    "turnTitle": "Obróć telefon poziomo",
+    "turnText": "Linia i zawodnik pokazują cały stół z ośmioma drążkami. Połóż telefon przy stole, długim bokiem wzdłuż stołu.",
+    "turnDone": "Gotowe, obrócony",
+    "turnWho": "Zapisuj tylko, kto strzelił (pionowo)"
   },
   "modes": {
     "title": "Tryb",

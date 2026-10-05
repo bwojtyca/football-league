@@ -129,38 +129,32 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   await createLeague(page, `E2E linie ${id}`);
   await addPlayers(page, [a, b, c, d]);
   await startGame(page, { red: [a, b], blue: [c, d] });
-  const cell = (team: 'red' | 'blue', position: 'defence' | 'offence') =>
-    page.getByRole('region', { name: `${t(`team.${team}`)}, ${t(`position.${position}`)}` });
   const bar = page.locator('footer.bar');
   const detail = page.locator('header.top button.detail');
+  const button = (name: string) => page.getByRole('button', { name, exact: true });
 
-  // By rod: Bartek scores with a forward. The choice stays on the device.
+  // By rod: the whole table needs the phone sideways; the choice stays on the device.
   await detail.click();
   expect(await page.evaluate(() => localStorage.getItem('fl.goalDetail'))).toBe('rod');
   await page.reload();
-  const forwards = cell('red', 'offence').getByRole('button', {
-    name: `${t('game.goalAria', { name: b })} · ${t('rods.attack')}`,
-  });
-  await forwards.click();
+  await page.getByRole('button', { name: t('game.turnDone') }).click();
+  expect(await page.evaluate(() => localStorage.getItem('fl.rotation'))).toBe('1');
+  // Bartek scores with a forward.
+  await button(`${t('game.goalAria', { name: b })} · ${t('rods.attack')}`).click();
   await expect(score(page)).toHaveText('1:0');
   await expect(bar).toContainText(t('game.event.goalRod', { name: b, rod: t('rods.with.attack') }));
   await shot(page, 'game-detail-rod');
 
   // By figure: Celina scores with her goalkeeper; Ala's own goal with defender 2, undone.
   await detail.click();
-  await cell('blue', 'defence')
-    .getByRole('button', { name: `${t('game.goalAria', { name: c })} · ${t('rods.goalie')} 1` })
-    .click();
+  await button(`${t('game.goalAria', { name: c })} · ${t('rods.goalie')} 1`).click();
   await expect(score(page)).toHaveText('1:1');
   await expect(bar).toContainText(
     t('game.event.goalMan', { name: c, rod: t('rods.with.goalie'), n: 1 }),
   );
-  const own = t('game.ownGoalAria', { name: a });
-  await cell('red', 'defence').getByRole('button', { name: own, exact: true }).click();
+  await bar.getByRole('button', { name: t('game.ownArm') }).click();
   await shot(page, 'game-detail-man');
-  await cell('red', 'defence')
-    .getByRole('button', { name: `${own} · ${t('rods.defence')} 2` })
-    .click();
+  await button(`${t('game.ownGoalAria', { name: a })} · ${t('rods.defence')} 2`).click();
   await expect(score(page)).toHaveText('1:2');
   await expect(bar).toContainText(
     t('game.event.ownMan', { name: a, rod: t('rods.with.defence'), n: 2 }),

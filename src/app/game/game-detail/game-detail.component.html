@@ -116,67 +116,45 @@
       >
     </section>
 
-    <!-- The table seen from where the phone lies: four cells, turned in quarter steps. -->
-    <div
-      class="teams fl-felt"
-      [class.paused]="!!game.paused"
-      [class.from-red]="tableTurn() === 2"
-      [attr.data-turn]="tableTurn()"
-    >
-      @if (game.paused) {
-        <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
-      }
-      @for (color of colors; track color) {
-        @for (position of positions; track position) {
-          @let slot = game.teams[color][position];
-          @let name = playerService.getPlayerName(slot.player);
-          @let delta = change(slot.player);
-          @let cell = color + '-' + position;
-          @let detailed = detail() !== 'position' && !game.end && !!game.events;
-          <section
-            class="team team--{{ color }}"
-            [class.detailed]="detailed"
-            [class.won]="game.win === color"
-            [style.grid-area]="area(color, position)"
-            [attr.aria-label]="
-              (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
-            "
-          >
-            @if (detailed) {
-              <div class="who">
-                <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
-                <span class="name">
-                  <b>{{ name }}</b>
-                  <small>{{ positionNames[position] | transloco }}</small>
-                </span>
-                <b class="tally">{{ slot.goals }}</b>
-              </div>
-              <fl-goal-pad
-                [detail]="$any(detail())"
-                [color]="color"
-                [position]="position"
-                [rotation]="tableTurn()"
-                [counts]="rodCounts()[cell] ?? {}"
-                [armed]="armed() === cell"
-                [label]="
-                  (armed() === cell ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }
-                "
-                (score)="detailedGoal(color, position, $event)"
-              />
-              <button
-                class="own"
-                [class.armed]="armed() === cell"
-                [attr.aria-pressed]="armed() === cell"
-                (click)="armOwn(color, position)"
-                [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
-              >
-                @if (armed() === cell) {
-                  {{ 'game.ownPick' | transloco }}
-                } @else {
-                  {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
-                }
-              </button>
-            } @else {
+    @if (tableMode() && landscape()) {
+      <!-- Goals told by rod or figure: the whole table, lengthwise. -->
+      <div class="table-area">
+        @if (game.paused) {
+          <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+        }
+        <fl-table
+          [game]="game"
+          [detail]="$any(detail())"
+          [fromRed]="tableTurn() === 2"
+          [own]="ownArmed()"
+          [disabled]="!!game.paused || !!winner"
+          (score)="tableGoal($event)"
+        />
+      </div>
+    } @else {
+      <!-- Who scored: four cells, the table seen from where the phone lies, turned in quarters. -->
+      <div
+        class="teams fl-felt"
+        [class.paused]="!!game.paused"
+        [class.from-red]="tableTurn() === 2"
+        [attr.data-turn]="tableTurn()"
+      >
+        @if (game.paused) {
+          <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+        }
+        @for (color of colors; track color) {
+          @for (position of positions; track position) {
+            @let slot = game.teams[color][position];
+            @let name = playerService.getPlayerName(slot.player);
+            @let delta = change(slot.player);
+            <section
+              class="team team--{{ color }}"
+              [class.won]="game.win === color"
+              [style.grid-area]="area(color, position)"
+              [attr.aria-label]="
+                (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
+              "
+            >
               <!-- The whole cell is the player's goal button. -->
               <fl-avatar class="face" [playerId]="slot.player" [name]="name" [size]="40" />
               <b class="name">{{ name }}</b>
@@ -199,23 +177,49 @@
               >
                 {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
               </button>
-            }
-          </section>
+            </section>
+          }
+          @if (canSwap(game, color)) {
+            @let spot = swapSpot(color);
+            <button
+              class="swap swap--{{ color }}"
+              [style.left.%]="spot[0]"
+              [style.top.%]="spot[1]"
+              (click)="swap(color)"
+              [attr.aria-label]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
+            >
+              <mat-icon>swap_horiz</mat-icon>
+            </button>
+          }
         }
-        @if (canSwap(game, color)) {
-          @let spot = swapSpot(color);
-          <button
-            class="swap swap--{{ color }}"
-            [style.left.%]="spot[0]"
-            [style.top.%]="spot[1]"
-            (click)="swap(color)"
-            [attr.aria-label]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
-          >
-            <mat-icon>swap_horiz</mat-icon>
-          </button>
-        }
-      }
-    </div>
+      </div>
+    }
+
+    @if (askTurn() && !winner) {
+      <!-- The whole table needs the phone sideways (P49). -->
+      <section class="turn-prompt" role="dialog" [attr.aria-label]="'game.turnTitle' | transloco">
+        <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+          <rect
+            x="45"
+            y="15"
+            width="60"
+            height="120"
+            rx="12"
+            fill="#17191c"
+            stroke="#9aa39d"
+            stroke-width="3"
+          />
+          <rect x="52" y="30" width="46" height="90" rx="4" fill="#0d5a31" />
+          <path d="M58 50h34M58 65h34M58 85h34M58 100h34" stroke="#e9edf0" stroke-width="2" />
+        </svg>
+        <h2>{{ 'game.turnTitle' | transloco }}</h2>
+        <p>{{ 'game.turnText' | transloco }}</p>
+        <button matButton="filled" class="fl-cta" (click)="turnDone()">
+          {{ 'game.turnDone' | transloco }}
+        </button>
+        <button matButton (click)="whoOnly()">{{ 'game.turnWho' | transloco }}</button>
+      </section>
+    }
 
     @if (winner && !game.end) {
       <fl-finish-panel
@@ -243,7 +247,9 @@
       <footer class="bar" role="status">
         <span class="text">
           <small>{{ 'game.last' | transloco }}</small>
-          @if (last) {
+          @if (ownArmed()) {
+            <span class="event armed">{{ 'game.ownPick' | transloco }}</span>
+          } @else if (last) {
             <span class="event">{{ eventText(last) }}</span>
           } @else {
             <span class="event placeholder">{{ 'game.event.none' | transloco }}</span>
@@ -252,6 +258,33 @@
         <button matButton="filled" class="fl-cta" (click)="undo()" [disabled]="!last">
           <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
         </button>
+        @if (tableMode() && landscape()) {
+          <button
+            matButton="outlined"
+            class="own-arm"
+            [class.armed]="ownArmed()"
+            [attr.aria-pressed]="ownArmed()"
+            [disabled]="!!winner || !!game.paused"
+            (click)="toggleOwn()"
+          >
+            {{ (ownArmed() ? 'game.ownCancel' : 'game.ownArm') | transloco }}
+          </button>
+          <div class="swaps">
+            <span>{{ 'game.swap' | transloco }}</span>
+            @for (color of colors; track color) {
+              <button
+                class="swap-dot swap-dot--{{ color }}"
+                [disabled]="!canSwap(game, color)"
+                (click)="swap(color)"
+                [attr.aria-label]="
+                  ('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)
+                "
+              >
+                <i></i>
+              </button>
+            }
+          </div>
+        }
       </footer>
     }
   </div>

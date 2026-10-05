@@ -57,16 +57,16 @@ import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.c
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
-import { GoalPadComponent } from './goal-pad.component';
 import { openLeaveDialog } from './leave-dialog.component';
 import { PauseOverlayComponent } from './pause-overlay.component';
+import { TableComponent, TableGoal } from './table.component';
 
 /** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
 const FINISH_AFTER_MS = 8000;
 
 const ROTATION_KEY = 'fl.rotation';
 const DETAIL_KEY = 'fl.goalDetail';
-/** An own goal waits this long for the rod or figure that scored it. */
+/** "Own goal…" waits this long for the rod or figure that scored it. */
 const OWN_GOAL_PICK_MS = 6000;
 
 /** Cells clockwise from the top left when the table is not turned. */
@@ -108,10 +108,10 @@ function readDetail(): GoalDetail {
     RouterLink,
     AvatarComponent,
     FinishPanelComponent,
-    GoalPadComponent,
     ModeLabelComponent,
     PauseOverlayComponent,
     RatingChangeComponent,
+    TableComponent,
     TranslocoPipe,
   ],
   templateUrl: './game-detail.component.html',
@@ -357,9 +357,22 @@ export class GameDetailComponent implements LeaveGuarded {
     return this._wide() && rotation >= 2 ? 2 : 0;
   });
 
-  /** A quarter turn on a portrait screen; on a landscape one, the other side of the table. */
+  /**
+   * A quarter turn on a portrait screen; on a landscape one, the other side of the table. The
+   * whole table (rod, figure) only turns between the two landscape quarters.
+   */
   protected rotate(): void {
-    const rotation = (this.rotation() + (this._wide() ? 2 : 1)) % 4;
+    const rotation = this.rotation();
+    const step = this._wide() || (this.tableMode() && rotation % 2 === 1) ? 2 : 1;
+    this._setRotation((rotation + step) % 4);
+  }
+
+  /** "Done, it's sideways" on the prompt: the landscape layout, on the same side of the table. */
+  protected turnDone(): void {
+    this._setRotation(this.rotation() === 2 ? 3 : 1);
+  }
+
+  private _setRotation(rotation: number): void {
     this.rotation.set(rotation);
     try {
       localStorage.setItem(ROTATION_KEY, String(rotation));
@@ -377,13 +390,7 @@ export class GameDetailComponent implements LeaveGuarded {
 
   protected cycleDetail(): void {
     const detail = GOAL_DETAILS[(GOAL_DETAILS.indexOf(this.detail()) + 1) % GOAL_DETAILS.length];
-    this.detail.set(detail);
-    this.armed.set(null);
-    try {
-      localStorage.setItem(DETAIL_KEY, detail);
-    } catch {
-      // Not remembered: private mode or storage blocked.
-    }
+    this._setDetail(detail);
     this._snackBar.open(
       this._transloco.translate('game.detail', {
         level: this._transloco.translate(`game.detailLevel.${detail}`),
@@ -393,42 +400,49 @@ export class GameDetailComponent implements LeaveGuarded {
     );
   }
 
-  /** The cell (`red-offence`...) whose next tap is an own goal, told by rod or figure. */
-  protected readonly armed = signal<string | null>(null);
-  private _armedTimer?: ReturnType<typeof setTimeout>;
+  /** "Record only who scored" on the prompt to turn the phone. */
+  protected whoOnly(): void {
+    this._setDetail('position');
+  }
 
-  protected armOwn(color: TeamColor, position: Position): void {
-    const cell = `${color}-${position}`;
-    clearTimeout(this._armedTimer);
-    this.armed.set(this.armed() === cell ? null : cell);
-    if (this.armed()) {
-      this._armedTimer = setTimeout(() => this.armed.set(null), OWN_GOAL_PICK_MS);
+  private _setDetail(detail: GoalDetail): void {
+    this.detail.set(detail);
+    this.ownArmed.set(false);
+    try {
+      localStorage.setItem(DETAIL_KEY, detail);
+    } catch {
+      // Not remembered: private mode or storage blocked.
     }
   }
 
-  /** A goal told by rod or figure; an own goal when the cell was armed for one. */
-  protected detailedGoal(
-    color: TeamColor,
-    position: Position,
-    where: { rod: Rod; man?: number },
-  ): void {
-    const own = this.armed() === `${color}-${position}`;
-    this.armed.set(null);
-    clearTimeout(this._armedTimer);
-    this.goal(color, position, own, where);
-  }
-
-  /** Goals of each rod of each cell in this game (`red-offence` → rod → goals). */
-  protected readonly rodCounts = computed(() => {
-    const counts: Record<string, Partial<Record<Rod, number>>> = {};
-    for (const event of this.game()?.events ?? []) {
-      if (event.type === 'goal' && event.rod) {
-        const cell = (counts[`${event.team}-${event.position}`] ??= {});
-        cell[event.rod] = (cell[event.rod] ?? 0) + 1;
-      }
-    }
-    return counts;
+  /** Goals told by rod or figure, on the whole table: a running game with a log. */
+  protected readonly tableMode = computed(() => {
+    const game = this.game();
+    return this.detail() !== 'position' && !!game && !game.end && !!game.events;
   });
+
+  /** The whole table needs the landscape layout; a portrait one asks to turn the phone. */
+  protected readonly askTurn = computed(() => this.tableMode() && !this.landscape());
+
+  /** "Own goal…": the next rod or figure tapped scored into its own goal. */
+  protected readonly ownArmed = signal(false);
+  private _ownTimer?: ReturnType<typeof setTimeout>;
+
+  protected toggleOwn(): void {
+    clearTimeout(this._ownTimer);
+    this.ownArmed.set(!this.ownArmed());
+    if (this.ownArmed()) {
+      this._ownTimer = setTimeout(() => this.ownArmed.set(false), OWN_GOAL_PICK_MS);
+    }
+  }
+
+  /** A goal told on the whole table; an own goal when "Own goal…" was armed. */
+  protected tableGoal({ color, position, rod, man }: TableGoal): void {
+    const own = this.ownArmed();
+    this.ownArmed.set(false);
+    clearTimeout(this._ownTimer);
+    this.goal(color, position, own, { rod, man });
+  }
 
   /** The translation key that tells the last goal, as precisely as it was entered. */
   protected eventKey(event: Exclude<GameEvent, { type: 'swap' }>): string {
