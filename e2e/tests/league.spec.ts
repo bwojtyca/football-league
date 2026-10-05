@@ -42,6 +42,11 @@ test('a new league: players, the bottom navigation, language and the league swit
   await switcher.getByRole('link', { name: t('switcher.manage') }).click();
   await expect(page).toHaveURL(/#\/leagues$/);
   await expect(page.getByRole('link', { name })).toBeVisible();
+  await shot(page, 'leagues');
+  await page.getByRole('button', { name: t('leagues.new') }).click();
+  await page.locator('fl-league-new-dialog').getByLabel(t('leagues.name')).fill('Biuro 2026');
+  await page.getByRole('button', { name: t('leagueNew.next') }).click();
+  await shot(page, 'league-new');
 });
 
 test('the language can be switched on the leagues page', async ({ page }) => {
