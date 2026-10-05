@@ -104,14 +104,19 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Firestore observables, ng2-charts (Chart.js) for the rating chart, Fontsource and
   `material-icons` for self-hosted fonts, `@angular/service-worker` for offline use and
   installing on phones (a snackbar offers to reload when a new deploy is ready).
-- The look (`src/styles.scss`): a foosball table and its score sheet. `--fl-*` tokens: warm
-  paper and black ink for pages, the yellow ball (`--fl-ball`, class `fl-cta` on a button) for
-  the one main action of a screen, the green felt for the Today card and the overall ranking,
-  the dark scoreboard (`--fl-board`) for scores, the game screen and summaries (such blocks set
-  `color-scheme: dark`, so every `light-dark()` token inside takes its dark value). Material's
-  `--mat-sys-*` colours and component tokens are mapped onto them. Headings are Barlow
-  Condensed 800 italic in capitals (`fl-title`, small labels `fl-kicker`); end-to-end checks
-  must compare texts case-insensitively, since `innerText` returns the capitals.
+- The look (`src/styles.scss`), "Nocą": a foosball table at night, one dark scheme
+  (`color-scheme: dark`). `--fl-*` tokens: black page (`--fl-paper`), dark cards (`--fl-card`,
+  `--fl-card-2`, inset 1.5 px `--fl-line`), the yellow ball (`--fl-ball`, class `fl-cta` on a
+  button) for the one main action of a screen, the felt (`--fl-felt-bg`, class `.fl-felt`) for
+  the table, the Today card and the profile card, LED panels (`--fl-board-bg`, class
+  `.fl-board`) for scores, team fills `--fl-red`/`--fl-blue` and team text/LED colours
+  `--fl-red-board`/`--fl-blue-board`, `--fl-chart` for chart bars. Material's `--mat-sys-*`
+  colours and component tokens are mapped onto them. Text and headings are Archivo
+  (`--fl-display`) in sentence case (`fl-title`, small labels `fl-kicker`); numbers from about
+  18 px are Doto LED digits (`--fl-led`, class `.fl-led`). Fonts come from Fontsource. The
+  mockups of this look and of the next phases (UX, then kits and sign-in) are on the canvas
+  https://claude.ai/artifact/As2G6VoRzAPeEkLxmbC8Kx; the UI phase's plan is
+  `docs/superpowers/plans/2026-10-05-ui-noca.md`.
 - `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
 - `GameService` keeps one live listener on all games; per-league lists, Elo ratings
   (`player/rating.ts`), rankings, series and stats all derive from it. `scoreGoal()` writes an
@@ -195,8 +200,8 @@ most even lineups, the match timeline, pairs ranking, defence/attack ratings, re
 achievements on the profile. Next: the owner's feedback below.
 
 Owner feedback, to do at the end (after the planned stages):
-- (Done: redesign, "the table and its score sheet"; see the look in the code map. Waiting for
-  the owner's opinion.)
+- (Done, then superseded: the redesign "the table and its score sheet". The owner chose the
+  "Nocą" look instead; see the look in the code map.)
 - The 2017 league: the owner prefers a regular league with a generated id and a one-off
   migration that sets `league` on all 2017 games, so the code needs no special case for games
   without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). The owner
@@ -331,5 +336,6 @@ session can pick up where the last one stopped:
   it"). Round F and the statistics were deployed on 3 Oct 2026 (rules first, then the app).
 - The 2017 migration (see above) is ready; the owner postponed it (3 Oct 2026: "the database
   doesn't bother us for now").
-- A parallel session on the owner's machine works on the redesign concepts (A: the table as the
-  interface, C liked visually); it must not change code yet, so leave the visuals to it.
+- The redesign (owner, 5 Oct 2026): first the UI ("Nocą", branch `claude/ui-noca`, plan in
+  `docs/superpowers/plans/2026-10-05-ui-noca.md`), then the UX (navigation and screens from the
+  canvas's "Flow aplikacji" page), then new features (kits, sign-in) on the new UI and UX.
