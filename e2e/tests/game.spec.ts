@@ -37,7 +37,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   const overlay = page.locator('fl-pause-overlay');
   await expect(overlay).toBeVisible();
   await shot(page, 'game-paused');
-  await overlay.getByRole('button').click();
+  await overlay.getByRole('button', { name: t('game.resume') }).click();
   await expect(overlay).toBeHidden();
 
   // Leaving a running game asks first.
@@ -54,7 +54,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
     .getByRole('link', { name: t('today.playing') })
     .click();
   await expect(overlay).toBeVisible();
-  await overlay.getByRole('button').click();
+  await overlay.getByRole('button', { name: t('game.resume') }).click();
 
   await page.getByRole('button', { name: t('game.rotate') }).click();
   expect(await page.evaluate(() => localStorage.getItem('fl.rotation'))).toBe('1');
@@ -64,6 +64,8 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   const finish = page.locator('fl-finish-panel');
   await expect(finish).toContainText(t('game.wins', { team: t('team.red') }));
   await expect(score(page)).toHaveText('8:0');
+  // The finish card tells everyone's Elo change before the result is recorded.
+  await expect(finish.locator('.changes > div')).toHaveCount(4);
   await shot(page, 'game-finish');
   await finish.getByRole('button', { name: t('game.undoLast') }).click();
   await expect(finish).toBeHidden();

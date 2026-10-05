@@ -119,7 +119,7 @@ export async function startGame(page: Page, teams: Teams): Promise<void> {
 
 /** The score at the top of the game screen, e.g. "3:1". */
 export function score(page: Page): Locator {
-  return page.locator('header.top .bug');
+  return page.locator('.board .bug');
 }
 
 /** Scores goals for a player on the game screen (one playing alone has two goal buttons). */

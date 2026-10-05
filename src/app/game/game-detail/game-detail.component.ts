@@ -12,6 +12,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { firstValueFrom, interval, map, switchMap } from 'rxjs';
 
 import { leagueOf } from '../../league/league';
+import { K_FACTOR, START_RATING, winChance } from '../../player/rating';
 import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
@@ -38,6 +39,8 @@ import {
   seriesScore,
   TEAM_COLORS,
   TeamColor,
+  teamPlayers,
+  winsNeeded,
   teamScore,
   timeLeft,
 } from '../game';
@@ -45,7 +48,7 @@ import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
 import { ModeLabelComponent } from '../mode/mode-label.component';
-import { FinishPanelComponent } from './finish-panel.component';
+import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
 import { GoalPadComponent } from './goal-pad.component';
 import { openLeaveDialog } from './leave-dialog.component';
 import { PauseOverlayComponent } from './pause-overlay.component';
@@ -236,6 +239,48 @@ export class GameDetailComponent implements LeaveGuarded {
       : '';
   });
 
+  /** Elo change of each player once the decided game is recorded, winners first. */
+  protected readonly preview = computed<FinishPlayer[]>(() => {
+    const game = this.game();
+    const winner = this.decided();
+    const leagueId = this.leagueId();
+    if (!game || !winner || !leagueId) {
+      return [];
+    }
+    const current = this._gameService.ratings(leagueId)?.current;
+    const team = (color: TeamColor) => {
+      const players = teamPlayers(game.teams[color]);
+      return (
+        players.reduce((sum, id) => sum + (current?.get(id) ?? START_RATING), 0) / players.length
+      );
+    };
+    const loser = winner === 'red' ? 'blue' : 'red';
+    const gain = K_FACTOR * (1 - winChance(team(winner), team(loser)));
+    return [winner, loser].flatMap((color) =>
+      teamPlayers(game.teams[color]).map((id) => ({
+        id,
+        name: this.playerService.getPlayerName(id),
+        change: Math.round(color === winner ? gain : -gain),
+      })),
+    );
+  });
+
+  /** Where a series stands once the decided game is recorded. */
+  protected readonly seriesNote = computed(() => {
+    const series = this.series();
+    const winner = this.decided();
+    if (!series || !winner) {
+      return '';
+    }
+    const score = { red: series.red, blue: series.blue };
+    score[winner]++;
+    return score[winner] >= winsNeeded(series.bestOf)
+      ? this._transloco.translate('series.won', {
+          team: this._transloco.translate(this.teamNames[winner]),
+        })
+      : this._transloco.translate('series.score', score);
+  });
+
   constructor() {
     // A decided game shows the finish panel for a few seconds (time to undo the last goal or
     // tap "Next"); then any device showing it records the result, and the device used for
@@ -354,6 +399,26 @@ export class GameDetailComponent implements LeaveGuarded {
     return `game.event.${kind}${event.man ? 'Man' : event.rod ? 'Rod' : ''}`;
   }
 
+  /** An event as the log tells it, e.g. "Ala scores from defence". */
+  protected eventText(event: GameEvent | undefined): string {
+    const translate = (key: string, params?: Record<string, unknown>) =>
+      this._transloco.translate(key, params);
+    if (!event) {
+      return '';
+    }
+    if (event.type === 'swap') {
+      return translate('game.event.swap', { team: translate(this.teamNames[event.team]) });
+    }
+    return translate(this.eventKey(event), {
+      name: this.playerService.getPlayerName(event.player),
+      from: translate(
+        event.position === 'defence' ? 'position.fromDefence' : 'position.fromOffence',
+      ),
+      rod: event.rod ? translate(`rods.with.${event.rod}`) : '',
+      n: event.man ?? '',
+    });
+  }
+
   /** The grid cell of a player: the corners clockwise from the top left, turned. */
   protected area(color: TeamColor, position: Position): string {
     const start = CELL_ORDER.indexOf(`${color}-${position}`);
@@ -460,6 +525,27 @@ export class GameDetailComponent implements LeaveGuarded {
     if (game?.end) {
       openGameTimeline(this._bottomSheet, game);
     }
+  }
+
+  /** "How it went" on the finish card: records the result now, stays here and shows it. */
+  protected async howItWent(): Promise<void> {
+    const game = this.game();
+    const winner = this.decided();
+    if (!game || !winner) {
+      return;
+    }
+    await this._closeDecided(game.id, false);
+    // The closed game may not have come back from the server yet.
+    const latest = this.game();
+    openGameTimeline(
+      this._bottomSheet,
+      latest?.end ? latest : { ...game, end: new Date().toISOString(), win: winner },
+    );
+  }
+
+  /** "Leave, finish later" on a paused game: it waits paused at the top of the games. */
+  protected leaveForLater(): void {
+    this._router.navigate(this.backLink());
   }
 
   protected rematch(): void {

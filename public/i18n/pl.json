@@ -183,7 +183,11 @@
       "rod": "linia",
       "man": "zawodnik"
     },
-    "ownPick": "Wskaż, kto strzelił"
+    "ownPick": "Wskaż, kto strzelił",
+    "leaveLater": "Wyjdź, dokończę później",
+    "last": "Ostatnio",
+    "lastGoal": "Ostatni gol: {event}",
+    "score": "Wynik"
   },
   "modes": {
     "title": "Tryb",
@@ -205,7 +209,8 @@
     "hint": "Po każdym meczu drużyny zamieniają się kolorami.",
     "game": "Seria, mecz {n}",
     "won": "Serię wygrywają {team}",
-    "next": "Mecz {n}"
+    "next": "Mecz {n}",
+    "score": "Seria {red}:{blue}"
   },
   "tournament": {
     "new": "Nowy turniej",

@@ -183,7 +183,11 @@
       "rod": "rod",
       "man": "figure"
     },
-    "ownPick": "Tap who scored it"
+    "ownPick": "Tap who scored it",
+    "leaveLater": "Leave, finish later",
+    "last": "Last",
+    "lastGoal": "Last goal: {event}",
+    "score": "Score"
   },
   "modes": {
     "title": "Mode",
@@ -205,7 +209,8 @@
     "hint": "Teams swap colours after every game.",
     "game": "Series, game {n}",
     "won": "{team} win the series",
-    "next": "Game {n}"
+    "next": "Game {n}",
+    "score": "Series {red}:{blue}"
   },
   "tournament": {
     "new": "New tournament",

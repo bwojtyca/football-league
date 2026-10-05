@@ -5,11 +5,11 @@
       <a matIconButton [routerLink]="backLink()" [attr.aria-label]="'common.back' | transloco">
         <mat-icon>arrow_back</mat-icon>
       </a>
-      <span class="tools">
+      @if (!game.end) {
         <button matIconButton (click)="rotate()" [attr.aria-label]="'game.rotate' | transloco">
-          <mat-icon>rotate_right</mat-icon>
+          <mat-icon>screen_rotation</mat-icon>
         </button>
-        @if (!game.end && game.events) {
+        @if (game.events) {
           <button
             matIconButton
             class="detail"
@@ -21,22 +21,36 @@
             <mat-icon>{{ detailIcons[detail()] }}</mat-icon>
           </button>
         }
-      </span>
-      <div class="score">
-        <span class="bug"
-          ><span class="r">{{ score().red }}</span
-          ><span class="sep">:</span><span class="b">{{ score().blue }}</span></span
-        >
-        <small>
-          @if (clock().golden) {
-            <b class="golden">{{ 'game.goldenGoal' | transloco }}</b>
-          } @else {
-            {{ clock().time }}
-          }
-          @if (mode(); as mode) {
-            · <fl-mode-label [mode]="mode" />
-          }
-        </small>
+      }
+      <!-- The series or the rules above the clock. -->
+      <div class="status">
+        @let rules = mode();
+        @if (series() || rules) {
+          <small>
+            @if (series(); as series) {
+              @if (series.winner; as seriesWinner) {
+                {{ 'series.won' | transloco: { team: (teamNames[seriesWinner] | transloco) } }}
+              } @else {
+                {{ 'series.game' | transloco: { n: series.number, bestOf: series.bestOf } }}
+              }
+              <b class="series-score"
+                ><span class="r">{{ series.red }}</span
+                >:<span class="b">{{ series.blue }}</span></b
+              >
+            }
+            @if (series() && rules) {
+              ·
+            }
+            @if (rules) {
+              <fl-mode-label [mode]="rules" />
+            }
+          </small>
+        }
+        @if (clock().golden) {
+          <b class="clock golden">{{ 'game.goldenGoal' | transloco }}</b>
+        } @else {
+          <b class="clock">{{ clock().time }}</b>
+        }
       </div>
       @if (!game.end) {
         @if (game.paused) {
@@ -65,8 +79,6 @@
         <button matButton="filled" class="fl-cta" (click)="rematch()">
           {{ 'game.rematch' | transloco }}
         </button>
-      } @else {
-        <span class="spacer"></span>
       }
       @if (!game.deleted) {
         <button
@@ -88,54 +100,45 @@
       <p class="deleted-note">{{ 'game.deletedNote' | transloco }}</p>
     }
 
-    @if (series(); as series) {
-      <p class="series">
-        @if (series.winner; as seriesWinner) {
-          {{ 'series.won' | transloco: { team: (teamNames[seriesWinner] | transloco) } }}
-        } @else {
-          {{ 'series.game' | transloco: { n: series.number, bestOf: series.bestOf } }}
-        }
-        <b
-          ><span class="r">{{ series.red }}</span
-          >:<span class="b">{{ series.blue }}</span></b
-        >
-      </p>
-    }
+    <!-- The score on the LED board, the team names above their goals. -->
+    <section class="board" [attr.aria-label]="'game.score' | transloco" aria-live="polite">
+      <span class="bug"
+        ><b class="r" [attr.data-team]="'team.red' | transloco">{{ score().red }}</b
+        ><span class="sep">:</span
+        ><b class="b" [attr.data-team]="'team.blue' | transloco">{{ score().blue }}</b></span
+      >
+    </section>
 
     <!-- The table seen from where the phone lies: four cells, turned in quarter steps. -->
     <div class="teams fl-felt" [class.paused]="!!game.paused" [attr.data-turn]="rotation()">
       @if (game.paused) {
-        <fl-pause-overlay (resume)="resume()" />
+        <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
       }
       @for (color of colors; track color) {
         @for (position of positions; track position) {
           @let slot = game.teams[color][position];
           @let name = playerService.getPlayerName(slot.player);
           @let delta = change(slot.player);
+          @let cell = color + '-' + position;
+          @let detailed = detail() !== 'position' && !game.end && !!game.events;
           <section
             class="team team--{{ color }}"
+            [class.detailed]="detailed"
             [class.won]="game.win === color"
             [style.grid-area]="area(color, position)"
             [attr.aria-label]="
               (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
             "
           >
-            @let cell = color + '-' + position;
-            @let detailed = detail() !== 'position' && !game.end && !!game.events;
-            <div class="who">
-              <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
-              <span class="name">
-                <b>{{ name }}</b>
-                <small>{{ positionNames[position] | transloco }}</small>
-              </span>
-              @if (delta !== null) {
-                <fl-change [value]="delta" />
-              }
-              @if (detailed) {
-                <b class="tally">{{ slot.goals }}</b>
-              }
-            </div>
             @if (detailed) {
+              <div class="who">
+                <fl-avatar [playerId]="slot.player" [name]="name" [size]="28" />
+                <span class="name">
+                  <b>{{ name }}</b>
+                  <small>{{ positionNames[position] | transloco }}</small>
+                </span>
+                <b class="tally">{{ slot.goals }}</b>
+              </div>
               <fl-goal-pad
                 [detail]="$any(detail())"
                 [color]="color"
@@ -162,13 +165,21 @@
                 }
               </button>
             } @else {
+              <!-- The whole cell is the player's goal button. -->
+              <fl-avatar class="face" [playerId]="slot.player" [name]="name" [size]="40" />
+              <b class="name">{{ name }}</b>
+              <small class="pos">
+                {{ positionNames[position] | transloco }}
+                @if (delta !== null) {
+                  <fl-change [value]="delta" />
+                }
+              </small>
+              <b class="goals">{{ slot.goals }}</b>
               <button
                 class="goal"
                 (click)="goal(color, position)"
                 [attr.aria-label]="'game.goalAria' | transloco: { name }"
-              >
-                {{ slot.goals }}
-              </button>
+              ></button>
               <button
                 class="own"
                 (click)="goal(color, position, true)"
@@ -182,7 +193,6 @@
         @if (canSwap(game, color)) {
           @let spot = swapSpot(color);
           <button
-            matMiniFab
             class="swap swap--{{ color }}"
             [style.left.%]="spot[0]"
             [style.top.%]="spot[1]"
@@ -200,10 +210,13 @@
         [class]="winner"
         [winner]="winner"
         [score]="score()"
-        [names]="winners()"
+        [players]="preview()"
+        [note]="seriesNote()"
+        [last]="eventText(game.events?.at(-1))"
         [canUndo]="!!game.events?.length"
         (undo)="undo()"
         (next)="next()"
+        (timeline)="howItWent()"
       />
     } @else if (game.end) {
       <footer class="bar">
@@ -216,34 +229,15 @@
     } @else if (!game.end && game.events) {
       @let last = lastEvent();
       <footer class="bar" role="status">
-        <span class="text" [class.placeholder]="!last">
+        <span class="text">
+          <small>{{ 'game.last' | transloco }}</small>
           @if (last) {
-            @switch (last.type) {
-              @case ('swap') {
-                {{ 'game.event.swap' | transloco: { team: (teamNames[last.team] | transloco) } }}
-              }
-              @default {
-                {{
-                  eventKey($any(last))
-                    | transloco
-                      : {
-                          name: playerService.getPlayerName($any(last).player),
-                          from:
-                            ($any(last).position === 'defence'
-                              ? 'position.fromDefence'
-                              : 'position.fromOffence'
-                            ) | transloco,
-                          rod: $any(last).rod ? ('rods.with.' + $any(last).rod | transloco) : '',
-                          n: $any(last).man ?? '',
-                        }
-                }}
-              }
-            }
+            <span class="event">{{ eventText(last) }}</span>
           } @else {
-            {{ 'game.event.none' | transloco }}
+            <span class="event placeholder">{{ 'game.event.none' | transloco }}</span>
           }
         </span>
-        <button matButton (click)="undo()" [disabled]="!last">
+        <button matButton="filled" class="fl-cta" (click)="undo()" [disabled]="!last">
           <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
         </button>
       </footer>

@@ -1,4 +1,4 @@
-/* The game screen: the table at night, with an LED scoreboard above it. */
+/* The game screen: the table at night, an LED scoreboard above it, the last move below. */
 .screen {
   position: fixed;
   inset: 0;
@@ -9,90 +9,112 @@
   color: var(--fl-ink);
 }
 
+/* Back, turn and goal detail on the left, series and clock in the middle, pause and menu. */
 .top {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto auto;
+  flex: none;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 8px 6px;
+  gap: 2px;
+  min-height: 56px;
+  padding: 2px 4px;
 }
 
-.score {
+.top .mat-icon {
+  color: var(--fl-ink-2);
+}
+
+.top a .mat-icon {
+  color: var(--fl-ink);
+}
+
+.status {
+  flex: 1;
+  min-width: 0;
   display: grid;
   justify-items: center;
-  gap: 4px;
+  line-height: 1.1;
+  text-align: center;
 }
 
-/* The score on an LED panel: red digits, a dim colon, blue digits. */
-.bug {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
-  padding: 7px 14px 5px;
-  border-radius: 12px;
+.status small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--fl-ink-2);
+}
+
+.series-score {
+  margin-left: 4px;
+  color: var(--fl-ink);
+}
+
+.series-score .r {
+  color: var(--fl-red-board);
+}
+
+.series-score .b {
+  color: var(--fl-blue-board);
+}
+
+.clock {
+  font: 900 1.25rem/1.2 var(--fl-led);
+  font-variant-numeric: tabular-nums;
+  color: var(--fl-ball);
+}
+
+.clock.golden {
+  font: 800 1rem/1.4 var(--fl-display);
+}
+
+/* The score on an LED board: red left, blue right, each with its team's name above. */
+.board {
+  flex: none;
+  margin: 0 12px;
+  padding: 6px 16px 8px;
+  border-radius: 14px;
   background: var(--fl-board-bg);
   box-shadow: inset 0 0 0 1.5px var(--fl-line);
-  font: 900 2.5rem/1 var(--fl-led);
+}
+
+.bug {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  font: 900 clamp(3rem, 8.5vh, 4.5rem)/0.95 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
-.bug .r,
-.bug .b {
-  min-width: 1em;
-  text-align: center;
+.bug b::before {
+  content: attr(data-team);
+  display: block;
+  margin-bottom: 2px;
+  font: 600 0.75rem/1.2 var(--fl-display);
 }
 
 .bug .r {
   color: var(--fl-red-board);
 }
 
+.bug .r::before {
+  color: #ff9a92;
+}
+
 .bug .b {
   color: var(--fl-blue-board);
+  text-align: right;
+}
+
+.bug .b::before {
+  color: #9db8ff;
 }
 
 .bug .sep {
+  align-self: center;
+  padding: 0 8px;
+  font: 800 2.2rem/1 var(--fl-display);
   color: var(--fl-line-2);
-}
-
-.score small {
-  font: 600 0.8rem/1 var(--fl-display);
-  font-variant-numeric: tabular-nums;
-  color: var(--fl-ink-2);
-}
-
-.score .golden {
-  color: var(--fl-ball);
-  font-weight: 800;
-}
-
-.spacer {
-  width: 48px;
-}
-
-.tools {
-  display: flex;
-}
-
-.series {
-  margin: 0;
-  padding: 0 16px 6px;
-  text-align: center;
-  font: 600 0.85rem/1.2 var(--fl-display);
-  color: var(--fl-ink-2);
-}
-
-.series b {
-  margin-left: 6px;
-  font: 900 1.15rem/1 var(--fl-led);
-  color: var(--fl-on-board);
-}
-
-.series .r {
-  color: var(--fl-red-board);
-}
-
-.series .b {
-  color: var(--fl-blue-board);
 }
 
 /*
@@ -106,17 +128,17 @@
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template: 1fr 1fr / 1fr 1fr;
-  gap: 10px;
-  margin: 0 8px 8px;
+  grid-template: minmax(0, 1fr) minmax(0, 1fr) / minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin: 10px 12px;
   padding: 12px;
   border-radius: 18px;
   background:
     radial-gradient(
       circle at 50% 50%,
-      transparent 44px,
-      var(--fl-felt-line) 45px 46px,
-      transparent 47px
+      transparent 39px,
+      var(--fl-felt-line) 40px 41px,
+      transparent 42px
     ),
     linear-gradient(
       var(--halfway),
@@ -155,19 +177,26 @@
   row-gap: 32px;
 }
 
-/* A player's cell: a plate tinted with the team's colour. */
+/*
+ * A player's cell: a plate tinted with the team's colour, on a darker plate so that red still
+ * reads as red on the felt. The whole cell is the goal button; the own goal sits at the bottom.
+ */
 .team {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 8px;
-  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   min-width: 0;
-  padding: 10px;
+  min-height: 0;
+  padding: 10px 10px 62px;
   border-radius: 16px;
   color: #fff;
+  text-align: center;
+  container-type: size;
 }
 
-/* A darker plate under the tint, so that red still reads as red on the green felt. */
 .team--red {
   --team-text: #ff9a92;
   background: linear-gradient(rgb(255 74 61 / 0.24), rgb(255 74 61 / 0.24)), rgb(0 0 0 / 0.38);
@@ -180,27 +209,111 @@
   box-shadow: inset 0 0 0 2px rgb(92 140 255 / 0.75);
 }
 
-/* A team's swap of positions, on the line between its two cells. */
-.swap {
-  position: absolute;
-  z-index: 1;
-  transform: translate(-50%, -50%);
-  --mat-fab-small-container-color: var(--fl-card);
-  --mat-fab-small-foreground-color: #fff;
-  --mat-fab-small-container-shape: 12px;
+.face {
+  margin-bottom: 4px;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85);
+  border-radius: 50%;
 }
 
-.swap--red {
-  box-shadow: 0 0 0 2px var(--fl-red-board);
+.team > .name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 1.1rem/1.2 var(--fl-display);
 }
 
-.swap--blue {
-  box-shadow: 0 0 0 2px var(--fl-blue-board);
+.pos {
+  font-size: 0.8rem;
+  color: var(--team-text);
 }
 
-.team.won .name b::after {
+.pos fl-change {
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.45);
+}
+
+.goals {
+  margin-top: 4px;
+  font: 900 clamp(2.6rem, 8vh, 4.2rem)/1 var(--fl-led);
+  font-variant-numeric: tabular-nums;
+}
+
+.team.won .name::after {
   content: ' ★';
   color: var(--fl-ball);
+}
+
+/* Short cells drop the face first, then the position. */
+@container (max-height: 220px) {
+  .face {
+    display: none;
+  }
+}
+
+@container (max-height: 170px) {
+  .pos {
+    display: none;
+  }
+}
+
+.goal {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.goal:active {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.own {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+  min-height: 44px;
+  border: 1.5px solid rgb(225 255 235 / 0.45);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.45);
+  color: #dde7e0;
+  font: 600 0.9rem/1 var(--fl-display);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.own b {
+  margin-left: 4px;
+  color: #fff;
+}
+
+/* Rod or figure: the player's row on top, the pad, the own goal below. */
+.team.detailed {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+  padding: 10px;
+  text-align: left;
+}
+
+.detailed .own {
+  position: static;
+}
+
+/* Waiting for the rod or figure that scored the own goal. */
+.own.armed {
+  border-color: var(--fl-ball);
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
 }
 
 .who {
@@ -212,79 +325,55 @@
 
 .who fl-avatar {
   box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85);
+  border-radius: 50%;
 }
 
-.who fl-change {
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: rgb(0 0 0 / 0.45);
-}
-
-.name {
+.who .name {
   display: grid;
-  min-width: 0;
   flex: 1;
+  min-width: 0;
   line-height: 1.15;
 }
 
-.name b {
-  font: 700 1.05rem/1.2 var(--fl-display);
+.who .name b {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font: 700 1.05rem/1.2 var(--fl-display);
 }
 
-.name small {
+.who .name small {
   color: var(--team-text);
   font-size: 0.75rem;
-}
-
-/* The tap zone of a player: a dark plate with the goals in LED digits. */
-.goal {
-  min-height: 64px;
-  border: 0;
-  border-radius: 12px;
-  background: rgb(0 0 0 / 0.22);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
-  color: #fff;
-  font: 900 clamp(2.8rem, 11vh, 5.5rem)/1 var(--fl-led);
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: transform 80ms ease-out;
-}
-
-.goal:active {
-  transform: scale(0.97);
-  background: rgb(0 0 0 / 0.42);
-}
-
-.own {
-  min-height: 44px;
-  border: 1.5px solid rgb(225 255 235 / 0.35);
-  border-radius: 12px;
-  background: rgb(0 0 0 / 0.35);
-  color: rgb(255 255 255 / 0.88);
-  font: 600 0.9rem/1 var(--fl-display);
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.own b {
-  margin-left: 4px;
-  color: #fff;
-}
-
-/* Waiting for the rod or figure that scored the own goal. */
-.own.armed {
-  border-color: var(--fl-ball);
-  background: var(--fl-ball);
-  color: var(--fl-on-ball);
 }
 
 .tally {
   font: 900 1.5rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
+}
+
+/* A team's swap of positions, on the line between its two cells. */
+.swap {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border: 2px solid;
+  border-radius: 12px;
+  background: var(--fl-card);
+  color: var(--fl-ink);
+  cursor: pointer;
+}
+
+.swap--red {
+  border-color: var(--fl-red-board);
+}
+
+.swap--blue {
+  border-color: var(--fl-blue-board);
 }
 
 .ended .goal,
@@ -296,16 +385,16 @@
 
 .ended .goal:active,
 .decided .goal:active {
-  transform: none;
+  background: transparent;
 }
 
-.decided .goal {
+.decided .goals {
   opacity: 0.6;
 }
 
 :focus-visible {
   outline: 3px solid var(--fl-ball);
-  outline-offset: 2px;
+  outline-offset: -3px;
 }
 
 .teams.paused .team {
@@ -319,35 +408,46 @@
 
 /* The last move and its undo, always at the bottom. */
 .bar {
+  flex: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 56px;
-  margin: 0 8px 8px;
-  padding: 4px 6px 4px 16px;
-  border-radius: 14px;
-  background: var(--fl-card);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line);
+  gap: 10px;
+  min-height: 60px;
+  padding: 0 12px 8px 16px;
 }
 
 .bar .text {
   flex: 1;
   min-width: 0;
+  display: grid;
+  line-height: 1.25;
+}
+
+.bar .text small {
+  font-size: 0.75rem;
+  color: var(--fl-ink-2);
+}
+
+.bar .event {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 600;
 }
 
-.bar .text.placeholder {
+.bar .event.placeholder {
   color: var(--fl-ink-2);
   font-size: 0.85rem;
   font-weight: 400;
   white-space: normal;
 }
 
+.bar .fl-cta {
+  --mat-button-filled-container-height: 48px;
+}
+
 .deleted-note {
-  margin: 0 8px 6px;
+  margin: 0 12px 6px;
   padding: 8px 12px;
   border-radius: 10px;
   background: var(--mat-sys-error-container);
