@@ -75,8 +75,8 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
   await expect(page).toHaveURL(/#\/game\//);
   // Game 2: the teams swap colours, Ala's team plays blue.
   await expect(
-    page.getByRole('region', { name: `${t('team.blue')}, ${t('position.defence')}` }),
-  ).toContainText(a);
+    page.locator('fl-table button.hit[data-team="blue"][data-position="defence"]').first(),
+  ).toHaveAttribute('aria-label', t('game.goalAria', { name: a }));
   await win(page, a);
 
   await expect(page).toHaveURL(TOURNAMENT_URL);
