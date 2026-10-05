@@ -325,12 +325,17 @@ export class GameDetailComponent implements LeaveGuarded {
   /** The screen itself is landscape: a phone held sideways, a tablet, a computer. */
   private readonly _wide = signal(matchMedia('(orientation: landscape)').matches);
 
-  /** The landscape layout (the table beside a panel): on a landscape screen, or turned. */
-  protected readonly landscape = computed(() => this._wide() || this.rotation() % 2 === 1);
+  /**
+   * The landscape layout (the table beside a panel): on a landscape screen, or turned; a
+   * finished game is a plain page.
+   */
+  protected readonly landscape = computed(
+    () => !this.game()?.end && (this._wide() || this.rotation() % 2 === 1),
+  );
 
   /** On a portrait screen the landscape layout is turned a quarter, so it works lying flat. */
   protected readonly turn = computed(() =>
-    this._wide() || this.rotation() % 2 === 0 ? null : this.rotation() === 1 ? 'cw' : 'ccw',
+    !this.landscape() || this._wide() ? null : this.rotation() === 1 ? 'cw' : 'ccw',
   );
 
   /**

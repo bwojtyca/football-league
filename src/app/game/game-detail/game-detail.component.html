@@ -117,10 +117,12 @@
                 @let delta = change(id);
                 <span class="player">
                   <fl-avatar [playerId]="id" [name]="playerService.getPlayerName(id)" [size]="32" />
-                  <b>{{ playerService.getPlayerName(id) }}</b>
-                  @if (delta !== null) {
-                    <fl-change [value]="delta" />
-                  }
+                  <span class="who">
+                    <b>{{ playerService.getPlayerName(id) }}</b>
+                    @if (delta !== null) {
+                      <fl-change [value]="delta" />
+                    }
+                  </span>
                 </span>
               }
             </div>

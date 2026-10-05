@@ -723,6 +723,12 @@
   flex-direction: row-reverse;
 }
 
+.player .who {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
 .player b {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -764,4 +770,9 @@
   text-align: center;
   font-size: 0.85rem;
   color: #cfe6d8;
+}
+
+/* A finished game's header keeps only back, its next step and the menu. */
+.ended .status .clock {
+  display: none;
 }
