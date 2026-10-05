@@ -246,14 +246,14 @@
   color: var(--fl-ball);
 }
 
-/* Short cells drop the face first, then the position. */
-@container (max-height: 220px) {
+/* Short cells drop the face first, then the position (heights inside the padding). */
+@container (max-height: 165px) {
   .face {
     display: none;
   }
 }
 
-@container (max-height: 170px) {
+@container (max-height: 115px) {
   .pos {
     display: none;
   }
