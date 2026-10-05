@@ -212,3 +212,13 @@ h2 {
   background: rgb(255 255 255 / 0.12);
   font: 700 0.78rem/1.4 var(--fl-display);
 }
+
+/* Overview, statistics, games. */
+.tabs {
+  display: flex;
+  margin: 4px 0 16px;
+}
+
+.tabs button {
+  flex: 1;
+}

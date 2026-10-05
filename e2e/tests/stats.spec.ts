@@ -67,11 +67,14 @@ test('statistics: the league, two players compared, a profile and a game against
   await expect(elo).toHaveAttribute('aria-checked', 'true');
   await page.locator('fl-ranking').getByText(a).click();
   await expect(page.locator('main .hero')).toBeVisible();
-  await expect(page.getByRole('heading', { name: t('stats.moments') })).toBeVisible();
   await expect(page.getByRole('heading', { name: t('achievements.mishaps') })).toBeVisible();
   await expect(page.locator('.achievements li.earned').first()).toBeVisible();
+  await shot(page, 'profile-overview');
+  await page.getByRole('tab', { name: t('player.tabs.stats') }).click();
+  await expect(page.getByRole('heading', { name: t('stats.moments') })).toBeVisible();
   await page.getByRole('heading', { name: t('stats.moments') }).scrollIntoViewIfNeeded();
   await shot(page, 'stats-profile');
+  await page.getByRole('tab', { name: t('player.tabs.overview') }).click();
   await page.getByRole('button', { name: t('compare.with') }).click();
   await page.getByRole('menuitem', { name: d }).click();
   await expect(page).toHaveURL(/\/compare\/[^/]+\/[^/]+$/);

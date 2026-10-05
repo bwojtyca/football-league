@@ -38,11 +38,9 @@ test('what the app shows of the 2017 league', async ({ page }) => {
   for (const href of profiles) {
     const player = href.split('/').at(-1)!;
     await page.goto(href);
-    await expect(page.locator('main .hero')).toBeVisible();
-    await keep(`profile in league: ${player}`, page.locator('main'));
+    await keepProfile(page, `profile in league: ${player}`, keep);
     await page.goto(`#/player/${player}`);
-    await expect(page.locator('main .hero')).toBeVisible();
-    await keep(`profile overall: ${player}`, page.locator('main'));
+    await keepProfile(page, `profile overall: ${player}`, keep);
   }
 
   await page.goto('#/leagues');
@@ -83,6 +81,23 @@ async function rankingViews(
     } else if (key === 'potato') {
       await choose(page.getByRole('radio', { name: 'Gracze' }));
     }
+  }
+}
+
+/** Every part of a profile: overview, statistics and games. */
+async function keepProfile(
+  page: Page,
+  prefix: string,
+  keep: (key: string, locator: Locator) => Promise<void>,
+): Promise<void> {
+  await expect(page.locator('main .hero')).toBeVisible();
+  for (const [key, name] of [
+    ['overview', 'Przegląd'],
+    ['stats', 'Statystyki'],
+    ['games', 'Mecze'],
+  ]) {
+    await page.getByRole('tab', { name }).click();
+    await keep(`${prefix} ${key}`, page.locator('main'));
   }
 }
 

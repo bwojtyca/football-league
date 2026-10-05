@@ -98,7 +98,13 @@
     "longestWinStreak": "Najdłuższa seria wygranych",
     "longestLossStreak": "Najdłuższa seria porażek",
     "peakRating": "Najwyższy rating",
-    "biggestWin": "Najwyższa wygrana"
+    "biggestWin": "Najwyższa wygrana",
+    "tabs": {
+      "label": "Części profilu",
+      "overview": "Przegląd",
+      "stats": "Statystyki",
+      "games": "Mecze"
+    }
   },
   "stats": {
     "goals": "Gole",

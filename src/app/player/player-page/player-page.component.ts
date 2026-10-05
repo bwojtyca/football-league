@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -100,6 +100,10 @@ const BADGES: Record<AchievementId, { icon: string; key: string; params: object 
   styleUrl: './player-page.component.scss',
 })
 export class PlayerPageComponent {
+  /** The part of the profile shown: overview, statistics or games. */
+  protected readonly tabs = ['overview', 'stats', 'games'] as const;
+  protected readonly section = signal<'overview' | 'stats' | 'games'>('overview');
+
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _leagueService = inject(LeagueService);

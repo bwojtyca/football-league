@@ -182,6 +182,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
     .getByRole('button', { name: t('common.cancel') })
     .click();
   await page.locator('fl-ranking').getByText(b).click();
+  await page.getByRole('tab', { name: t('player.tabs.stats') }).click();
   await expect(page.getByRole('heading', { name: t('lines.title') })).toBeVisible();
   await expect(page.locator('fl-lines')).toContainText(t('lines.known', { n: 1, total: 1 }));
 });

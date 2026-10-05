@@ -54,87 +54,104 @@
       }
     </section>
 
-    @if (p.games === 0) {
-      <p class="empty">{{ 'player.noGames' | transloco }}</p>
-    } @else {
-      @if (positionRatings().length) {
-        <div class="tiles tiles--positions">
-          @for (position of positionRatings(); track position.key) {
-            <div>
-              <b>{{ position.rating }}</b>
-              <small>{{ position.key | transloco: { n: position.games } }}</small>
-            </div>
-          }
-        </div>
+    <!-- The profile in three parts (P20, P21). -->
+    <nav class="fl-switch tabs" role="tablist" [attr.aria-label]="'player.tabs.label' | transloco">
+      @for (tab of tabs; track tab) {
+        <button role="tab" [attr.aria-selected]="tab === section()" (click)="section.set(tab)">
+          {{ 'player.tabs.' + tab | transloco }}
+        </button>
       }
-      <div class="form-row">
-        <fl-form [results]="p.form" />
-        @if (comparable().length) {
-          <button matButton class="compare" [matMenuTriggerFor]="compareMenu">
-            <mat-icon>compare_arrows</mat-icon>{{ 'compare.with' | transloco }}
-          </button>
-          <mat-menu #compareMenu="matMenu">
-            @for (other of comparable(); track other.id) {
-              <a mat-menu-item [routerLink]="compareLink(leagueId(), p.id, other.id)">{{
-                other.name
-              }}</a>
+    </nav>
+
+    @switch (section()) {
+      @case ('overview') {
+        @if (p.games === 0) {
+          <p class="empty">{{ 'player.noGames' | transloco }}</p>
+        } @else {
+          <div class="form-row">
+            <fl-form [results]="p.form" />
+            @if (comparable().length) {
+              <button matButton class="compare" [matMenuTriggerFor]="compareMenu">
+                <mat-icon>compare_arrows</mat-icon>{{ 'compare.with' | transloco }}
+              </button>
+              <mat-menu #compareMenu="matMenu">
+                @for (other of comparable(); track other.id) {
+                  <a mat-menu-item [routerLink]="compareLink(leagueId(), p.id, other.id)">{{
+                    other.name
+                  }}</a>
+                }
+              </mat-menu>
             }
-          </mat-menu>
+          </div>
+
+          @if (chart(); as data) {
+            <figure class="chart">
+              <figcaption>{{ 'player.ratingHistory' | transloco }}</figcaption>
+              <div class="canvas">
+                <canvas
+                  baseChart
+                  type="line"
+                  [data]="data"
+                  [options]="chartOptions"
+                  [attr.aria-label]="'player.ratingHistory' | transloco"
+                ></canvas>
+              </div>
+            </figure>
+          }
+
+          @if (records(); as records) {
+            <h2>{{ 'player.records' | transloco }}</h2>
+            <dl class="records">
+              <div>
+                <dt>{{ 'player.longestWinStreak' | transloco }}</dt>
+                <dd>{{ records.longestWinStreak }}</dd>
+              </div>
+              <div>
+                <dt>{{ 'player.longestLossStreak' | transloco }}</dt>
+                <dd>{{ records.longestLossStreak }}</dd>
+              </div>
+              @if (records.peakRating) {
+                <div>
+                  <dt>{{ 'player.peakRating' | transloco }}</dt>
+                  <dd>{{ records.peakRating }}</dd>
+                </div>
+              }
+              @if (records.biggestWin) {
+                <div>
+                  <dt>{{ 'player.biggestWin' | transloco }}</dt>
+                  <dd>{{ records.biggestWin }}</dd>
+                </div>
+              }
+            </dl>
+
+            <h2>{{ 'achievements.title' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
+            <h2>{{ 'achievements.mishaps' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
+          }
         }
-      </div>
-
-      @if (chart(); as data) {
-        <figure class="chart">
-          <figcaption>{{ 'player.ratingHistory' | transloco }}</figcaption>
-          <div class="canvas">
-            <canvas
-              baseChart
-              type="line"
-              [data]="data"
-              [options]="chartOptions"
-              [attr.aria-label]="'player.ratingHistory' | transloco"
-            ></canvas>
-          </div>
-        </figure>
       }
-
-      @if (records(); as records) {
-        <h2>{{ 'player.records' | transloco }}</h2>
-        <dl class="records">
-          <div>
-            <dt>{{ 'player.longestWinStreak' | transloco }}</dt>
-            <dd>{{ records.longestWinStreak }}</dd>
-          </div>
-          <div>
-            <dt>{{ 'player.longestLossStreak' | transloco }}</dt>
-            <dd>{{ records.longestLossStreak }}</dd>
-          </div>
-          @if (records.peakRating) {
-            <div>
-              <dt>{{ 'player.peakRating' | transloco }}</dt>
-              <dd>{{ records.peakRating }}</dd>
+      @case ('stats') {
+        @if (p.games === 0) {
+          <p class="empty">{{ 'player.noGames' | transloco }}</p>
+        } @else {
+          @if (positionRatings().length) {
+            <div class="tiles tiles--positions">
+              @for (position of positionRatings(); track position.key) {
+                <div>
+                  <b>{{ position.rating }}</b>
+                  <small>{{ position.key | transloco: { n: position.games } }}</small>
+                </div>
+              }
             </div>
           }
-          @if (records.biggestWin) {
-            <div>
-              <dt>{{ 'player.biggestWin' | transloco }}</dt>
-              <dd>{{ records.biggestWin }}</dd>
-            </div>
-          }
-        </dl>
-
-        <h2>{{ 'achievements.title' | transloco }}</h2>
-        <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
-        <h2>{{ 'achievements.mishaps' | transloco }}</h2>
-        <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
+          <fl-games-stats [leagueId]="leagueId()" [playerId]="p.id" />
+        }
       }
-
-      <h2>{{ 'player.stats' | transloco }}</h2>
-      <fl-games-stats [leagueId]="leagueId()" [playerId]="p.id" />
+      @case ('games') {
+        <fl-game-list [leagueId]="leagueId()" [playerId]="p.id" [pageSize]="20" />
+      }
     }
-
-    <h2>{{ 'player.history' | transloco }}</h2>
-    <fl-game-list [leagueId]="leagueId()" [playerId]="p.id" [pageSize]="20" />
   }
 </main>
 

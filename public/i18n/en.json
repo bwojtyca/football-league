@@ -98,7 +98,13 @@
     "longestWinStreak": "Longest winning streak",
     "longestLossStreak": "Longest losing streak",
     "peakRating": "Best rating",
-    "biggestWin": "Biggest win"
+    "biggestWin": "Biggest win",
+    "tabs": {
+      "label": "Profile parts",
+      "overview": "Overview",
+      "stats": "Statistics",
+      "games": "Games"
+    }
   },
   "stats": {
     "goals": "Goals",
