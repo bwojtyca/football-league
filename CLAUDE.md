@@ -113,8 +113,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   `--fl-red-board`/`--fl-blue-board`, `--fl-chart` for chart bars. Material's `--mat-sys-*`
   colours and component tokens are mapped onto them. Text and headings are Archivo
   (`--fl-display`) in sentence case (`fl-title`, small labels `fl-kicker`); numbers from about
-  18 px are Doto LED digits (`--fl-led`, class `.fl-led`). Fonts come from Fontsource. The
-  mockups of this look and of the next phases (UX, then kits and sign-in) are on the canvas
+  18 px are Doto LED digits (`--fl-led`, class `.fl-led`; the `Doto Digits` face covers only
+  digits and signs, so units and the colon stay Archivo). Fonts come from Fontsource. The game
+  table's halfway line runs between the teams and its rails take their colours (`data-turn`).
+  The mockups of this look and of the next phases (UX, then kits and sign-in) are on the canvas
   https://claude.ai/artifact/As2G6VoRzAPeEkLxmbC8Kx; the UI phase's plan is
   `docs/superpowers/plans/2026-10-05-ui-noca.md`.
 - `src/app/firebase.ts`: Firestore instance with a persistent IndexedDB cache.
