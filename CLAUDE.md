@@ -140,18 +140,23 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   chosen one, and chooses what a goal records and the screen's orientation (device settings in
   `game/screen-settings.ts`, read by the game screen). `game/mode/` has the shared rules picker
   and label.
-- Game screen (canvas P40–P49): a header (back, turn, goal detail, series or rules over an LED
-  clock, pause, menu), the score on an LED board, the table, and a "Last" bar with the undo.
-  Two layouts from one template: portrait (2x2 cells, each cell its player's goal button) and
-  landscape (`.landscape`: the table beside a panel; the far team's cells face them). Quarter
-  turns (`fl.rotation`): on a portrait screen 0/2 are the portrait layout from the blue/red
-  side and 1/3 the landscape layout turned a quarter by CSS (`.turn-cw`/`.turn-ccw`, for a
-  phone lying flat or locked); a landscape screen always shows the landscape layout and a turn
-  swaps sides (`tableTurn()`). The halfway line runs between the teams, the rails take their
-  colours (`data-turn`). Pausing offers resume, leave for later or remove. A decided game
-  shows `FinishPanelComponent` (the blinking score, an Elo preview from the current ratings,
-  the series, how it went, "Next" with an LED countdown, undo) for 8 s (`FINISH_AFTER_MS`),
-  then any device records the result; the scoring device (or whoever taps "Next") moves on.
+- Game screen (canvas P40–P49, reworked after the owner's round H): a header (back, turn, goal
+  detail, series or rules over an LED clock, pause, menu), the score on an LED board, the table
+  (`table.component.ts`), and a bar with the last move, the undo, "Own goal…" and the swaps.
+  Every goal is entered on the table seen from above with its figures: who scored taps a rod
+  of the scorer, the rod mode the rod, the figure mode the figure. Held portrait the table
+  stands (red goal on top, each team's LED board at its end); in the landscape layout
+  (`.landscape`, a panel on the right) it lies lengthwise with LED boards on its rails. Quarter
+  turns (`fl.rotation`): on a portrait screen 0/2 stand the table from the blue/red side, 1/3
+  show the landscape layout turned a quarter by CSS (`.turn-cw`/`.turn-ccw`, for a phone lying
+  flat or locked); a landscape screen always shows the landscape layout and a turn swaps
+  sides (`fromRed()`). Text never turns upside down. Pausing offers resume, leave for later or
+  remove. A decided game shows `FinishPanelComponent` (the blinking score, an Elo preview from
+  the current ratings, the series, how it went, "Next" with an LED countdown, undo) for 8 s
+  (`FINISH_AFTER_MS`), then any device records the result; the scoring device (or whoever taps
+  "Next") moves on. A finished game is a page: the result, its timeline and league facts.
+  The goal detail and the turn are read for every game shown (the screen is reused by a
+  rematch).
 - `TournamentService` lists tournaments; `tournament/tournament.ts` holds the pure logic: king
   of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the
@@ -161,11 +166,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
   down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
 - Goal detail: the game screen's button next to "turn" cycles the detail of new goals
-  (`fl.goalDetail` in localStorage: position, rod, figure). Rod and figure are tapped on the
-  whole table (`table.component.ts`: an SVG of the eight rods in table order with figures,
-  handles and name plates, and a hit zone per rod or figure), which needs the landscape
-  layout: a portrait screen asks to turn the phone ("record only who scored" is the way out).
-  "Own goal…" in the panel arms the next tap. Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
+  (`fl.goalDetail` in localStorage: position, rod, figure; the new game dialog sets it too).
+  Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
   veteran, marathoner, comeback king, dream team, scoring keeper) show as icons in the
   rankings, on the profile and in the league's statistics; `player/records.ts` has the
   achievements and the mishaps shown on the profile.
@@ -281,12 +283,11 @@ Owner feedback, round H (5 October 2026, after trying the UX phase; more to come
 all ready):
 - (Done) Nothing on the game screen is shown turned or mirrored any more: the far team's cells
   and the name plates on the table read upright (they were hard to read).
-- The goal input needs a redesign: the team-tinted translucent cells on the felt look bad
-  for both colours. Proposal: always enter goals on the view of the table with its figures,
-  with the tap zones laid over it (for who scored too). If cells stay, the rounded rails with
-  coloured borders above and below the felt must go (the straight lines of the table view
-  look much better). Idea: use the rails like the advertising boards at a match, a bigger
-  strip with scrolling text (the league's name, the players' names).
+- (Done) The goal input: the team-tinted cells and rounded rails are gone; every goal is
+  entered on the table with its figures (who scored taps a rod of the scorer), upright or
+  lengthwise, and the rails and ends are LED boards with the players' names and goals. Still
+  open from the owner's idea: scrolling text on the boards, like advertising at a match (the
+  league's name, the players' names).
 - (Done) Title icons in the rankings show a tooltip (name and why), not a bare `title`.
 - (Done) Bug: a goal by figure did not register in a win-by-2 game. Cause: the rematch (and
   the next game of a series) reuses the game screen, which read the goal detail and the turn
