@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
-import { Game } from '../../game/game';
+import { Game, POSITIONS, Position, TEAM_COLORS } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { places } from '../../shared/places';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
@@ -53,9 +53,9 @@ export class RankingComponent {
   public readonly titles = input<Map<string, Title[]>>(new Map());
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
-  /** Who is ranked, and (players) by what: Elo, win rate or potato points. */
-  protected readonly view = signal<'players' | 'duets'>('players');
-  protected readonly sortBy = signal<'elo' | 'winRate' | 'potato'>('elo');
+  /** What is ranked (players, pairs or potatoes), and players by what: Elo or win rate. */
+  protected readonly view = signal<'players' | 'duets' | 'potato'>('players');
+  protected readonly sortBy = signal<'elo' | 'winRate'>('elo');
 
   private readonly _threshold = computed(() => Math.max(1, this.minGames()));
 
@@ -82,6 +82,31 @@ export class RankingComponent {
       .filter((p) => p.games < this._threshold())
       .sort((a, b) => b.games - a.games),
   );
+
+  /** The position each player mostly plays in 2 vs 2 games, when one clearly prevails. */
+  protected readonly mainPosition = computed(() => {
+    const counts = new Map<string, Record<Position, number>>();
+    for (const game of this.games()) {
+      for (const color of TEAM_COLORS) {
+        const team = game.teams[color];
+        if (!game.end || team.defence.player === team.offence.player) {
+          continue;
+        }
+        for (const position of POSITIONS) {
+          const count = counts.get(team[position].player) ?? { defence: 0, offence: 0 };
+          count[position]++;
+          counts.set(team[position].player, count);
+        }
+      }
+    }
+    const main = new Map<string, Position>();
+    for (const [id, { defence, offence }] of counts) {
+      if (defence !== offence) {
+        main.set(id, defence > offence ? 'defence' : 'offence');
+      }
+    }
+    return main;
+  });
 
   protected readonly potatoPoints = POTATO_POINTS;
   protected readonly potatoDayGames = POTATO_DAY_GAMES;

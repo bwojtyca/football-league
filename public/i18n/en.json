@@ -461,7 +461,8 @@
     "global": "Overall ranking",
     "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
     "allLeagues": "All leagues",
-    "overallProfile": "overall profile"
+    "overallProfile": "overall profile",
+    "order": "Order"
   },
   "potato": {
     "title": "Potato",

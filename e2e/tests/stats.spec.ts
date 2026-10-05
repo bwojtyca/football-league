@@ -61,6 +61,7 @@ test('statistics: the league, two players compared, a profile and a game against
   await page.getByRole('radio', { name: t('potato.title') }).click();
   await expect(page.locator('.potato-today li')).toHaveCount(4);
   await shot(page, 'stats-potato-today');
+  await page.getByRole('radio', { name: t('league.players') }).click();
   const elo = page.getByRole('radio', { name: 'Elo' });
   await elo.click();
   await expect(elo).toHaveAttribute('aria-checked', 'true');

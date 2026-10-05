@@ -31,9 +31,10 @@ test('what the app shows of the 2017 league', async ({ page }) => {
   // Each player's profile in the league and overall.
   await choose(page.getByRole('radio', { name: 'Gracze' }));
   await choose(page.getByRole('radio', { name: 'Elo' }));
-  const profiles = await rows.evaluateAll((links) =>
-    links.map((link) => link.getAttribute('href') ?? ''),
-  );
+  // Players below the threshold are plain links after the ranked rows.
+  const profiles = await page
+    .locator('fl-ranking a.row, fl-ranking .others a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
   for (const href of profiles) {
     const player = href.split('/').at(-1)!;
     await page.goto(href);
@@ -59,7 +60,7 @@ test('what the app shows of the 2017 league', async ({ page }) => {
   console.log(`${Object.keys(shown).length} views saved as ${name}.json`);
 });
 
-/** The ranking as players (Elo, win %, potato) and as pairs. */
+/** The ranking as players (Elo, win %), potatoes and pairs. */
 async function rankingViews(
   page: Page,
   prefix: string,
@@ -77,8 +78,10 @@ async function rankingViews(
       await choose(option);
       await keep(`${prefix}: ranking ${key}`, ranking);
     }
-    if (key !== 'pairs') {
+    if (key === 'win rate') {
       await choose(page.getByRole('radio', { name: 'Elo' }));
+    } else if (key === 'potato') {
+      await choose(page.getByRole('radio', { name: 'Gracze' }));
     }
   }
 }

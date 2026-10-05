@@ -11,32 +11,35 @@
     >
       {{ 'league.duets' | transloco }}
     </button>
+    <button
+      role="radio"
+      [attr.aria-checked]="view() === 'potato'"
+      (click)="view.set('potato')"
+      [disabled]="!potatoes().length"
+    >
+      🥔 {{ 'potato.title' | transloco }}
+    </button>
   </div>
   @if (view() === 'players') {
-    <div class="fl-switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
-      <button role="radio" [attr.aria-checked]="sortBy() === 'elo'" (click)="sortBy.set('elo')">
-        Elo
-      </button>
-      <button
-        role="radio"
-        [attr.aria-checked]="sortBy() === 'winRate'"
-        (click)="sortBy.set('winRate')"
-      >
-        {{ 'ranking.winRate' | transloco }}
-      </button>
-      <button
-        role="radio"
-        [attr.aria-checked]="sortBy() === 'potato'"
-        (click)="sortBy.set('potato')"
-        [disabled]="!potatoes().length"
-      >
-        🥔 {{ 'potato.title' | transloco }}
-      </button>
+    <div class="order">
+      <span>{{ 'ranking.order' | transloco }}</span>
+      <div class="fl-switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
+        <button role="radio" [attr.aria-checked]="sortBy() === 'elo'" (click)="sortBy.set('elo')">
+          Elo
+        </button>
+        <button
+          role="radio"
+          [attr.aria-checked]="sortBy() === 'winRate'"
+          (click)="sortBy.set('winRate')"
+        >
+          {{ 'ranking.winRate' | transloco }}
+        </button>
+      </div>
     </div>
   }
 </div>
 
-@if (view() === 'players' && sortBy() === 'potato') {
+@if (view() === 'potato') {
   @if (potatoToday().length) {
     <section class="potato-today">
       <h3 class="fl-kicker">{{ 'potato.today' | transloco }}</h3>
@@ -117,30 +120,32 @@
   </ol>
   <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
 } @else {
-  <ol class="ranking">
-    @for (player of ranked(); track player.id; let i = $index) {
-      <li>
-        <ng-container
-          *ngTemplateOutlet="row; context: { $implicit: player, position: rankedPlaces()[i] }"
-        />
-      </li>
-    }
-  </ol>
-  @if (others().length) {
-    <h3 class="others">
-      @if (minGames() > 1) {
-        {{ 'ranking.belowThreshold' | transloco: { n: minGames() } }}
-      } @else {
-        {{ 'league.unrated' | transloco }}
-      }
-    </h3>
-    <ul class="ranking">
-      @for (player of others(); track player.id) {
+  @if (ranked().length) {
+    <ol class="ranking">
+      @for (player of ranked(); track player.id; let i = $index) {
         <li>
-          <ng-container *ngTemplateOutlet="row; context: { $implicit: player, position: null }" />
+          <ng-container
+            *ngTemplateOutlet="row; context: { $implicit: player, position: rankedPlaces()[i] }"
+          />
         </li>
       }
-    </ul>
+    </ol>
+  }
+  @if (others().length) {
+    <!-- Below the threshold: names only, without a place. -->
+    <p class="others">
+      <span>
+        @if (minGames() > 1) {
+          {{ 'ranking.belowThreshold' | transloco: { n: minGames() } }}:
+        } @else {
+          {{ 'league.unrated' | transloco }}:
+        }
+      </span>
+      @for (player of others(); track player.id; let last = $last) {
+        <a [routerLink]="playerLink()(player.id)">{{ player.name }}</a
+        >{{ last ? '' : ', ' }}
+      }
+    </p>
   }
 }
 
@@ -169,7 +174,11 @@
       @if (player.games === 0) {
         <small>{{ 'league.unrated' | transloco }}</small>
       } @else {
-        <small>{{ player.wins }}–{{ player.loses }}</small>
+        @let main = mainPosition().get(player.id);
+        <small
+          >{{ player.wins }}–{{ player.loses
+          }}{{ main ? ' · ' + ('newGame.mostly.' + main | transloco) : '' }}</small
+        >
       }
     </span>
     @if (player.games > 0) {
