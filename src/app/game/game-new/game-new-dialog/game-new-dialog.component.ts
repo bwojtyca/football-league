@@ -334,16 +334,11 @@ export class GameNewDialogComponent {
     this._router.navigate(['/game', id]);
   }
 
-  /**
-   * The game screen opens as chosen here: rod and figure on the whole table (sideways), who
-   * scored upright or sideways, on the same side of the table as before.
-   */
+  /** The game screen opens as chosen here: upright or sideways, on the same side as before. */
   private _saveScreen(): void {
-    const detail = this.inputMode();
-    const sideways = detail !== 'position' || !this.upright();
     const redSide = readRotation() >= 2;
-    saveDetail(detail);
-    saveRotation((redSide ? 2 : 0) + (sideways ? 1 : 0));
+    saveDetail(this.inputMode());
+    saveRotation((redSide ? 2 : 0) + (this.upright() ? 0 : 1));
   }
 
   /** The series as a tournament of the two teams; its first game is played at once. */

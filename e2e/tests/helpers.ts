@@ -143,8 +143,8 @@ export async function win(page: Page, name: string, goals = 8): Promise<void> {
 /** Red or blue wins a game to 8 at 0 (goals of its defender), then "Next". */
 export async function winAs(page: Page, color: 'red' | 'blue'): Promise<void> {
   const goal = page
-    .getByRole('region', { name: `${t(`team.${color}`)}, ${t('position.defence')}` })
-    .locator('button.goal');
+    .locator(`fl-table button.hit[data-team="${color}"][data-position="defence"]`)
+    .first();
   for (let i = 0; i < 8; i++) {
     await goal.click();
   }

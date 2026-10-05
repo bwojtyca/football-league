@@ -69,18 +69,6 @@ const FINISH_AFTER_MS = 8000;
 /** "Own goal…" waits this long for the rod or figure that scored it. */
 const OWN_GOAL_PICK_MS = 6000;
 
-/** Cells clockwise from the top left when the table is not turned. */
-const CELL_ORDER = ['red-offence', 'red-defence', 'blue-offence', 'blue-defence'];
-/** Grid areas of the corners, clockwise from the top left. */
-const CORNERS = ['1 / 1', '1 / 2', '2 / 2', '2 / 1'];
-/** Middles of the lines between two cells: top, right, bottom and left, as [left, top] %. */
-const EDGE_MIDDLES = [
-  [50, 25],
-  [75, 50],
-  [50, 75],
-  [25, 50],
-] as const;
-
 @Component({
   selector: 'fl-game-detail',
   imports: [
@@ -353,30 +341,18 @@ export class GameDetailComponent implements LeaveGuarded {
   );
 
   /**
-   * Quarter turns of the table inside the layout. The landscape layout always shows the table
-   * lengthwise, from the blue side (0) or, on a landscape screen turned once more, the red (2).
+   * The table seen from the red side (turned half way): upright at quarter 2 on a portrait
+   * screen; lengthwise on a landscape screen turned once more. A quarter-turned layout on a
+   * portrait screen gets its side from the direction of the turn.
    */
-  protected readonly tableTurn = computed(() => {
+  protected readonly fromRed = computed(() => {
     const rotation = this.rotation();
-    if (!this.landscape()) {
-      return rotation;
-    }
-    return this._wide() && rotation >= 2 ? 2 : 0;
+    return this.landscape() ? this._wide() && rotation >= 2 : rotation === 2;
   });
 
-  /**
-   * A quarter turn on a portrait screen; on a landscape one, the other side of the table. The
-   * whole table (rod, figure) only turns between the two landscape quarters.
-   */
+  /** A quarter turn on a portrait screen; on a landscape one, the other side of the table. */
   protected rotate(): void {
-    const rotation = this.rotation();
-    const step = this._wide() || (this.tableMode() && rotation % 2 === 1) ? 2 : 1;
-    this._setRotation((rotation + step) % 4);
-  }
-
-  /** "Done, it's sideways" on the prompt: the landscape layout, on the same side of the table. */
-  protected turnDone(): void {
-    this._setRotation(this.rotation() === 2 ? 3 : 1);
+    this._setRotation((this.rotation() + (this._wide() ? 2 : 1)) % 4);
   }
 
   private _setRotation(rotation: number): void {
@@ -403,25 +379,16 @@ export class GameDetailComponent implements LeaveGuarded {
     );
   }
 
-  /** "Record only who scored" on the prompt to turn the phone. */
-  protected whoOnly(): void {
-    this._setDetail('position');
-  }
-
   private _setDetail(detail: GoalDetail): void {
     this.detail.set(detail);
     this.ownArmed.set(false);
     saveDetail(detail);
   }
 
-  /** Goals told by rod or figure, on the whole table: a running game with a log. */
-  protected readonly tableMode = computed(() => {
-    const game = this.game();
-    return this.detail() !== 'position' && !!game && !game.end && !!game.events;
-  });
-
-  /** The whole table needs the landscape layout; a portrait one asks to turn the phone. */
-  protected readonly askTurn = computed(() => this.tableMode() && !this.landscape());
+  /** What a tap on the table tells; games without a log (older app) take who scored only. */
+  protected readonly inputDetail = computed<GoalDetail>(() =>
+    this.game()?.events ? this.detail() : 'position',
+  );
 
   /** "Own goal…": the next rod or figure tapped scored into its own goal. */
   protected readonly ownArmed = signal(false);
@@ -467,17 +434,6 @@ export class GameDetailComponent implements LeaveGuarded {
       rod: event.rod ? translate(`rods.with.${event.rod}`) : '',
       n: event.man ?? '',
     });
-  }
-
-  /** The grid cell of a player: the corners clockwise from the top left, turned. */
-  protected area(color: TeamColor, position: Position): string {
-    const start = CELL_ORDER.indexOf(`${color}-${position}`);
-    return CORNERS[(start + this.tableTurn()) % 4];
-  }
-
-  /** Where a team's swap button sits: on the line between its two cells, in % of the table. */
-  protected swapSpot(color: TeamColor): readonly [number, number] {
-    return EDGE_MIDDLES[(this.tableTurn() + (color === 'red' ? 0 : 2)) % 4];
   }
 
   protected canSwap(game: Game, color: TeamColor): boolean {

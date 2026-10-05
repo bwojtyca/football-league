@@ -1,15 +1,15 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
-import { FIGURES, Game, Position, Rod, TeamColor } from '../game';
+import { FIGURES, Game, GoalDetail, Position, Rod, TeamColor } from '../game';
 
-/** A goal told on the table: whose rod it was and, by figure, which figure on it. */
+/** A goal told on the table: whose rod it was and, told that precisely, the rod and figure. */
 export interface TableGoal {
   color: TeamColor;
   position: Position;
-  rod: Rod;
+  rod?: Rod;
   man?: number;
 }
 
@@ -34,7 +34,7 @@ const TABLE_RODS: readonly { color: TeamColor; position: Position; rod: Rod; x: 
   { color: 'red', position: 'defence', rod: 'goalie', x: 618.5 },
 ];
 
-/** Where each player's name plate sits on their rail: between their two rods. */
+/** Where each player's name sits on their rail's board: between their two rods. */
 const PLATES: readonly { color: TeamColor; position: Position; x: number }[] = [
   { color: 'red', position: 'offence', x: 297 },
   { color: 'red', position: 'defence', x: 578 },
@@ -50,145 +50,184 @@ const TEAM_LOOK = {
 const percent = (value: number, of: number) => `${(value / of) * 100}%`;
 
 /**
- * The whole table from above, lengthwise, for goals told by rod or by figure (P42, P43): the
- * rods in table order with their figures and handles, each player's name plate on their rail,
- * and a tap zone per rod or per figure. Figures are numbered from the team's handles. Seen from
- * the red side, the table turns half way; the plates always read upright.
+ * The table from above with its figures, where every goal is entered (canvas P42, P43, and
+ * the owner's round H): a tap zone per rod (who scored, or which rod) or per figure. Figures are
+ * numbered from the team's handles. Lengthwise, the rails are LED boards with each player's
+ * name and goals by their rods; upright (a phone held portrait), the table stands with the red
+ * goal on top and each team's board at its end. Text always reads upright.
  */
 @Component({
   selector: 'fl-table',
-  imports: [AvatarComponent, TranslocoPipe],
+  imports: [NgTemplateOutlet, TranslocoPipe],
   template: `
-    <div class="table" [class.from-red]="fromRed()" [class.own]="own()">
-      <svg [attr.viewBox]="'0 0 ' + width + ' ' + height" aria-hidden="true">
-        <defs>
-          <radialGradient id="fl-felt" cx="50%" cy="50%" r="70%">
-            <stop offset="0" stop-color="#157a42" />
-            <stop offset="0.6" stop-color="#0d5a31" />
-            <stop offset="1" stop-color="#083d21" />
-          </radialGradient>
-          <linearGradient id="fl-steel" x1="0" x2="1">
-            <stop offset="0" stop-color="#5e666c" />
-            <stop offset="0.45" stop-color="#e9edf0" />
-            <stop offset="1" stop-color="#7c858c" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="22" width="674" height="346" rx="10" fill="#17191c" />
-        <rect x="16" y="52" width="642" height="286" fill="url(#fl-felt)" />
-        <g fill="none" stroke="rgb(225 255 235 / 0.5)" stroke-width="2">
-          <rect x="23" y="59" width="628" height="272" />
-          <line x1="337" y1="59" x2="337" y2="331" />
-          <circle cx="337" cy="195" r="43" />
-          <path d="M22 115h60v160h-60M652 115h-60v160h60" />
-        </g>
-        <rect x="0" y="150" width="16" height="90" fill="#000" />
-        <rect x="658" y="150" width="16" height="90" fill="#000" />
-        @for (rod of rods; track rod.x) {
-          <rect
-            [attr.x]="rod.x - 3.5"
-            [attr.y]="rod.color === 'red' ? 0 : 34"
-            width="7"
-            height="356"
-            fill="url(#fl-steel)"
-          />
-        }
-        @for (figure of figures; track figure.key) {
-          @let look = looks[figure.color];
-          <g [attr.transform]="'translate(' + (figure.x - 15) + ' ' + (figure.y - 15) + ')'">
-            <rect
-              [attr.x]="look.footX"
-              y="12"
-              width="13"
-              height="6"
-              rx="3"
-              [attr.fill]="look.foot"
-            />
-            <rect
-              x="9"
-              y="1"
-              width="12"
-              height="28"
-              rx="6"
-              [attr.fill]="look.body"
-              [attr.stroke]="look.edge"
-              stroke-width="1.2"
-            />
-            <circle cx="15" cy="15" r="5.5" fill="#1b1410" />
-          </g>
-        }
-        <rect x="0" y="22" width="674" height="30" rx="10" fill="#17191c" />
-        <rect x="0" y="50" width="674" height="2" style="fill: var(--fl-red-board)" />
-        <rect x="0" y="338" width="674" height="30" rx="10" fill="#17191c" />
-        <rect x="0" y="338" width="674" height="2" style="fill: var(--fl-blue-board)" />
-        @for (rod of rods; track rod.x) {
-          <g
-            [attr.transform]="
-              'translate(' + (rod.x - 10.5) + ' ' + (rod.color === 'red' ? 0 : 368) + ')'
-            "
-          >
-            <rect width="21" height="22" rx="4" fill="#232323" />
-            <rect
-              [attr.y]="rod.color === 'red' ? 0 : 18"
-              width="21"
-              height="4"
-              [style.fill]="rod.color === 'red' ? 'var(--fl-red-board)' : 'var(--fl-blue-board)'"
-            />
-          </g>
-        }
-      </svg>
-
-      @for (plate of plates(); track plate.key) {
-        <span
-          class="plate plate--{{ plate.color }}"
-          [style.left]="plate.left"
-          [style.top]="plate.top"
-          aria-hidden="true"
-        >
-          <fl-avatar [playerId]="plate.player" [name]="plate.name" [size]="18" />
-          {{ plate.name }}<b>{{ plate.goals }}</b>
-        </span>
+    <div
+      class="frame"
+      [class.vertical]="vertical()"
+      [class.from-red]="fromRed()"
+      [class.own]="own()"
+    >
+      @if (vertical()) {
+        <ng-container *ngTemplateOutlet="board; context: { $implicit: ends()[0] }" />
       }
+      <div class="pitch">
+        <div class="table">
+          <svg [attr.viewBox]="'0 0 ' + width + ' ' + height" aria-hidden="true">
+            <defs>
+              <radialGradient id="fl-felt" cx="50%" cy="50%" r="70%">
+                <stop offset="0" stop-color="#157a42" />
+                <stop offset="0.6" stop-color="#0d5a31" />
+                <stop offset="1" stop-color="#083d21" />
+              </radialGradient>
+              <linearGradient id="fl-steel" x1="0" x2="1">
+                <stop offset="0" stop-color="#5e666c" />
+                <stop offset="0.45" stop-color="#e9edf0" />
+                <stop offset="1" stop-color="#7c858c" />
+              </linearGradient>
+              <pattern id="fl-dots" width="5" height="5" patternUnits="userSpaceOnUse">
+                <rect width="5" height="5" fill="#0a0b0a" />
+                <circle cx="2.5" cy="2.5" r="1.1" fill="#1c1e1c" />
+              </pattern>
+            </defs>
+            <rect x="0" y="22" width="674" height="346" fill="#17191c" />
+            <rect x="16" y="52" width="642" height="286" fill="url(#fl-felt)" />
+            <g fill="none" stroke="rgb(225 255 235 / 0.5)" stroke-width="2">
+              <rect x="23" y="59" width="628" height="272" />
+              <line x1="337" y1="59" x2="337" y2="331" />
+              <circle cx="337" cy="195" r="43" />
+              <path d="M22 115h60v160h-60M652 115h-60v160h60" />
+            </g>
+            <rect x="0" y="150" width="16" height="90" fill="#000" />
+            <rect x="658" y="150" width="16" height="90" fill="#000" />
+            @for (rod of rods; track rod.x) {
+              <rect
+                [attr.x]="rod.x - 3.5"
+                [attr.y]="rod.color === 'red' ? 0 : 34"
+                width="7"
+                height="356"
+                fill="url(#fl-steel)"
+              />
+            }
+            @for (figure of figures; track figure.key) {
+              @let look = looks[figure.color];
+              <g [attr.transform]="'translate(' + (figure.x - 15) + ' ' + (figure.y - 15) + ')'">
+                <rect
+                  [attr.x]="look.footX"
+                  y="12"
+                  width="13"
+                  height="6"
+                  rx="3"
+                  [attr.fill]="look.foot"
+                />
+                <rect
+                  x="9"
+                  y="1"
+                  width="12"
+                  height="28"
+                  rx="6"
+                  [attr.fill]="look.body"
+                  [attr.stroke]="look.edge"
+                  stroke-width="1.2"
+                />
+                <circle cx="15" cy="15" r="5.5" fill="#1b1410" />
+              </g>
+            }
+            <!-- The rails: straight LED boards, each edged in its team's colour. -->
+            <rect x="0" y="22" width="674" height="30" fill="url(#fl-dots)" />
+            <rect x="0" y="50" width="674" height="2" style="fill: var(--fl-red-board)" />
+            <rect x="0" y="338" width="674" height="30" fill="url(#fl-dots)" />
+            <rect x="0" y="338" width="674" height="2" style="fill: var(--fl-blue-board)" />
+            @for (rod of rods; track rod.x) {
+              <g
+                [attr.transform]="
+                  'translate(' + (rod.x - 10.5) + ' ' + (rod.color === 'red' ? 0 : 368) + ')'
+                "
+              >
+                <rect width="21" height="22" rx="4" fill="#232323" />
+                <rect
+                  [attr.y]="rod.color === 'red' ? 0 : 18"
+                  width="21"
+                  height="4"
+                  [style.fill]="
+                    rod.color === 'red' ? 'var(--fl-red-board)' : 'var(--fl-blue-board)'
+                  "
+                />
+              </g>
+            }
+          </svg>
 
-      @if (detail() === 'rod') {
-        @for (rod of rods; track rod.x) {
-          @let name = nameOf(rod.color, rod.position);
-          <button
-            class="hit rod"
-            [class.last]="isLast(rod.color, rod.rod)"
-            [style.left]="percent(rod.x - 40, width)"
-            [style.top]="percent(felt.y, height)"
-            [style.width]="percent(80, width)"
-            [style.height]="percent(felt.height, height)"
-            [disabled]="disabled()"
-            (click)="pick(rod)"
-            [attr.aria-label]="
-              ((own() ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }) +
-              ' · ' +
-              ('rods.' + rod.rod | transloco)
-            "
-          ></button>
-        }
-      } @else {
-        @for (figure of figures; track figure.key) {
-          @let name = nameOf(figure.color, figure.position);
-          <button
-            class="hit man"
-            [class.last]="isLast(figure.color, figure.rod, figure.man)"
-            [style.left]="percent(figure.x, width)"
-            [style.top]="percent(figure.y, height)"
-            [disabled]="disabled()"
-            (click)="pick(figure, figure.man)"
-            [attr.aria-label]="
-              ((own() ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }) +
-              ' · ' +
-              ('rods.' + figure.rod | transloco) +
-              ' ' +
-              figure.man
-            "
-          ></button>
-        }
+          @if (!vertical()) {
+            @for (plate of plates(); track plate.key) {
+              <span
+                class="plate plate--{{ plate.color }}"
+                [style.left]="plate.left"
+                [style.top]="plate.top"
+                aria-hidden="true"
+              >
+                {{ plate.name }}<b>{{ plate.goals }}</b>
+              </span>
+            }
+          }
+
+          @if (detail() === 'man') {
+            @for (figure of figures; track figure.key) {
+              @let name = nameOf(figure.color, figure.position);
+              <button
+                class="hit man"
+                [attr.data-team]="figure.color"
+                [attr.data-position]="figure.position"
+                [class.last]="isLast(figure.color, figure.rod, figure.man)"
+                [style.left]="percent(figure.x, width)"
+                [style.top]="percent(figure.y, height)"
+                [disabled]="disabled()"
+                (click)="pick(figure, true, figure.man)"
+                [attr.aria-label]="
+                  ((own() ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }) +
+                  ' · ' +
+                  ('rods.' + figure.rod | transloco) +
+                  ' ' +
+                  figure.man
+                "
+              ></button>
+            }
+          } @else {
+            @for (rod of rods; track rod.x) {
+              @let name = nameOf(rod.color, rod.position);
+              <button
+                class="hit rod rod--{{ rod.color }}"
+                [attr.data-team]="rod.color"
+                [attr.data-position]="rod.position"
+                [class.last]="detail() === 'rod' && isLast(rod.color, rod.rod)"
+                [style.left]="percent(rod.x - 40, width)"
+                [style.top]="percent(felt.y, height)"
+                [style.width]="percent(80, width)"
+                [style.height]="percent(felt.height, height)"
+                [disabled]="disabled()"
+                (click)="pick(rod, detail() === 'rod')"
+                [attr.aria-label]="
+                  ((own() ? 'game.ownGoalAria' : 'game.goalAria') | transloco: { name }) +
+                  (detail() === 'rod' ? ' · ' + ('rods.' + rod.rod | transloco) : '')
+                "
+              ></button>
+            }
+          }
+        </div>
+      </div>
+      @if (vertical()) {
+        <ng-container *ngTemplateOutlet="board; context: { $implicit: ends()[1] }" />
       }
     </div>
+
+    <!-- A team's LED board at its end of the upright table. -->
+    <ng-template #board let-end>
+      <div class="board board--{{ end.color }}" aria-hidden="true">
+        <span class="team">{{ 'team.' + end.color | transloco }}</span>
+        @for (player of end.players; track player.position) {
+          <span class="who"
+            >{{ player.name }}<b>{{ player.goals }}</b></span
+          >
+        }
+      </div>
+    </ng-template>
   `,
   styles: `
     :host {
@@ -198,51 +237,102 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       min-height: 0;
       container-type: size;
     }
-    .table {
+    .frame {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+    }
+    /* Lengthwise: as wide as the space allows, keeping the table's proportions. */
+    .pitch {
       position: relative;
       width: min(100cqw, calc(100cqh * 674 / 390));
       aspect-ratio: 674 / 390;
     }
-    .table.from-red {
+    .table {
+      position: absolute;
+      inset: 0;
+    }
+    .from-red .pitch {
       transform: rotate(180deg);
+    }
+    /* Upright: the table stands, red goal on top, with a board at each end. */
+    .vertical .pitch {
+      width: min(100cqw, calc((100cqh - 96px) * 390 / 674));
+      aspect-ratio: 390 / 674;
+    }
+    .vertical .table {
+      inset: auto;
+      top: 100%;
+      left: 0;
+      width: calc(100% * 674 / 390);
+      height: calc(100% * 390 / 674);
+      transform-origin: 0 0;
+      transform: rotate(-90deg);
     }
     svg {
       display: block;
       width: 100%;
       height: 100%;
     }
-    /* A player's name and goals on their rail; the far team's face them. */
+    /* A player's name and goals in LED letters on their rail's board. */
     .plate {
       position: absolute;
       z-index: 2;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       max-width: 22%;
-      height: 6.2%;
-      padding: 0 4px 0 3px;
-      border-radius: 999px;
-      background: #000;
-      box-shadow: inset 0 0 0 1px #3a3d41;
-      font: 700 clamp(0.6rem, 2.2cqw, 0.85rem) / 1 var(--fl-display);
+      transform: translate(-50%, -50%);
+      font: 800 clamp(0.6rem, 2.2cqw, 0.9rem) / 1 var(--fl-display);
+      color: var(--fl-ink);
       white-space: nowrap;
       overflow: hidden;
-      transform: translate(-50%, -50%);
       pointer-events: none;
     }
-    /* Plates always read upright, also on the table turned for the red side. */
     .from-red .plate {
       transform: translate(-50%, -50%) rotate(180deg);
     }
     .plate b {
-      padding: 0 4px;
       font: 900 1.3em/1 var(--fl-led);
     }
-    .plate--red b {
+    .plate--red b,
+    .board--red b,
+    .board--red .team {
       color: var(--fl-red-board);
     }
-    .plate--blue b {
+    .plate--blue b,
+    .board--blue b,
+    .board--blue .team {
       color: var(--fl-blue-board);
+    }
+    .board {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      overflow: hidden;
+      border-radius: 6px;
+      background: var(--fl-board-bg);
+      box-shadow: inset 0 0 0 1.5px var(--fl-line);
+      font: 800 0.95rem/1 var(--fl-display);
+      white-space: nowrap;
+    }
+    .board .team {
+      font-size: 0.75rem;
+    }
+    .board .who {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .board b {
+      font: 900 1.3rem/1 var(--fl-led);
     }
     .hit {
       position: absolute;
@@ -254,7 +344,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       touch-action: manipulation;
     }
     .hit:active {
-      background: rgb(255 255 255 / 0.14);
+      background: rgb(255 255 255 / 0.16);
     }
     .hit:disabled {
       cursor: default;
@@ -286,7 +376,10 @@ export class TableComponent {
   private readonly _players = inject(PlayerService);
 
   public readonly game = input.required<Game>();
-  public readonly detail = input.required<'rod' | 'man'>();
+  /** What a tap tells: who scored (a rod of theirs), the rod, or the figure. */
+  public readonly detail = input.required<GoalDetail>();
+  /** The table standing (a phone held portrait), red goal on top. */
+  public readonly vertical = input(false);
   /** Seen from the red side: the table turned half way. */
   public readonly fromRed = input(false);
   /** The next tap is an own goal of the player whose rod or figure it is. */
@@ -319,13 +412,31 @@ export class TableComponent {
       return {
         key: `${color}-${position}`,
         color,
-        player: slot.player,
         name: this._players.getPlayerName(slot.player),
         goals: slot.goals,
         left: percent(x, WIDTH),
         top: percent(color === 'red' ? 37 : 353, HEIGHT),
       };
     });
+  });
+
+  /** The boards at the ends of the upright table: the team whose goal is there, on top first. */
+  protected readonly ends = computed(() => {
+    const game = this.game();
+    const end = (color: TeamColor) => {
+      const team = game.teams[color];
+      const positions: Position[] =
+        team.defence.player === team.offence.player ? ['defence'] : ['defence', 'offence'];
+      return {
+        color,
+        players: positions.map((position) => ({
+          position,
+          name: this._players.getPlayerName(team[position].player),
+          goals: team[position].goals,
+        })),
+      };
+    };
+    return this.fromRed() ? [end('blue'), end('red')] : [end('red'), end('blue')];
   });
 
   /** The rod (and figure) of the last goal, when it was told that precisely. */
@@ -345,7 +456,17 @@ export class TableComponent {
     );
   }
 
-  protected pick(rod: { color: TeamColor; position: Position; rod: Rod }, man?: number): void {
-    this.score.emit({ color: rod.color, position: rod.position, rod: rod.rod, man });
+  /** A tap: the player, and the rod (and figure) when the goal is told that precisely. */
+  protected pick(
+    rod: { color: TeamColor; position: Position; rod: Rod },
+    withRod: boolean,
+    man?: number,
+  ): void {
+    this.score.emit({
+      color: rod.color,
+      position: rod.position,
+      ...(withRod && { rod: rod.rod }),
+      ...(man && { man }),
+    });
   }
 }

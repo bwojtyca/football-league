@@ -114,23 +114,17 @@
             </button>
           }
         </div>
-        @if (inputMode() === 'position') {
-          <div class="screen">
-            <span>{{ 'newGame.screen' | transloco }}</span>
-            <div
-              class="fl-switch"
-              role="radiogroup"
-              [attr.aria-label]="'newGame.screen' | transloco"
-            >
-              <button role="radio" [attr.aria-checked]="upright()" (click)="upright.set(true)">
-                {{ 'newGame.upright' | transloco }}
-              </button>
-              <button role="radio" [attr.aria-checked]="!upright()" (click)="upright.set(false)">
-                {{ 'newGame.sideways' | transloco }}
-              </button>
-            </div>
+        <div class="screen">
+          <span>{{ 'newGame.screen' | transloco }}</span>
+          <div class="fl-switch" role="radiogroup" [attr.aria-label]="'newGame.screen' | transloco">
+            <button role="radio" [attr.aria-checked]="upright()" (click)="upright.set(true)">
+              {{ 'newGame.upright' | transloco }}
+            </button>
+            <button role="radio" [attr.aria-checked]="!upright()" (click)="upright.set(false)">
+              {{ 'newGame.sideways' | transloco }}
+            </button>
           </div>
-        }
+        </div>
         <p class="hint">{{ 'newGame.inputHint.' + inputMode() | transloco }}</p>
       </section>
 

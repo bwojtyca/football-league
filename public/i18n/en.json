@@ -189,9 +189,9 @@
       "man": "Which figure"
     },
     "inputHint": {
-      "position": "Tap the player who scored. The quickest.",
-      "rod": "Tap the rod the goal came from: goalkeeper, defence, midfield or attack. Sideways screen, the whole table.",
-      "man": "Tap the very figure on its rod. The most precise. Sideways screen, the whole table."
+      "position": "Tap a rod of the player who scored. The quickest.",
+      "rod": "Tap the rod the goal came from: goalkeeper, defence, midfield or attack.",
+      "man": "Tap the very figure on its rod. The most precise; sideways the figures are biggest."
     },
     "screen": "Game screen",
     "upright": "Upright",
@@ -247,11 +247,7 @@
     "lastGoal": "Last goal: {event}",
     "score": "Score",
     "ownArm": "Own goal…",
-    "ownCancel": "Cancel own goal",
-    "turnTitle": "Turn the phone sideways",
-    "turnText": "Rod and figure show the whole table with its eight rods. Lay the phone by the table, its long side along the table.",
-    "turnDone": "Done, it’s sideways",
-    "turnWho": "Record only who scored (upright)"
+    "ownCancel": "Cancel own goal"
   },
   "modes": {
     "title": "Mode",

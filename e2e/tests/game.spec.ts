@@ -29,7 +29,12 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await expect(bar).toContainText(
     t('game.event.goal', { name: a, from: t('position.fromOffence') }),
   );
-  await page.getByRole('button', { name: t('game.ownGoalAria', { name: c }), exact: true }).click();
+  // An own goal: "Own goal…", then a rod of the one who scored it.
+  await page.getByRole('button', { name: t('game.ownArm') }).click();
+  await page
+    .getByRole('button', { name: t('game.ownGoalAria', { name: c }), exact: true })
+    .first()
+    .click();
   await expect(score(page)).toHaveText('2:0');
   await shot(page, 'game-running');
 
@@ -141,12 +146,10 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   const detail = page.locator('header.top button.detail');
   const button = (name: string) => page.getByRole('button', { name, exact: true });
 
-  // By rod: the whole table needs the phone sideways; the choice stays on the device.
+  // By rod, on the upright table; the choice stays on the device.
   await detail.click();
   expect(await page.evaluate(() => localStorage.getItem('fl.goalDetail'))).toBe('rod');
   await page.reload();
-  await page.getByRole('button', { name: t('game.turnDone') }).click();
-  expect(await page.evaluate(() => localStorage.getItem('fl.rotation'))).toBe('1');
   // Bartek scores with a forward.
   await button(`${t('game.goalAria', { name: b })} · ${t('rods.attack')}`).click();
   await expect(score(page)).toHaveText('1:0');
@@ -181,7 +184,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   const rematch = page.locator('fl-game-new-dialog');
   await rematch.getByRole('radio', { name: t('newGame.inputs.man') }).click();
   await rematch.getByRole('button', { name: t('newGame.start') }).click();
-  await expect(page.locator('fl-table')).toBeVisible();
+  await expect(page.locator('fl-table button.hit.man').first()).toBeVisible();
   await page
     .locator('header.top')
     .getByRole('link', { name: t('common.back') })

@@ -189,9 +189,9 @@
       "man": "Którym zawodnikiem"
     },
     "inputHint": {
-      "position": "Tapnięcie w gracza, który strzelił. Najszybciej.",
-      "rod": "Tapnięcie w drążek, z którego padł gol: bramkarz, obrona, pomoc albo atak. Ekran poziomo, cały stół.",
-      "man": "Tapnięcie w konkretną figurkę na drążku. Najdokładniej. Ekran poziomo, cały stół."
+      "position": "Tapnięcie w drążek gracza, który strzelił. Najszybciej.",
+      "rod": "Tapnięcie w drążek, z którego padł gol: bramkarz, obrona, pomoc albo atak.",
+      "man": "Tapnięcie w konkretną figurkę na drążku. Najdokładniej; poziomo figurki są największe."
     },
     "screen": "Ekran meczu",
     "upright": "Pionowo",
@@ -247,11 +247,7 @@
     "lastGoal": "Ostatni gol: {event}",
     "score": "Wynik",
     "ownArm": "Samobój…",
-    "ownCancel": "Anuluj samobój",
-    "turnTitle": "Obróć telefon poziomo",
-    "turnText": "Linia i zawodnik pokazują cały stół z ośmioma drążkami. Połóż telefon przy stole, długim bokiem wzdłuż stołu.",
-    "turnDone": "Gotowe, obrócony",
-    "turnWho": "Zapisuj tylko, kto strzelił (pionowo)"
+    "ownCancel": "Anuluj samobój"
   },
   "modes": {
     "title": "Tryb",
