@@ -133,8 +133,13 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   rematch).
 - `game/timeline.ts` tells how a logged game went (score after each goal, longest run, biggest
   leads, comeback); the finished game screen opens it in a bottom sheet with a step chart.
-- The new game dialog suggests the most even split of four players (Elo) when it is clearly
-  more even than the chosen one. `game/mode/` has the shared rules picker and label.
+- The new game dialog (canvas P31, full screen on a phone) shows the lineups on a small table;
+  tapping a place opens `player-picker-sheet.component.ts` (P32: search, Elo, where each one
+  plays; picking someone placed elsewhere swaps the two places; "plays alone"; a new player).
+  It suggests the most even split of four players (Elo) when it is clearly more even than the
+  chosen one, and chooses what a goal records and the screen's orientation (device settings in
+  `game/screen-settings.ts`, read by the game screen). `game/mode/` has the shared rules picker
+  and label.
 - Game screen (canvas P40–P49): a header (back, turn, goal detail, series or rules over an LED
   clock, pause, menu), the score on an LED board, the table, and a "Last" bar with the undo.
   Two layouts from one template: portrait (2x2 cells, each cell its player's goal button) and
@@ -353,7 +358,9 @@ session can pick up where the last one stopped:
   `docs/superpowers/plans/2026-10-05-ui-noca.md`), then the UX (navigation and screens from the
   canvas's "Flow aplikacji" page), then new features (kits, sign-in) on the new UI and UX. The
   owner lets finished work with a green Check go to `master` (5 Oct). UX steps, in order:
-  1. game screen (live 5 Oct, `docs/superpowers/plans/2026-10-05-ux-game.md`); 2. starting a
-  game ("What are we playing?", the new game with a player picker); 3. the league's skeleton
-  (league hub instead of "More", lists, players, settings); 4. leagues, the new league wizard,
-  app settings; 5. profile, comparison, game details; 6. tournaments; 7. the desktop layout.
+  1. game screen (live 5 Oct, `docs/superpowers/plans/2026-10-05-ux-game.md`); 2. the new game
+  with a player picker (live 5 Oct); 3. the league's hub instead of "More" (`l/:id/more`,
+  `league-hub.component.ts`), its players (`players`) and settings (`settings`, archive or
+  delete in a dialog) (live 5 Oct; the lists of P10–P13 and statistics P15 still to compare);
+  4. leagues, the new league wizard, app settings; 5. profile, comparison, game details;
+  6. tournaments; 7. the desktop layout.

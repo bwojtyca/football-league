@@ -139,6 +139,14 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       text-align: left;
       font: inherit;
     }
+    .row > div {
+      flex: 1;
+      min-width: 0;
+    }
+    .row > mat-slide-toggle,
+    .row > .mat-icon {
+      flex: none;
+    }
     .row + .row {
       border-top: 1px solid var(--fl-line);
     }
