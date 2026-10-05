@@ -365,5 +365,7 @@ session can pick up where the last one stopped:
   tournaments running and finished with winners, jumps on the statistics (all live 5 Oct);
   4. the leagues page with crests, a running game and deleted leagues to restore, and the new
   league in two steps (`league-new-dialog.component.ts`: name, then who plays) (live 5 Oct;
-  app settings P66 wait for more than the language); 5. profile, comparison, game details;
+  app settings P66 wait for more than the language); 5. a finished game's page (result,
+  timeline and league facts inline) and the profile in tabs Overview / Statistics / Games
+  (live 5 Oct);
   6. tournaments; 7. the desktop layout.
