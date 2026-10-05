@@ -254,7 +254,7 @@ export class GameDetailComponent implements LeaveGuarded {
         players.reduce((sum, id) => sum + (current?.get(id) ?? START_RATING), 0) / players.length
       );
     };
-    const loser = winner === 'red' ? 'blue' : 'red';
+    const loser: TeamColor = winner === 'red' ? 'blue' : 'red';
     const gain = K_FACTOR * (1 - winChance(team(winner), team(loser)));
     return [winner, loser].flatMap((color) =>
       teamPlayers(game.teams[color]).map((id) => ({
