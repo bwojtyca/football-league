@@ -368,4 +368,6 @@ session can pick up where the last one stopped:
   app settings P66 wait for more than the language); 5. a finished game's page (result,
   timeline and league facts inline) and the profile in tabs Overview / Statistics / Games
   (live 5 Oct);
-  6. tournaments; 7. the desktop layout.
+  6. a new tournament starts with its format (cards with what each needs; a series goes to the
+  new game) (live 5 Oct; the running and finished pages P52–P54 were close already); 7. the
+  desktop layout.
