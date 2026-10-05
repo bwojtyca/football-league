@@ -177,9 +177,18 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
     .locator('fl-finish-panel')
     .getByRole('button', { name: t('game.next') })
     .click();
+  // The rematch chosen with figures opens on the whole table (the screen is reused).
+  const rematch = page.locator('fl-game-new-dialog');
+  await rematch.getByRole('radio', { name: t('newGame.inputs.man') }).click();
+  await rematch.getByRole('button', { name: t('newGame.start') }).click();
+  await expect(page.locator('fl-table')).toBeVisible();
   await page
-    .locator('fl-game-new-dialog')
-    .getByRole('button', { name: t('common.cancel') })
+    .locator('header.top')
+    .getByRole('link', { name: t('common.back') })
+    .click();
+  await page
+    .locator('fl-leave-dialog')
+    .getByRole('button', { name: t('game.leaveRunning') })
     .click();
   await page.locator('fl-ranking').getByText(b).click();
   await page.getByRole('tab', { name: t('player.tabs.stats') }).click();

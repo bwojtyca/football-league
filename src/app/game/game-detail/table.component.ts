@@ -53,7 +53,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
  * The whole table from above, lengthwise, for goals told by rod or by figure (P42, P43): the
  * rods in table order with their figures and handles, each player's name plate on their rail,
  * and a tap zone per rod or per figure. Figures are numbered from the team's handles. Seen from
- * the red side, everything turns half way, so the near team's plates read upright.
+ * the red side, the table turns half way; the plates always read upright.
  */
 @Component({
   selector: 'fl-table',
@@ -230,7 +230,8 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       transform: translate(-50%, -50%);
       pointer-events: none;
     }
-    .plate--red {
+    /* Plates always read upright, also on the table turned for the red side. */
+    .from-red .plate {
       transform: translate(-50%, -50%) rotate(180deg);
     }
     .plate b {

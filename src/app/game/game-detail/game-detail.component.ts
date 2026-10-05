@@ -6,6 +6,7 @@ import {
   HostListener,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -134,6 +135,8 @@ export class GameDetailComponent implements LeaveGuarded {
       switchMap((params) => this._gameService.getGame(params.get('gameId') ?? '')),
     ),
   );
+
+  private readonly _gameId = computed(() => this.game()?.id);
 
   protected readonly leagueId = computed(() => {
     const game = this.game();
@@ -277,6 +280,17 @@ export class GameDetailComponent implements LeaveGuarded {
     const onTurn = (event: MediaQueryListEvent) => this._wide.set(event.matches);
     landscape.addEventListener('change', onTurn);
     inject(DestroyRef).onDestroy(() => landscape.removeEventListener('change', onTurn));
+    // The screen stays when one game leads to the next (a rematch, the next game of a
+    // series): each game opens as the device was last set, e.g. in the new game dialog.
+    effect(() => {
+      if (this._gameId()) {
+        untracked(() => {
+          this.detail.set(readDetail());
+          this.rotation.set(readRotation());
+          this.ownArmed.set(false);
+        });
+      }
+    });
     // A decided game shows the finish panel for a few seconds (time to undo the last goal or
     // tap "Next"); then any device showing it records the result, and the device used for
     // scoring moves on.

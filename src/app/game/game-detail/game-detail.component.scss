@@ -640,12 +640,6 @@
   padding: 0 14px;
 }
 
-/* The far team stands across the table: their cells are turned to face them. */
-.landscape .teams:not(.from-red) .team--red,
-.landscape .teams.from-red .team--blue {
-  transform: rotate(180deg);
-}
-
 /*
  * A portrait screen showing the landscape layout, for a phone lying flat or with the rotation
  * locked: the whole screen turned a quarter, clockwise or not, so either long side of the phone

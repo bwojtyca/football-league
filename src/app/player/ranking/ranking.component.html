@@ -162,11 +162,19 @@
       <b
         >{{ player.name }}
         @for (title of titles().get(player.id) ?? []; track title.id) {
+          @let label =
+            ('titles.' + title.id + '.name' | transloco) +
+            ': ' +
+            ('titles.' + title.id + '.hint' | transloco: { n: titleGames });
           <span
             class="title"
             role="img"
-            [attr.aria-label]="'titles.' + title.id + '.name' | transloco"
-            [attr.title]="'titles.' + title.id + '.name' | transloco"
+            tabindex="0"
+            [attr.aria-label]="label"
+            [matTooltip]="label"
+            matTooltipTouchGestures="on"
+            (click)="$event.preventDefault(); $event.stopPropagation(); tip.toggle()"
+            #tip="matTooltip"
             >{{ title.icon }}</span
           >
         }

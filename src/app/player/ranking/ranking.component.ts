@@ -15,7 +15,7 @@ import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
 import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../potato';
 import { duets } from '../records';
-import { Title } from '../../stats/titles';
+import { Title, TITLE_GAMES } from '../../stats/titles';
 
 /** Fewest games together for a pair to be ranked. */
 const DUET_GAMES = 3;
@@ -53,6 +53,7 @@ export class RankingComponent {
   public readonly titles = input<Map<string, Title[]>>(new Map());
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
+  protected readonly titleGames = TITLE_GAMES;
   /** What is ranked (players, pairs or potatoes), and players by what: Elo or win rate. */
   protected readonly view = signal<'players' | 'duets' | 'potato'>('players');
   protected readonly sortBy = signal<'elo' | 'winRate'>('elo');

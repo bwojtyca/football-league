@@ -277,6 +277,24 @@ Owner feedback, to do at the end (after the planned stages):
   number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)
 
+Owner feedback, round H (5 October 2026, after trying the UX phase; more to come once it is
+all ready):
+- (Done) Nothing on the game screen is shown turned or mirrored any more: the far team's cells
+  and the name plates on the table read upright (they were hard to read).
+- The goal input needs a redesign: the team-tinted translucent cells on the felt look bad
+  for both colours. Proposal: always enter goals on the view of the table with its figures,
+  with the tap zones laid over it (for who scored too). If cells stay, the rounded rails with
+  coloured borders above and below the felt must go (the straight lines of the table view
+  look much better). Idea: use the rails like the advertising boards at a match, a bigger
+  strip with scrolling text (the league's name, the players' names).
+- (Done) Title icons in the rankings show a tooltip (name and why), not a bare `title`.
+- (Done) Bug: a goal by figure did not register in a win-by-2 game. Cause: the rematch (and
+  the next game of a series) reuses the game screen, which read the goal detail and the turn
+  only once; it now reads them for every game (e2e in `game.spec.ts`).
+- After the redesign: streamline the app's flow once more; some screens and transitions make
+  no sense, things hide behind menus or repeat in several views, some mechanics are unclear or
+  hard to reach.
+
 Owner feedback, round G (4 October 2026):
 - (Done, e2e) Goals can tell their rod or figure, besides the position (see the code map);
   one tap per goal, undo as before, the detail chosen on the game screen and kept on the
