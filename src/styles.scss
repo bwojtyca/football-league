@@ -1,6 +1,19 @@
 @use '@angular/material' as mat;
 
 /*
+ * Doto for digits and signs only: letters, units and the colon fall back to Archivo, since
+ * Doto's letters are hard to read and its colon looks like two crosses.
+ */
+@font-face {
+  font-family: 'Doto Digits';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../node_modules/@fontsource/doto/files/doto-latin-900-normal.woff2') format('woff2');
+  unicode-range: U+0025, U+002B-002E, U+0030-0039, U+2212;
+}
+
+/*
  * The look, "Nocą": a foosball table at night. Black around the table, the green felt where
  * the game happens, LED dot-matrix numbers for scores and ratings, the yellow ball for the main
  * action of a screen, red and blue for the teams. Text and headings are Archivo, in sentence
@@ -21,8 +34,8 @@ html {
   );
 
   --fl-display: 'Archivo', system-ui, sans-serif;
-  /* LED dot-matrix numbers: only from about 18px, smaller numbers stay Archivo. */
-  --fl-led: 'Doto', 'Archivo', monospace;
+  /* LED dot-matrix digits (letters stay Archivo): only from about 18px. */
+  --fl-led: 'Doto Digits', 'Archivo', system-ui, sans-serif;
 
   --fl-paper: #000000;
   --fl-card: #0b0c0d;

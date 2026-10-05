@@ -40,7 +40,6 @@
               "@fontsource/archivo/600.css",
               "@fontsource/archivo/700.css",
               "@fontsource/archivo/800.css",
-              "@fontsource/doto/900.css",
               "material-icons/iconfont/filled.css",
               "src/styles.scss"
             ],

@@ -34,15 +34,14 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: var(--fl-ink-2);
+  color: var(--fl-ink);
   font: 900 1.3rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
 /* The leader holds the ball. */
 .first .pos {
-  background: var(--fl-ball);
-  color: var(--fl-on-ball);
+  color: var(--fl-ball);
 }
 
 .who {

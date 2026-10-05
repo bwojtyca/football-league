@@ -103,7 +103,7 @@
     }
 
     <!-- The table seen from where the phone lies: four cells, turned in quarter steps. -->
-    <div class="teams fl-felt" [class.paused]="!!game.paused" [class.turned]="rotation() % 2 === 1">
+    <div class="teams fl-felt" [class.paused]="!!game.paused" [attr.data-turn]="rotation()">
       @if (game.paused) {
         <fl-pause-overlay (resume)="resume()" />
       }
