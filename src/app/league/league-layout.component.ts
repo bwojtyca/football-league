@@ -13,6 +13,7 @@ import { filter, map } from 'rxjs';
 import { Notifier } from '../notifier';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
+import { crestOf } from './league-hub.component';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 
@@ -51,6 +52,37 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
       </main>
     } @else {
       <div class="content"><router-outlet /></div>
+      <!-- On a wide screen (P80): a rail with the leagues and this league's sections. -->
+      <nav class="rail" [attr.aria-label]="'nav.label' | transloco">
+        <a routerLink="/leagues" class="brand">Football League</a>
+        <h2 class="fl-kicker">{{ 'leagues.title' | transloco }}</h2>
+        @for (league of railLeagues(); track league.id) {
+          <a
+            [routerLink]="['/l', league.id]"
+            class="league"
+            [class.current]="league.id === current.id"
+            [attr.aria-current]="league.id === current.id ? 'page' : null"
+          >
+            <span class="crest" aria-hidden="true">{{ league.crest }}</span>
+            <span class="league-name">{{ league.name }}</span>
+          </a>
+        }
+        <a routerLink="/leagues" class="league add">
+          <mat-icon aria-hidden="true">add</mat-icon>{{ 'switcher.manage' | transloco }}
+        </a>
+        <h2 class="fl-kicker">{{ current.name }}</h2>
+        @for (tab of tabs; track tab.section) {
+          <ng-container *ngTemplateOutlet="link; context: { $implicit: tab }" />
+        }
+        <button
+          matButton="filled"
+          class="fl-cta new-play"
+          (click)="newPlay()"
+          [disabled]="current.archived"
+        >
+          <mat-icon>add</mat-icon>{{ 'nav.new' | transloco }}
+        </button>
+      </nav>
       <nav class="tabs" [attr.aria-label]="'nav.label' | transloco">
         @for (tab of tabs.slice(0, 2); track tab.section) {
           <ng-container *ngTemplateOutlet="link; context: { $implicit: tab }" />
@@ -152,6 +184,91 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
       outline: 3px solid var(--fl-ball);
       outline-offset: 2px;
     }
+    .rail {
+      display: none;
+    }
+    /* A wide screen: the rail on the left instead of the bottom bar. */
+    @media (min-width: 1000px) {
+      .content {
+        margin-left: 256px;
+        padding-bottom: 24px;
+      }
+      .tabs {
+        display: none;
+      }
+      .rail {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 256px;
+        padding: 16px 12px;
+        overflow-y: auto;
+        background: var(--fl-card);
+        box-shadow: inset -1px 0 0 var(--fl-line);
+      }
+      .brand {
+        margin: 0 8px 12px;
+        color: var(--fl-ink);
+        text-decoration: none;
+        font: 800 1.2rem/1.2 var(--fl-display);
+      }
+      .rail h2 {
+        margin: 16px 8px 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .league,
+      .rail .tab {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 4px 8px;
+        border-radius: 12px;
+        color: var(--fl-ink-2);
+        text-decoration: none;
+        font: 600 0.95rem/1.2 var(--fl-display);
+      }
+      .league.current,
+      .rail .tab.active {
+        background: var(--fl-card-2);
+        color: var(--fl-ink);
+      }
+      .rail .tab.active mat-icon {
+        color: var(--fl-ball);
+      }
+      .league-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .crest {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: var(--fl-board);
+        box-shadow: inset 0 0 0 1.5px var(--fl-line-2);
+        color: var(--fl-ink);
+        font: 800 0.7rem/1 var(--fl-display);
+      }
+      .league.add mat-icon {
+        width: 32px;
+        text-align: center;
+      }
+      .new-play {
+        margin-top: 16px;
+        --mat-button-filled-container-height: 48px;
+      }
+    }
   `,
 })
 export class LeagueLayoutComponent {
@@ -176,6 +293,15 @@ export class LeagueLayoutComponent {
   protected readonly leagueId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),
     { initialValue: '' },
+  );
+
+  /** The leagues in the rail of a wide screen, each with its crest. */
+  protected readonly railLeagues = computed(() =>
+    (this._leagueService.leagues() ?? []).map((league) => ({
+      id: league.id,
+      name: league.name,
+      crest: crestOf(league.name),
+    })),
   );
 
   /** `undefined` while loading, `null` when there is no such league. */

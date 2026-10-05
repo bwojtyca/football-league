@@ -36,6 +36,13 @@ test('a new league: players, the bottom navigation, language and the league swit
   await expect(nav.getByRole('link', { name: t('nav.games') })).toBeVisible();
 
   await nav.getByRole('link', { name: t('nav.ranking') }).click();
+  // On a wide screen the league's sections move to a rail on the left.
+  const phone = page.viewportSize()!;
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.locator('nav.rail')).toBeVisible();
+  await expect(nav).toBeHidden();
+  await shot(page, 'desktop');
+  await page.setViewportSize(phone);
   await page.getByRole('button', { name: t('switcher.open', { name }) }).click();
   const switcher = page.locator('fl-league-switcher');
   await expect(switcher.getByText(name)).toBeVisible();
