@@ -93,6 +93,12 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
     .click();
   await expect(page.locator('fl-game-list a.game')).toHaveCount(1);
   await expect(page.locator('fl-game-list a.game .score')).toHaveText('8:0');
+  // The finished game's page: the result and how it went.
+  await page.locator('fl-game-list a.game').click();
+  await expect(page.locator('.details .result')).toBeVisible();
+  await expect(page.locator('fl-game-timeline')).toContainText(t('timeline.title'));
+  await shot(page, 'game-details');
+  await page.goBack();
   await expect(page.locator('fl-game-list .day h3')).toContainText(t('gameList.today'));
   await shot(page, 'league-games');
 });

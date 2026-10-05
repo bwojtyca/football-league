@@ -86,7 +86,7 @@ test('statistics: the league, two players compared, a profile and a game against
     .click();
   await page.locator('fl-game-list a.game').last().click();
   await expect(page).toHaveURL(/#\/game\//);
-  await page.locator('footer.bar').getByRole('button').click();
+  // A finished game shows how it went and where it stands, right on its page.
   const sheet = page.locator('fl-game-timeline');
   await expect(sheet.getByRole('heading', { name: t('facts.title') })).toBeVisible();
   await expect(sheet.locator('.facts.league li').last()).toContainText(':');

@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 import { firstValueFrom, interval, map, switchMap } from 'rxjs';
 
 import { leagueOf } from '../../league/league';
@@ -54,7 +54,7 @@ import {
 } from '../game';
 import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
-import { openGameTimeline } from '../game-timeline/game-timeline.component';
+import { GameTimelineComponent } from '../game-timeline/game-timeline.component';
 import { readDetail, readRotation, saveDetail, saveRotation } from '../screen-settings';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
@@ -90,10 +90,12 @@ const EDGE_MIDDLES = [
     RouterLink,
     AvatarComponent,
     FinishPanelComponent,
+    GameTimelineComponent,
     ModeLabelComponent,
     PauseOverlayComponent,
     RatingChangeComponent,
     TableComponent,
+    TranslocoDatePipe,
     TranslocoPipe,
   ],
   templateUrl: './game-detail.component.html',
@@ -103,7 +105,6 @@ export class GameDetailComponent implements LeaveGuarded {
   private readonly _gameService = inject(GameService);
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
-  private readonly _bottomSheet = inject(MatBottomSheet);
   private readonly _snackBar = inject(MatSnackBar);
   private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
@@ -302,6 +303,11 @@ export class GameDetailComponent implements LeaveGuarded {
       const game = this.game();
       return !!game && !game.end;
     });
+  }
+
+  /** The players of a team: one, or the defender and the attacker. */
+  protected sidePlayers(game: Game, color: TeamColor): string[] {
+    return teamPlayers(game.teams[color]);
   }
 
   protected change(playerId: string): number | null {
@@ -544,28 +550,15 @@ export class GameDetailComponent implements LeaveGuarded {
     }
   }
 
-  /** How a finished game went (from its log) and where it stands among the league's games. */
-  protected showTimeline(): void {
+  /**
+   * "How it went" on the finish card: records the result now and stays here, where the
+   * finished game's page tells how it went.
+   */
+  protected howItWent(): void {
     const game = this.game();
-    if (game?.end) {
-      openGameTimeline(this._bottomSheet, game);
+    if (game && this.decided()) {
+      this._closeDecided(game.id, false);
     }
-  }
-
-  /** "How it went" on the finish card: records the result now, stays here and shows it. */
-  protected async howItWent(): Promise<void> {
-    const game = this.game();
-    const winner = this.decided();
-    if (!game || !winner) {
-      return;
-    }
-    await this._closeDecided(game.id, false);
-    // The closed game may not have come back from the server yet.
-    const latest = this.game();
-    openGameTimeline(
-      this._bottomSheet,
-      latest?.end ? latest : { ...game, end: new Date().toISOString(), win: winner },
-    );
   }
 
   /** "Leave, finish later" on a paused game: it waits paused at the top of the games. */

@@ -708,5 +708,8 @@
     "fromOthers": "From other leagues",
     "newPlayers": "New players",
     "summary": "{n, plural, =0 {You can add players later too.} one {# player to start with.} other {# players to start with.}}"
+  },
+  "gameDetails": {
+    "played": "{time} played"
   }
 }

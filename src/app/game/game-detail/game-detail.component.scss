@@ -678,3 +678,90 @@
   padding: env(safe-area-inset-left, 0px) env(safe-area-inset-top, 0px)
     env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px);
 }
+
+/* A finished game (P47): the result on top, then how it went. */
+.details {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 16px 24px;
+}
+
+.result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 12px;
+  margin: 4px 0 16px;
+  padding: 16px 14px;
+  border-radius: 18px;
+  background: var(--fl-felt-bg);
+  box-shadow:
+    inset 0 3px 0 var(--fl-red-board),
+    inset 0 -3px 0 var(--fl-blue-board);
+}
+
+.side {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.side--red {
+  justify-items: end;
+  text-align: right;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.side--red .player {
+  flex-direction: row-reverse;
+}
+
+.player b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 0.95rem/1.2 var(--fl-display);
+  color: rgb(255 255 255 / 0.75);
+}
+
+.side.won .player b {
+  color: #fff;
+}
+
+.player fl-change {
+  font-size: 0.75rem;
+}
+
+.bug.final {
+  display: inline-flex;
+  align-items: baseline;
+  padding: 6px 12px 4px;
+  border-radius: 12px;
+  background: var(--fl-board-bg);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
+  font-size: 2.6rem;
+}
+
+.bug.final b::before {
+  content: none;
+}
+
+.bug.final .sep {
+  padding: 0 4px;
+  font-size: 1.4rem;
+}
+
+.when {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #cfe6d8;
+}

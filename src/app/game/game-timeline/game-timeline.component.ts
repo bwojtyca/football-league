@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheet,
@@ -20,13 +20,16 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
   return sheet.open(GameTimelineComponent, { data: game });
 }
 
-/** How a finished game went: the score over time, its runs and comebacks, every goal. */
+/**
+ * How a finished game went: the score over time, its runs and comebacks, every goal, and where
+ * it stands among the league's games. Opens in a sheet, or sits on the finished game's page.
+ */
 @Component({
   selector: 'fl-game-timeline',
   imports: [BaseChartDirective, MatBottomSheetModule, TranslocoPipe],
   template: `
-    <h2>{{ (timeline ? 'timeline.title' : 'facts.title') | transloco }}</h2>
-    @if (timeline; as story) {
+    <h2>{{ (timeline() ? 'timeline.title' : 'facts.title') | transloco }}</h2>
+    @if (timeline(); as story) {
       <div class="canvas">
         <canvas
           baseChart
@@ -97,7 +100,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
       </ol>
     }
     @if (facts().length) {
-      @if (timeline) {
+      @if (timeline()) {
         <h3>{{ 'facts.title' | transloco }}</h3>
       }
       <ul class="facts league">
@@ -175,7 +178,10 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
   `,
 })
 export class GameTimelineComponent {
-  private readonly _game = inject<Game>(MAT_BOTTOM_SHEET_DATA);
+  private readonly _sheetGame = inject<Game | null>(MAT_BOTTOM_SHEET_DATA, { optional: true });
+  /** The game, when shown on a page rather than in a sheet. */
+  public readonly game = input<Game | null>(null);
+  private readonly _game = computed(() => (this.game() ?? this._sheetGame)!);
   private readonly _playerService = inject(PlayerService);
   private readonly _gameService = inject(GameService);
 
@@ -185,28 +191,30 @@ export class GameTimelineComponent {
     offence: 'position.offence',
     defence: 'position.defence',
   } as const;
-  protected readonly timeline = timelineOf(this._game);
+  protected readonly timeline = computed(() => timelineOf(this._game()));
 
   /** Where the game stands among its league's games, e.g. "the 2nd longest". */
   protected readonly facts = computed(() =>
-    gameFacts(this._game, this._gameService.leagueGames(leagueOf(this._game)) ?? []).map((fact) =>
-      fact.key === 'facts.duration'
-        ? {
-            key: fact.key,
-            params: {
-              time: formatDuration(Number(fact.params['time'])),
-              average: formatDuration(Number(fact.params['average'])),
-            },
-          }
-        : fact,
+    gameFacts(this._game(), this._gameService.leagueGames(leagueOf(this._game())) ?? []).map(
+      (fact) =>
+        fact.key === 'facts.duration'
+          ? {
+              key: fact.key,
+              params: {
+                time: formatDuration(Number(fact.params['time'])),
+                average: formatDuration(Number(fact.params['average'])),
+              },
+            }
+          : fact,
     ),
   );
 
   /** Goals of each team over time, as steps. */
   protected readonly chart = computed<ChartConfiguration<'line'>['data']>(() => {
-    const goals = this.timeline?.goals ?? [];
-    const end = this._game.end
-      ? (Date.parse(this._game.end) - Date.parse(this._game.start)) / 60_000
+    const game = this._game();
+    const goals = this.timeline()?.goals ?? [];
+    const end = game.end
+      ? (Date.parse(game.end) - Date.parse(game.start)) / 60_000
       : (goals.at(-1)?.at ?? 0) / 60_000;
     return {
       datasets: TEAM_COLORS.map((color) => {

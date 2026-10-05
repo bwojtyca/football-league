@@ -107,118 +107,156 @@
       <p class="deleted-note">{{ 'game.deletedNote' | transloco }}</p>
     }
 
-    <!-- The score on the LED board, the team names above their goals. -->
-    <section class="board" [attr.aria-label]="'game.score' | transloco" aria-live="polite">
-      <span class="bug"
-        ><b class="r" [attr.data-team]="'team.red' | transloco">{{ score().red }}</b
-        ><span class="sep">:</span
-        ><b class="b" [attr.data-team]="'team.blue' | transloco">{{ score().blue }}</b></span
-      >
-    </section>
-
-    @if (tableMode() && landscape()) {
-      <!-- Goals told by rod or figure: the whole table, lengthwise. -->
-      <div class="table-area">
-        @if (game.paused) {
-          <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
-        }
-        <fl-table
-          [game]="game"
-          [detail]="$any(detail())"
-          [fromRed]="tableTurn() === 2"
-          [own]="ownArmed()"
-          [disabled]="!!game.paused || !!winner"
-          (score)="tableGoal($event)"
-        />
+    @if (game.end) {
+      <!-- A finished game (P47): the result, how it went and where it stands in the league. -->
+      <div class="details">
+        <section class="result">
+          @for (color of colors; track color) {
+            <div class="side side--{{ color }}" [class.won]="game.win === color">
+              @for (id of sidePlayers(game, color); track id) {
+                @let delta = change(id);
+                <span class="player">
+                  <fl-avatar [playerId]="id" [name]="playerService.getPlayerName(id)" [size]="32" />
+                  <b>{{ playerService.getPlayerName(id) }}</b>
+                  @if (delta !== null) {
+                    <fl-change [value]="delta" />
+                  }
+                </span>
+              }
+            </div>
+            @if ($first) {
+              <span class="bug final"
+                ><b class="r">{{ score().red }}</b
+                ><span class="sep">:</span><b class="b">{{ score().blue }}</b></span
+              >
+            }
+          }
+          <p class="when">
+            {{ game.start | translocoDate: { dateStyle: 'full', timeStyle: 'short' } }} ·
+            {{ 'gameDetails.played' | transloco: { time: clock().time } }}
+            @if (mode(); as rules) {
+              · <fl-mode-label [mode]="rules" />
+            }
+          </p>
+        </section>
+        <fl-game-timeline [game]="game" />
       </div>
     } @else {
-      <!-- Who scored: four cells, the table seen from where the phone lies, turned in quarters. -->
-      <div
-        class="teams fl-felt"
-        [class.paused]="!!game.paused"
-        [class.from-red]="tableTurn() === 2"
-        [attr.data-turn]="tableTurn()"
-      >
-        @if (game.paused) {
-          <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
-        }
-        @for (color of colors; track color) {
-          @for (position of positions; track position) {
-            @let slot = game.teams[color][position];
-            @let name = playerService.getPlayerName(slot.player);
-            @let delta = change(slot.player);
-            <section
-              class="team team--{{ color }}"
-              [class.won]="game.win === color"
-              [style.grid-area]="area(color, position)"
-              [attr.aria-label]="
-                (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
-              "
-            >
-              <!-- The whole cell is the player's goal button. -->
-              <fl-avatar class="face" [playerId]="slot.player" [name]="name" [size]="40" />
-              <b class="name">{{ name }}</b>
-              <small class="pos">
-                {{ positionNames[position] | transloco }}
-                @if (delta !== null) {
-                  <fl-change [value]="delta" />
-                }
-              </small>
-              <b class="goals">{{ slot.goals }}</b>
-              <button
-                class="goal"
-                (click)="goal(color, position)"
-                [attr.aria-label]="'game.goalAria' | transloco: { name }"
-              ></button>
-              <button
-                class="own"
-                (click)="goal(color, position, true)"
-                [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
-              >
-                {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
-              </button>
-            </section>
-          }
-          @if (canSwap(game, color)) {
-            @let spot = swapSpot(color);
-            <button
-              class="swap swap--{{ color }}"
-              [style.left.%]="spot[0]"
-              [style.top.%]="spot[1]"
-              (click)="swap(color)"
-              [attr.aria-label]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
-            >
-              <mat-icon>swap_horiz</mat-icon>
-            </button>
-          }
-        }
-      </div>
-    }
-
-    @if (askTurn() && !winner) {
-      <!-- The whole table needs the phone sideways (P49). -->
-      <section class="turn-prompt" role="dialog" [attr.aria-label]="'game.turnTitle' | transloco">
-        <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
-          <rect
-            x="45"
-            y="15"
-            width="60"
-            height="120"
-            rx="12"
-            fill="#17191c"
-            stroke="#9aa39d"
-            stroke-width="3"
-          />
-          <rect x="52" y="30" width="46" height="90" rx="4" fill="#0d5a31" />
-          <path d="M58 50h34M58 65h34M58 85h34M58 100h34" stroke="#e9edf0" stroke-width="2" />
-        </svg>
-        <h2>{{ 'game.turnTitle' | transloco }}</h2>
-        <p>{{ 'game.turnText' | transloco }}</p>
-        <button matButton="filled" class="fl-cta" (click)="turnDone()">
-          {{ 'game.turnDone' | transloco }}
-        </button>
-        <button matButton (click)="whoOnly()">{{ 'game.turnWho' | transloco }}</button>
+      <!-- The score on the LED board, the team names above their goals. -->
+      <section class="board" [attr.aria-label]="'game.score' | transloco" aria-live="polite">
+        <span class="bug"
+          ><b class="r" [attr.data-team]="'team.red' | transloco">{{ score().red }}</b
+          ><span class="sep">:</span
+          ><b class="b" [attr.data-team]="'team.blue' | transloco">{{ score().blue }}</b></span
+        >
       </section>
+
+      @if (tableMode() && landscape()) {
+        <!-- Goals told by rod or figure: the whole table, lengthwise. -->
+        <div class="table-area">
+          @if (game.paused) {
+            <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+          }
+          <fl-table
+            [game]="game"
+            [detail]="$any(detail())"
+            [fromRed]="tableTurn() === 2"
+            [own]="ownArmed()"
+            [disabled]="!!game.paused || !!winner"
+            (score)="tableGoal($event)"
+          />
+        </div>
+      } @else {
+        <!-- Who scored: four cells, the table seen from where the phone lies, turned in quarters. -->
+        <div
+          class="teams fl-felt"
+          [class.paused]="!!game.paused"
+          [class.from-red]="tableTurn() === 2"
+          [attr.data-turn]="tableTurn()"
+        >
+          @if (game.paused) {
+            <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+          }
+          @for (color of colors; track color) {
+            @for (position of positions; track position) {
+              @let slot = game.teams[color][position];
+              @let name = playerService.getPlayerName(slot.player);
+              @let delta = change(slot.player);
+              <section
+                class="team team--{{ color }}"
+                [class.won]="game.win === color"
+                [style.grid-area]="area(color, position)"
+                [attr.aria-label]="
+                  (teamNames[color] | transloco) + ', ' + (positionNames[position] | transloco)
+                "
+              >
+                <!-- The whole cell is the player's goal button. -->
+                <fl-avatar class="face" [playerId]="slot.player" [name]="name" [size]="40" />
+                <b class="name">{{ name }}</b>
+                <small class="pos">
+                  {{ positionNames[position] | transloco }}
+                  @if (delta !== null) {
+                    <fl-change [value]="delta" />
+                  }
+                </small>
+                <b class="goals">{{ slot.goals }}</b>
+                <button
+                  class="goal"
+                  (click)="goal(color, position)"
+                  [attr.aria-label]="'game.goalAria' | transloco: { name }"
+                ></button>
+                <button
+                  class="own"
+                  (click)="goal(color, position, true)"
+                  [attr.aria-label]="'game.ownGoalAria' | transloco: { name }"
+                >
+                  {{ 'game.ownGoal' | transloco }} <b>{{ slot.ownGoals }}</b>
+                </button>
+              </section>
+            }
+            @if (canSwap(game, color)) {
+              @let spot = swapSpot(color);
+              <button
+                class="swap swap--{{ color }}"
+                [style.left.%]="spot[0]"
+                [style.top.%]="spot[1]"
+                (click)="swap(color)"
+                [attr.aria-label]="
+                  ('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)
+                "
+              >
+                <mat-icon>swap_horiz</mat-icon>
+              </button>
+            }
+          }
+        </div>
+      }
+
+      @if (askTurn() && !winner) {
+        <!-- The whole table needs the phone sideways (P49). -->
+        <section class="turn-prompt" role="dialog" [attr.aria-label]="'game.turnTitle' | transloco">
+          <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+            <rect
+              x="45"
+              y="15"
+              width="60"
+              height="120"
+              rx="12"
+              fill="#17191c"
+              stroke="#9aa39d"
+              stroke-width="3"
+            />
+            <rect x="52" y="30" width="46" height="90" rx="4" fill="#0d5a31" />
+            <path d="M58 50h34M58 65h34M58 85h34M58 100h34" stroke="#e9edf0" stroke-width="2" />
+          </svg>
+          <h2>{{ 'game.turnTitle' | transloco }}</h2>
+          <p>{{ 'game.turnText' | transloco }}</p>
+          <button matButton="filled" class="fl-cta" (click)="turnDone()">
+            {{ 'game.turnDone' | transloco }}
+          </button>
+          <button matButton (click)="whoOnly()">{{ 'game.turnWho' | transloco }}</button>
+        </section>
+      }
     }
 
     @if (winner && !game.end) {
@@ -234,14 +272,6 @@
         (next)="next()"
         (timeline)="howItWent()"
       />
-    } @else if (game.end) {
-      <footer class="bar">
-        <span class="text">{{ 'timeline.prompt' | transloco }}</span>
-        <button matButton (click)="showTimeline()">
-          <mat-icon>timeline</mat-icon
-          >{{ (game.events?.length ? 'timeline.title' : 'facts.title') | transloco }}
-        </button>
-      </footer>
     } @else if (!game.end && game.events) {
       @let last = lastEvent();
       <footer class="bar" role="status">
