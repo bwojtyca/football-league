@@ -361,6 +361,7 @@ session can pick up where the last one stopped:
   1. game screen (live 5 Oct, `docs/superpowers/plans/2026-10-05-ux-game.md`); 2. the new game
   with a player picker (live 5 Oct); 3. the league's hub instead of "More" (`l/:id/more`,
   `league-hub.component.ts`), its players (`players`) and settings (`settings`, archive or
-  delete in a dialog) (live 5 Oct; the lists of P10–P13 and statistics P15 still to compare);
+  delete in a dialog), the ranking with one switch (players, pairs, potato), games by day,
+  tournaments running and finished with winners, jumps on the statistics (all live 5 Oct);
   4. leagues, the new league wizard, app settings; 5. profile, comparison, game details;
   6. tournaments; 7. the desktop layout.

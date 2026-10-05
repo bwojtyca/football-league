@@ -2,8 +2,21 @@
   @if (!s.games) {
     <p class="empty">{{ 'leagueStats.none' | transloco }}</p>
   } @else {
+    <!-- Jumps to the main parts of a long page (P15). -->
+    <nav class="jump" [attr.aria-label]="'leagueStats.jump' | transloco">
+      <button (click)="jump('stats-numbers')">{{ 'leagueStats.numbers' | transloco }}</button>
+      @if (week()) {
+        <button (click)="jump('stats-when')">{{ 'leagueStats.when' | transloco }}</button>
+      }
+      @if (records().length) {
+        <button (click)="jump('stats-records')">{{ 'leagueStats.records' | transloco }}</button>
+      }
+      @if (ratingChart()) {
+        <button (click)="jump('stats-elo')">{{ 'leagueStats.elo' | transloco }}</button>
+      }
+    </nav>
     <div class="fl-stats">
-      <section>
+      <section id="stats-numbers">
         <h2>{{ 'leagueStats.numbers' | transloco }}</h2>
         <div class="fl-tiles">
           <div>
@@ -77,7 +90,7 @@
       </section>
 
       @if (week(); as week) {
-        <section>
+        <section id="stats-when">
           <h2>{{ 'leagueStats.when' | transloco }}</h2>
           <p class="hint">
             {{
@@ -170,7 +183,7 @@
       }
 
       @if (records().length) {
-        <section>
+        <section id="stats-records">
           <h2>{{ 'leagueStats.records' | transloco }}</h2>
           <dl class="fl-records">
             @for (row of records(); track row.key) {
@@ -192,7 +205,7 @@
       }
 
       @if (ratingChart(); as chart) {
-        <section>
+        <section id="stats-elo">
           <h2>{{ 'leagueStats.elo' | transloco }}</h2>
           <p class="hint">{{ 'leagueStats.eloHint' | transloco }}</p>
           <mat-chip-listbox

@@ -47,6 +47,11 @@ interface RecordRow {
   styleUrl: './league-stats.component.scss',
 })
 export class LeagueStatsComponent {
+  /** Scrolls to a part of the page. */
+  protected jump(id: string): void {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _transloco = inject(TranslocoService);

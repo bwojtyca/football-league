@@ -559,7 +559,8 @@
     "goalTimes": "Goal times",
     "fromLog": "From {n, plural, one {# game} other {# games}} with a goal log (since October 2026).",
     "firstGoal": "first goal on average after",
-    "goalGap": "a goal on average every"
+    "goalGap": "a goal on average every",
+    "jump": "Jump to"
   },
   "thirds": {
     "title": "Goals by part of the game",

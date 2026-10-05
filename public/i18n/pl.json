@@ -559,7 +559,8 @@
     "goalTimes": "Czas goli",
     "fromLog": "Z {n, plural, one {# meczu} other {# meczów}} z zapisem goli (od października 2026).",
     "firstGoal": "pierwszy gol średnio po",
-    "goalGap": "gol średnio co"
+    "goalGap": "gol średnio co",
+    "jump": "Przejdź do"
   },
   "thirds": {
     "title": "Gole w częściach meczu",
