@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -10,67 +10,49 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
-import { LanguageSwitchComponent } from '../../shared/language-switch.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { League } from '../league';
+import { openLeagueDeleteDialog } from '../league-delete-dialog.component';
 import { LeagueService } from '../league.service';
 
 /** Choices for the fewest games a player needs to be ranked. */
 const MIN_GAMES = [0, 3, 5, 10, 20, 50];
 
 /**
- * "More": the app's language, links to all leagues and the overall ranking, and the league
- * settings. Without sign-in anyone may change them; a league moderator comes with sign-in.
+ * The league's settings (canvas P18): its name, the ranking threshold, locking new games, and
+ * archiving or deleting it. Without sign-in anyone may change them; a moderator comes with it.
  */
 @Component({
   selector: 'fl-league-settings',
   imports: [
     FormsModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSlideToggleModule,
-    RouterLink,
-    LanguageSwitchComponent,
     TopBarComponent,
     TranslocoPipe,
   ],
   template: `
     @let current = league();
-    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
+    <fl-top-bar [title]="'settings.title' | transloco" [back]="['/l', leagueId(), 'more']" />
     <main class="page">
       @if (current === null) {
         <p class="empty">{{ 'league.notFound' | transloco }}</p>
       } @else if (!current) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
-        <section>
-          <h2>{{ 'more.language' | transloco }}</h2>
-          <fl-language-switch />
-        </section>
-
-        <section class="links">
-          <a routerLink="/ranking"
-            ><mat-icon aria-hidden="true">leaderboard</mat-icon
-            >{{ 'ranking.global' | transloco }}</a
-          >
-          <a routerLink="/leagues"
-            ><mat-icon aria-hidden="true">list</mat-icon>{{ 'switcher.manage' | transloco }}</a
-          >
-        </section>
-
-        <h2 class="fl-kicker group">{{ 'more.league' | transloco }}</h2>
-        <section>
+        <h2 class="fl-kicker">{{ 'settings.general' | transloco }}</h2>
+        <section class="card">
           <mat-form-field appearance="outline" class="full">
             <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
             <input
@@ -85,20 +67,9 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
           </mat-form-field>
         </section>
 
-        <section class="row">
-          <div>
-            <h2>{{ 'settings.lock' | transloco }}</h2>
-            <p class="hint">{{ 'settings.lockHint' | transloco }}</p>
-          </div>
-          <mat-slide-toggle
-            [checked]="!!current.archived"
-            (change)="save({ archived: $event.checked })"
-            [attr.aria-label]="'settings.lock' | transloco"
-          />
-        </section>
-
-        <section>
-          <h2>{{ 'settings.minGames' | transloco }}</h2>
+        <h2 class="fl-kicker">{{ 'settings.rankingGroup' | transloco }}</h2>
+        <section class="card">
+          <h3>{{ 'settings.minGames' | transloco }}</h3>
           <p class="hint">{{ 'settings.minGamesHint' | transloco }}</p>
           <mat-form-field appearance="outline">
             <mat-select
@@ -117,109 +88,83 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
           </mat-form-field>
         </section>
 
-        <section class="danger">
-          <h2>{{ 'settings.delete' | transloco }}</h2>
-          <p class="hint">{{ 'settings.deleteHint' | transloco }}</p>
-          @if (confirming()) {
-            <div
-              class="confirm"
-              role="alertdialog"
-              [attr.aria-label]="'settings.delete' | transloco"
-            >
-              <p>{{ 'settings.deleteConfirm' | transloco: { name: current.name } }}</p>
-              <mat-checkbox [(ngModel)]="withGames">
-                {{ 'settings.deleteGames' | transloco: { n: gameCount() } }}
-              </mat-checkbox>
-              <p class="hint">
-                {{
-                  (withGames ? 'settings.deleteGamesHint' : 'settings.keepGamesHint') | transloco
-                }}
-              </p>
-              <div class="buttons">
-                <button matButton (click)="confirming.set(false)">
-                  {{ 'common.cancel' | transloco }}
-                </button>
-                <button matButton="filled" class="delete" (click)="remove()">
-                  {{ 'settings.delete' | transloco }}
-                </button>
-              </div>
+        <h2 class="fl-kicker">{{ 'settings.changes' | transloco }}</h2>
+        <section class="card rows">
+          <div class="row">
+            <div>
+              <h3>{{ 'settings.lock' | transloco }}</h3>
+              <p class="hint">{{ 'settings.lockHint' | transloco }}</p>
             </div>
-          } @else {
-            <button matButton="outlined" (click)="confirming.set(true)">
-              <mat-icon>delete_outline</mat-icon>{{ 'settings.delete' | transloco }}
-            </button>
-          }
+            <mat-slide-toggle
+              [checked]="!!current.archived"
+              (change)="save({ archived: $event.checked })"
+              [attr.aria-label]="'settings.lock' | transloco"
+            />
+          </div>
+          <button class="row danger" (click)="archiveOrDelete()">
+            <div>
+              <h3>{{ 'settings.archiveOrDelete' | transloco }}</h3>
+              <p class="hint">{{ 'settings.archiveOrDeleteHint' | transloco }}</p>
+            </div>
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </button>
         </section>
       }
     </main>
   `,
   styles: `
-    section {
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--fl-line);
-    }
-    section:last-child {
-      border-bottom: 0;
-    }
     .full {
       width: 100%;
     }
-    .group {
-      margin: 8px 0 12px;
+    .card {
+      margin-bottom: 18px;
+      padding: 14px 16px 4px;
+      border-radius: 16px;
+      background: var(--fl-card);
+      box-shadow: inset 0 0 0 1.5px var(--fl-line);
     }
-    .links {
-      display: grid;
-    }
-    .links a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 48px;
-      color: inherit;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .links mat-icon {
-      color: var(--fl-ink-2);
+    .card.rows {
+      padding: 0;
     }
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      width: 100%;
+      padding: 14px 16px;
+      border: 0;
+      background: none;
+      color: inherit;
+      text-align: left;
+      font: inherit;
+    }
+    .row + .row {
+      border-top: 1px solid var(--fl-line);
+    }
+    button.row {
+      cursor: pointer;
     }
     h2 {
+      margin: 4px 0 6px;
+    }
+    h3 {
       margin: 0 0 4px;
-      font: 800 1.15rem/1.3 var(--fl-display);
+      font: 700 1rem/1.3 var(--fl-display);
     }
     .hint {
       margin: 0 0 8px;
       font-size: 0.85rem;
       color: var(--fl-ink-2);
     }
-    .danger > button {
-      color: var(--mat-sys-error);
-    }
-    .confirm {
-      display: grid;
-      gap: 8px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: var(--mat-sys-error-container);
-      color: var(--mat-sys-on-error-container);
-    }
-    .confirm p {
+    .row .hint {
       margin: 0;
     }
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
+    .danger h3 {
+      color: var(--fl-loss);
     }
-    .delete {
-      --mat-button-filled-container-color: var(--mat-sys-error);
-      --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+    .danger .mat-icon {
+      color: var(--fl-ink-2);
     }
   `,
 })
@@ -262,16 +207,36 @@ export class LeagueSettingsComponent {
       .catch((error) => this._notifier.error('error.league', error));
   }
 
-  protected readonly confirming = signal(false);
-  protected withGames = false;
+  private readonly _dialog = inject(MatDialog);
   protected readonly gameCount = computed(
     () => this._gameService.leagueGames(this.leagueId())?.length ?? 0,
   );
 
-  protected remove(): void {
+  /** Archive or delete, as chosen in the dialog. */
+  protected archiveOrDelete(): void {
+    const league = this.league();
+    if (!league) {
+      return;
+    }
+    openLeagueDeleteDialog(this._dialog, {
+      name: league.name,
+      games: this.gameCount(),
+      archived: !!league.archived,
+    })
+      .afterClosed()
+      .subscribe((choice) => {
+        if (choice && 'archive' in choice) {
+          this.save({ archived: true });
+        } else if (choice) {
+          this._remove(choice.withGames);
+        }
+      });
+  }
+
+  private _remove(withGames: boolean): void {
     const id = this.leagueId();
     this._leagueService
-      .remove(id, this.withGames)
+      .remove(id, withGames)
       .catch((error) => this._notifier.error('error.league', error));
     this._leagueService.lastLeague = '';
     this._router.navigate(['/leagues']);

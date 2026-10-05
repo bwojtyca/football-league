@@ -20,7 +20,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
 
 /**
  * A league's pages with the bottom navigation: ranking, games, the "new play" button,
- * tournaments and more (settings and language).
+ * tournaments and the league's hub (players, settings, language).
  */
 @Component({
   selector: 'fl-league-layout',
@@ -170,7 +170,7 @@ export class LeagueLayoutComponent {
       icon: 'emoji_events',
       label: 'nav.tournaments',
     },
-    { section: 'more', path: ['more'], icon: 'more_horiz', label: 'nav.more' },
+    { section: 'more', path: ['more'], icon: 'shield', label: 'nav.league' },
   ] as const;
 
   protected readonly leagueId = toSignal(
@@ -196,7 +196,7 @@ export class LeagueLayoutComponent {
       ? 'games'
       : part === 'tournaments' || part === 't'
         ? 'tournaments'
-        : part === 'more'
+        : part === 'more' || part === 'settings' || part === 'players'
           ? 'more'
           : 'ranking';
   });

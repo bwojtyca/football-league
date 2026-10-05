@@ -1,0 +1,207 @@
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { map } from 'rxjs';
+
+import { GameService } from '../game/game.service';
+import { LanguageSwitchComponent } from '../shared/language-switch.component';
+import { TopBarComponent } from '../shared/top-bar.component';
+import { LeagueService } from './league.service';
+
+/** Up to three initials of a league's name, as its crest until leagues get one. */
+export function crestOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter((word) => /^\p{L}/u.test(word))
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 3)
+    .toUpperCase();
+}
+
+/**
+ * The league's hub (canvas P14), the last tab of the bottom bar: the league at a glance, its
+ * players, statistics and settings, then the app's language and the ways to other leagues.
+ */
+@Component({
+  selector: 'fl-league-hub',
+  imports: [
+    MatIconModule,
+    MatProgressSpinnerModule,
+    RouterLink,
+    LanguageSwitchComponent,
+    TopBarComponent,
+    TranslocoPipe,
+  ],
+  template: `
+    @let current = league();
+    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
+    <main class="page">
+      @if (current === null) {
+        <p class="empty">{{ 'league.notFound' | transloco }}</p>
+      } @else if (!current) {
+        <div class="loader"><mat-spinner [diameter]="40" /></div>
+      } @else {
+        <section class="hero fl-felt">
+          <span class="crest" aria-hidden="true">{{ crest() }}</span>
+          <span class="about">
+            <b>{{ current.name }}</b>
+            <small>
+              {{ 'count.players' | transloco: { n: current.players.length } }} ·
+              {{ 'count.games' | transloco: { n: games() } }}
+              @if (current.archived) {
+                · {{ 'leagues.archive' | transloco }}
+              }
+            </small>
+          </span>
+        </section>
+
+        <h2 class="fl-kicker">{{ 'hub.league' | transloco }}</h2>
+        <nav class="rows">
+          <a [routerLink]="['/l', current.id, 'players']">
+            <mat-icon aria-hidden="true">groups</mat-icon>
+            <span
+              ><b>{{ 'hub.players' | transloco }}</b
+              ><small>{{ 'count.players' | transloco: { n: current.players.length } }}</small></span
+            >
+            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+          <a [routerLink]="['/l', current.id, 'stats']">
+            <mat-icon aria-hidden="true">insights</mat-icon>
+            <span
+              ><b>{{ 'hub.stats' | transloco }}</b
+              ><small>{{ 'hub.statsHint' | transloco: { games: games() } }}</small></span
+            >
+            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+          <a [routerLink]="['/l', current.id, 'settings']">
+            <mat-icon aria-hidden="true">tune</mat-icon>
+            <span
+              ><b>{{ 'settings.title' | transloco }}</b
+              ><small>{{ 'hub.settingsHint' | transloco }}</small></span
+            >
+            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        </nav>
+
+        <h2 class="fl-kicker">{{ 'hub.app' | transloco }}</h2>
+        <section class="language">
+          <span>{{ 'more.language' | transloco }}</span>
+          <fl-language-switch />
+        </section>
+        <nav class="rows">
+          <a routerLink="/ranking">
+            <mat-icon aria-hidden="true">leaderboard</mat-icon>
+            <span
+              ><b>{{ 'ranking.global' | transloco }}</b></span
+            >
+            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+          <a routerLink="/leagues">
+            <mat-icon aria-hidden="true">list</mat-icon>
+            <span
+              ><b>{{ 'switcher.manage' | transloco }}</b></span
+            >
+            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
+          </a>
+        </nav>
+      }
+    </main>
+  `,
+  styles: `
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--fl-felt-bg);
+    }
+    .crest {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: var(--fl-board);
+      box-shadow: inset 0 0 0 2px var(--fl-ball);
+      color: var(--fl-ball);
+      font: 800 1.1rem/1 var(--fl-display);
+    }
+    .about {
+      display: grid;
+      min-width: 0;
+    }
+    .about b {
+      font: 800 1.25rem/1.2 var(--fl-display);
+    }
+    .about small {
+      color: #cfe6d8;
+    }
+    h2 {
+      margin: 8px 0 6px;
+    }
+    .rows {
+      display: grid;
+      margin-bottom: 16px;
+      border-radius: 16px;
+      background: var(--fl-card);
+      box-shadow: inset 0 0 0 1.5px var(--fl-line);
+    }
+    .rows a {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 60px;
+      padding: 8px 12px 8px 16px;
+      color: inherit;
+      text-decoration: none;
+    }
+    .rows a + a {
+      border-top: 1px solid var(--fl-line);
+    }
+    .rows span {
+      flex: 1;
+      display: grid;
+      min-width: 0;
+    }
+    .rows b {
+      font: 700 1rem/1.3 var(--fl-display);
+    }
+    .rows small {
+      font-size: 0.8rem;
+      color: var(--fl-ink-2);
+    }
+    .rows .mat-icon {
+      color: var(--fl-ink-2);
+    }
+    .language {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding: 0 4px;
+      font-weight: 700;
+    }
+  `,
+})
+export class LeagueHubComponent {
+  private readonly _leagueService = inject(LeagueService);
+  private readonly _gameService = inject(GameService);
+
+  protected readonly leagueId = toSignal(
+    inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),
+    { initialValue: '' },
+  );
+  protected readonly league = computed(() => this._leagueService.league(this.leagueId()));
+  protected readonly crest = computed(() => crestOf(this.league()?.name ?? ''));
+  protected readonly games = computed(
+    () => this._gameService.leagueGames(this.leagueId())?.length ?? 0,
+  );
+}

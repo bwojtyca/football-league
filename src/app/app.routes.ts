@@ -48,11 +48,20 @@ export const routes: Routes = [
       {
         path: 'more',
         loadComponent: () =>
+          import('./league/league-hub.component').then((m) => m.LeagueHubComponent),
+      },
+      {
+        path: 'players',
+        loadComponent: () =>
+          import('./league/league-players.component').then((m) => m.LeaguePlayersComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
           import('./league/league-settings/league-settings.component').then(
             (m) => m.LeagueSettingsComponent,
           ),
       },
-      { path: 'settings', redirectTo: 'more' },
       {
         path: 'player/:playerId',
         loadComponent: () =>

@@ -443,7 +443,16 @@
     "deleted": "League deleted",
     "deleteGames": "Also delete all games of this league ({n})",
     "deleteGamesHint": "The games also leave the overall ranking and profiles. Restoring the league brings them back.",
-    "keepGamesHint": "The games stay in the overall ranking and player profiles."
+    "keepGamesHint": "The games stay in the overall ranking and player profiles.",
+    "general": "General",
+    "rankingGroup": "Ranking",
+    "changes": "Important changes",
+    "archiveOrDelete": "Archive or delete the league",
+    "archiveOrDeleteHint": "Both can be undone.",
+    "question": "What to do with “{name}”?",
+    "archive": "Archive",
+    "archiveHint": "The league stays to look at, with its ranking and history. No one can start a new game.",
+    "deleteOption": "Delete"
   },
   "ranking": {
     "sortBy": "Sort by",
@@ -489,8 +498,8 @@
     "ranking": "Ranking",
     "games": "Games",
     "tournaments": "Tournaments",
-    "more": "More",
-    "new": "New play"
+    "new": "New play",
+    "league": "League"
   },
   "switcher": {
     "title": "Leagues",
@@ -666,5 +675,14 @@
       "hint": "most goals with the goalkeeper",
       "value": "{count, plural, one {# goal} other {# goals}}"
     }
+  },
+  "hub": {
+    "league": "League",
+    "players": "Players",
+    "inLeague": "In the league ({n})",
+    "stats": "League statistics",
+    "statsHint": "{games, plural, one {# game} other {# games}}, records, when we play",
+    "settingsHint": "name, ranking, locking new games, deleting",
+    "app": "App"
   }
 }

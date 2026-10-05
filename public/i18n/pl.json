@@ -443,7 +443,16 @@
     "deleted": "Liga usunięta",
     "deleteGames": "Usuń też wszystkie mecze tej ligi ({n})",
     "deleteGamesHint": "Mecze znikną też z rankingu ogólnego i profili. Przywrócenie ligi przywróci jej mecze.",
-    "keepGamesHint": "Mecze zostaną w rankingu ogólnym i profilach graczy."
+    "keepGamesHint": "Mecze zostaną w rankingu ogólnym i profilach graczy.",
+    "general": "Ogólne",
+    "rankingGroup": "Ranking",
+    "changes": "Ważne zmiany",
+    "archiveOrDelete": "Zarchiwizuj albo usuń ligę",
+    "archiveOrDeleteHint": "Jedno i drugie można cofnąć.",
+    "question": "Co zrobić z ligą „{name}”?",
+    "archive": "Zarchiwizuj",
+    "archiveHint": "Liga zostaje do oglądania, z rankingiem i historią. Nikt nie zacznie nowego meczu.",
+    "deleteOption": "Usuń"
   },
   "ranking": {
     "sortBy": "Sortuj według",
@@ -489,8 +498,8 @@
     "ranking": "Ranking",
     "games": "Mecze",
     "tournaments": "Turnieje",
-    "more": "Więcej",
-    "new": "Nowa rozgrywka"
+    "new": "Nowa rozgrywka",
+    "league": "Liga"
   },
   "switcher": {
     "title": "Ligi",
@@ -666,5 +675,14 @@
       "hint": "najwięcej goli bramkarzem",
       "value": "{count, plural, one {# gol} few {# gole} many {# goli} other {# gola}}"
     }
+  },
+  "hub": {
+    "league": "Liga",
+    "players": "Gracze",
+    "inLeague": "W lidze ({n})",
+    "stats": "Statystyki ligi",
+    "statsHint": "{games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, rekordy, kiedy gramy",
+    "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
+    "app": "Aplikacja"
   }
 }

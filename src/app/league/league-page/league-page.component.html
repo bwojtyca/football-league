@@ -19,7 +19,7 @@
     @if (current.archived) {
       <p class="note">
         {{ 'league.lockedNote' | transloco }}
-        <a [routerLink]="['/l', current.id, 'more']">{{ 'settings.title' | transloco }}</a>
+        <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
       </p>
     } @else {
       <fl-today-card [leagueId]="current.id" />

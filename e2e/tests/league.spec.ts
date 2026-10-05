@@ -26,8 +26,9 @@ test('a new league: players, the bottom navigation, language and the league swit
   await expect(page).toHaveURL(/\/games$/);
   await nav.getByRole('link', { name: t('nav.tournaments') }).click();
   await expect(page).toHaveURL(/\/tournaments$/);
-  await nav.getByRole('link', { name: t('nav.more') }).click();
+  await nav.getByRole('link', { name: t('nav.league') }).click();
   await expect(page).toHaveURL(/\/more$/);
+  await shot(page, 'league-hub');
 
   await page.getByRole('radio', { name: 'English' }).click();
   await expect(nav.getByRole('link', { name: 'Games' })).toBeVisible();
@@ -98,13 +99,15 @@ test('restoring a league with its games leaves a game deleted on its own deleted
   await expect(games).toHaveCount(1);
 
   // ...then the league with its games, and back again.
-  await nav.getByRole('link', { name: t('nav.more') }).click();
-  await page.getByRole('button', { name: t('settings.delete') }).click();
-  await page.getByRole('checkbox').check();
-  await page
-    .locator('.confirm')
-    .getByRole('button', { name: t('settings.delete') })
-    .click();
+  await nav.getByRole('link', { name: t('nav.league') }).click();
+  await page.getByRole('link', { name: t('settings.title') }).click();
+  await expect(page).toHaveURL(/\/settings$/);
+  await shot(page, 'league-settings');
+  await page.getByRole('button', { name: t('settings.archiveOrDelete') }).click();
+  const dialog = page.locator('fl-league-delete-dialog');
+  await dialog.getByRole('radio').last().check();
+  await dialog.getByRole('checkbox').check();
+  await dialog.getByRole('button', { name: t('settings.delete') }).click();
   await expect(page).toHaveURL(/#\/leagues$/);
   await page.getByRole('button', { name: t('game.undo') }).click();
   await page.getByRole('link', { name: `E2E przywróć ${id}` }).click();
