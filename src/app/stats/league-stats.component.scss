@@ -27,7 +27,7 @@
 .heat td {
   height: 24px;
   border-radius: 4px;
-  background: color-mix(in srgb, var(--fl-felt) calc(12% + var(--share) * 88%), transparent);
+  background: color-mix(in srgb, var(--fl-chart) calc(12% + var(--share) * 88%), transparent);
 }
 
 .heat td.empty {

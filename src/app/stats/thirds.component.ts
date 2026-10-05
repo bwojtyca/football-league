@@ -24,7 +24,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styles: `
     /* One hue, darker for later in the game. */
     i {
-      background: var(--fl-felt);
+      background: var(--fl-chart);
     }
   `,
 })

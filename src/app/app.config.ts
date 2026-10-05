@@ -41,6 +41,8 @@ export const appConfig: ApplicationConfig = {
         Filler,
         Tooltip,
       ],
+      // Axis labels and lines that read on the dark page.
+      defaults: { color: '#9aa39d', font: { family: 'Archivo, system-ui, sans-serif' } },
     }),
     // Caches the app itself, so it opens without a network and can be installed on a phone.
     provideServiceWorker('ngsw-worker.js', {

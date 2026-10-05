@@ -39,6 +39,8 @@ html {
   /* The felt under a lamp: lighter in the middle. */
   --fl-felt-bg: radial-gradient(ellipse 80% 90% at 50% 50%, #157a42 0%, #0d5a31 60%, #083d21 100%);
   --fl-felt-line: rgb(225 255 235 / 0.35);
+  /* The felt's green as a chart colour: light enough to read on black. */
+  --fl-chart: #3fb36e;
   --fl-board: #0a0b0a;
   /* An LED panel: a grid of unlit dots. */
   --fl-board-bg: radial-gradient(circle, #1c1e1c 1.1px, transparent 1.5px) 0 0 / 5px 5px, #0a0b0a;
@@ -81,6 +83,7 @@ html {
   --mat-sys-tertiary-container: #1d3a2a;
   --mat-sys-on-tertiary-container: #bfe8cd;
   --mat-sys-error: var(--fl-loss);
+  --mat-sys-on-error: #1b0a08;
   --mat-sys-error-container: #2a1614;
   --mat-sys-on-error-container: #ffb4ac;
   --mat-sys-inverse-surface: var(--fl-ink);

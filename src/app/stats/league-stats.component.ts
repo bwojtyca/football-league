@@ -90,7 +90,7 @@ export class LeagueStatsComponent {
       datasets: [
         {
           data: months.map((month) => month.games),
-          backgroundColor: cssColor('--fl-felt'),
+          backgroundColor: cssColor('--fl-chart'),
           borderRadius: 4,
           borderSkipped: 'start',
           maxBarThickness: 36,
