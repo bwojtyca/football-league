@@ -309,11 +309,11 @@ session can pick up where the last one stopped:
   a mode keep "to 8" (`DEFAULT_MODE`), and the rules label is hidden for both.
 - (Done) Countdown ring of "Next" on the finish panel centred (a `mat-icon`) with a track.
 - (Done, checked on the emulator with `navF.js`) Mobile navigation: `league/league-layout.component.ts`
-  holds a league's pages (`l/:id` ranking, `games`, `tournaments`, `more`, `player/:id`,
-  `t/:id`; `settings` redirects to `more`) with a bottom bar Ranking / Games / + / Tournaments /
-  More. The title of a league page opens the league switcher (bottom sheet). The 3-dot menu is
-  gone; the language is in More (`shared/language-switch.component.ts`) and at the bottom of
-  the leagues page.
+  holds a league's pages (`l/:id` ranking, `games`, `tournaments`, `more` (the league's hub),
+  `players`, `settings`, `player/:id`, `t/:id`) with a bottom bar Ranking / Games / + /
+  Tournaments / League. The title of a league page opens the league switcher (bottom sheet).
+  The 3-dot menu is gone; the language is in the hub (`shared/language-switch.component.ts`)
+  and at the bottom of the leagues page.
 - (Done, checked) "+" opens "What are we playing?" (`league/new-play-sheet.component.ts`):
   a game (teams of the latest game filled in), a series (the new game dialog with `series: true`
   creates a `series` tournament of the two chosen teams and starts game 1) or a tournament.
