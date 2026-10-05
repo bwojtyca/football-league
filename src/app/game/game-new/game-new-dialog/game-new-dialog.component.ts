@@ -1,15 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-} from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import {
   MAT_DIALOG_DATA,
@@ -17,26 +8,35 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { take } from 'rxjs';
 
+import { openAddPlayerDialog } from '../../../league/add-player-dialog.component';
 import { LeagueService } from '../../../league/league.service';
 import { Notifier } from '../../../notifier';
 import { AvatarComponent } from '../../../player/avatar/avatar.component';
-import { compareNames, Player } from '../../../player/player';
+import { compareNames } from '../../../player/player';
 import { PlayerService } from '../../../player/player.service';
 import { TournamentService } from '../../../tournament/tournament.service';
 import { START_RATING, winChance } from '../../../player/rating';
-import { Game, GameMode, Lineup, NEW_GAME_MODE, TEAM_COLORS, TeamColor } from '../../game';
+import {
+  Game,
+  GameMode,
+  GOAL_DETAILS,
+  GoalDetail,
+  Lineup,
+  NEW_GAME_MODE,
+  Position,
+  TEAM_COLORS,
+  TeamColor,
+} from '../../game';
 import { GameService } from '../../game.service';
-import { HighlightPipe } from '../../highlight.pipe';
 import { ModeLabelComponent } from '../../mode/mode-label.component';
 import { ModePickerComponent } from '../../mode/mode-picker.component';
+import { readDetail, readRotation, saveDetail, saveRotation } from '../../screen-settings';
+import { openPlayerPicker, PickerOption, PickerResult } from '../player-picker-sheet.component';
 
 export interface GameNewDialogData {
   leagueId: string;
@@ -50,65 +50,39 @@ export interface GameNewDialogData {
   series?: boolean;
 }
 
-/** An autocomplete holds the typed text until a player is picked. */
-type PlayerValue = Player | string | null;
-
-function isPlayer(value: unknown): value is Player {
-  return !!value && typeof value === 'object' && 'id' in value;
+/** Who holds the two places of a team; `alone` when one player covers both. */
+interface Places {
+  defence: string | null;
+  offence: string | null;
+  alone: boolean;
 }
 
-function validatePlayer(control: AbstractControl): ValidationErrors | null {
-  return isPlayer(control.value) ? null : { validatePlayer: { valid: false } };
-}
+/** The places of each team as laid out on the table: red across, blue near. */
+const PLACE_ORDER: Record<TeamColor, readonly Position[]> = {
+  red: ['offence', 'defence'],
+  blue: ['defence', 'offence'],
+};
 
-function createTeam() {
-  const form = new FormGroup({
-    singlePlayer: new FormControl(false, { nonNullable: true }),
-    defence: new FormControl<PlayerValue>(null, validatePlayer),
-    offence: new FormControl<PlayerValue>(null, validatePlayer),
-  });
-  const { singlePlayer, defence, offence } = form.controls;
-
-  singlePlayer.valueChanges.subscribe((single) => {
-    if (single) {
-      offence.disable();
-      offence.setValue('');
-    } else {
-      offence.enable();
-    }
-  });
-
-  return {
-    form,
-    singlePlayer: toSignal(singlePlayer.valueChanges, { initialValue: singlePlayer.value }),
-    defence: toSignal(defence.valueChanges, { initialValue: defence.value }),
-    offence: toSignal(offence.valueChanges, { initialValue: offence.value }),
-  };
-}
+const NO_ONE: Places = { defence: null, offence: null, alone: false };
 
 export function openNewGameDialog(dialog: MatDialog, data: GameNewDialogData) {
   return dialog.open<GameNewDialogComponent, GameNewDialogData>(GameNewDialogComponent, {
     data,
-    width: '700px',
-    maxWidth: '95vw',
+    width: '560px',
+    maxWidth: '100vw',
+    panelClass: 'fl-full-on-phone',
   });
 }
 
 @Component({
   selector: 'fl-game-new-dialog',
   imports: [
-    ReactiveFormsModule,
-    MatAutocompleteModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatChipsModule,
     MatDialogModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     AvatarComponent,
-    HighlightPipe,
     ModeLabelComponent,
     ModePickerComponent,
     TranslocoPipe,
@@ -122,14 +96,27 @@ export class GameNewDialogComponent {
   private readonly _gameService = inject(GameService);
   private readonly _router = inject(Router);
   private readonly _notifier = inject(Notifier);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _sheet = inject(MatBottomSheet);
   private readonly _dialogRef = inject(MatDialogRef<GameNewDialogComponent>);
   private readonly _data = inject<GameNewDialogData>(MAT_DIALOG_DATA);
   private readonly _tournamentService = inject(TournamentService);
   private readonly _transloco = inject(TranslocoService);
 
   protected readonly colors = TEAM_COLORS;
+  protected readonly placeOrder = PLACE_ORDER;
   protected readonly teamNames = { red: 'team.red', blue: 'team.blue' } as const;
-  protected readonly teams = { red: createTeam(), blue: createTeam() };
+  protected readonly inputModes = GOAL_DETAILS;
+
+  /** Who plays where; a rematch starts from the previous game's teams. */
+  protected readonly places = signal<Record<TeamColor, Places>>(
+    this._data.previousGame
+      ? placesOf(this._data.previousGame)
+      : { red: { ...NO_ONE }, blue: { ...NO_ONE } },
+  );
+
+  /** Places left empty when "Start" was tapped. */
+  protected readonly showMissing = signal(false);
 
   /** How the game is played; a rematch keeps the rules of the previous game. */
   protected readonly mode = signal<GameMode>({
@@ -140,17 +127,9 @@ export class GameNewDialogComponent {
   protected readonly series = !!this._data.series;
   protected readonly bestOf = signal(3);
 
-  /** Who plays with whom, once both teams are picked. */
-  protected readonly lineupNames = computed(() => {
-    const names = (color: TeamColor) => {
-      const { singlePlayer, defence, offence } = this.teams[color];
-      const players = singlePlayer() ? [defence()] : [defence(), offence()];
-      return players.every(isPlayer) ? players.map((p) => (p as Player).name).join(' & ') : null;
-    };
-    const red = names('red');
-    const blue = names('blue');
-    return red && blue ? { red, blue } : null;
-  });
+  /** How much a goal tells on the game screen, and whether it stands upright (this device). */
+  protected readonly inputMode = signal<GoalDetail>(readDetail());
+  protected readonly upright = signal(readRotation() % 2 === 0);
 
   /** Players of the league, by name. */
   protected readonly players = computed(() => {
@@ -163,23 +142,30 @@ export class GameNewDialogComponent {
       .sort(compareNames);
   });
 
+  private readonly _ratings = computed(() => this._gameService.ratings(this._data.leagueId));
+
+  /** The players of a team, once its places are filled. */
+  private _team(color: TeamColor): string[] | null {
+    const { defence, offence, alone } = this.places()[color];
+    if (!defence || (!alone && !offence)) {
+      return null;
+    }
+    return alone || defence === offence ? [defence] : [defence, offence!];
+  }
+
+  /** Who plays with whom, once both teams are picked. */
+  protected readonly lineupNames = computed(() => {
+    const red = this._team('red');
+    const blue = this._team('blue');
+    const names = (ids: string[]) => ids.map((id) => this.name(id)).join(' & ');
+    return red && blue ? { red: names(red), blue: names(blue) } : null;
+  });
+
   /** Chance of the red team to win, from the players' ratings; `null` until both teams are set. */
   protected readonly redChance = computed(() => {
-    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
-    const team = (color: TeamColor) => {
-      const { singlePlayer, defence, offence } = this.teams[color];
-      const ids = [defence(), singlePlayer() ? defence() : offence()];
-      if (!ids.every(isPlayer)) {
-        return null;
-      }
-      const unique = [...new Set(ids.map((p) => (p as Player).id))];
-      return (
-        unique.reduce((sum, id) => sum + (ratings?.get(id) ?? START_RATING), 0) / unique.length
-      );
-    };
-    const red = team('red');
-    const blue = team('blue');
-    return red === null || blue === null ? null : Math.round(winChance(red, blue) * 100);
+    const red = this._team('red');
+    const blue = this._team('blue');
+    return red && blue ? Math.round(winChance(this._rating(red), this._rating(blue)) * 100) : null;
   });
 
   /**
@@ -187,19 +173,17 @@ export class GameNewDialogComponent {
    * clearly more even than the current one. Players keep their positions where possible.
    */
   protected readonly suggestion = computed(() => {
-    const { red, blue } = this.teams;
-    const picked = [red.defence(), red.offence(), blue.defence(), blue.offence()];
-    if (red.singlePlayer() || blue.singlePlayer() || !picked.every(isPlayer)) {
+    const { red, blue } = this.places();
+    const picked = [red.defence, red.offence, blue.defence, blue.offence];
+    if (red.alone || blue.alone || !picked.every((id) => !!id)) {
       return null;
     }
-    const [a, b, c, d] = picked as Player[];
-    if (new Set([a, b, c, d].map((p) => p.id)).size < 4) {
+    const [a, b, c, d] = picked as string[];
+    if (new Set([a, b, c, d]).size < 4) {
       return null;
     }
-    const ratings = this._gameService.ratings(this._data.leagueId)?.current;
-    const rating = (team: Player[]) =>
-      team.reduce((sum, p) => sum + (ratings?.get(p.id) ?? START_RATING), 0) / team.length;
-    const unevenness = ([x, y]: Player[][]) => Math.abs(winChance(rating(x), rating(y)) - 0.5);
+    const unevenness = ([x, y]: string[][]) =>
+      Math.abs(winChance(this._rating(x), this._rating(y)) - 0.5);
     const splits = [
       [
         [a, b],
@@ -220,60 +204,85 @@ export class GameNewDialogComponent {
     }
     // The current red defender stays red; defenders stay in defence where they can.
     const [redTeam, blueTeam] = best[0].includes(a) ? best : [best[1], best[0]];
-    const lineup = (team: Player[]) => {
-      const defender = team.find((p) => p === a || p === c) ?? team[0];
-      return { defence: defender, offence: team.find((p) => p !== defender)! };
+    const lineup = (team: string[]) => {
+      const defender = team.find((id) => id === a || id === c) ?? team[0];
+      return { defence: defender, offence: team.find((id) => id !== defender)! };
     };
     return {
       red: lineup(redTeam),
       blue: lineup(blueTeam),
-      chance: Math.round(winChance(rating(redTeam), rating(blueTeam)) * 100),
+      chance: Math.round(winChance(this._rating(redTeam), this._rating(blueTeam)) * 100),
     };
   });
 
-  /** Players already picked anywhere in the form. */
-  protected readonly selected = computed(() => {
-    const ids = new Set<string>();
-    for (const team of Object.values(this.teams)) {
-      for (const value of [team.defence(), team.offence()]) {
-        if (isPlayer(value)) {
-          ids.add(value.id);
-        }
-      }
-    }
-    return ids;
-  });
-
-  /** Kind of game the form describes, and the lonely player of a stress test. */
+  /** Kind of game the lineups describe, and the lonely player of a stress test. */
   protected readonly kind = computed(() => {
-    const { red, blue } = this.teams;
-    if (red.singlePlayer() && blue.singlePlayer()) {
+    const { red, blue } = this.places();
+    if (red.alone && blue.alone) {
       return { key: 'newGame.mode1v1', name: '' };
     }
-    if (red.singlePlayer() || blue.singlePlayer()) {
-      const defence = (red.singlePlayer() ? red : blue).defence();
-      return { key: 'newGame.modeStress', name: isPlayer(defence) ? defence.name : '…' };
+    if (red.alone || blue.alone) {
+      const defence = (red.alone ? red : blue).defence;
+      return { key: 'newGame.modeStress', name: defence ? this.name(defence) : '…' };
     }
     return { key: 'newGame.mode2v2', name: '' };
   });
 
-  constructor() {
-    const previousGame = this._data.previousGame;
-    if (previousGame) {
-      this._playerService.players$
-        .pipe(take(1))
-        .subscribe((players) => this._prefill(previousGame, players));
-    }
+  protected name(id: string): string {
+    return this._playerService.getPlayerName(id);
   }
 
-  protected filterPlayers(value: PlayerValue): Player[] {
-    const players = this.players() ?? [];
-    const name = (isPlayer(value) ? value.name : (value ?? '')).toLowerCase();
-    return name ? players.filter((p) => p.name.toLowerCase().startsWith(name)) : players;
+  /** The player in a place (the defender also holds the attack of a team playing alone). */
+  protected holder(color: TeamColor, position: Position): string | null {
+    const places = this.places()[color];
+    return position === 'offence' && places.alone ? places.defence : places[position];
   }
 
-  protected displayPlayer(value: PlayerValue): string {
-    return isPlayer(value) ? value.name : (value ?? '');
+  protected isMissing(color: TeamColor, position: Position): boolean {
+    return this.showMissing() && !this.holder(color, position);
+  }
+
+  /** Opens the picker for a place; picking someone placed elsewhere swaps the two places. */
+  protected pick(color: TeamColor, position: Position): void {
+    const current = this.places()[color][position];
+    const options: PickerOption[] = (this.players() ?? []).map((player) => {
+      const where = this._placeOf(player.id);
+      const here = where?.color === color && where.position === position;
+      return {
+        id: player.id,
+        name: player.name,
+        rating: this._ratings()?.current.has(player.id)
+          ? Math.round(this._ratings()!.current.get(player.id)!)
+          : null,
+        note: here
+          ? this._transloco.translate('newGame.current')
+          : where
+            ? this._transloco.translate(`newGame.inSlot.${where.color}.${where.position}`)
+            : this._mostly(player.id),
+        placed: !!where && !here,
+      };
+    });
+    openPlayerPicker(this._sheet, {
+      title: this._transloco.translate(`newGame.slot.${color}.${position}`),
+      current: current ? this.name(current) : undefined,
+      options,
+      canBeAlone: position === 'offence',
+    })
+      .afterDismissed()
+      .subscribe((result?: PickerResult) => {
+        if (!result) {
+          return;
+        }
+        if ('alone' in result) {
+          this._update(color, (places) => ({ ...places, offence: null, alone: true }));
+        } else if ('add' in result) {
+          openAddPlayerDialog(this._dialog, { leagueId: this._data.leagueId })
+            .afterClosed()
+            .subscribe((id?: string) => id && this._place(color, position, id));
+        } else {
+          this._place(color, position, result.player);
+        }
+      });
   }
 
   /** Cancel: a rematch offered on the game screen leads back to the league, elsewhere it stays. */
@@ -285,36 +294,32 @@ export class GameNewDialogComponent {
   }
 
   protected useSuggestion(suggestion: {
-    red: { defence: Player; offence: Player };
-    blue: { defence: Player; offence: Player };
+    red: { defence: string; offence: string };
+    blue: { defence: string; offence: string };
   }): void {
-    for (const color of TEAM_COLORS) {
-      const controls = this.teams[color].form.controls;
-      controls.defence.setValue(suggestion[color].defence);
-      controls.offence.setValue(suggestion[color].offence);
-    }
+    this.places.set({
+      red: { ...suggestion.red, alone: false },
+      blue: { ...suggestion.blue, alone: false },
+    });
   }
 
-  protected teamLabel(team: { defence: Player; offence: Player }): string {
-    return `${team.defence.name} & ${team.offence.name}`;
+  protected teamLabel(team: { defence: string; offence: string }): string {
+    return `${this.name(team.defence)} & ${this.name(team.offence)}`;
   }
 
   protected switchTeams(): void {
-    const red = this.teams.red.form.getRawValue();
-    const blue = this.teams.blue.form.getRawValue();
-    this.teams.red.form.setValue(blue);
-    this.teams.blue.form.setValue(red);
+    const { red, blue } = this.places();
+    this.places.set({ red: blue, blue: red });
   }
 
   protected startGame(): void {
     const red = this._lineup('red');
     const blue = this._lineup('blue');
     if (!red || !blue) {
-      for (const team of Object.values(this.teams)) {
-        team.form.markAllAsTouched();
-      }
+      this.showMissing.set(true);
       return;
     }
+    this._saveScreen();
 
     const tournament = this.series ? this._createSeries(red, blue) : this._data.tournamentId;
     const { id, saved } = this._gameService.createGame(
@@ -327,6 +332,18 @@ export class GameNewDialogComponent {
     saved.catch((error) => this._notifier.error('error.newGame', error));
     this._dialogRef.close(id);
     this._router.navigate(['/game', id]);
+  }
+
+  /**
+   * The game screen opens as chosen here: rod and figure on the whole table (sideways), who
+   * scored upright or sideways, on the same side of the table as before.
+   */
+  private _saveScreen(): void {
+    const detail = this.inputMode();
+    const sideways = detail !== 'position' || !this.upright();
+    const redSide = readRotation() >= 2;
+    saveDetail(detail);
+    saveRotation((redSide ? 2 : 0) + (sideways ? 1 : 0));
   }
 
   /** The series as a tournament of the two teams; its first game is played at once. */
@@ -348,24 +365,68 @@ export class GameNewDialogComponent {
   }
 
   private _lineup(color: TeamColor): Lineup | undefined {
-    const { singlePlayer, defence, offence } = this.teams[color].form.getRawValue();
-    const attacker = singlePlayer ? defence : offence;
-    return isPlayer(defence) && isPlayer(attacker)
-      ? { defence: defence.id, offence: attacker.id }
-      : undefined;
+    const team = this._team(color);
+    return team ? { defence: team[0], offence: team[1] ?? team[0] } : undefined;
   }
 
-  private _prefill(game: Game, players: Player[]): void {
-    const find = (id: string) => players.find((player) => player.id === id) ?? null;
+  private _rating(team: string[]): number {
+    const current = this._ratings()?.current;
+    return team.reduce((sum, id) => sum + (current?.get(id) ?? START_RATING), 0) / team.length;
+  }
+
+  /** Where a player already plays in these lineups. */
+  private _placeOf(id: string): { color: TeamColor; position: Position } | undefined {
     for (const color of TEAM_COLORS) {
-      const { defence, offence } = game.teams[color];
-      const controls = this.teams[color].form.controls;
-      controls.defence.setValue(find(defence.player));
-      if (defence.player !== offence.player) {
-        controls.offence.setValue(find(offence.player));
-      } else {
-        controls.singlePlayer.setValue(true);
+      for (const position of ['defence', 'offence'] as const) {
+        if (this.holder(color, position) === id) {
+          return { color, position };
+        }
       }
     }
+    return undefined;
   }
+
+  /** "Mostly defence" or "mostly attack", from the 2 vs 2 games in the league. */
+  private _mostly(id: string): string {
+    const positions = this._ratings()?.positions.get(id);
+    if (!positions || positions.defence.games === positions.offence.games) {
+      return '';
+    }
+    const mostly = positions.defence.games > positions.offence.games ? 'defence' : 'offence';
+    return this._transloco.translate(`newGame.mostly.${mostly}`);
+  }
+
+  /** Puts a player in a place; if they held another, its holder moves there. */
+  private _place(color: TeamColor, position: Position, id: string): void {
+    const from = this._placeOf(id);
+    const replaced = this.places()[color][position];
+    if (from) {
+      this._update(from.color, (places) =>
+        from.position === 'offence'
+          ? { ...places, offence: replaced, alone: false }
+          : { ...places, defence: replaced },
+      );
+    }
+    this._update(color, (places) =>
+      position === 'offence'
+        ? { ...places, offence: id, alone: false }
+        : { ...places, defence: id },
+    );
+    this.showMissing.set(false);
+  }
+
+  private _update(color: TeamColor, change: (places: Places) => Places): void {
+    this.places.update((all) => ({ ...all, [color]: change(all[color]) }));
+  }
+}
+
+/** The places of a previous game's teams. */
+function placesOf(game: Game): Record<TeamColor, Places> {
+  const places = (color: TeamColor): Places => {
+    const { defence, offence } = game.teams[color];
+    return defence.player === offence.player
+      ? { defence: defence.player, offence: null, alone: true }
+      : { defence: defence.player, offence: offence.player, alone: false };
+  };
+  return { red: places('red'), blue: places('blue') };
 }

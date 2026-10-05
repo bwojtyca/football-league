@@ -55,6 +55,7 @@ import {
 import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 import { openGameTimeline } from '../game-timeline/game-timeline.component';
+import { readDetail, readRotation, saveDetail, saveRotation } from '../screen-settings';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
 import { openLeaveDialog } from './leave-dialog.component';
@@ -64,8 +65,6 @@ import { TableComponent, TableGoal } from './table.component';
 /** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
 const FINISH_AFTER_MS = 8000;
 
-const ROTATION_KEY = 'fl.rotation';
-const DETAIL_KEY = 'fl.goalDetail';
 /** "Own goal…" waits this long for the rod or figure that scored it. */
 const OWN_GOAL_PICK_MS = 6000;
 
@@ -80,23 +79,6 @@ const EDGE_MIDDLES = [
   [50, 75],
   [25, 50],
 ] as const;
-
-function readRotation(): number {
-  try {
-    return Number(localStorage.getItem(ROTATION_KEY)) % 4 || 0;
-  } catch {
-    return 0;
-  }
-}
-
-function readDetail(): GoalDetail {
-  try {
-    const detail = localStorage.getItem(DETAIL_KEY) as GoalDetail;
-    return GOAL_DETAILS.includes(detail) ? detail : 'position';
-  } catch {
-    return 'position';
-  }
-}
 
 @Component({
   selector: 'fl-game-detail',
@@ -374,11 +356,7 @@ export class GameDetailComponent implements LeaveGuarded {
 
   private _setRotation(rotation: number): void {
     this.rotation.set(rotation);
-    try {
-      localStorage.setItem(ROTATION_KEY, String(rotation));
-    } catch {
-      // Not remembered: private mode or storage blocked.
-    }
+    saveRotation(rotation);
   }
 
   /**
@@ -408,11 +386,7 @@ export class GameDetailComponent implements LeaveGuarded {
   private _setDetail(detail: GoalDetail): void {
     this.detail.set(detail);
     this.ownArmed.set(false);
-    try {
-      localStorage.setItem(DETAIL_KEY, detail);
-    } catch {
-      // Not remembered: private mode or storage blocked.
-    }
+    saveDetail(detail);
   }
 
   /** Goals told by rod or figure, on the whole table: a running game with a log. */

@@ -129,7 +129,6 @@
     "mode2v2": "2 na 2",
     "mode1v1": "1 na 1",
     "modeStress": "Stress test: {name}",
-    "onePlayer": "Jeden gracz w drużynie",
     "switchTeams": "Zamień drużyny",
     "start": "Zacznij mecz",
     "needPlayers": "W tej lidze potrzeba co najmniej dwóch graczy.",
@@ -138,7 +137,54 @@
     "useSuggestion": "Ustaw",
     "rules": "Zasady",
     "seriesTitle": "Nowa seria",
-    "startSeries": "Zacznij serię"
+    "startSeries": "Zacznij serię",
+    "lineups": "Składy",
+    "pick": "Wybierz",
+    "current": "wybrany",
+    "alone": "Gra sam",
+    "aloneHint": "Bez partnera: jeden gracz na obu pozycjach",
+    "pickNow": "Teraz: {name}. Wybierz kogoś innego albo zostaw.",
+    "search": "Szukaj gracza",
+    "newPlayer": "Nowy gracz w lidze",
+    "slot": {
+      "red": {
+        "defence": "Obrona czerwonych",
+        "offence": "Atak czerwonych"
+      },
+      "blue": {
+        "defence": "Obrona niebieskich",
+        "offence": "Atak niebieskich"
+      }
+    },
+    "inSlot": {
+      "red": {
+        "defence": "w obronie czerwonych",
+        "offence": "w ataku czerwonych"
+      },
+      "blue": {
+        "defence": "w obronie niebieskich",
+        "offence": "w ataku niebieskich"
+      }
+    },
+    "mostly": {
+      "defence": "głównie obrona",
+      "offence": "głównie atak"
+    },
+    "input": "Co zapisujemy przy golu",
+    "inputs": {
+      "position": "Kto strzelił",
+      "rod": "Którą linią",
+      "man": "Którym zawodnikiem"
+    },
+    "inputHint": {
+      "position": "Tapnięcie w gracza, który strzelił. Najszybciej.",
+      "rod": "Tapnięcie w drążek, z którego padł gol: bramkarz, obrona, pomoc albo atak. Ekran poziomo, cały stół.",
+      "man": "Tapnięcie w konkretną figurkę na drążku. Najdokładniej. Ekran poziomo, cały stół."
+    },
+    "screen": "Ekran meczu",
+    "upright": "Pionowo",
+    "sideways": "Poziomo",
+    "missing": "Wybierz graczy na wszystkie miejsca."
   },
   "game": {
     "ownGoal": "samobój",

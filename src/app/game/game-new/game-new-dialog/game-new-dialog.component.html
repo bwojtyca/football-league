@@ -1,74 +1,84 @@
-<h2 mat-dialog-title>{{ (series ? 'newGame.seriesTitle' : 'newGame.title') | transloco }}</h2>
+<header class="head">
+  <button matIconButton (click)="close()" [attr.aria-label]="'common.cancel' | transloco">
+    <mat-icon>close</mat-icon>
+  </button>
+  <h2 mat-dialog-title>{{ (series ? 'newGame.seriesTitle' : 'newGame.title') | transloco }}</h2>
+  <button
+    matIconButton
+    class="switch"
+    (click)="switchTeams()"
+    [attr.aria-label]="'newGame.switchTeams' | transloco"
+  >
+    <mat-icon>swap_vert</mat-icon>
+  </button>
+</header>
 
 <mat-dialog-content>
   @if (players(); as players) {
     @if (players.length < 2) {
       <p class="empty">{{ 'newGame.needPlayers' | transloco }}</p>
     } @else {
-      <div class="new-game">
+      <!-- The lineups on a small table: red across, blue near, as on the game screen. -->
+      <section class="lineups" [attr.aria-label]="'newGame.lineups' | transloco">
         @for (color of colors; track color) {
-          @let team = teams[color];
-          <div class="team team--{{ color }}" [formGroup]="team.form">
-            <div class="team-head">
-              <strong class="team-color">{{ teamNames[color] | transloco }}</strong>
-              <mat-checkbox formControlName="singlePlayer">{{
-                'newGame.onePlayer' | transloco
-              }}</mat-checkbox>
-            </div>
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'position.defence' | transloco }}</mat-label>
-              <input
-                matInput
-                [matAutocomplete]="defenceAutocomplete"
-                formControlName="defence"
-                required
-              />
-              <mat-autocomplete #defenceAutocomplete [displayWith]="displayPlayer">
-                @for (player of filterPlayers(team.defence()); track player.id) {
-                  <mat-option [value]="player" [disabled]="selected().has(player.id)">
-                    <span class="option">
-                      <fl-avatar [playerId]="player.id" [name]="player.name" [size]="28" />
-                      <span [innerHTML]="player.name | highlight: team.defence()"></span>
-                    </span>
-                  </mat-option>
+          <div class="row">
+            @for (position of placeOrder[color]; track position) {
+              @let id = holder(color, position);
+              @let alone = position === 'offence' && places()[color].alone;
+              @let label = 'newGame.slot.' + color + '.' + position | transloco;
+              <button
+                class="slot slot--{{ color }} slot--{{ color }}-{{ position }}"
+                [class.missing]="isMissing(color, position)"
+                (click)="pick(color, position)"
+                [attr.aria-label]="
+                  label +
+                  ': ' +
+                  (alone
+                    ? ('newGame.alone' | transloco)
+                    : id
+                      ? name(id)
+                      : ('newGame.pick' | transloco))
+                "
+              >
+                @if (alone) {
+                  <span class="face empty"><mat-icon>person</mat-icon></span>
+                } @else if (id) {
+                  <fl-avatar class="face" [playerId]="id" [name]="name(id)" [size]="36" />
+                } @else {
+                  <span class="face empty"><mat-icon>add</mat-icon></span>
                 }
-              </mat-autocomplete>
-            </mat-form-field>
-            @if (!team.singlePlayer()) {
-              <mat-form-field appearance="outline">
-                <mat-label>{{ 'position.offence' | transloco }}</mat-label>
-                <input
-                  matInput
-                  [matAutocomplete]="offenceAutocomplete"
-                  formControlName="offence"
-                  required
-                />
-                <mat-autocomplete #offenceAutocomplete [displayWith]="displayPlayer">
-                  @for (player of filterPlayers(team.offence()); track player.id) {
-                    <mat-option [value]="player" [disabled]="selected().has(player.id)">
-                      <span class="option">
-                        <fl-avatar [playerId]="player.id" [name]="player.name" [size]="28" />
-                        <span [innerHTML]="player.name | highlight: team.offence()"></span>
-                      </span>
-                    </mat-option>
-                  }
-                </mat-autocomplete>
-              </mat-form-field>
+                <span class="who">
+                  <b>{{
+                    alone
+                      ? ('newGame.alone' | transloco)
+                      : id
+                        ? name(id)
+                        : ('newGame.pick' | transloco)
+                  }}</b>
+                  <small>{{ label }}</small>
+                </span>
+              </button>
             }
           </div>
-          @if ($first) {
-            <div class="team-switch">
-              <button
-                matIconButton
-                (click)="switchTeams()"
-                [attr.aria-label]="'newGame.switchTeams' | transloco"
-              >
-                <mat-icon>swap_vert</mat-icon>
-              </button>
-            </div>
-          }
         }
-      </div>
+      </section>
+      @if (suggestion(); as even) {
+        <div class="suggestion">
+          <span>{{
+            'newGame.evenest'
+              | transloco
+                : {
+                    red: teamLabel(even.red),
+                    blue: teamLabel(even.blue),
+                    chance: even.chance + '% : ' + (100 - even.chance) + '%',
+                  }
+          }}</span>
+          <button matButton="outlined" (click)="useSuggestion(even)">
+            {{ 'newGame.useSuggestion' | transloco }}
+          </button>
+        </div>
+      }
+
       <section class="rules">
         <h3 class="fl-kicker">{{ 'newGame.rules' | transloco }}</h3>
         <fl-mode-picker [(mode)]="mode" />
@@ -90,6 +100,40 @@
         }
       </section>
 
+      <!-- How goals are entered on the game screen (kept on this device). -->
+      <section class="input">
+        <h3 class="fl-kicker">{{ 'newGame.input' | transloco }}</h3>
+        <div class="fl-switch" role="radiogroup" [attr.aria-label]="'newGame.input' | transloco">
+          @for (option of inputModes; track option) {
+            <button
+              role="radio"
+              [attr.aria-checked]="inputMode() === option"
+              (click)="inputMode.set(option)"
+            >
+              {{ 'newGame.inputs.' + option | transloco }}
+            </button>
+          }
+        </div>
+        @if (inputMode() === 'position') {
+          <div class="screen">
+            <span>{{ 'newGame.screen' | transloco }}</span>
+            <div
+              class="fl-switch"
+              role="radiogroup"
+              [attr.aria-label]="'newGame.screen' | transloco"
+            >
+              <button role="radio" [attr.aria-checked]="upright()" (click)="upright.set(true)">
+                {{ 'newGame.upright' | transloco }}
+              </button>
+              <button role="radio" [attr.aria-checked]="!upright()" (click)="upright.set(false)">
+                {{ 'newGame.sideways' | transloco }}
+              </button>
+            </div>
+          </div>
+        }
+        <p class="hint">{{ 'newGame.inputHint.' + inputMode() | transloco }}</p>
+      </section>
+
       <section class="summary" aria-live="polite">
         <div class="summary-head">
           <b>{{ kind().key | transloco: { name: kind().name } }}</b>
@@ -105,30 +149,16 @@
         @let red = redChance();
         @if (red !== null) {
           <div class="chance">
-            <div class="chance-row">
-              <span>{{ 'newGame.chance' | transloco }}</span>
-              <span class="num">{{ red }}% : {{ 100 - red }}%</span>
-            </div>
-            <div class="chance-bar" aria-hidden="true">
-              <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
-            </div>
+            <b class="r">{{ red }}%</b>
+            <span>{{ 'newGame.chance' | transloco }}</span>
+            <b class="b">{{ 100 - red }}%</b>
+          </div>
+          <div class="chance-bar" aria-hidden="true">
+            <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
           </div>
         }
-        @if (suggestion(); as even) {
-          <div class="suggestion">
-            <span>{{
-              'newGame.evenest'
-                | transloco
-                  : {
-                      red: teamLabel(even.red),
-                      blue: teamLabel(even.blue),
-                      chance: even.chance + '% : ' + (100 - even.chance) + '%',
-                    }
-            }}</span>
-            <button matButton (click)="useSuggestion(even)">
-              {{ 'newGame.useSuggestion' | transloco }}
-            </button>
-          </div>
+        @if (showMissing()) {
+          <p class="missing-note">{{ 'newGame.missing' | transloco }}</p>
         }
       </section>
     }
@@ -137,11 +167,10 @@
   }
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button matButton (click)="close()">{{ 'common.cancel' | transloco }}</button>
+<mat-dialog-actions>
   <button
     matButton="filled"
-    class="fl-cta"
+    class="fl-cta start"
     (click)="startGame()"
     [disabled]="(players()?.length ?? 0) < 2"
   >

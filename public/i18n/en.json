@@ -129,7 +129,6 @@
     "mode2v2": "2 vs 2",
     "mode1v1": "1 vs 1",
     "modeStress": "Stress test on {name}",
-    "onePlayer": "One player in team",
     "switchTeams": "Switch teams",
     "start": "Start game",
     "needPlayers": "This league needs at least two players.",
@@ -138,7 +137,54 @@
     "useSuggestion": "Use",
     "rules": "Rules",
     "seriesTitle": "New series",
-    "startSeries": "Start the series"
+    "startSeries": "Start the series",
+    "lineups": "Lineups",
+    "pick": "Pick",
+    "current": "picked",
+    "alone": "Plays alone",
+    "aloneHint": "No partner: one player in both positions",
+    "pickNow": "Now: {name}. Pick someone else or leave it.",
+    "search": "Find a player",
+    "newPlayer": "New player in the league",
+    "slot": {
+      "red": {
+        "defence": "Red defence",
+        "offence": "Red attack"
+      },
+      "blue": {
+        "defence": "Blue defence",
+        "offence": "Blue attack"
+      }
+    },
+    "inSlot": {
+      "red": {
+        "defence": "in red defence",
+        "offence": "in red attack"
+      },
+      "blue": {
+        "defence": "in blue defence",
+        "offence": "in blue attack"
+      }
+    },
+    "mostly": {
+      "defence": "mostly defence",
+      "offence": "mostly attack"
+    },
+    "input": "What a goal records",
+    "inputs": {
+      "position": "Who scored",
+      "rod": "Which rod",
+      "man": "Which figure"
+    },
+    "inputHint": {
+      "position": "Tap the player who scored. The quickest.",
+      "rod": "Tap the rod the goal came from: goalkeeper, defence, midfield or attack. Sideways screen, the whole table.",
+      "man": "Tap the very figure on its rod. The most precise. Sideways screen, the whole table."
+    },
+    "screen": "Game screen",
+    "upright": "Upright",
+    "sideways": "Sideways",
+    "missing": "Pick players for every place."
   },
   "game": {
     "ownGoal": "own goal",

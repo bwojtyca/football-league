@@ -74,39 +74,38 @@ export async function newPlay(page: Page, kind: 'game' | 'series' | 'tournament'
 /** Defence, then offence; one name plays alone. */
 export type Teams = Record<'red' | 'blue', [string] | [string, string]>;
 
-/** Fills in the teams of the new game dialog, emptied first (it may come filled in). */
+/**
+ * Fills in the teams of the new game dialog (it may come filled in): each place is tapped and
+ * its player picked in the sheet; picking someone placed elsewhere swaps the two places, so
+ * filling the places in order ends with the wanted lineups.
+ */
 export async function pickTeams(page: Page, teams: Teams): Promise<Locator> {
   const dialog = page.locator('fl-game-new-dialog');
   for (const color of ['red', 'blue'] as const) {
-    const team = dialog.locator(`.team--${color}`);
-    await team.getByRole('checkbox', { name: t('newGame.onePlayer') }).uncheck();
-    for (const position of [t('position.defence'), t('position.offence')]) {
-      await team.getByRole('combobox', { name: position }).fill('');
-    }
-  }
-  for (const color of ['red', 'blue'] as const) {
     const [defence, offence] = teams[color];
-    const team = dialog.locator(`.team--${color}`);
-    const single = team.getByRole('checkbox', { name: t('newGame.onePlayer') });
-    if (offence) {
-      await single.uncheck();
-    } else {
-      await single.check();
-    }
-    await pick(page, team.getByRole('combobox', { name: t('position.defence') }), defence);
-    if (offence) {
-      await pick(page, team.getByRole('combobox', { name: t('position.offence') }), offence);
-    }
+    await pickPlace(page, dialog, color, 'defence', defence);
+    await pickPlace(page, dialog, color, 'offence', offence ?? null);
   }
   return dialog;
 }
 
-/** Types a name and picks it in the list of this field (other fields' lists may be open). */
-async function pick(page: Page, input: Locator, name: string): Promise<void> {
-  await input.fill(name);
-  const list = await input.getAttribute('aria-controls');
-  await page.locator(`[id="${list}"]`).getByRole('option', { name }).click();
-  await expect(input).toHaveValue(name);
+/** One place of the lineups: a player by name, or `null` for a team playing alone. */
+async function pickPlace(
+  page: Page,
+  dialog: Locator,
+  color: 'red' | 'blue',
+  position: 'defence' | 'offence',
+  name: string | null,
+): Promise<void> {
+  await dialog.locator(`.slot--${color}-${position}`).click();
+  const sheet = page.locator('fl-player-picker');
+  if (name === null) {
+    await sheet.locator('button.alone').click();
+  } else {
+    await sheet.getByRole('searchbox').fill(name);
+    await sheet.locator('button.option', { has: page.getByText(name, { exact: true }) }).click();
+  }
+  await expect(sheet).toBeHidden();
 }
 
 /** Starts a game from "+" and waits for the game screen. */

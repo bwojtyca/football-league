@@ -1,200 +1,265 @@
-.new-game {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 4px;
-}
-
-.team {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  padding-left: 12px;
-  border-left: 4px solid;
-}
-
-.team--red {
-  border-color: var(--fl-red);
-}
-
-.team--blue {
-  border-color: var(--fl-blue);
-}
-
-.team-head {
+/* The new game (P31): the lineups on a small table, the rules, how goals are entered. */
+.head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-bottom: 4px;
+  gap: 2px;
+  padding: 6px 8px 0 4px;
 }
 
-.team-color {
-  font: 800 1.25rem/1 var(--fl-display);
+.head h2 {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  font: 800 1.4rem/1.2 var(--fl-display);
 }
 
-.team--red .team-color {
-  color: var(--fl-red-text);
+.head h2::before {
+  display: none;
 }
 
-.team--blue .team-color {
-  color: var(--fl-blue-text);
+.switch {
+  background: var(--fl-card-2);
 }
 
-.team mat-form-field {
-  width: 100%;
+mat-dialog-content {
+  display: grid;
+  gap: 16px;
+  padding-top: 8px;
 }
 
-.team-switch {
-  display: flex;
-  justify-content: center;
+/* The felt with the four places: red across the table, blue near. */
+.lineups {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 16px;
+  background: var(--fl-felt-bg);
+  box-shadow:
+    inset 0 3px 0 var(--fl-red-board),
+    inset 0 -3px 0 var(--fl-blue-board);
 }
 
-.option {
-  display: flex;
-  align-items: center;
+.lineups::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--fl-felt-line);
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
-.chance {
-  display: grid;
-  gap: 4px;
-  margin-top: 8px;
-  font-size: 0.85rem;
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 56px;
+  padding: 0 10px 0 6px;
+  border: 0;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.55);
+  color: var(--fl-ink);
+  text-align: left;
+  cursor: pointer;
 }
 
-.chance-row {
-  display: flex;
-  justify-content: space-between;
+.slot--red {
+  box-shadow: inset 0 0 0 1.5px rgb(255 90 78 / 0.7);
+}
+
+.slot--blue {
+  box-shadow: inset 0 0 0 1.5px rgb(92 140 255 / 0.7);
+}
+
+.slot.missing {
+  box-shadow: inset 0 0 0 2px var(--fl-ball);
+}
+
+.face.empty {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px dashed var(--fl-line-2);
+  border-radius: 50%;
   color: var(--fl-ink-2);
 }
 
-.chance .num {
-  font-variant-numeric: tabular-nums;
+.slot .who {
+  display: grid;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.slot .who b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 0.95rem/1.2 var(--fl-display);
+}
+
+.slot .who small {
+  font-size: 0.7rem;
   font-weight: 600;
-  color: var(--fl-ink);
+}
+
+.slot--red small {
+  color: #ff9a92;
+}
+
+.slot--blue small {
+  color: #9db8ff;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -6px;
+  font-size: 0.85rem;
+  color: var(--fl-ink-2);
+}
+
+.suggestion span {
+  flex: 1;
+}
+
+.rules,
+.input {
+  display: grid;
+  gap: 8px;
+}
+
+.rules h3,
+.input h3 {
+  margin: 0;
+}
+
+.input > .fl-switch {
+  display: flex;
+}
+
+.input .fl-switch button {
+  flex: 1;
+  line-height: 1.1;
+}
+
+.screen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--fl-ink-2);
+}
+
+.summary {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--fl-board-bg);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
+}
+
+.summary-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.matchup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-weight: 700;
+}
+
+.matchup .r {
+  color: #ff9a92;
+}
+
+.matchup .b {
+  color: #9db8ff;
+}
+
+.matchup .vs {
+  font-size: 0.8rem;
+  color: var(--fl-ink-2);
+}
+
+.chance {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--fl-ink-2);
+}
+
+.chance b {
+  font: 900 1.15rem/1 var(--fl-led);
+}
+
+.chance .r {
+  color: var(--fl-red-board);
+}
+
+.chance .b {
+  color: var(--fl-blue-board);
 }
 
 .chance-bar {
   display: flex;
   gap: 2px;
   height: 8px;
-  border-radius: 4px;
   overflow: hidden;
+  border-radius: 4px;
 }
 
 .chance-bar .r {
-  background: var(--fl-red);
+  background: var(--fl-red-board);
 }
 
 .chance-bar .b {
-  background: var(--fl-blue);
+  background: var(--fl-blue-board);
+}
+
+.missing-note {
+  margin: 0;
+  color: var(--fl-ball);
+  font-size: 0.85rem;
+}
+
+mat-dialog-actions {
+  padding: 10px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+.start {
+  width: 100%;
+  --mat-button-filled-container-height: 54px;
+  font-size: 1.05rem;
 }
 
 .empty {
   color: var(--fl-ink-2);
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  padding: 16px;
-}
-
-@media (min-width: 720px) {
-  .new-game {
-    flex-direction: row;
-    gap: 16px;
-  }
-
-  .team {
-    width: 270px;
-  }
-
-  .team-switch {
-    align-items: center;
-  }
-}
-
-.suggestion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 6px 4px 6px 12px;
-  border-radius: 12px;
-  background: var(--mat-sys-surface-container);
-  font-size: 0.85rem;
-}
-
-.rules {
-  margin-top: 12px;
-}
-
-.rules h3 {
-  margin: 0 0 8px;
-}
-
-/* What is about to be played, on an LED panel. */
-.summary {
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--fl-board-bg);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line);
-  color: var(--fl-on-board);
-}
-
-.summary-head b {
-  font: 800 1.15rem/1.2 var(--fl-display);
-}
-
-.summary-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 4px 12px;
-}
-
-.summary-head fl-mode-label {
-  color: var(--fl-ink-2);
-}
-
-.matchup {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.matchup .r {
-  color: var(--fl-red-board);
-  text-align: right;
-}
-
-.matchup .b {
-  color: var(--fl-blue-board);
-}
-
-.matchup .vs {
-  color: var(--fl-ink-2);
-}
-
-.summary .chance {
-  margin-top: 0;
-}
-
-.summary .suggestion {
-  margin-top: 0;
-  background: var(--fl-card);
-  --mat-button-text-label-text-color: var(--fl-ball);
-}
-
-.best-of {
-  display: block;
-  margin-top: 8px;
 }
