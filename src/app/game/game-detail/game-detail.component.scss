@@ -1,13 +1,12 @@
-/* The game screen is a scoreboard: dark in both colour schemes, the teams in their colours. */
+/* The game screen: the table at night, with an LED scoreboard above it. */
 .screen {
   position: fixed;
   inset: 0;
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
-  color-scheme: dark;
-  background: var(--fl-board);
-  color: var(--fl-on-board);
+  background: var(--fl-paper);
+  color: var(--fl-ink);
 }
 
 .top {
@@ -15,7 +14,7 @@
   grid-template-columns: auto auto 1fr auto auto;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px 4px;
+  padding: 6px 8px 6px;
 }
 
 .score {
@@ -24,32 +23,39 @@
   gap: 4px;
 }
 
-/* The score as a broadcast score bug: red block, blue block. */
+/* The score on an LED panel: red digits, a dim colon, blue digits. */
 .bug {
   display: inline-flex;
-  align-items: stretch;
-  border-radius: 8px;
-  overflow: hidden;
-  font: 800 2.3rem/1 var(--fl-display);
+  align-items: baseline;
+  gap: 2px;
+  padding: 7px 14px 5px;
+  border-radius: 12px;
+  background: var(--fl-board-bg);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
+  font: 900 2.5rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
 .bug .r,
 .bug .b {
-  min-width: 1.35em;
-  padding: 5px 8px 3px;
+  min-width: 1em;
   text-align: center;
-  color: #fff;
+}
+
+.bug .r {
+  color: var(--fl-red-board);
+}
+
+.bug .b {
+  color: var(--fl-blue-board);
 }
 
 .bug .sep {
-  width: 0;
-  overflow: hidden;
+  color: var(--fl-line-2);
 }
 
 .score small {
-  font: 600 0.82rem/1 var(--fl-display);
-  text-transform: uppercase;
+  font: 600 0.8rem/1 var(--fl-display);
   font-variant-numeric: tabular-nums;
   color: var(--fl-ink-2);
 }
@@ -69,16 +75,15 @@
 
 .series {
   margin: 0;
-  padding: 0 16px 4px;
+  padding: 0 16px 6px;
   text-align: center;
   font: 600 0.85rem/1.2 var(--fl-display);
-  text-transform: uppercase;
   color: var(--fl-ink-2);
 }
 
 .series b {
   margin-left: 6px;
-  font: 800 1rem/1 var(--fl-display);
+  font: 900 1.15rem/1 var(--fl-led);
   color: var(--fl-on-board);
 }
 
@@ -90,36 +95,74 @@
   color: var(--fl-blue-board);
 }
 
-/* The table: four cells (one per player), placed by the component as the table is turned. */
+/*
+ * The table: four cells (one per player), placed by the component as the table is turned. The
+ * halfway line runs between the two halves of the table: between the columns as the phone
+ * first lies, between the rows after a quarter turn.
+ */
 .teams {
   position: relative;
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template: 1fr 1fr / 1fr 1fr;
-  gap: 6px;
-  padding: 4px 6px 6px;
+  gap: 10px;
+  margin: 0 8px 8px;
+  padding: 10px;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 44px,
+      var(--fl-felt-line) 45px 46px,
+      transparent 47px
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 1px),
+      var(--fl-felt-line) calc(50% - 1px) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ),
+    var(--fl-felt-bg);
 }
 
+.teams.turned {
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 44px,
+      var(--fl-felt-line) 45px 46px,
+      transparent 47px
+    ),
+    linear-gradient(
+      180deg,
+      transparent calc(50% - 1px),
+      var(--fl-felt-line) calc(50% - 1px) calc(50% + 1px),
+      transparent calc(50% + 1px)
+    ),
+    var(--fl-felt-bg);
+}
+
+/* A player's cell: a plate tinted with the team's colour. */
 .team {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 6px;
+  gap: 8px;
   min-height: 0;
   min-width: 0;
-  padding: 8px;
-  border-radius: 14px;
+  padding: 10px;
+  border-radius: 16px;
   color: #fff;
 }
 
-.team--red,
-.bug .r {
-  background: var(--fl-red);
+.team--red {
+  background: rgb(255 74 61 / 0.16);
+  box-shadow: inset 0 0 0 1.5px rgb(255 90 78 / 0.65);
 }
 
-.team--blue,
-.bug .b {
-  background: var(--fl-blue);
+.team--blue {
+  background: rgb(74 123 255 / 0.16);
+  box-shadow: inset 0 0 0 1.5px rgb(92 140 255 / 0.65);
 }
 
 /* A team's swap of positions, on the line between its two cells. */
@@ -127,8 +170,17 @@
   position: absolute;
   z-index: 1;
   transform: translate(-50%, -50%);
-  --mat-fab-small-container-color: var(--fl-board);
+  --mat-fab-small-container-color: var(--fl-card);
   --mat-fab-small-foreground-color: #fff;
+  --mat-fab-small-container-shape: 12px;
+}
+
+.swap--red {
+  box-shadow: 0 0 0 2px var(--fl-red-board);
+}
+
+.swap--blue {
+  box-shadow: 0 0 0 2px var(--fl-blue-board);
 }
 
 .team.won .name b::after {
@@ -139,7 +191,7 @@
 .who {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -157,32 +209,30 @@
   display: grid;
   min-width: 0;
   flex: 1;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .name b {
-  font: 700 1.1rem/1.15 var(--fl-display);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font: 700 1.05rem/1.2 var(--fl-display);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .name small {
-  color: rgb(255 255 255 / 0.75);
+  color: rgb(255 255 255 / 0.72);
   font-size: 0.75rem;
 }
 
-/* The tap zone of a player: a darker panel with the goals in big numbers. */
+/* The tap zone of a player: a dark plate with the goals in LED digits. */
 .goal {
   min-height: 64px;
   border: 0;
   border-radius: 12px;
-  background: rgb(0 0 0 / 0.16);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+  background: rgb(0 0 0 / 0.3);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
   color: #fff;
-  font: 800 clamp(2.6rem, 10vh, 5rem)/1 var(--fl-display);
+  font: 900 clamp(2.8rem, 11vh, 5.5rem)/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   touch-action: manipulation;
@@ -191,18 +241,16 @@
 
 .goal:active {
   transform: scale(0.97);
-  background: rgb(0 0 0 / 0.26);
+  background: rgb(0 0 0 / 0.42);
 }
 
 .own {
   min-height: 44px;
-  border: 0;
-  border-radius: 10px;
-  background: rgb(0 0 0 / 0.24);
-  color: rgb(255 255 255 / 0.85);
+  border: 1.5px solid rgb(225 255 235 / 0.35);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.35);
+  color: rgb(255 255 255 / 0.88);
   font: 600 0.9rem/1 var(--fl-display);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
 }
@@ -214,12 +262,13 @@
 
 /* Waiting for the rod or figure that scored the own goal. */
 .own.armed {
+  border-color: var(--fl-ball);
   background: var(--fl-ball);
   color: var(--fl-on-ball);
 }
 
 .tally {
-  font: 800 1.4rem/1 var(--fl-display);
+  font: 900 1.5rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
@@ -259,10 +308,11 @@
   align-items: center;
   gap: 8px;
   min-height: 56px;
-  margin: 0 6px 6px;
+  margin: 0 8px 8px;
   padding: 4px 6px 4px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--fl-card);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
 }
 
 .bar .text {

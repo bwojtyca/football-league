@@ -70,11 +70,9 @@ function turned(direction: number, rotation: number): string {
       min-height: 0;
     }
     .name {
-      font: 700 0.72rem/1.1 var(--fl-display);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      font: 600 0.75rem/1.1 var(--fl-display);
       text-align: center;
-      color: rgb(255 255 255 / 0.8);
+      color: rgb(255 255 255 / 0.78);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -90,9 +88,9 @@ function turned(direction: number, rotation: number): string {
       min-width: 0;
       min-height: 0;
       border: 0;
-      border-radius: 10px;
-      background: rgb(0 0 0 / 0.16);
-      box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+      border-radius: 12px;
+      background: rgb(0 0 0 / 0.3);
+      box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
       color: #fff;
       cursor: pointer;
       touch-action: manipulation;
@@ -100,7 +98,7 @@ function turned(direction: number, rotation: number): string {
     }
     .hit:active {
       transform: scale(0.96);
-      background: rgb(0 0 0 / 0.26);
+      background: rgb(0 0 0 / 0.42);
     }
     button.rod {
       display: grid;
@@ -109,11 +107,13 @@ function turned(direction: number, rotation: number): string {
       padding: 4px;
     }
     button.rod b {
-      font: 800 clamp(1.8rem, 6vh, 3.4rem)/1 var(--fl-display);
+      font: 900 clamp(1.9rem, 6vh, 3.4rem)/1 var(--fl-led);
       font-variant-numeric: tabular-nums;
     }
+    /* A figure: a round button on its rod. */
     .man {
-      font: 800 1.15rem/1 var(--fl-display);
+      border-radius: 999px;
+      font: 900 1.2rem/1 var(--fl-led);
     }
     /* Choosing who scored the own goal. */
     .armed .hit {

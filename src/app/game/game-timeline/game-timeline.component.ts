@@ -114,8 +114,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     }
     h2 {
       margin: 4px 0 8px;
-      font: italic 800 1.35rem/1.2 var(--fl-display);
-      text-transform: uppercase;
+      font: 800 1.35rem/1.2 var(--fl-display);
     }
     .canvas {
       position: relative;
@@ -130,8 +129,6 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     h3 {
       margin: 16px 0 0;
       font: 700 0.85rem/1.2 var(--fl-display);
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
       color: var(--mat-sys-on-surface-variant);
     }
     .goals {
@@ -166,7 +163,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
       color: var(--mat-sys-on-surface-variant);
     }
     .score {
-      font: 700 1.05rem/1 var(--fl-display);
+      font: 900 1.2rem/1 var(--fl-led);
       font-variant-numeric: tabular-nums;
     }
     .r {
