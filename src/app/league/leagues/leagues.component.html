@@ -1,11 +1,10 @@
 <fl-top-bar [title]="'leagues.title' | transloco" />
 
 <main class="page">
-  <a routerLink="/ranking" class="global">
-    <mat-icon aria-hidden="true">leaderboard</mat-icon>
-    <span>{{ 'ranking.global' | transloco }}</span>
-    <mat-icon aria-hidden="true">chevron_right</mat-icon>
-  </a>
+  <button matButton="filled" class="fl-cta new-league" (click)="newLeague()">
+    <mat-icon>add</mat-icon>{{ 'leagues.new' | transloco }}
+  </button>
+
   @if (leagues(); as leagues) {
     @if (onlyArchive()) {
       <p class="empty">{{ 'leagues.empty' | transloco }}</p>
@@ -13,7 +12,8 @@
     <ul class="leagues">
       @for (league of leagues; track league.id) {
         <li>
-          <a [routerLink]="['/l', league.id]" class="league">
+          <a [routerLink]="['/l', league.id]" class="league" [class.live]="!!league.live">
+            <span class="crest" aria-hidden="true">{{ league.crest }}</span>
             <span class="name">
               {{ league.name }}
               @if (league.archived) {
@@ -21,17 +21,23 @@
               }
             </span>
             <span class="meta">
-              {{ 'count.players' | transloco: { n: league.players.length } }}
-              @if (league.games !== undefined) {
-                · {{ 'count.games' | transloco: { n: league.games } }}
-              }
-              @if (league.lastGame) {
-                ·
-                {{
-                  'leagues.lastGame'
-                    | transloco
-                      : { date: (league.lastGame | translocoDate: { dateStyle: 'medium' }) }
-                }}
+              @if (league.live; as live) {
+                <b class="live-line">{{
+                  'leagues.live' | transloco: { red: live.red, blue: live.blue, score: live.score }
+                }}</b>
+              } @else {
+                {{ 'count.players' | transloco: { n: league.players.length } }}
+                @if (league.games !== undefined) {
+                  · {{ 'count.games' | transloco: { n: league.games } }}
+                }
+                @if (league.lastGame) {
+                  ·
+                  {{
+                    'leagues.lastGame'
+                      | transloco
+                        : { date: (league.lastGame | translocoDate: { dateStyle: 'medium' }) }
+                  }}
+                }
               }
             </span>
             <mat-icon aria-hidden="true">chevron_right</mat-icon>
@@ -43,18 +49,37 @@
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   }
 
-  <form class="new" [formGroup]="form" (ngSubmit)="create()">
-    <h2 class="fl-kicker">{{ 'leagues.new' | transloco }}</h2>
-    <mat-form-field appearance="outline">
-      <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
-      <input matInput formControlName="name" maxlength="60" autocomplete="off" />
-      <mat-hint>{{ 'leagues.nameHint' | transloco }}</mat-hint>
-      @if (form.controls.name.hasError('required')) {
-        <mat-error>{{ 'leagues.nameRequired' | transloco }}</mat-error>
+  <h2 class="fl-kicker together">{{ 'leagues.together' | transloco }}</h2>
+  <a routerLink="/ranking" class="global">
+    <mat-icon aria-hidden="true">leaderboard</mat-icon>
+    <span>{{ 'ranking.global' | transloco }}</span>
+    <mat-icon aria-hidden="true">chevron_right</mat-icon>
+  </a>
+
+  @if (deleted().length) {
+    <section class="deleted">
+      <p>
+        {{ 'leagues.deleted' | transloco: { n: deleted().length } }}
+        <button matButton (click)="showDeleted.set(!showDeleted())">
+          {{ (showDeleted() ? 'leagues.hide' : 'leagues.show') | transloco }}
+        </button>
+      </p>
+      @if (showDeleted()) {
+        <ul class="leagues">
+          @for (league of deleted(); track league.id) {
+            <li>
+              <a [routerLink]="['/l', league.id]" class="league gone">
+                <span class="crest" aria-hidden="true">{{ league.crest }}</span>
+                <span class="name">{{ league.name }}</span>
+                <span class="meta">{{ 'leagues.restoreHint' | transloco }}</span>
+                <mat-icon aria-hidden="true">chevron_right</mat-icon>
+              </a>
+            </li>
+          }
+        </ul>
       }
-    </mat-form-field>
-    <button matButton="filled" type="submit">{{ 'leagues.create' | transloco }}</button>
-  </form>
+    </section>
+  }
 
   <section class="language">
     <h2 class="fl-kicker">{{ 'more.language' | transloco }}</h2>

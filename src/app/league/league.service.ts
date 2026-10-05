@@ -29,6 +29,13 @@ export class LeagueService {
       ),
   );
 
+  /** Deleted leagues, newest first. */
+  public readonly deletedLeagues = computed(() =>
+    (this._stored() ?? [])
+      .filter((league) => league.deleted)
+      .sort((a, b) => (a.created < b.created ? 1 : a.created > b.created ? -1 : 0)),
+  );
+
   /** A league, deleted ones included; `undefined` while loading, `null` when there is none. */
   public league(id: string): League | null | undefined {
     const leagues = this._stored();

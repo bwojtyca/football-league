@@ -44,8 +44,11 @@ export async function shot(page: Page, name: string): Promise<void> {
 /** Creates a league on the leagues page and returns its id. */
 export async function createLeague(page: Page, name: string): Promise<string> {
   await page.goto('/#/leagues');
-  await page.getByLabel(t('leagues.name')).fill(name);
-  await page.getByRole('button', { name: t('leagues.create') }).click();
+  await page.getByRole('button', { name: t('leagues.new') }).click();
+  const wizard = page.locator('fl-league-new-dialog');
+  await wizard.getByLabel(t('leagues.name')).fill(name);
+  await wizard.getByRole('button', { name: t('leagueNew.next') }).click();
+  await wizard.getByRole('button', { name: t('leagues.create') }).click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
   return page.url().split('/l/')[1];
 }

@@ -1,28 +1,27 @@
-import { Component, computed, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
+import { teamPlayers, teamScore } from '../../game/game';
 import { GameService } from '../../game/game.service';
-import { Notifier } from '../../notifier';
+import { PlayerService } from '../../player/player.service';
 import { LanguageSwitchComponent } from '../../shared/language-switch.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
+import { crestOf } from '../league-hub.component';
+import { openLeagueNewDialog } from '../league-new-dialog.component';
+import { League } from '../league';
 import { LeagueService } from '../league.service';
 
 @Component({
   selector: 'fl-leagues',
   imports: [
-    ReactiveFormsModule,
     MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     RouterLink,
     LanguageSwitchComponent,
@@ -33,23 +32,23 @@ import { LeagueService } from '../league.service';
   templateUrl: './leagues.component.html',
   styleUrl: './leagues.component.scss',
 })
+/** The leagues (canvas P01, before accounts): a game running in one, new and deleted ones. */
 export class LeaguesComponent {
   private readonly _leagueService = inject(LeagueService);
   private readonly _gameService = inject(GameService);
-  private readonly _router = inject(Router);
-  private readonly _notifier = inject(Notifier);
-
-  protected readonly form = new FormGroup({
-    name: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(60)],
-    }),
-  });
+  private readonly _playerService = inject(PlayerService);
+  private readonly _dialog = inject(MatDialog);
 
   protected readonly leagues = computed(() =>
     this._leagueService.leagues()?.map((league) => {
       const games = this._gameService.leagueGames(league.id);
-      return { ...league, games: games?.length, lastGame: games?.[0]?.start };
+      return {
+        ...league,
+        crest: crestOf(league.name),
+        games: games?.length,
+        lastGame: games?.[0]?.start,
+        live: this._live(games?.find((game) => !game.end && !game.paused)),
+      };
     }),
   );
 
@@ -57,16 +56,32 @@ export class LeaguesComponent {
     this.leagues()?.every((league) => league.archived),
   );
 
-  protected create(): void {
-    const control = this.form.controls.name;
-    const name = control.value.trim();
-    if (!name) {
-      control.setValue('');
-      control.markAsTouched();
-      return;
+  /** Deleted leagues, to be found and restored. */
+  protected readonly deleted = computed(() =>
+    this._leagueService.deletedLeagues().map((league: League) => ({
+      ...league,
+      crest: crestOf(league.name),
+    })),
+  );
+  protected readonly showDeleted = signal(false);
+
+  protected newLeague(): void {
+    openLeagueNewDialog(this._dialog);
+  }
+
+  /** A game running in a league: who plays and the score. */
+  private _live(game: Parameters<typeof teamScore>[0] | undefined) {
+    if (!game) {
+      return null;
     }
-    const { id, saved } = this._leagueService.createLeague(name);
-    saved.catch((error) => this._notifier.error('error.createLeague', error));
-    this._router.navigate(['/l', id]);
+    const names = (color: 'red' | 'blue') =>
+      teamPlayers(game.teams[color])
+        .map((id) => this._playerService.getPlayerName(id))
+        .join(' & ');
+    return {
+      red: names('red'),
+      blue: names('blue'),
+      score: `${teamScore(game, 'red')}:${teamScore(game, 'blue')}`,
+    };
   }
 }

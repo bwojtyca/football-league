@@ -46,7 +46,13 @@
     "create": "Utwórz ligę",
     "archive": "Zablokowana",
     "empty": "Nie ma jeszcze lig. Utwórz pierwszą, dodaj graczy i grajcie.",
-    "lastGame": "ostatni mecz {date}"
+    "lastGame": "ostatni mecz {date}",
+    "live": "Trwa mecz: {red} vs {blue}, {score}",
+    "together": "Wszystkie ligi razem",
+    "deleted": "{n, plural, one {Usunięta liga: #} few {Usunięte ligi: #} many {Usunięte ligi: #} other {Usunięte ligi: #}}",
+    "show": "Pokaż",
+    "hide": "Ukryj",
+    "restoreHint": "usunięta, otwórz, żeby przywrócić"
   },
   "league": {
     "ranking": "Ranking",
@@ -694,5 +700,13 @@
     "yesterday": "Wczoraj",
     "running": "Trwa",
     "paused": "Wstrzymany"
+  },
+  "leagueNew": {
+    "who": "Kto gra?",
+    "step": "krok {n} z {of}",
+    "next": "Dalej: kto gra",
+    "fromOthers": "Z innych lig",
+    "newPlayers": "Nowi gracze",
+    "summary": "{n, plural, =0 {Graczy dodasz też później.} one {Na start # gracz.} few {Na start # gracze.} many {Na start # graczy.} other {Na start # gracza.}}"
   }
 }

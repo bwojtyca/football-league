@@ -46,7 +46,13 @@
     "create": "Create league",
     "archive": "Locked",
     "empty": "No leagues yet. Create one, add players and start playing.",
-    "lastGame": "last game {date}"
+    "lastGame": "last game {date}",
+    "live": "Playing now: {red} vs {blue}, {score}",
+    "together": "All leagues together",
+    "deleted": "Deleted leagues: {n}",
+    "show": "Show",
+    "hide": "Hide",
+    "restoreHint": "deleted, open it to restore"
   },
   "league": {
     "ranking": "Ranking",
@@ -694,5 +700,13 @@
     "yesterday": "Yesterday",
     "running": "Live",
     "paused": "Paused"
+  },
+  "leagueNew": {
+    "who": "Who plays?",
+    "step": "step {n} of {of}",
+    "next": "Next: who plays",
+    "fromOthers": "From other leagues",
+    "newPlayers": "New players",
+    "summary": "{n, plural, =0 {You can add players later too.} one {# player to start with.} other {# players to start with.}}"
   }
 }
