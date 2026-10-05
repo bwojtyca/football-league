@@ -159,8 +159,8 @@
     <span class="pos">{{ position }}</span>
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">
-      <b
-        >{{ player.name }}
+      <span class="line">
+        <b>{{ player.name }}</b>
         @for (title of titles().get(player.id) ?? []; track title.id) {
           @let label =
             ('titles.' + title.id + '.name' | transloco) +
@@ -178,7 +178,7 @@
             >{{ title.icon }}</span
           >
         }
-      </b>
+      </span>
       @if (player.games === 0) {
         <small>{{ 'league.unrated' | transloco }}</small>
       } @else {

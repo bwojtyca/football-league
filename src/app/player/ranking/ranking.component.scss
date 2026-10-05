@@ -221,3 +221,22 @@
 .potato-today .hint {
   margin: 0;
 }
+
+/* The name, then the title icons (each with its tooltip). */
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+
+.line b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line .title {
+  flex: none;
+  cursor: help;
+}
