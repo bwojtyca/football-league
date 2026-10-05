@@ -52,8 +52,7 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
     h1 {
       margin: 0 8px;
       padding-right: 2px;
-      font: italic 800 1.65rem/1.1 var(--fl-display);
-      text-transform: uppercase;
+      font: 800 1.5rem/1.15 var(--fl-display);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

@@ -75,8 +75,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       text-decoration: none;
     }
     .name {
-      font: italic 800 1.2rem/1.2 var(--fl-display);
-      text-transform: uppercase;
+      font: 700 1.1rem/1.25 var(--fl-display);
     }
     small {
       grid-column: 1;

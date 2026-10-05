@@ -71,14 +71,12 @@ function sameDay(a: Date, b: Date): boolean {
           rgb(255 255 255 / 0.14) calc(50% - 1px) calc(50% + 1px),
           transparent calc(50% + 1px)
         ),
-        var(--fl-felt);
+        var(--fl-felt-bg);
       color: #fff;
     }
     h2 {
       margin: 0;
       font: 700 0.8rem/1.2 var(--fl-display);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
       color: rgb(255 255 255 / 0.75);
     }
     .run {
@@ -104,7 +102,7 @@ function sameDay(a: Date, b: Date): boolean {
       border-color: var(--fl-blue-board);
     }
     .run b {
-      font: 800 2.4rem/1 var(--fl-display);
+      font: 900 2.5rem/1 var(--fl-led);
       font-variant-numeric: tabular-nums;
     }
     .sep {

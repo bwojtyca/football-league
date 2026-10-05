@@ -105,12 +105,11 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       align-items: stretch;
-      height: 64px;
+      height: 68px;
       padding-bottom: env(safe-area-inset-bottom, 0px);
-      color-scheme: dark;
-      background: var(--fl-board);
-      color: var(--fl-on-board);
-      box-shadow: 0 -2px 12px rgb(0 0 0 / 0.15);
+      background: var(--fl-card);
+      color: var(--fl-ink);
+      box-shadow: inset 0 1px 0 var(--fl-line);
     }
     .tab {
       display: grid;
@@ -119,9 +118,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
       gap: 2px;
       color: var(--fl-ink-2);
       text-decoration: none;
-      font: 700 0.72rem/1 var(--fl-display);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font: 700 0.75rem/1 var(--fl-display);
     }
     .tab.active {
       color: var(--fl-ball);
@@ -129,12 +126,12 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
     .play {
       justify-self: center;
       align-self: start;
-      width: 60px;
-      height: 60px;
-      margin-top: -18px;
+      width: 66px;
+      height: 66px;
+      margin-top: -22px;
       display: grid;
       place-items: center;
-      border: 4px solid var(--fl-board);
+      border: 5px solid var(--fl-paper);
       border-radius: 50%;
       background: var(--fl-ball);
       color: var(--fl-on-ball);

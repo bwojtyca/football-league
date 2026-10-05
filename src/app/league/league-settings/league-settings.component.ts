@@ -192,8 +192,6 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
     h2 {
       margin: 0 0 4px;
       font: 800 1.15rem/1.3 var(--fl-display);
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
     }
     .hint {
       margin: 0 0 8px;

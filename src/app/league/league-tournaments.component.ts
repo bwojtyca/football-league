@@ -85,19 +85,17 @@ import { LeagueService } from './league.service';
       column-gap: 8px;
       row-gap: 2px;
       padding: 12px 12px 12px 16px;
-      border: 1px solid var(--fl-line);
-      border-left: 4px solid var(--fl-line);
-      border-radius: 12px;
+      border-radius: 16px;
       background: var(--fl-card);
+      box-shadow: inset 0 0 0 1.5px var(--fl-line);
       color: inherit;
       text-decoration: none;
     }
     .tournament.running {
-      border-left-color: var(--fl-ball);
+      box-shadow: inset 0 0 0 2px var(--fl-ball);
     }
     .name {
-      font: italic 800 1.2rem/1.2 var(--fl-display);
-      text-transform: uppercase;
+      font: 700 1.1rem/1.25 var(--fl-display);
     }
     .meta {
       grid-column: 1;
@@ -111,12 +109,11 @@ import { LeagueService } from './league.service';
     }
     .tag {
       margin-left: 6px;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 2px 8px;
+      border-radius: 9px;
       background: var(--fl-ball);
       color: var(--fl-on-ball);
-      font: normal 700 0.7rem/1.2 var(--fl-display);
-      letter-spacing: 0.06em;
+      font: 700 0.7rem/1.2 var(--fl-display);
       vertical-align: 3px;
     }
     .empty {

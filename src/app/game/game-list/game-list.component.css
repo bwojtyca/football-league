@@ -47,15 +47,16 @@
   text-underline-offset: 3px;
 }
 
-/* The score on a small dark scoreboard. */
+/* The score on a small LED panel. */
 .score {
-  min-width: 3.4em;
-  padding: 5px 8px 4px;
-  border-radius: 6px;
-  background: var(--fl-board);
+  min-width: 3.2em;
+  padding: 6px 10px 5px;
+  border-radius: 8px;
+  background: var(--fl-board-bg);
+  box-shadow: inset 0 0 0 1.5px var(--fl-line);
   color: var(--fl-on-board);
   text-align: center;
-  font: 800 1.35rem/1 var(--fl-display);
+  font: 900 1.4rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
@@ -68,7 +69,7 @@
 }
 
 .in-progress .score {
-  box-shadow: 0 0 0 2px var(--fl-ball);
+  box-shadow: inset 0 0 0 2px var(--fl-ball);
 }
 
 .meta {

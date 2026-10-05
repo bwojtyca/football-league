@@ -60,17 +60,17 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
       column-gap: 12px;
       min-height: 64px;
       padding: 10px 14px 10px 10px;
-      border: 1px solid var(--fl-line);
-      border-radius: 12px;
+      border: 0;
+      border-radius: 16px;
       background: var(--fl-card);
+      box-shadow: inset 0 0 0 1.5px var(--fl-line);
       color: inherit;
       font: inherit;
       text-align: left;
       cursor: pointer;
     }
     .option:first-child {
-      border-color: var(--fl-ball);
-      box-shadow: inset 0 0 0 1px var(--fl-ball);
+      box-shadow: inset 0 0 0 2px var(--fl-ball);
     }
     .option mat-icon {
       grid-row: 1 / span 2;
@@ -78,7 +78,7 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
       height: 44px;
       display: grid;
       place-items: center;
-      border-radius: 50%;
+      border-radius: 12px;
       background: var(--fl-card-2);
       font-size: 24px;
     }
@@ -87,8 +87,7 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
       color: var(--fl-on-ball);
     }
     b {
-      font: italic 800 1.2rem/1.1 var(--fl-display);
-      text-transform: uppercase;
+      font: 700 1.1rem/1.2 var(--fl-display);
     }
     small {
       color: var(--fl-ink-2);

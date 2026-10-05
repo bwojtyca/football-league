@@ -33,9 +33,9 @@
   height: 30px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 50%;
   color: var(--fl-ink-2);
-  font: italic 800 1.35rem/1 var(--fl-display);
+  font: 900 1.3rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
 }
 
@@ -71,8 +71,13 @@
 }
 
 .rating b {
-  font: 800 1.5rem/1 var(--fl-display);
+  font: 900 1.6rem/1 var(--fl-led);
   font-variant-numeric: tabular-nums;
+}
+
+/* The leader's rating lights up like the ball. */
+.first .rating b {
+  color: var(--fl-ball);
 }
 
 .rating b.provisional {
@@ -112,8 +117,6 @@
 .others {
   margin: 20px 0 0;
   font: 700 0.8rem/1.2 var(--fl-display);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--fl-ink-2);
 }
 
@@ -141,8 +144,6 @@ ul.ranking {
 .rules summary {
   cursor: pointer;
   font: 700 0.9rem/1.4 var(--fl-display);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 .rules ul {
