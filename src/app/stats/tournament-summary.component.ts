@@ -22,7 +22,7 @@ import { tournamentSummary } from './stats';
               <b>{{ s.games }}</b>
               <small>{{ 'leagueStats.games' | transloco }}</small>
             </div>
-            <div>
+            <div class="wide">
               <b>{{ 'leagueStats.hours' | transloco: hours(s.seconds) }}</b>
               <small>{{ 'leagueStats.time' | transloco }}</small>
             </div>

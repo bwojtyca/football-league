@@ -370,7 +370,13 @@ a {
 .fl-tiles {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-auto-flow: dense;
   gap: 8px;
+}
+
+/* A tile with a longer value, such as "12 h 5 min", takes two columns. */
+.fl-tiles > .wide {
+  grid-column: span 2;
 }
 
 .fl-tiles > div {
