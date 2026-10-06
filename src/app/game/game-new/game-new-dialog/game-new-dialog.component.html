@@ -133,13 +133,6 @@
           <b>{{ kind().key | transloco: { name: kind().name } }}</b>
           <fl-mode-label [mode]="mode()" />
         </div>
-        @if (lineupNames(); as names) {
-          <div class="matchup">
-            <span class="r">{{ names.red }}</span>
-            <span class="vs">vs</span>
-            <span class="b">{{ names.blue }}</span>
-          </div>
-        }
         @let red = redChance();
         @if (red !== null) {
           <div class="chance">

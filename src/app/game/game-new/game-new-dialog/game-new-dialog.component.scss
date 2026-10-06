@@ -184,27 +184,6 @@ mat-dialog-content {
   gap: 4px 12px;
 }
 
-.matchup {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 8px;
-  font-weight: 700;
-}
-
-.matchup .r {
-  color: #ff9a92;
-}
-
-.matchup .b {
-  color: #9db8ff;
-}
-
-.matchup .vs {
-  font-size: 0.8rem;
-  color: var(--fl-ink-2);
-}
-
 .chance {
   display: flex;
   align-items: baseline;

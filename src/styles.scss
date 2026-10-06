@@ -130,7 +130,9 @@ html {
 
   /* Chips: a chosen chip is light on the dark page. */
   --mat-chip-container-shape-radius: 20px;
-  --mat-chip-outline-color: var(--fl-line-2);
+  /* Chips are tonal too, without outlines. */
+  --mat-chip-outline-color: transparent;
+  --mat-chip-elevated-container-color: var(--fl-card-2);
   --mat-chip-label-text-color: var(--fl-ink);
   --mat-chip-elevated-selected-container-color: var(--fl-ink);
   --mat-chip-selected-label-text-color: #000000;
@@ -396,8 +398,8 @@ a {
   --label-color: var(--fl-ink-2);
   --hint-color: var(--fl-ink-2);
   --connector-color: var(--fl-line-2);
-  --border-color: var(--fl-line);
-  --border-hover-color: var(--fl-ink-2);
+  --border-color: transparent;
+  --border-hover-color: var(--fl-line-2);
   --border-selected-color: var(--fl-ball);
   --text-size: 14px;
   font-family: var(--fl-display);

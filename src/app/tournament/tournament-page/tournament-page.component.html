@@ -224,7 +224,7 @@
                   }}</a>
                 } @else if (!current.end && !running()) {
                   <button matButton="tonal" class="vs" (click)="start(fixture.red, fixture.blue)">
-                    {{ 'tournament.play' | transloco }}
+                    <mat-icon>play_arrow</mat-icon>{{ 'tournament.play' | transloco }}
                   </button>
                 } @else {
                   <span class="vs">{{ 'tournament.vs' | transloco }}</span>
@@ -361,7 +361,7 @@
         class="vs"
         (click)="start(current.teams![red], current.teams![blue])"
       >
-        {{ 'tournament.play' | transloco }}
+        <mat-icon>play_arrow</mat-icon>{{ 'tournament.play' | transloco }}
       </button>
     } @else {
       <span class="vs">{{ 'tournament.vs' | transloco }}</span>

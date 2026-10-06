@@ -160,14 +160,6 @@ export class GameNewDialogComponent {
     return alone || defence === offence ? [defence] : [defence, offence!];
   }
 
-  /** Who plays with whom, once both teams are picked. */
-  protected readonly lineupNames = computed(() => {
-    const red = this._team('red');
-    const blue = this._team('blue');
-    const names = (ids: string[]) => ids.map((id) => this.name(id)).join(' & ');
-    return red && blue ? { red: names(red), blue: names(blue) } : null;
-  });
-
   /** Chance of the red team to win, from the players' ratings; `null` until both teams are set. */
   protected readonly redChance = computed(() => {
     const red = this._team('red');

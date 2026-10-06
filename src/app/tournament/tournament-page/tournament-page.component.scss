@@ -187,6 +187,12 @@ ol.people li.empty::before {
   border-bottom: 1px solid var(--fl-line);
 }
 
+/* "Play": a tonal pill in plain text, not the LED score it stands in for. */
+button.vs {
+  font: 700 0.95rem/1 var(--fl-display);
+  color: var(--fl-ink);
+}
+
 .fixtures a.vs {
   color: inherit;
   text-decoration: none;
