@@ -714,7 +714,8 @@
     "stats": "Statystyki ligi",
     "statsHint": "{games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, rekordy, kiedy gramy",
     "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
-    "app": "Aplikacja"
+    "share": "Udostępnij link do ligi",
+    "copied": "Link do ligi skopiowany"
   },
   "gameList": {
     "today": "Dziś",
@@ -734,5 +735,13 @@
   },
   "gameDetails": {
     "played": "{time} gry"
+  },
+  "appMenu": {
+    "title": "Aplikacja",
+    "open": "Aplikacja: język, ranking ogólny, ligi",
+    "install": "Zainstaluj na telefonie",
+    "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
+    "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska.",
+    "leagues": "Ligi: moje, szukaj, nowa"
   }
 }

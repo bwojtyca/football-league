@@ -30,10 +30,14 @@ test('a new league: players, the bottom navigation, language and the league swit
   await expect(page).toHaveURL(/\/more$/);
   await shot(page, 'league-hub');
 
+  // The language is the app's, in its menu.
+  await page.getByRole('button', { name: t('appMenu.open') }).click();
+  await shot(page, 'app-menu');
   await page.getByRole('radio', { name: 'English' }).click();
   await expect(nav.getByRole('link', { name: 'Games' })).toBeVisible();
   await page.getByRole('radio', { name: 'Polski' }).click();
   await expect(nav.getByRole('link', { name: t('nav.games') })).toBeVisible();
+  await page.keyboard.press('Escape');
 
   await nav.getByRole('link', { name: t('nav.ranking') }).click();
   // On a wide screen the league's sections move to a rail on the left.
@@ -58,9 +62,13 @@ test('a new league: players, the bottom navigation, language and the league swit
 
 test('the language can be switched on the leagues page', async ({ page }) => {
   await page.goto('/#/leagues');
+  await page.getByRole('button', { name: t('appMenu.open') }).click();
   await page.getByRole('radio', { name: 'English' }).click();
+  await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: 'Leagues', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'App: language, overall ranking, leagues' }).click();
   await page.getByRole('radio', { name: 'Polski' }).click();
+  await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: t('leagues.title'), exact: true })).toBeVisible();
 });
 

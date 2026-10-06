@@ -10,7 +10,6 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 import { teamPlayers, teamScore } from '../../game/game';
 import { GameService } from '../../game/game.service';
 import { PlayerService } from '../../player/player.service';
-import { LanguageSwitchComponent } from '../../shared/language-switch.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { crestOf } from '../league-hub.component';
 import { openLeagueNewDialog } from '../league-new-dialog.component';
@@ -24,7 +23,6 @@ import { LeagueService } from '../league.service';
     MatIconModule,
     MatProgressSpinnerModule,
     RouterLink,
-    LanguageSwitchComponent,
     TopBarComponent,
     TranslocoDatePipe,
     TranslocoPipe,

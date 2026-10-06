@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { openLeagueSwitcher } from '../league/league-switcher.component';
+import { openAppMenu } from './app-menu-sheet.component';
 
 /**
  * Page header: a back link or the league switcher, the title and the page's actions. The
@@ -34,6 +35,14 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
         <h1 class="title">{{ title() }}</h1>
       }
       <ng-content />
+      <button
+        matIconButton
+        class="app-menu"
+        (click)="appMenu()"
+        [attr.aria-label]="'appMenu.open' | transloco"
+      >
+        <mat-icon>tune</mat-icon>
+      </button>
     </header>
   `,
   styles: `
@@ -75,6 +84,10 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
       flex: none;
       color: var(--fl-ink-2);
     }
+    .app-menu {
+      flex: none;
+      background: var(--fl-card-2);
+    }
   `,
 })
 export class TopBarComponent {
@@ -85,6 +98,10 @@ export class TopBarComponent {
   public readonly back = input<string | unknown[] | null>(null);
   /** The current league: the title then opens the list of leagues. */
   public readonly switcher = input<string | null>(null);
+
+  protected appMenu(): void {
+    openAppMenu(this._sheet);
+  }
 
   protected switchLeague(): void {
     openLeagueSwitcher(this._sheet, this.switcher());

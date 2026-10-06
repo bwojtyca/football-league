@@ -1,13 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 
 import { GameService } from '../game/game.service';
-import { LanguageSwitchComponent } from '../shared/language-switch.component';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { LeagueService } from './league.service';
 
@@ -23,16 +24,17 @@ export function crestOf(name: string): string {
 }
 
 /**
- * The league's hub (canvas P14), the last tab of the bottom bar: the league at a glance, its
- * players, statistics and settings, then the app's language and the ways to other leagues.
+ * The league's hub (canvas P14, round 4), the last tab of the bottom bar: the league at a
+ * glance, its players, statistics and settings, and a link to share it. What belongs to the
+ * app (language, other leagues) is in the app menu.
  */
 @Component({
   selector: 'fl-league-hub',
   imports: [
+    MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     RouterLink,
-    LanguageSwitchComponent,
     TopBarComponent,
     TranslocoPipe,
   ],
@@ -87,27 +89,9 @@ export function crestOf(name: string): string {
           </a>
         </nav>
 
-        <h2 class="fl-kicker">{{ 'hub.app' | transloco }}</h2>
-        <section class="language">
-          <span>{{ 'more.language' | transloco }}</span>
-          <fl-language-switch />
-        </section>
-        <nav class="rows">
-          <a routerLink="/ranking">
-            <mat-icon aria-hidden="true">leaderboard</mat-icon>
-            <span
-              ><b>{{ 'ranking.global' | transloco }}</b></span
-            >
-            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
-          </a>
-          <a routerLink="/leagues">
-            <mat-icon aria-hidden="true">list</mat-icon>
-            <span
-              ><b>{{ 'switcher.manage' | transloco }}</b></span
-            >
-            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
-          </a>
-        </nav>
+        <button matButton="filled" class="share" (click)="share()">
+          <mat-icon>share</mat-icon>{{ 'hub.share' | transloco }}
+        </button>
       }
     </main>
   `,
@@ -178,14 +162,14 @@ export function crestOf(name: string): string {
     .rows .mat-icon {
       color: var(--fl-ink-2);
     }
-    .language {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-      padding: 0 4px;
-      font-weight: 700;
+    .share {
+      width: 100%;
+      --mat-button-filled-container-height: 52px;
+      --mat-button-filled-container-color: var(--fl-card-2);
+      --mat-button-filled-label-text-color: var(--fl-ink);
+    }
+    .share .mat-icon {
+      color: var(--fl-ball);
     }
   `,
 })
@@ -202,4 +186,22 @@ export class LeagueHubComponent {
   protected readonly games = computed(
     () => this._gameService.leagueGames(this.leagueId())?.length ?? 0,
   );
+
+  private readonly _snackBar = inject(MatSnackBar);
+  private readonly _transloco = inject(TranslocoService);
+
+  /** Shares the league's address (the phone's share sheet), or copies it. */
+  protected async share(): Promise<void> {
+    const league = this.league();
+    if (!league) {
+      return;
+    }
+    const url = `${location.origin}${location.pathname}#/l/${league.id}`;
+    if (navigator.share) {
+      await navigator.share({ title: league.name, url }).catch(() => undefined);
+      return;
+    }
+    await navigator.clipboard?.writeText(url).catch(() => undefined);
+    this._snackBar.open(this._transloco.translate('hub.copied'), undefined, { duration: 2500 });
+  }
 }

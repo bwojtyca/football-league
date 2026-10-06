@@ -714,7 +714,8 @@
     "stats": "League statistics",
     "statsHint": "{games, plural, one {# game} other {# games}}, records, when we play",
     "settingsHint": "name, ranking, locking new games, deleting",
-    "app": "App"
+    "share": "Share a link to the league",
+    "copied": "Link to the league copied"
   },
   "gameList": {
     "today": "Today",
@@ -734,5 +735,13 @@
   },
   "gameDetails": {
     "played": "{time} played"
+  },
+  "appMenu": {
+    "title": "App",
+    "open": "App: language, overall ranking, leagues",
+    "install": "Install on the phone",
+    "installHint": "Full screen without the browser bar, an icon on the home screen.",
+    "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar.",
+    "leagues": "Leagues: mine, find, new"
   }
 }
