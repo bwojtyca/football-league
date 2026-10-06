@@ -5,8 +5,8 @@ rules_version = '2';
 // players to them, adding players, creating tournaments, joining, leaving, editing, ending
 // and deleting (softly) them, starting and pausing games, scoring one goal at a time,
 // swapping positions, undoing the last event of a game, closing a game once it is won,
-// removing unfinished games and marking any game as deleted. Nobody can change or erase
-// players, remove anyone from a league or rewrite results.
+// removing unfinished games and marking any game as deleted, and dressing players in a kit.
+// Nobody can rename or erase players, remove anyone from a league or rewrite results.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -22,6 +22,21 @@ service cloud.firestore {
         && (!('minutes' in mode) || (mode.minutes is int && mode.minutes >= 1 && mode.minutes <= 60));
     }
 
+    // A player's shirt: a pattern in two colours of the palette, and a number 1 to 99 or none.
+    function validKit(kit) {
+      return kit is map
+        && kit.keys().hasAll(['pattern', 'c1', 'c2'])
+        && kit.keys().hasOnly(['pattern', 'c1', 'c2', 'num'])
+        && kit.pattern in ['plain', 'stripes', 'hoops', 'halves', 'sash', 'quarters']
+        && kitColor(kit.c1)
+        && kitColor(kit.c2)
+        && (!('num' in kit) || (kit.num is int && kit.num >= 1 && kit.num <= 99));
+    }
+
+    function kitColor(color) {
+      return color in ['yellow', 'white', 'black', 'red', 'blue', 'green', 'maroon', 'orange'];
+    }
+
     // The first `n` items (a range of an empty list is an error).
     function prefix(items, n) {
       return n == 0 ? [] : items[0:n];
@@ -30,14 +45,18 @@ service cloud.firestore {
     match /players/{playerId} {
       allow read: if true;
 
-      // Results are counted from the games, so players never change after being added.
-      // `wins`/`loses` are legacy counters, accepted only as 0.
+      // Results are counted from the games, so a player's name and counters never change
+      // after being added; only their kit may. `wins`/`loses` are legacy counters, accepted
+      // only as 0.
       allow create: if request.resource.data.keys().hasOnly(['name', 'wins', 'loses'])
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 50
         && request.resource.data.get('wins', 0) == 0
         && request.resource.data.get('loses', 0) == 0;
+
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['kit'])
+        && validKit(request.resource.data.kit);
     }
 
     match /leagues/{leagueId} {

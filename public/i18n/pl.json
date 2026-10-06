@@ -527,7 +527,8 @@
     "tournament": "Nie udało się zapisać zmiany w turnieju. Sprawdź połączenie i spróbuj ponownie.",
     "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę.",
     "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie.",
-    "pause": "Nie udało się zatrzymać ani wznowić meczu. Sprawdź połączenie i spróbuj ponownie."
+    "pause": "Nie udało się zatrzymać ani wznowić meczu. Sprawdź połączenie i spróbuj ponownie.",
+    "kit": "Nie udało się zapisać koszulki"
   },
   "nav": {
     "label": "Nawigacja ligi",
@@ -767,5 +768,37 @@
   "board": {
     "goal": "GOL",
     "own": "samobój: {name}"
+  },
+  "kit": {
+    "title": "Koszulka",
+    "edit": "Zmień koszulkę",
+    "preview": "Podgląd figurki w koszulce",
+    "number": "Numer",
+    "noNumber": "bez numeru",
+    "less": "Mniejszy numer",
+    "more": "Większy numer",
+    "pattern": "Wzór",
+    "c1": "Kolor główny",
+    "c2": "Drugi kolor",
+    "save": "Zapisz koszulkę",
+    "hint": "Na stole grasz w barwach drużyny. Koszulka to Twój znak w rankingach, na listach i w profilu.",
+    "patterns": {
+      "plain": "Gładka",
+      "stripes": "Pionowe pasy",
+      "hoops": "Poziome pasy",
+      "halves": "Pół na pół",
+      "sash": "Szarfa",
+      "quarters": "Ćwiartki"
+    },
+    "colors": {
+      "yellow": "Żółty",
+      "white": "Biały",
+      "black": "Czarny",
+      "red": "Czerwony",
+      "blue": "Niebieski",
+      "green": "Zielony",
+      "maroon": "Bordowy",
+      "orange": "Pomarańczowy"
+    }
   }
 }

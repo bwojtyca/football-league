@@ -22,6 +22,35 @@
   box-shadow: 0 0 0 3px var(--fl-ball);
 }
 
+.head .who {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The kit: a pill on the felt, opening the shirt editor. */
+.head .kit {
+  flex: none;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: 18px;
+  background: rgb(0 0 0 / 0.28);
+  color: #fff;
+  font: 700 0.85rem/1 var(--fl-display);
+  cursor: pointer;
+}
+
+.head .kit .mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--fl-ball);
+}
+
 .league {
   font-weight: 600;
 }

@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -39,6 +40,7 @@ import { compareLink } from '../../stats/compare-link';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { openKitDialog } from '../kit-dialog.component';
 import { compareNames, rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
 import { START_RATING } from '../rating';
@@ -107,6 +109,12 @@ export class PlayerPageComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _leagueService = inject(LeagueService);
+  private readonly _dialog = inject(MatDialog);
+
+  /** Chooses the player's kit (shirt), shown wherever their avatar is. */
+  protected editKit(playerId: string): void {
+    openKitDialog(this._dialog, { playerId });
+  }
 
   private readonly _params = toSignal(
     inject(ActivatedRoute).paramMap.pipe(

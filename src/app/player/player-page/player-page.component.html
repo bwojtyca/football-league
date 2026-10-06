@@ -10,7 +10,7 @@
     <section class="hero">
       <div class="head">
         <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
-        <div>
+        <div class="who">
           <div class="league">
             @if (overall()) {
               {{ 'ranking.allLeagues' | transloco }}
@@ -32,6 +32,9 @@
             </div>
           }
         </div>
+        <button class="kit" (click)="editKit(p.id)" [attr.aria-label]="'kit.edit' | transloco">
+          <mat-icon aria-hidden="true">checkroom</mat-icon>{{ 'kit.title' | transloco }}
+        </button>
       </div>
       @if (p.games > 0) {
         <div class="tiles">

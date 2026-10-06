@@ -1,4 +1,5 @@
 import { Game, teamOf } from '../game/game';
+import { Kit } from './kit';
 import { PROVISIONAL_GAMES, Ratings, START_RATING } from './rating';
 
 /**
@@ -8,6 +9,8 @@ import { PROVISIONAL_GAMES, Ratings, START_RATING } from './rating';
 export interface Player {
   id: string;
   name: string;
+  /** The shirt chosen on the profile (`kitOf()` reads it safely). */
+  kit?: Kit;
 }
 
 export type Result = 'W' | 'L';

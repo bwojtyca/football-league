@@ -527,7 +527,8 @@
     "tournament": "Could not save the change to the tournament. Check your connection and try again.",
     "bracket": "Could not draw the bracket. Check your connection and reload the page.",
     "league": "Could not save the league settings. Check your connection and try again.",
-    "pause": "Could not pause or resume the game. Check your connection and try again."
+    "pause": "Could not pause or resume the game. Check your connection and try again.",
+    "kit": "The kit could not be saved"
   },
   "nav": {
     "label": "League navigation",
@@ -767,5 +768,37 @@
   "board": {
     "goal": "GOAL",
     "own": "own goal: {name}"
+  },
+  "kit": {
+    "title": "Kit",
+    "edit": "Change the kit",
+    "preview": "The figure in this kit",
+    "number": "Number",
+    "noNumber": "no number",
+    "less": "Lower number",
+    "more": "Higher number",
+    "pattern": "Pattern",
+    "c1": "Main colour",
+    "c2": "Second colour",
+    "save": "Save the kit",
+    "hint": "On the table you play in your team's colours. The kit is your sign in rankings, lists and on your profile.",
+    "patterns": {
+      "plain": "Plain",
+      "stripes": "Stripes",
+      "hoops": "Hoops",
+      "halves": "Halves",
+      "sash": "Sash",
+      "quarters": "Quarters"
+    },
+    "colors": {
+      "yellow": "Yellow",
+      "white": "White",
+      "black": "Black",
+      "red": "Red",
+      "blue": "Blue",
+      "green": "Green",
+      "maroon": "Maroon",
+      "orange": "Orange"
+    }
   }
 }
