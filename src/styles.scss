@@ -264,7 +264,6 @@ a {
 /* An LED panel: scores and times sit on it. */
 .fl-board {
   background: var(--fl-board-bg);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line);
   color: var(--fl-on-board);
 }
 
@@ -363,7 +362,7 @@ a {
 .bracket.brackets-viewer .match[data-match-status='2'] .opponents,
 .bracket.brackets-viewer .match[data-match-status='3'] .opponents {
   border-radius: var(--match-border-radius);
-  outline: 3px solid var(--fl-ball);
+  background: #1e1a0c;
   cursor: pointer;
 }
 
@@ -411,7 +410,6 @@ a {
   padding: 10px 12px;
   border-radius: 14px;
   background: var(--fl-card);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line);
 }
 
 .fl-tiles b {

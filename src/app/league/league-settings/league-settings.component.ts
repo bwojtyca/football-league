@@ -121,7 +121,6 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       padding: 14px 16px 4px;
       border-radius: 16px;
       background: var(--fl-card);
-      box-shadow: inset 0 0 0 1.5px var(--fl-line);
     }
     .card.rows {
       padding: 0;

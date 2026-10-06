@@ -316,7 +316,6 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       overflow: hidden;
       border-radius: 6px;
       background: var(--fl-board-bg);
-      box-shadow: inset 0 0 0 1.5px var(--fl-line);
       font: 800 0.95rem/1 var(--fl-display);
       white-space: nowrap;
     }
@@ -365,10 +364,10 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     }
     /* The next tap is an own goal; the last goal's rod or figure stays marked. */
     .own .hit {
-      box-shadow: inset 0 0 0 2px rgb(255 198 41 / 0.55);
+      background: rgb(255 198 41 / 0.12);
     }
     .hit.last {
-      box-shadow: inset 0 0 0 2.5px var(--fl-ball);
+      background: rgb(255 198 41 / 0.24);
     }
   `,
 })

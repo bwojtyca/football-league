@@ -63,14 +63,13 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
       border: 0;
       border-radius: 16px;
       background: var(--fl-card);
-      box-shadow: inset 0 0 0 1.5px var(--fl-line);
       color: inherit;
       font: inherit;
       text-align: left;
       cursor: pointer;
     }
     .option:first-child {
-      box-shadow: inset 0 0 0 2px var(--fl-ball);
+      background: #1e1a0c;
     }
     .option mat-icon {
       grid-row: 1 / span 2;

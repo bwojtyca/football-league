@@ -86,7 +86,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       grid-column: 2;
     }
     .current {
-      box-shadow: inset 4px 0 0 var(--fl-ball);
+      background: var(--fl-card-2);
       padding-left: 14px;
     }
     .link {

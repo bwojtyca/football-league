@@ -147,13 +147,12 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
       min-height: 44px;
       padding-left: 8px;
       border-bottom: 1px solid var(--mat-sys-outline-variant);
-      border-left: 3px solid transparent;
     }
-    .goals li.red {
-      border-left-color: var(--fl-red);
+    .goals li.red .time {
+      color: var(--fl-red-board);
     }
-    .goals li.blue {
-      border-left-color: var(--fl-blue);
+    .goals li.blue .time {
+      color: var(--fl-blue-board);
     }
     .time {
       color: var(--mat-sys-on-surface-variant);

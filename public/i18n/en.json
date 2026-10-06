@@ -719,7 +719,9 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "running": "Live",
-    "paused": "Paused"
+    "paused": "Paused",
+    "win": "W",
+    "lost": "L"
   },
   "leagueNew": {
     "who": "Who plays?",

@@ -51,6 +51,9 @@ import { LeagueService } from './league.service';
                 class="tournament"
                 [class.running]="!tournament.end"
               >
+                @if (!tournament.end) {
+                  <span class="tag">{{ 'tournament.runningList' | transloco }}</span>
+                }
                 <span class="name">{{ tournament.name }}</span>
                 <span class="meta">
                   {{ 'tournament.format.' + tournament.format | transloco }} ·
@@ -94,12 +97,17 @@ import { LeagueService } from './league.service';
       padding: 12px 12px 12px 16px;
       border-radius: 16px;
       background: var(--fl-card);
-      box-shadow: inset 0 0 0 1.5px var(--fl-line);
       color: inherit;
       text-decoration: none;
     }
-    .tournament.running {
-      box-shadow: inset 0 0 0 2px var(--fl-ball);
+    .tag {
+      justify-self: start;
+      margin-bottom: 2px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--fl-ball);
+      color: var(--fl-on-ball);
+      font: 800 0.72rem/1.3 var(--fl-display);
     }
     .name {
       font: 700 1.1rem/1.25 var(--fl-display);

@@ -154,6 +154,7 @@
     [routerLink]="playerLink()(player.id)"
     class="row"
     [class.unrated]="position === null"
+    [class.provisional]="player.provisional"
     [class.first]="position === 1"
   >
     <span class="pos">{{ position }}</span>

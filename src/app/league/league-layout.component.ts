@@ -256,7 +256,6 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
         height: 32px;
         border-radius: 9px;
         background: var(--fl-board);
-        box-shadow: inset 0 0 0 1.5px var(--fl-line-2);
         color: var(--fl-ink);
         font: 800 0.7rem/1 var(--fl-display);
       }

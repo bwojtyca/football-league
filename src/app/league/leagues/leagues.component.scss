@@ -53,14 +53,13 @@
   padding: 14px 12px 14px 16px;
   border-radius: 16px;
   background: var(--fl-card);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line);
   color: inherit;
   text-decoration: none;
 }
 
 .league:hover,
 .league:focus-visible {
-  box-shadow: inset 0 0 0 1.5px var(--fl-ink-2);
+  background: var(--fl-card-2);
 }
 
 .name {
@@ -89,13 +88,8 @@
   margin-right: 6px;
   border-radius: 12px;
   background: var(--fl-board);
-  box-shadow: inset 0 0 0 1.5px var(--fl-line-2);
   color: var(--fl-ink);
   font: 800 0.85rem/1 var(--fl-display);
-}
-
-.league.live {
-  box-shadow: inset 0 0 0 2px var(--fl-ball);
 }
 
 .live-line {

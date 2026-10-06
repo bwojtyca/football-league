@@ -87,14 +87,9 @@
   color: var(--fl-ball);
 }
 
-.rating b.provisional {
-  color: var(--fl-ink-2);
-}
-
-.rating b.provisional::after {
-  content: '?';
-  font-size: 0.6em;
-  vertical-align: super;
+/* Fewer games than a settled rating needs: the whole row fades a little. */
+.row.provisional {
+  opacity: 0.55;
 }
 
 .rating small {

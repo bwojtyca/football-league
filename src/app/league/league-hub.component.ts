@@ -129,7 +129,6 @@ export function crestOf(name: string): string {
       height: 56px;
       border-radius: 16px;
       background: var(--fl-board);
-      box-shadow: inset 0 0 0 2px var(--fl-ball);
       color: var(--fl-ball);
       font: 800 1.1rem/1 var(--fl-display);
     }
@@ -151,7 +150,6 @@ export function crestOf(name: string): string {
       margin-bottom: 16px;
       border-radius: 16px;
       background: var(--fl-card);
-      box-shadow: inset 0 0 0 1.5px var(--fl-line);
     }
     .rows a {
       display: flex;
