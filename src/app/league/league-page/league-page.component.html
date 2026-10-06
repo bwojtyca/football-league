@@ -22,7 +22,7 @@
         <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
       </p>
     } @else {
-      <fl-today-card [leagueId]="current.id" />
+      <fl-now-card [leagueId]="current.id" />
     }
 
     @if (!canPlay() && !current.archived) {

@@ -54,9 +54,10 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await back.click();
   await leave.getByRole('button', { name: t('game.leavePause') }).click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
+  // The league's page offers the paused game to finish.
   await page
-    .locator('fl-today-card')
-    .getByRole('link', { name: t('today.playing') })
+    .locator('fl-now-card')
+    .getByRole('link', { name: t('now.finish') })
     .click();
   await expect(overlay).toBeVisible();
   await overlay.getByRole('button', { name: t('game.resume') }).click();

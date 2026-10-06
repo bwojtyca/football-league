@@ -416,10 +416,6 @@
     "run": "Longest run: {team}, {n, plural, one {# goal} other {# goals}} in a row",
     "lead": "Biggest lead, {team}: {score}"
   },
-  "today": {
-    "title": "Today, {date}",
-    "playing": "Game on"
-  },
   "achievements": {
     "title": "Achievements",
     "shutout": "Clean sheet",
@@ -748,5 +744,19 @@
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar.",
     "leagues": "Leagues: mine, find, new"
+  },
+  "now": {
+    "title": "Now in the league",
+    "live": "Live",
+    "back": "Back to the game",
+    "paused": "Paused: {date}",
+    "finish": "Finish it",
+    "open": "Open",
+    "quiet": "Nothing going on · the last game",
+    "howItWent": "How it went",
+    "leader": "Leader",
+    "potato": "Potato",
+    "week": "This week",
+    "games": "{n, plural, one {game} other {games}}"
   }
 }

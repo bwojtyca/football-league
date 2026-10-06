@@ -16,10 +16,10 @@ import { RankingComponent } from '../../player/ranking/ranking.component';
 import { leagueTitles, titlesByPlayer } from '../../stats/titles';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
-import { TodayCardComponent } from '../today-card.component';
+import { NowCardComponent } from '../now-card.component';
 import { LeagueService } from '../league.service';
 
-/** A league's home: today's games and the ranking. */
+/** A league's home: what is going on now (or the last game) and the ranking. */
 @Component({
   selector: 'fl-league-page',
   imports: [
@@ -29,7 +29,7 @@ import { LeagueService } from '../league.service';
     MatTooltipModule,
     RouterLink,
     RankingComponent,
-    TodayCardComponent,
+    NowCardComponent,
     TopBarComponent,
     TranslocoPipe,
   ],

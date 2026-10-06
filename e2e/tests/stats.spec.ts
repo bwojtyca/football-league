@@ -56,6 +56,8 @@ test('statistics: the league, two players compared, a profile and a game against
     .getByRole('link', { name: t('nav.ranking') })
     .click();
   await expect(page.locator('fl-ranking .title').first()).toBeVisible();
+  // Nothing going on: the league's page names the last game and offers a rematch.
+  await expect(page.locator('fl-now-card')).toContainText(t('now.quiet'));
   await shot(page, 'stats-ranking-titles');
   // The potato of the day: today's four players, the worst one first.
   await page.getByRole('radio', { name: t('potato.title') }).click();

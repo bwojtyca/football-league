@@ -416,10 +416,6 @@
     "run": "Najdłuższa seria: {team}, {n, plural, one {# gol} few {# gole} many {# goli} other {# gola}} z rzędu",
     "lead": "Największe prowadzenie, {team}: {score}"
   },
-  "today": {
-    "title": "Dziś, {date}",
-    "playing": "Trwa mecz"
-  },
   "achievements": {
     "title": "Osiągnięcia",
     "shutout": "Do zera",
@@ -748,5 +744,19 @@
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska.",
     "leagues": "Ligi: moje, szukaj, nowa"
+  },
+  "now": {
+    "title": "Teraz w lidze",
+    "live": "Trwa",
+    "back": "Wróć do meczu",
+    "paused": "Wstrzymany: {date}",
+    "finish": "Dokończ",
+    "open": "Otwórz",
+    "quiet": "Teraz nic nie trwa · ostatni mecz",
+    "howItWent": "Jak szedł",
+    "leader": "Lider",
+    "potato": "Ziemniak",
+    "week": "Ten tydzień",
+    "games": "{n, plural, one {mecz} few {mecze} many {meczów} other {meczu}}"
   }
 }
