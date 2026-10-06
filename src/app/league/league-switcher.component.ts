@@ -20,7 +20,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
   selector: 'fl-league-switcher',
   imports: [MatIconModule, RouterLink, TranslocoPipe],
   template: `
-    <h2 class="fl-kicker">{{ 'switcher.title' | transloco }}</h2>
+    <h2 class="fl-kicker">{{ 'leagues.recent' | transloco }}</h2>
     <nav>
       @for (league of leagues(); track league.id) {
         <a
@@ -110,11 +110,20 @@ export class LeagueSwitcherComponent {
 
   protected readonly current = inject<string | null>(MAT_BOTTOM_SHEET_DATA);
 
-  protected readonly leagues = computed(() =>
-    this._leagueService
-      .leagues()
-      ?.map((league) => ({ ...league, games: this._gameService.leagueGames(league.id)?.length })),
-  );
+  /**
+   * The leagues opened on this device, the current one included (with thousands of leagues,
+   * never all of them: the rest is one search away on the leagues page).
+   */
+  protected readonly leagues = computed(() => {
+    const all = this._leagueService.leagues() ?? [];
+    const ids = [
+      ...new Set([...(this.current ? [this.current] : []), ...this._leagueService.recent()]),
+    ];
+    return ids
+      .map((id) => all.find((league) => league.id === id))
+      .filter((league): league is NonNullable<typeof league> => !!league)
+      .map((league) => ({ ...league, games: this._gameService.leagueGames(league.id)?.length }));
+  });
 
   protected close(): void {
     this._ref.dismiss();

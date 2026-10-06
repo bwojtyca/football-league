@@ -285,6 +285,10 @@ export class GameDetailComponent implements LeaveGuarded {
       document.removeEventListener('fullscreenchange', onFullscreen);
       // Leaving the game leaves full screen too (kept as the choice for the next game).
       setFullscreen(false, false);
+      // And its confetti does not rain on the next page.
+      if (this._celebrated) {
+        import('canvas-confetti').then(({ default: confetti }) => confetti.reset());
+      }
     });
     const landscape = matchMedia('(orientation: landscape)');
     const onTurn = (event: MediaQueryListEvent) => this._wide.set(event.matches);

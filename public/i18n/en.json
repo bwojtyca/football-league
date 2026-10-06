@@ -732,9 +732,11 @@
     "who": "Who plays?",
     "step": "step {n} of {of}",
     "next": "Next: who plays",
-    "fromOthers": "From other leagues",
+    "fromOthers": "From your leagues",
     "newPlayers": "New players",
-    "summary": "{n, plural, =0 {You can add players later too.} one {# player to start with.} other {# players to start with.}}"
+    "summary": "{n, plural, =0 {You can add players later too.} one {# player to start with.} other {# players to start with.}}",
+    "search": "Find a player by name",
+    "found": "Found"
   },
   "gameDetails": {
     "played": "{time} played"

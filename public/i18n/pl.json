@@ -732,9 +732,11 @@
     "who": "Kto gra?",
     "step": "krok {n} z {of}",
     "next": "Dalej: kto gra",
-    "fromOthers": "Z innych lig",
+    "fromOthers": "Z Twoich lig",
     "newPlayers": "Nowi gracze",
-    "summary": "{n, plural, =0 {Graczy dodasz też później.} one {Na start # gracz.} few {Na start # gracze.} many {Na start # graczy.} other {Na start # gracza.}}"
+    "summary": "{n, plural, =0 {Graczy dodasz też później.} one {Na start # gracz.} few {Na start # gracze.} many {Na start # graczy.} other {Na start # gracza.}}",
+    "search": "Szukaj gracza po imieniu",
+    "found": "Znalezieni"
   },
   "gameDetails": {
     "played": "{time} gry"

@@ -55,7 +55,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
       <!-- On a wide screen (P80): a rail with the leagues and this league's sections. -->
       <nav class="rail" [attr.aria-label]="'nav.label' | transloco">
         <a routerLink="/leagues" class="brand">Football League</a>
-        <h2 class="fl-kicker">{{ 'leagues.title' | transloco }}</h2>
+        <h2 class="fl-kicker">{{ 'leagues.recent' | transloco }}</h2>
         @for (league of railLeagues(); track league.id) {
           <a
             [routerLink]="['/l', league.id]"
@@ -295,13 +295,14 @@ export class LeagueLayoutComponent {
   );
 
   /** The leagues in the rail of a wide screen, each with its crest. */
-  protected readonly railLeagues = computed(() =>
-    (this._leagueService.leagues() ?? []).map((league) => ({
-      id: league.id,
-      name: league.name,
-      crest: crestOf(league.name),
-    })),
-  );
+  protected readonly railLeagues = computed(() => {
+    const all = this._leagueService.leagues() ?? [];
+    const ids = [...new Set([this.leagueId(), ...this._leagueService.recent()])];
+    return ids
+      .map((id) => all.find((league) => league.id === id))
+      .filter((league): league is NonNullable<typeof league> => !!league)
+      .map((league) => ({ id: league.id, name: league.name, crest: crestOf(league.name) }));
+  });
 
   /** `undefined` while loading, `null` when there is no such league. */
   protected readonly league = computed(() => this._leagueService.league(this.leagueId()));

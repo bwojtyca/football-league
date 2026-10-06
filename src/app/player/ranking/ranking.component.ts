@@ -1,5 +1,6 @@
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -29,6 +30,7 @@ const DUET_GAMES = 3;
   imports: [
     DecimalPipe,
     NgTemplateOutlet,
+    MatButtonModule,
     MatTooltipModule,
     RouterLink,
     AvatarComponent,
@@ -51,6 +53,19 @@ export class RankingComponent {
   public readonly minGames = input(0);
   /** Titles each player holds now, shown as icons next to their name. */
   public readonly titles = input<Map<string, Title[]>>(new Map());
+  /** Shows this many ranked players first, then more on request (the overall ranking). */
+  public readonly pageSize = input<number | null>(null);
+  private readonly _pages = signal(1);
+
+  /** The ranked players shown now. */
+  protected readonly shown = computed(() => {
+    const size = this.pageSize();
+    return size ? this.ranked().slice(0, size * this._pages()) : this.ranked();
+  });
+
+  protected showMore(): void {
+    this._pages.update((pages) => pages + 1);
+  }
 
   protected readonly provisionalGames = PROVISIONAL_GAMES;
   protected readonly titleGames = TITLE_GAMES;

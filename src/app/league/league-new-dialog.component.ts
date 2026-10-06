@@ -75,8 +75,21 @@ export function openLeagueNewDialog(dialog: MatDialog) {
           </mat-form-field>
         </div>
       } @else {
+        <label class="search">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input
+            type="search"
+            autocomplete="off"
+            [attr.aria-label]="'leagueNew.search' | transloco"
+            [placeholder]="'leagueNew.search' | transloco"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+        </label>
         @if (others().length) {
-          <h3 class="fl-kicker">{{ 'leagueNew.fromOthers' | transloco }}</h3>
+          <h3 class="fl-kicker">
+            {{ (query().trim() ? 'leagueNew.found' : 'leagueNew.fromOthers') | transloco }}
+          </h3>
           <div class="players">
             @for (player of others(); track player.id) {
               <button
@@ -207,6 +220,30 @@ export function openLeagueNewDialog(dialog: MatDialog) {
       margin-left: 6px;
       font-size: 18px;
     }
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 44px;
+      margin-top: 4px;
+      padding: 0 14px;
+      border-radius: 22px;
+      background: var(--fl-card-2);
+    }
+    .search .mat-icon {
+      color: var(--fl-ink-2);
+    }
+    .search input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      background: none;
+      color: var(--fl-ink);
+      font: 500 1rem var(--fl-display);
+    }
+    .search input:focus {
+      outline: none;
+    }
     .add {
       display: flex;
       align-items: flex-start;
@@ -240,10 +277,35 @@ export class LeagueNewDialogComponent {
   protected readonly name = signal('');
   protected readonly crest = computed(() => crestOf(this.name()));
 
-  /** Players of the other leagues, by name. */
-  protected readonly others = computed(() =>
-    [...(this._playerService.players() ?? [])].sort(compareNames),
-  );
+  protected readonly query = signal('');
+
+  /**
+   * Players to pick: those of the leagues opened on this device, or (with thousands of players,
+   * never all of them) those found by name; the ones already picked stay listed.
+   */
+  protected readonly others = computed(() => {
+    const players = this._playerService.players() ?? [];
+    const query = this.query().trim().toLowerCase();
+    if (query) {
+      return players
+        .filter((player) =>
+          player.name
+            .toLowerCase()
+            .split(/\s+/)
+            .concat(player.name.toLowerCase())
+            .some((word) => word.startsWith(query)),
+        )
+        .sort(compareNames)
+        .slice(0, 20);
+    }
+    const mine = new Set(
+      this._leagueService
+        .recent()
+        .flatMap((id) => this._leagueService.league(id)?.players ?? [])
+        .concat([...this.picked()]),
+    );
+    return players.filter((player) => mine.has(player.id)).sort(compareNames);
+  });
   protected readonly picked = signal(new Set<string>());
   protected readonly newName = signal('');
   protected readonly newNames = signal<string[]>([]);

@@ -20,6 +20,7 @@ import { RankingComponent } from './ranking/ranking.component';
       <p class="hint">{{ 'ranking.globalHint' | transloco }}</p>
       @if (players(); as players) {
         <fl-ranking
+          [pageSize]="50"
           [players]="players"
           [games]="games()"
           [playerLink]="playerLink"

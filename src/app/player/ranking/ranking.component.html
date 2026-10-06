@@ -122,7 +122,7 @@
 } @else {
   @if (ranked().length) {
     <ol class="ranking">
-      @for (player of ranked(); track player.id; let i = $index) {
+      @for (player of shown(); track player.id; let i = $index) {
         <li>
           <ng-container
             *ngTemplateOutlet="row; context: { $implicit: player, position: rankedPlaces()[i] }"
@@ -130,6 +130,11 @@
         </li>
       }
     </ol>
+    @if (shown().length < ranked().length) {
+      <button matButton class="more" (click)="showMore()">
+        {{ 'league.showMore' | transloco }}
+      </button>
+    }
   }
   @if (others().length) {
     <!-- Below the threshold: names only, without a place. -->
