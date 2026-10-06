@@ -17,6 +17,7 @@
   gap: 2px;
   min-height: 56px;
   padding: 2px 4px;
+  --mat-icon-button-state-layer-size: 44px;
 }
 
 .top .mat-icon {
@@ -25,6 +26,38 @@
 
 .top a .mat-icon {
   color: var(--fl-ink);
+}
+
+/* The goal detail, named (R5): a pill that cycles position, rod and figure. */
+.detail {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  margin: 0 2px;
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--fl-card-2);
+  color: var(--fl-ink);
+  font: 700 0.85rem/1 var(--fl-display);
+  cursor: pointer;
+}
+
+.top .detail .mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--fl-ball);
+}
+
+.detail span {
+  display: inline-block;
+}
+
+.detail span::first-letter {
+  text-transform: uppercase;
 }
 
 .status {
@@ -259,33 +292,25 @@
   font-size: 0.9rem;
 }
 
-/*
- * A short phone (under 720 px of height, e.g. with the browser's bars): a compact board without
- * the team names (the table's own boards name them), so the upright table keeps its size.
- */
+/* Upright, the table's own boards show the score: this board is left to screen readers. */
+.screen:not(.landscape) > .board {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* A short phone (under 720 px of height, e.g. with the browser's bars): tighter margins. */
 @media (max-height: 720px) {
   .screen:not(.landscape) .top {
     min-height: 48px;
   }
 
-  .screen:not(.landscape) .board {
-    padding: 2px 14px 4px;
-  }
-
-  .screen:not(.landscape) .board .bug {
-    font-size: clamp(2.2rem, 7vh, 3rem);
-  }
-
-  .screen:not(.landscape) .board .bug b::before {
-    display: none;
-  }
-
-  .screen:not(.landscape) .board .bug .sep {
-    font-size: 1.6rem;
-  }
-
   .screen:not(.landscape) .table-area {
-    margin: 6px 12px 4px;
+    margin: 4px 12px 4px;
   }
 
   .screen:not(.landscape) .bar {
@@ -328,6 +353,13 @@
   order: 1;
   flex-basis: 100%;
   padding-bottom: 4px;
+}
+
+.landscape .detail {
+  order: 2;
+  flex-basis: 100%;
+  justify-content: center;
+  margin: 0 0 6px;
 }
 
 .landscape .board {

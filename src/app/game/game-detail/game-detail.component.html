@@ -17,27 +17,16 @@
           <mat-icon>screen_rotation</mat-icon>
         </button>
         @if (game.events) {
+          <!-- How much a goal tells, named (P42/R5): position, rod or figure. -->
           <button
-            matIconButton
             class="detail"
             (click)="cycleDetail()"
             [attr.aria-label]="
               'game.detail' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
             "
           >
-            <mat-icon>{{ detailIcons[detail()] }}</mat-icon>
-          </button>
-        }
-        @if (fullscreenAvailable) {
-          <button
-            matIconButton
-            class="fullscreen"
-            (click)="toggleFullscreen()"
-            [attr.aria-label]="
-              (fullscreen() ? 'game.fullscreenOff' : 'game.fullscreenOn') | transloco
-            "
-          >
-            <mat-icon>{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+            <mat-icon aria-hidden="true">{{ detailIcons[detail()] }}</mat-icon>
+            <span>{{ 'game.detailLevel.' + detail() | transloco }}</span>
           </button>
         }
       }
@@ -109,6 +98,12 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #gameMenu="matMenu">
+          @if (fullscreenAvailable && !game.end) {
+            <button mat-menu-item class="fullscreen" (click)="toggleFullscreen()">
+              <mat-icon>{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon
+              >{{ (fullscreen() ? 'game.fullscreenOff' : 'game.fullscreenOn') | transloco }}
+            </button>
+          }
           <button mat-menu-item (click)="game.end ? deleteFinished() : remove()">
             <mat-icon>delete_outline</mat-icon>{{ 'game.remove' | transloco }}
           </button>
@@ -156,7 +151,8 @@
         <fl-game-timeline [game]="game" />
       </div>
     } @else {
-      <!-- The score on the LED board, the team names above their goals. -->
+      <!-- The score on the LED board, the team names above their goals; upright, the table's
+           own boards show it and this one is left to screen readers. -->
       <section class="board" [attr.aria-label]="'game.score' | transloco" aria-live="polite">
         <span class="bug"
           ><b class="r" [attr.data-team]="'team.red' | transloco">{{ score().red }}</b
@@ -168,7 +164,9 @@
       <!-- Every goal is entered on the table with its figures (owner's round H). -->
       <div class="table-area">
         @if (game.paused) {
-          <fl-pause-overlay (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+          <fl-pause-overlay
+            [score]="score()"
+            (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
         }
         <fl-table
           [game]="game"

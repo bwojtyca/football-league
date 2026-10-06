@@ -253,14 +253,18 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
           </div>
         </div>
       } @else {
+        <!-- The team's score first, as the counter at a real table's end. -->
         <div class="board board--{{ end.color }}" aria-hidden="true">
-          <div class="track" flMarquee>
-            <span class="team">{{ 'team.' + end.color | transloco }}</span>
-            @for (player of end.players; track player.position) {
-              <span class="who"
-                >{{ player.name }}<b>{{ player.goals }}</b></span
-              >
-            }
+          <b class="count">{{ end.score }}</b>
+          <div class="names">
+            <div class="track" flMarquee>
+              <span class="team">{{ 'team.' + end.color | transloco }}</span>
+              @for (player of end.players; track player.position) {
+                <span class="who"
+                  >{{ player.name }}<b>{{ player.goals }}</b></span
+                >
+              }
+            </div>
           </div>
         </div>
       }
@@ -359,14 +363,37 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     .board .team {
       font-size: 0.75rem;
     }
+    .board:not(.flash) {
+      gap: 10px;
+      height: 48px;
+      padding-left: 4px;
+    }
+    .board .count {
+      flex: none;
+      min-width: 2ch;
+      padding: 0 6px;
+      font: 900 2.3rem/1 var(--fl-led);
+      text-align: center;
+    }
+    .names {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      justify-content: safe center;
+      overflow: hidden;
+    }
     /* Little height (a short phone): slimmer boards leave more of it to the table. */
     @container (max-height: 460px) {
       .frame {
         gap: 5px;
       }
-      .board {
-        height: 32px;
+      .board,
+      .board:not(.flash) {
+        height: 38px;
         font-size: 0.88rem;
+      }
+      .board .count {
+        font-size: 1.8rem;
       }
     }
     .board .track {
@@ -550,6 +577,7 @@ export class TableComponent {
         team.defence.player === team.offence.player ? ['defence'] : ['defence', 'offence'];
       return {
         color,
+        score: teamScore(game, color),
         players: positions.map((position) => ({
           position,
           name: this._players.getPlayerName(team[position].player),

@@ -396,13 +396,6 @@ export class GameDetailComponent implements LeaveGuarded {
   protected cycleDetail(): void {
     const detail = GOAL_DETAILS[(GOAL_DETAILS.indexOf(this.detail()) + 1) % GOAL_DETAILS.length];
     this._setDetail(detail);
-    this._snackBar.open(
-      this._transloco.translate('game.detail', {
-        level: this._transloco.translate(`game.detailLevel.${detail}`),
-      }),
-      undefined,
-      { duration: 1500 },
-    );
   }
 
   private _setDetail(detail: GoalDetail): void {

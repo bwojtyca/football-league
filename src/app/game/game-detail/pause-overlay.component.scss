@@ -24,6 +24,22 @@ b {
   font: 800 1.6rem/1.1 var(--fl-display);
 }
 
+.score {
+  font: 900 2.6rem/1 var(--fl-led);
+}
+
+.score .r {
+  color: var(--fl-red-board);
+}
+
+.score .sep {
+  color: var(--fl-line-2);
+}
+
+.score .b {
+  color: var(--fl-blue-board);
+}
+
 small {
   max-width: 280px;
   color: var(--fl-ink-2);
