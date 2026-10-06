@@ -387,24 +387,7 @@ a {
   display: none;
 }
 
-/* brackets-viewer on the dark page. */
-.bracket.brackets-viewer {
-  --primary-background: var(--fl-paper);
-  --secondary-background: var(--fl-card-2);
-  --match-background: var(--fl-card);
-  --font-color: var(--fl-ink);
-  --win-color: var(--fl-win);
-  --loss-color: var(--fl-loss);
-  --label-color: var(--fl-ink-2);
-  --hint-color: var(--fl-ink-2);
-  --connector-color: var(--fl-line-2);
-  --border-color: transparent;
-  --border-hover-color: var(--fl-line-2);
-  --border-selected-color: var(--fl-ball);
-  --text-size: 14px;
-  font-family: var(--fl-display);
-}
-
+/* brackets-viewer's colours are set on the tournament page (`.bracket`). */
 /* Games to play now stand out (a tap starts them); teams knocked out fade. */
 .bracket.brackets-viewer .match[data-match-status='2'] .opponents,
 .bracket.brackets-viewer .match[data-match-status='3'] .opponents {
