@@ -39,6 +39,11 @@ export function players(id: string): [string, string, string, string] {
 
 export async function shot(page: Page, name: string): Promise<void> {
   await page.screenshot({ path: join(__dirname, '..', 'screenshots', `${name}.png`) });
+  // No screen may be wider than the phone: a sideways scroll is a layout bug.
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect.soft(overflow, `${name}: the page is wider than the screen`).toBeLessThanOrEqual(1);
 }
 
 /** Creates a league on the leagues page and returns its id. */

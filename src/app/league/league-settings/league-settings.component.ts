@@ -130,6 +130,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      box-sizing: border-box;
       width: 100%;
       padding: 14px 16px;
       border: 0;
