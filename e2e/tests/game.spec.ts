@@ -94,7 +94,8 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   // The device that scored the last goal offers a rematch with the same teams.
   const rematch = page.locator('fl-game-new-dialog');
   await expect(rematch).toBeVisible();
-  await expect(rematch.locator('.summary .matchup')).toContainText(`${b} & ${a}`);
+  await expect(rematch.locator('.slot--red-defence')).toContainText(b);
+  await expect(rematch.locator('.slot--red-offence')).toContainText(a);
   await shot(page, 'game-rematch');
   await rematch.getByRole('button', { name: t('common.cancel') }).click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
