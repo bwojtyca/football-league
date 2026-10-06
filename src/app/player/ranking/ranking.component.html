@@ -196,6 +196,20 @@
       }
     </span>
     @if (player.games > 0) {
+      <!-- A wide ranking (the desktop's left column, P80): games and the other measure too. -->
+      <span class="col">
+        <b>{{ player.games }}</b>
+        <small>{{ 'ranking.colGames' | transloco }}</small>
+      </span>
+      <span class="col">
+        @if (sortBy() === 'elo') {
+          <b>{{ player.winRatio | number: '1.0-0' }}%</b>
+          <small>{{ 'ranking.colWon' | transloco }}</small>
+        } @else {
+          <b>{{ player.rating }}</b>
+          <small>Elo</small>
+        }
+      </span>
       <fl-form [results]="player.form" />
       <span class="rating">
         @if (sortBy() === 'elo') {

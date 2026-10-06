@@ -447,9 +447,10 @@
   padding: 0 16px 24px;
 }
 
+/* The final score on top, each team below it with the whole half for its names. */
 .result {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: 8px 12px;
   margin: 4px 0 16px;
@@ -503,6 +504,9 @@
 }
 
 .bug.final {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  justify-self: center;
   display: inline-flex;
   align-items: baseline;
   padding: 6px 12px 4px;

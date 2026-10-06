@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  container: ranking / inline-size;
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -239,4 +244,31 @@
 .more {
   display: flex;
   margin: 8px auto 88px;
+}
+
+/* Columns only a wide ranking has room for. */
+.col {
+  display: none;
+}
+
+@container ranking (min-width: 600px) {
+  .col {
+    display: grid;
+    justify-items: end;
+    min-width: 64px;
+  }
+
+  .col b {
+    font: 700 1rem/1.15 var(--fl-display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .col small {
+    font-size: 0.7rem;
+    color: var(--fl-ink-2);
+  }
+
+  .row fl-form {
+    margin: 0 10px 0 14px;
+  }
 }

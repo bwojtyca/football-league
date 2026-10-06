@@ -494,7 +494,9 @@
     "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
     "allLeagues": "Wszystkie ligi",
     "overallProfile": "profil ogólny",
-    "order": "Kolejność"
+    "order": "Kolejność",
+    "colGames": "mecze",
+    "colWon": "wygranych"
   },
   "potato": {
     "title": "Ziemniak",
