@@ -155,6 +155,9 @@ import { TournamentService } from '../tournament/tournament.service';
       gap: 8px;
       margin-bottom: 14px;
     }
+    :host:empty {
+      display: none;
+    }
     h2 {
       margin: 2px 0 0;
     }

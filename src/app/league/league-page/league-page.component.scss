@@ -9,3 +9,35 @@
 .empty {
   color: var(--fl-ink-2);
 }
+
+/* A wide screen, next to the rail: two columns, the side one stays in view while scrolling. */
+@media (min-width: 1100px) {
+  .home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    gap: 0 28px;
+    max-width: 1120px;
+  }
+  .loader {
+    grid-column: 1 / -1;
+  }
+  .main {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .side {
+    grid-row: 1;
+    grid-column: 2;
+    position: sticky;
+    top: 16px;
+  }
+  /* Nothing to show yet (a league without games): one column, as on a phone. */
+  .home:has(fl-now-card:empty) {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 720px;
+  }
+  .home:has(fl-now-card:empty) .side {
+    display: none;
+  }
+}

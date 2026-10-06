@@ -12,28 +12,33 @@
   }
 </fl-top-bar>
 
-<main class="page">
+<!-- On a wide screen (P80): the ranking on the left, what is going on in the league on the right. -->
+<main class="page home">
   @if (!current || !ranking()) {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   } @else {
-    @if (current.archived) {
-      <p class="note">
-        {{ 'league.lockedNote' | transloco }}
-        <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
-      </p>
-    } @else {
-      <fl-now-card [leagueId]="current.id" />
-    }
+    <aside class="side">
+      @if (current.archived) {
+        <p class="note">
+          {{ 'league.lockedNote' | transloco }}
+          <a [routerLink]="['/l', current.id, 'settings']">{{ 'settings.title' | transloco }}</a>
+        </p>
+      } @else {
+        <fl-now-card [leagueId]="current.id" />
+      }
+    </aside>
 
-    @if (!canPlay() && !current.archived) {
-      <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
-    }
-    <fl-ranking
-      [players]="ranking()!"
-      [games]="games()"
-      [minGames]="current.minGames ?? 0"
-      [playerLink]="playerLink"
-      [titles]="titles()"
-    />
+    <section class="main">
+      @if (!canPlay() && !current.archived) {
+        <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
+      }
+      <fl-ranking
+        [players]="ranking()!"
+        [games]="games()"
+        [minGames]="current.minGames ?? 0"
+        [playerLink]="playerLink"
+        [titles]="titles()"
+      />
+    </section>
   }
 </main>

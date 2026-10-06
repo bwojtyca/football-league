@@ -59,6 +59,12 @@ test('statistics: the league, two players compared, a profile and a game against
   // Nothing going on: the league's page names the last game and offers a rematch.
   await expect(page.locator('fl-now-card')).toContainText(t('now.quiet'));
   await shot(page, 'stats-ranking-titles');
+  // On a computer: the ranking on the left, the league's "now" on the right.
+  const phone = page.viewportSize()!;
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(page.locator('aside.side fl-now-card')).toBeVisible();
+  await shot(page, 'desktop-league');
+  await page.setViewportSize(phone);
   // The potato of the day: today's four players, the worst one first.
   await page.getByRole('radio', { name: t('potato.title') }).click();
   await expect(page.locator('.potato-today li')).toHaveCount(4);
