@@ -2,7 +2,8 @@
   "app": {
     "title": "Football League",
     "updateReady": "Jest nowa wersja aplikacji",
-    "reload": "Odśwież"
+    "reload": "Odśwież",
+    "loading": "Wczytywanie"
   },
   "common": {
     "back": "Wstecz",

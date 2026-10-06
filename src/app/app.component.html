@@ -1,1 +1,7 @@
+<!-- Something is on its way: a page, or the data (owner's round 4). -->
+@if (busy()) {
+  <div class="fl-progress" role="progressbar" [attr.aria-label]="'app.loading' | transloco">
+    <i></i>
+  </div>
+}
 <router-outlet />
