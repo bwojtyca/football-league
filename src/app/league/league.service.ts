@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
@@ -9,6 +9,18 @@ import { GameService } from '../game/game.service';
 import { League } from './league';
 
 const LAST_LEAGUE_KEY = 'fl.league';
+const RECENT_KEY = 'fl.recentLeagues';
+/** How many leagues opened on this device the leagues page lists. */
+const RECENT_COUNT = 8;
+
+function readRecent(): string[] {
+  try {
+    const ids = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
+    return Array.isArray(ids) ? ids.filter((id) => typeof id === 'string') : [];
+  } catch {
+    return [];
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
@@ -93,6 +105,22 @@ export class LeagueService {
       localStorage.setItem(LAST_LEAGUE_KEY, id);
     } catch {
       // Private mode: the app starts on the league list next time.
+    }
+    if (id) {
+      this._remember(id);
+    }
+  }
+
+  /** Leagues opened on this device, last first: "mine" until there are accounts. */
+  public readonly recent = signal(readRecent());
+
+  private _remember(id: string): void {
+    const ids = [id, ...this.recent().filter((other) => other !== id)].slice(0, RECENT_COUNT);
+    this.recent.set(ids);
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(ids));
+    } catch {
+      // Not remembered: private mode or storage blocked.
     }
   }
 }

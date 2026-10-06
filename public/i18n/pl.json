@@ -53,7 +53,12 @@
     "deleted": "{n, plural, one {Usunięta liga: #} few {Usunięte ligi: #} many {Usunięte ligi: #} other {Usunięte ligi: #}}",
     "show": "Pokaż",
     "hide": "Ukryj",
-    "restoreHint": "usunięta, otwórz, żeby przywrócić"
+    "restoreHint": "usunięta, otwórz, żeby przywrócić",
+    "search": "Szukaj ligi po nazwie",
+    "found": "Znalezione",
+    "recent": "Na tym telefonie",
+    "active": "Ostatnio grane",
+    "noneFound": "Żadna liga nie ma takiej nazwy."
   },
   "league": {
     "ranking": "Ranking",

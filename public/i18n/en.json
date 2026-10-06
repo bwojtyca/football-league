@@ -53,7 +53,12 @@
     "deleted": "Deleted leagues: {n}",
     "show": "Show",
     "hide": "Hide",
-    "restoreHint": "deleted, open it to restore"
+    "restoreHint": "deleted, open it to restore",
+    "search": "Find a league by name",
+    "found": "Found",
+    "recent": "On this phone",
+    "active": "Played lately",
+    "noneFound": "No league has that name."
   },
   "league": {
     "ranking": "Ranking",

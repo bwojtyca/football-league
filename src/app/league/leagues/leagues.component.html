@@ -5,9 +5,24 @@
     <mat-icon>add</mat-icon>{{ 'leagues.new' | transloco }}
   </button>
 
+  <label class="search">
+    <mat-icon aria-hidden="true">search</mat-icon>
+    <input
+      type="search"
+      autocomplete="off"
+      [attr.aria-label]="'leagues.search' | transloco"
+      [placeholder]="'leagues.search' | transloco"
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+    />
+  </label>
+
   @if (leagues(); as leagues) {
-    @if (onlyArchive()) {
-      <p class="empty">{{ 'leagues.empty' | transloco }}</p>
+    <h2 class="fl-kicker list-title">{{ 'leagues.' + listKind() | transloco }}</h2>
+    @if (!leagues.length) {
+      <p class="empty">
+        {{ (listKind() === 'found' ? 'leagues.noneFound' : 'leagues.empty') | transloco }}
+      </p>
     }
     <ul class="leagues">
       @for (league of leagues; track league.id) {
