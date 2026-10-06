@@ -206,6 +206,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'more';
         flex-direction: column;
         gap: 2px;
         width: 256px;
+        box-sizing: border-box;
         padding: 16px 12px;
         overflow-y: auto;
         background: var(--fl-card);

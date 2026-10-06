@@ -359,6 +359,16 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     .board .team {
       font-size: 0.75rem;
     }
+    /* Little height (a short phone): slimmer boards leave more of it to the table. */
+    @container (max-height: 460px) {
+      .frame {
+        gap: 5px;
+      }
+      .board {
+        height: 32px;
+        font-size: 0.88rem;
+      }
+    }
     .board .track {
       display: flex;
       align-items: center;

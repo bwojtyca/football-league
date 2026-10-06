@@ -37,6 +37,12 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
     .click();
   await expect(score(page)).toHaveText('2:0');
   await shot(page, 'game-running');
+  // A short phone: a compact board leaves the height to the table.
+  const tall = page.viewportSize()!;
+  await page.setViewportSize({ width: tall.width, height: 640 });
+  expect((await page.locator('fl-table .pitch').boundingBox())!.height).toBeGreaterThan(320);
+  await shot(page, 'game-short');
+  await page.setViewportSize(tall);
 
   await page.getByRole('button', { name: t('game.pause'), exact: true }).click();
   const overlay = page.locator('fl-pause-overlay');

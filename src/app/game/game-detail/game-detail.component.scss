@@ -260,6 +260,41 @@
 }
 
 /*
+ * A short phone (under 720 px of height, e.g. with the browser's bars): a compact board without
+ * the team names (the table's own boards name them), so the upright table keeps its size.
+ */
+@media (max-height: 720px) {
+  .screen:not(.landscape) .top {
+    min-height: 48px;
+  }
+
+  .screen:not(.landscape) .board {
+    padding: 2px 14px 4px;
+  }
+
+  .screen:not(.landscape) .board .bug {
+    font-size: clamp(2.2rem, 7vh, 3rem);
+  }
+
+  .screen:not(.landscape) .board .bug b::before {
+    display: none;
+  }
+
+  .screen:not(.landscape) .board .bug .sep {
+    font-size: 1.6rem;
+  }
+
+  .screen:not(.landscape) .table-area {
+    margin: 6px 12px 4px;
+  }
+
+  .screen:not(.landscape) .bar {
+    gap: 6px 10px;
+    padding-bottom: 6px;
+  }
+}
+
+/*
  * The landscape layout (P41): the table lengthwise on the left, a panel on the right with the
  * buttons, the clock, the score and the last move. The far team's cells face them.
  */
