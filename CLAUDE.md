@@ -185,6 +185,12 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   grey), `--fl-series-1/2` (validated for colour blindness) for two players. Time counts play
   time without pauses (`gameSeconds()`).
 
+## Where to continue
+
+The living plan with the next increments and the way the owner wants us to work is
+`docs/superpowers/plans/2026-10-06-next.md`: read it first in a new session and update it after
+every increment (what is done, what comes next).
+
 ## Plan (October 2026)
 
 Analysis of the 2017 games, other foosball formats and the first mockups:
