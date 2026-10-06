@@ -79,7 +79,7 @@ import { TournamentService } from '../tournament/tournament.service';
                 | transloco
                   : {
                       date:
-                        (game.game.paused
+                        (game.game.paused ?? game.game.start
                         | translocoDate: { weekday: 'long', hour: '2-digit', minute: '2-digit' }),
                     }
             }}</small>
