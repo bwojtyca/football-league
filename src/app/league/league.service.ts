@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
@@ -115,7 +115,12 @@ export class LeagueService {
   public readonly recent = signal(readRecent());
 
   private _remember(id: string): void {
-    const ids = [id, ...this.recent().filter((other) => other !== id)].slice(0, RECENT_COUNT);
+    // Called from effects: read without tracking, and leave the list alone when it is the same.
+    const recent = untracked(() => this.recent());
+    if (recent[0] === id) {
+      return;
+    }
+    const ids = [id, ...recent.filter((other) => other !== id)].slice(0, RECENT_COUNT);
     this.recent.set(ids);
     try {
       localStorage.setItem(RECENT_KEY, JSON.stringify(ids));
