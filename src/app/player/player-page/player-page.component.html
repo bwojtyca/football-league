@@ -69,7 +69,10 @@
           <p class="empty">{{ 'player.noGames' | transloco }}</p>
         } @else {
           <div class="form-row">
-            <fl-form [results]="p.form" />
+            <span class="form">
+              <span aria-hidden="true">{{ 'form.label' | transloco }}</span>
+              <fl-form [results]="p.form" />
+            </span>
             @if (comparable().length) {
               <button matButton class="compare" [matMenuTriggerFor]="compareMenu">
                 <mat-icon>compare_arrows</mat-icon>{{ 'compare.with' | transloco }}

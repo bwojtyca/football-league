@@ -202,15 +202,14 @@ export function openLeagueNewDialog(dialog: MatDialog) {
       gap: 8px;
       height: 40px;
       padding: 0 14px 0 6px;
-      border: 1.5px solid var(--fl-line-2);
+      border: 0;
       border-radius: 20px;
-      background: transparent;
+      background: var(--fl-card-2);
       color: var(--fl-ink);
       font: 600 0.9rem/1 var(--fl-display);
       cursor: pointer;
     }
     .player.picked {
-      border-color: var(--fl-ink);
       background: var(--fl-ink);
       color: var(--fl-paper);
     }

@@ -112,7 +112,9 @@ html {
     --mat-button-#{$kind}-label-text-tracking: 0.01em;
     --mat-button-#{$kind}-label-text-transform: none;
   }
-  --mat-button-outlined-outline-color: var(--fl-line-2);
+  /* No outlines (owner, round I): the "outlined" button is a tonal pill (see below). */
+  --mat-button-outlined-outline-color: transparent;
+  --mat-button-outlined-disabled-outline-color: transparent;
 
   /* The floating "new game" button is the yellow ball. */
   --mat-fab-container-color: var(--fl-ball);
@@ -204,6 +206,10 @@ a {
 }
 
 /* Content column of every page; the game screen fills the whole viewport instead. */
+.mat-mdc-outlined-button {
+  background-color: var(--fl-card-2);
+}
+
 .page {
   max-width: 720px;
   margin: 0 auto;

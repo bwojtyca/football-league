@@ -714,8 +714,6 @@
     "league": "Liga",
     "players": "Gracze",
     "inLeague": "W lidze ({n})",
-    "stats": "Statystyki ligi",
-    "statsHint": "{games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, rekordy, kiedy gramy",
     "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
     "share": "Udostępnij link do ligi",
     "copied": "Link do ligi skopiowany"

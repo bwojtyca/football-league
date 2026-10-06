@@ -71,7 +71,6 @@
 
 .tiles--positions div {
   padding: 10px 12px;
-  border: 1px solid var(--fl-line);
   border-radius: 12px;
   background: var(--fl-card);
 }
@@ -89,10 +88,17 @@
   margin: 12px 2px 0;
 }
 
+.form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--fl-ink-2);
+}
+
 .chart {
   margin: 16px 0 0;
   padding: 10px 12px 6px;
-  border: 1px solid var(--fl-line);
   border-radius: 12px;
   background: var(--fl-card);
 }
@@ -125,7 +131,6 @@ h2 {
 
 .records div {
   padding: 8px 12px;
-  border: 1px solid var(--fl-line);
   border-radius: 12px;
   background: var(--fl-card);
 }

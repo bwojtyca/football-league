@@ -181,9 +181,9 @@
   display: grid;
   place-items: center;
   height: 40px;
-  border: 1.5px solid var(--fl-line-2);
+  border: 0;
   border-radius: 20px;
-  background: transparent;
+  background: var(--fl-card-2);
   cursor: pointer;
 }
 

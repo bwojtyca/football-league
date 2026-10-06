@@ -108,15 +108,15 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
     .search {
       height: 44px;
       padding: 0 14px;
-      border: 1.5px solid var(--fl-line-2);
+      border: 0;
       border-radius: 22px;
-      background: var(--fl-card);
+      background: var(--fl-card-2);
       color: var(--fl-ink);
       font: 500 1rem var(--fl-display);
     }
     .search:focus {
       outline: none;
-      border-color: var(--fl-ball);
+      box-shadow: inset 0 0 0 2px var(--fl-ball);
     }
     ul {
       display: grid;

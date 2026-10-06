@@ -71,14 +71,6 @@ export function crestOf(name: string): string {
             >
             <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
           </a>
-          <a [routerLink]="['/l', current.id, 'stats']">
-            <mat-icon aria-hidden="true">insights</mat-icon>
-            <span
-              ><b>{{ 'hub.stats' | transloco }}</b
-              ><small>{{ 'hub.statsHint' | transloco: { games: games() } }}</small></span
-            >
-            <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
-          </a>
           <a [routerLink]="['/l', current.id, 'settings']">
             <mat-icon aria-hidden="true">tune</mat-icon>
             <span

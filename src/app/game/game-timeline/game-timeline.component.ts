@@ -35,7 +35,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
           baseChart
           type="line"
           [data]="chart()"
-          [options]="chartOptions"
+          [options]="chartOptions()"
           [attr.aria-label]="'timeline.chart' | transloco"
         ></canvas>
       </div>
@@ -208,24 +208,26 @@ export class GameTimelineComponent {
     ),
   );
 
+  /** The game's length in ms; under two minutes the chart counts seconds, else minutes. */
+  private readonly _length = computed(() => {
+    const game = this._game();
+    const last = this.timeline()?.goals.at(-1)?.at ?? 0;
+    return Math.max(game.end ? Date.parse(game.end) - Date.parse(game.start) : 0, last);
+  });
+  private readonly _unit = computed(() => (this._length() < 120_000 ? 1000 : 60_000));
+
   /** Goals of each team over time, as steps. */
   protected readonly chart = computed<ChartConfiguration<'line'>['data']>(() => {
-    const game = this._game();
     const goals = this.timeline()?.goals ?? [];
-    const end = game.end
-      ? (Date.parse(game.end) - Date.parse(game.start)) / 60_000
-      : (goals.at(-1)?.at ?? 0) / 60_000;
+    const unit = this._unit();
     return {
       datasets: TEAM_COLORS.map((color) => {
         const line = cssColor(color === 'red' ? '--fl-red' : '--fl-blue');
         return {
           data: [
             { x: 0, y: 0 },
-            ...goals.map((goal) => ({ x: goal.at / 60_000, y: goal.score[color] })),
-            {
-              x: Math.max(end, (goals.at(-1)?.at ?? 0) / 60_000),
-              y: goals.at(-1)?.score[color] ?? 0,
-            },
+            ...goals.map((goal) => ({ x: goal.at / unit, y: goal.score[color] })),
+            { x: this._length() / unit, y: goals.at(-1)?.score[color] ?? 0 },
           ],
           borderColor: line,
           backgroundColor: withAlpha(line, 0.08),
@@ -237,24 +239,27 @@ export class GameTimelineComponent {
     };
   });
 
-  protected readonly chartOptions: ChartConfiguration<'line'>['options'] = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: false,
-    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-    scales: {
-      x: {
-        type: 'linear',
-        ticks: { callback: (value) => `${value}′`, maxTicksLimit: 6 },
-        grid: { display: false },
+  protected readonly chartOptions = computed<ChartConfiguration<'line'>['options']>(() => {
+    const mark = this._unit() === 1000 ? '″' : '′';
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        x: {
+          type: 'linear',
+          ticks: { callback: (value) => `${value}${mark}`, maxTicksLimit: 6, precision: 0 },
+          grid: { display: false },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, maxTicksLimit: 5 },
+          grid: { color: 'rgba(128, 128, 128, 0.2)' },
+        },
       },
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1, maxTicksLimit: 5 },
-        grid: { color: 'rgba(128, 128, 128, 0.2)' },
-      },
-    },
-  };
+    };
+  });
 
   protected name(playerId: string): string {
     return this._playerService.getPlayerName(playerId);
