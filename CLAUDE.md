@@ -140,9 +140,13 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   chosen one, and chooses what a goal records and the screen's orientation (device settings in
   `game/screen-settings.ts`, read by the game screen). `game/mode/` has the shared rules picker
   and label.
-- Game screen (canvas P40–P49, reworked after the owner's round H): a header (back, turn, goal
-  detail, series or rules over an LED clock, pause, menu), the score on an LED board, the table
-  (`table.component.ts`), and a bar with the last move, the undo, "Own goal…" and the swaps.
+- Game screen (canvas P40–P49, reworked after the owner's round H): a header (back, turn, the
+  goal detail as a named pill, series or rules over an LED clock, pause, menu with full screen
+  and remove), the table (`table.component.ts`), and a bar with the last move, the undo, "Own
+  goal…" and the swaps. Upright, each team's score leads its LED board at its end of the table
+  (the board above the table is then only for screen readers and e2e's `score()`); lengthwise
+  the score is on an LED board in the panel. After each goal the board of the team it counts
+  for flashes "GOL", the scorer and the score; long names slide (`shared/marquee.directive.ts`).
   Every goal is entered on the table seen from above with its figures: who scored taps a rod
   of the scorer, the rod mode the rod, the figure mode the figure. Held portrait the table
   stands (red goal on top, each team's LED board at its end); in the landscape layout
@@ -165,7 +169,7 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Elo functions; `rating.ts` also rates defence and attack separately (2 vs 2 games only).
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
   down, 5 wins in a row, 100th game) and the pairs ("duets") ranking.
-- Goal detail: the game screen's button next to "turn" cycles the detail of new goals
+- Goal detail: the game screen's pill next to "turn" cycles the detail of new goals
   (`fl.goalDetail` in localStorage: position, rod, figure; the new game dialog sets it too).
   Titles of a league (`stats/titles.ts`: leader, potato, sniper, wall, on fire,
   veteran, marathoner, comeback king, dream team, scoring keeper) show as icons in the
@@ -303,7 +307,7 @@ increments without waiting for confirmation):
   played (ticking clock, back to the game), paused games to finish, running tournaments; when
   nothing goes on, the last game named as such with a rematch, and the leader, the potato and
   this week's games.
-- (Done) Games can go full screen without the browser's bar (button in the game header where the
+- (Done) Games can go full screen without the browser's bar (in the game's menu where the
   browser allows it, kept for the next games; `screen-settings.ts`); on an iPhone the app menu
   explains installing instead.
 - Next self-review ideas: skeleton rows while lists load, the leagues search on the server once

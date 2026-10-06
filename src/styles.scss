@@ -206,7 +206,8 @@ a {
 }
 
 /* Content column of every page; the game screen fills the whole viewport instead. */
-.mat-mdc-outlined-button {
+/* Two classes: Material's own `.mdc-button` (loaded later) sets a transparent background. */
+.mdc-button.mat-mdc-outlined-button {
   background-color: var(--fl-card-2);
 }
 
