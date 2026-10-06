@@ -1,10 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { GameService } from '../game/game.service';
 import { ALL_LEAGUES } from '../league/league';
 import { leagueTitles, titlesByPlayer } from '../stats/titles';
+import { SkeletonComponent } from '../shared/skeleton.component';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { rankPlayers } from './player';
 import { PlayerService } from './player.service';
@@ -13,7 +13,7 @@ import { RankingComponent } from './ranking/ranking.component';
 /** One ranking over every league: Elo, win %, pairs and the potato, from all games. */
 @Component({
   selector: 'fl-global-ranking',
-  imports: [MatProgressSpinnerModule, RankingComponent, TopBarComponent, TranslocoPipe],
+  imports: [RankingComponent, SkeletonComponent, TopBarComponent, TranslocoPipe],
   template: `
     <fl-top-bar [title]="'ranking.global' | transloco" back="/leagues" />
     <main class="page">
@@ -27,7 +27,7 @@ import { RankingComponent } from './ranking/ranking.component';
           [titles]="titles()"
         />
       } @else {
-        <div class="loader"><mat-spinner [diameter]="40" /></div>
+        <fl-skeleton [rows]="8" />
       }
     </main>
   `,
