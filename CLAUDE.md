@@ -279,6 +279,30 @@ Owner feedback, to do at the end (after the planned stages):
   number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)
 
+Owner feedback, round I (6 October 2026: scale and polish; designed first on the canvas page
+"Runda 4", then built in steps; the owner wants the agent to design, build and self-review in
+increments without waiting for confirmation):
+- (Done) The app menu (gear in every top bar, `shared/app-menu-sheet.component.ts`) holds what
+  belongs to the app: the language, installing on the phone (`shared/install.service.ts`), the
+  overall ranking, the leagues. The league hub keeps only the league and shares its link.
+- (Done) The leagues page scales: leagues opened on this device (`LeagueService.recent`,
+  `fl.recentLeagues`; on a first visit the ones played lately), a search over all leagues by
+  name, the new league, the overall ranking, the deleted leagues.
+- (Done) Nothing is marked with a border or coloured bar: cards are fills; leaders get a yellow
+  place, a player's games W/L letters, running things a badge; provisional ratings turn
+  translucent; the finished game and the new game's table lost their coloured rails.
+- (Done) Loading: a yellow progress bar on top while a page or the data is on its way
+  (`app.component.ts`).
+- (Done) "Now in the league" (`league/now-card.component.ts`) replaces the Today card: games being
+  played (ticking clock, back to the game), paused games to finish, running tournaments; when
+  nothing goes on, the last game named as such with a rematch, and the leader, the potato and
+  this week's games.
+- (Done) Games can go full screen without the browser's bar (button in the game header where the
+  browser allows it, kept for the next games; `screen-settings.ts`); on an iPhone the app menu
+  explains installing instead.
+- Next self-review ideas: skeleton rows while lists load, the leagues search on the server once
+  there are many leagues, scrolling text on the LED boards.
+
 Owner feedback, round H (5 October 2026, after trying the UX phase; more to come once it is
 all ready):
 - (Done) Nothing on the game screen is shown turned or mirrored any more: the far team's cells
