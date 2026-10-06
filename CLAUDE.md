@@ -37,6 +37,7 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   with `gh run list` / `gh run view --log-failed`, and the screenshots with
   `gh run download <run> -n e2e`. Scenarios run on a Pixel 7 in Polish and take their texts from
   `public/i18n/pl.json` (`t()` in `e2e/tests/helpers.ts`); each creates a league of its own.
+  Every `shot()` also fails softly when the page is wider than the phone (sideways scroll).
 
 ## Deploys (everything goes out from `master`)
 
@@ -302,7 +303,8 @@ increments without waiting for confirmation):
   place, a player's games W/L letters, running things a badge; provisional ratings turn
   translucent; the finished game and the new game's table lost their coloured rails.
 - (Done) Loading: a yellow progress bar on top while a page or the data is on its way
-  (`app.component.ts`).
+  (`app.component.ts`), and placeholder rows (`shared/skeleton.component.ts`) in the league's
+  ranking and the games lists.
 - (Done) "Now in the league" (`league/now-card.component.ts`) replaces the Today card: games being
   played (ticking clock, back to the game), paused games to finish, running tournaments; when
   nothing goes on, the last game named as such with a rematch, and the leader, the potato and
