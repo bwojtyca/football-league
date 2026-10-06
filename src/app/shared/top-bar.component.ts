@@ -41,7 +41,7 @@ import { openAppMenu } from './app-menu-sheet.component';
         (click)="appMenu()"
         [attr.aria-label]="'appMenu.open' | transloco"
       >
-        <mat-icon>tune</mat-icon>
+        <mat-icon>settings</mat-icon>
       </button>
     </header>
   `,

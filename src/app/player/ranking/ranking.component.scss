@@ -87,9 +87,9 @@
   color: var(--fl-ball);
 }
 
-/* Fewer games than a settled rating needs: the whole row fades a little. */
-.row.provisional {
-  opacity: 0.55;
+/* Fewer games than a settled rating needs: the rating is translucent, not yet firm. */
+.row.provisional .rating b {
+  opacity: 0.45;
 }
 
 .rating small {
