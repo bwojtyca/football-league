@@ -253,7 +253,9 @@
     "lastGoal": "Last goal: {event}",
     "score": "Score",
     "ownArm": "Own goal…",
-    "ownCancel": "Cancel own goal"
+    "ownCancel": "Cancel own goal",
+    "fullscreenOn": "Full screen",
+    "fullscreenOff": "Leave full screen"
   },
   "modes": {
     "title": "Mode",

@@ -56,7 +56,14 @@ import {
 import { GameService } from '../game.service';
 import { openNewGameDialog } from '../game-new/game-new-dialog/game-new-dialog.component';
 import { GameTimelineComponent } from '../game-timeline/game-timeline.component';
-import { readDetail, readRotation, saveDetail, saveRotation } from '../screen-settings';
+import {
+  canFullscreen,
+  readDetail,
+  readRotation,
+  saveDetail,
+  saveRotation,
+  setFullscreen,
+} from '../screen-settings';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
 import { openLeaveDialog } from './leave-dialog.component';
@@ -263,7 +270,22 @@ export class GameDetailComponent implements LeaveGuarded {
       : this._transloco.translate('series.score', score);
   });
 
+  /** Full screen without the browser's bar (Android and computers; not an iPhone). */
+  protected readonly fullscreenAvailable = canFullscreen();
+  protected readonly fullscreen = signal(!!document.fullscreenElement);
+
+  protected toggleFullscreen(): void {
+    setFullscreen(!this.fullscreen());
+  }
+
   constructor() {
+    const onFullscreen = () => this.fullscreen.set(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFullscreen);
+    inject(DestroyRef).onDestroy(() => {
+      document.removeEventListener('fullscreenchange', onFullscreen);
+      // Leaving the game leaves full screen too (kept as the choice for the next game).
+      setFullscreen(false, false);
+    });
     const landscape = matchMedia('(orientation: landscape)');
     const onTurn = (event: MediaQueryListEvent) => this._wide.set(event.matches);
     landscape.addEventListener('change', onTurn);

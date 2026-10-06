@@ -35,7 +35,14 @@ import {
 import { GameService } from '../../game.service';
 import { ModeLabelComponent } from '../../mode/mode-label.component';
 import { ModePickerComponent } from '../../mode/mode-picker.component';
-import { readDetail, readRotation, saveDetail, saveRotation } from '../../screen-settings';
+import {
+  readDetail,
+  readRotation,
+  saveDetail,
+  saveRotation,
+  setFullscreen,
+  wantsFullscreen,
+} from '../../screen-settings';
 import { openPlayerPicker, PickerOption, PickerResult } from '../player-picker-sheet.component';
 
 export interface GameNewDialogData {
@@ -320,6 +327,10 @@ export class GameNewDialogComponent {
       return;
     }
     this._saveScreen();
+    // The tap that starts the game may open full screen, if chosen before (browsers need one).
+    if (wantsFullscreen()) {
+      setFullscreen(true, false);
+    }
 
     const tournament = this.series ? this._createSeries(red, blue) : this._data.tournamentId;
     const { id, saved } = this._gameService.createGame(

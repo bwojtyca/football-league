@@ -39,3 +39,40 @@ export function saveDetail(detail: GoalDetail): void {
     // Not remembered: private mode or storage blocked.
   }
 }
+
+const FULLSCREEN_KEY = 'fl.fullscreen';
+
+/** The browser can show the page full screen (not an iPhone, nor the installed app). */
+export function canFullscreen(): boolean {
+  return (
+    !!document.fullscreenEnabled &&
+    !matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches
+  );
+}
+
+/** The player chose full screen for games on this device. */
+export function wantsFullscreen(): boolean {
+  try {
+    return localStorage.getItem(FULLSCREEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Full screen on or off, remembered for the next games (needs a tap: browsers ask for one). */
+export async function setFullscreen(on: boolean, remember = true): Promise<void> {
+  if (remember) {
+    try {
+      localStorage.setItem(FULLSCREEN_KEY, on ? '1' : '0');
+    } catch {
+      // Not remembered: private mode or storage blocked.
+    }
+  }
+  if (on && !document.fullscreenElement && canFullscreen()) {
+    await document.documentElement
+      .requestFullscreen({ navigationUI: 'hide' })
+      .catch(() => undefined);
+  } else if (!on && document.fullscreenElement) {
+    await document.exitFullscreen().catch(() => undefined);
+  }
+}

@@ -253,7 +253,9 @@
     "lastGoal": "Ostatni gol: {event}",
     "score": "Wynik",
     "ownArm": "Samobój…",
-    "ownCancel": "Anuluj samobój"
+    "ownCancel": "Anuluj samobój",
+    "fullscreenOn": "Pełny ekran",
+    "fullscreenOff": "Zamknij pełny ekran"
   },
   "modes": {
     "title": "Tryb",

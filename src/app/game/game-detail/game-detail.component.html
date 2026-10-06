@@ -28,6 +28,18 @@
             <mat-icon>{{ detailIcons[detail()] }}</mat-icon>
           </button>
         }
+        @if (fullscreenAvailable) {
+          <button
+            matIconButton
+            class="fullscreen"
+            (click)="toggleFullscreen()"
+            [attr.aria-label]="
+              (fullscreen() ? 'game.fullscreenOff' : 'game.fullscreenOn') | transloco
+            "
+          >
+            <mat-icon>{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+          </button>
+        }
       }
       <!-- The series or the rules above the clock. -->
       <div class="status">
