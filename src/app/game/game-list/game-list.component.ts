@@ -7,6 +7,7 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 import { PlayerService } from '../../player/player.service';
 import { TournamentService } from '../../tournament/tournament.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
+import { SkeletonComponent } from '../../shared/skeleton.component';
 import { Game, isDefaultMode, modeOf, Team, teamOf, teamPlayers, teamScore } from '../game';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { GameService } from '../game.service';
@@ -19,6 +20,7 @@ import { GameService } from '../game.service';
     RouterLink,
     ModeLabelComponent,
     RatingChangeComponent,
+    SkeletonComponent,
     TranslocoDatePipe,
     TranslocoPipe,
   ],
@@ -55,6 +57,9 @@ export class GameListComponent {
         (!versus || game.players.includes(versus)),
     );
   });
+
+  /** The games are not loaded yet: placeholder rows, not "no games". */
+  protected readonly loading = computed(() => this._gameService.games() === undefined);
 
   protected readonly more = computed(() => this._games().length > this._pages() * this.pageSize());
 

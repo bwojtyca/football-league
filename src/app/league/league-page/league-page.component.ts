@@ -3,7 +3,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -14,6 +13,7 @@ import { rankPlayers } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
 import { RankingComponent } from '../../player/ranking/ranking.component';
 import { leagueTitles, titlesByPlayer } from '../../stats/titles';
+import { SkeletonComponent } from '../../shared/skeleton.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { NowCardComponent } from '../now-card.component';
@@ -25,8 +25,8 @@ import { LeagueService } from '../league.service';
   imports: [
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
     MatTooltipModule,
+    SkeletonComponent,
     RouterLink,
     RankingComponent,
     NowCardComponent,

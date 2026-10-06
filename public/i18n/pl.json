@@ -11,7 +11,8 @@
     "ok": "OK",
     "menu": "Menu",
     "restore": "Przywróć",
-    "save": "Zapisz"
+    "save": "Zapisz",
+    "loading": "Wczytywanie…"
   },
   "menu": {
     "leagues": "Wszystkie ligi",

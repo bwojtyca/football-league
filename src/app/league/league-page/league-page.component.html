@@ -15,7 +15,7 @@
 <!-- On a wide screen (P80): the ranking on the left, what is going on in the league on the right. -->
 <main class="page home">
   @if (!current || !ranking()) {
-    <div class="loader"><mat-spinner [diameter]="40" /></div>
+    <fl-skeleton class="skeleton" />
   } @else {
     <aside class="side">
       @if (current.archived) {

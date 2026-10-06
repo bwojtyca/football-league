@@ -1,3 +1,6 @@
+@if (loading()) {
+  <fl-skeleton [rows]="5" />
+}
 @for (day of days(); track day.key) {
   <section class="day">
     <h3 class="fl-kicker">
@@ -59,12 +62,14 @@
     </ul>
   </section>
 } @empty {
-  <p class="empty">
-    {{
-      (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
-        | transloco
-    }}
-  </p>
+  @if (!loading()) {
+    <p class="empty">
+      {{
+        (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
+          | transloco
+      }}
+    </p>
+  }
 }
 @if (more()) {
   <button matButton class="more" (click)="showMore()">{{ 'league.showMore' | transloco }}</button>

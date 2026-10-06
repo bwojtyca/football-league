@@ -19,8 +19,8 @@
     gap: 0 28px;
     max-width: 1120px;
   }
-  .loader {
-    grid-column: 1 / -1;
+  .skeleton {
+    grid-column: 1;
   }
   .main {
     grid-row: 1;
