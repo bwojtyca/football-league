@@ -1,9 +1,11 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, input, output } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+
+import { MarqueeDirective } from '../../shared/marquee.directive';
 
 import { PlayerService } from '../../player/player.service';
-import { FIGURES, Game, GoalDetail, Position, Rod, TeamColor } from '../game';
+import { FIGURES, Game, GoalDetail, Position, Rod, TeamColor, teamScore } from '../game';
 
 /** A goal told on the table: whose rod it was and, told that precisely, the rod and figure. */
 export interface TableGoal {
@@ -58,7 +60,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
  */
 @Component({
   selector: 'fl-table',
-  imports: [NgTemplateOutlet, TranslocoPipe],
+  imports: [MarqueeDirective, NgTemplateOutlet, TranslocoPipe],
   template: `
     <div
       class="frame"
@@ -168,6 +170,25 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
             }
           }
 
+          @if (!vertical() && flash(); as goal) {
+            <!-- A goal just scored, on the board of the team it counts for. -->
+            <div
+              class="rail-flash"
+              [style.top]="percent(goal.color === 'red' ? 22 : 338, height)"
+              [style.height]="percent(30, height)"
+              role="status"
+            >
+              <span class="flash-text">
+                <b class="word">{{ 'board.goal' | transloco }}</b>
+                {{ goal.who }}
+                <span class="score"
+                  ><span class="r">{{ goal.red }}</span
+                  >:<span class="b">{{ goal.blue }}</span></span
+                >
+              </span>
+            </div>
+          }
+
           @if (detail() === 'man') {
             @for (figure of figures; track figure.key) {
               @let name = nameOf(figure.color, figure.position);
@@ -217,16 +238,32 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       }
     </div>
 
-    <!-- A team's LED board at its end of the upright table. -->
+    <!-- A team's LED board at its end of the upright table; it flashes the goals it gets. -->
     <ng-template #board let-end>
-      <div class="board board--{{ end.color }}" aria-hidden="true">
-        <span class="team">{{ 'team.' + end.color | transloco }}</span>
-        @for (player of end.players; track player.position) {
-          <span class="who"
-            >{{ player.name }}<b>{{ player.goals }}</b></span
-          >
-        }
-      </div>
+      @let goal = flash();
+      @if (goal && goal.color === end.color) {
+        <div class="board board--{{ end.color }} flash" role="status">
+          <div class="track" flMarquee>
+            <b class="word">{{ 'board.goal' | transloco }}</b>
+            <span class="who">{{ goal.who }}</span>
+            <span class="score"
+              ><span class="r">{{ goal.red }}</span
+              >:<span class="b">{{ goal.blue }}</span></span
+            >
+          </div>
+        </div>
+      } @else {
+        <div class="board board--{{ end.color }}" aria-hidden="true">
+          <div class="track" flMarquee>
+            <span class="team">{{ 'team.' + end.color | transloco }}</span>
+            @for (player of end.players; track player.position) {
+              <span class="who"
+                >{{ player.name }}<b>{{ player.goals }}</b></span
+              >
+            }
+          </div>
+        </div>
+      }
     </ng-template>
   `,
   styles: `
@@ -308,7 +345,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     .board {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       gap: 14px;
       width: 100%;
       height: 40px;
@@ -321,6 +358,81 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     }
     .board .team {
       font-size: 0.75rem;
+    }
+    .board .track {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+    /* Too long for the board: slides to its end and back. */
+    .track.marquee {
+      animation: fl-marquee 7s ease-in-out infinite alternate;
+    }
+    @keyframes fl-marquee {
+      0%,
+      15% {
+        transform: translateX(0);
+      }
+      85%,
+      100% {
+        transform: translateX(var(--shift));
+      }
+    }
+    /* A goal just scored: the board lights up yellow for a few seconds. */
+    .flash,
+    .rail-flash {
+      color: var(--fl-ball);
+      animation: fl-flash 0.35s steps(1, end) 3;
+    }
+    .flash .track {
+      gap: 10px;
+    }
+    .word {
+      font: 900 1.35rem/1 var(--fl-led);
+    }
+    .flash .score,
+    .rail-flash .score {
+      font: 900 1.2rem/1 var(--fl-led);
+    }
+    .flash .r,
+    .rail-flash .r {
+      color: var(--fl-red-board);
+    }
+    .flash .b,
+    .rail-flash .b {
+      color: var(--fl-blue-board);
+    }
+    .rail-flash {
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      background: var(--fl-board-bg);
+      font: 800 clamp(0.7rem, 2.4cqw, 1rem) / 1 var(--fl-display);
+      pointer-events: none;
+    }
+    .rail-flash .flash-text {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .from-red .rail-flash .flash-text {
+      transform: rotate(180deg);
+    }
+    @keyframes fl-flash {
+      50% {
+        opacity: 0.25;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .track.marquee,
+      .flash,
+      .rail-flash {
+        animation: none;
+      }
     }
     .board .who {
       display: flex;
@@ -437,6 +549,54 @@ export class TableComponent {
     };
     return this.fromRed() ? [end('blue'), end('red')] : [end('red'), end('blue')];
   });
+
+  private readonly _transloco = inject(TranslocoService);
+
+  /** A goal just scored, shown on the board of the team it counts for for a few seconds. */
+  protected readonly flash = signal<{
+    color: TeamColor;
+    who: string;
+    red: number;
+    blue: number;
+  } | null>(null);
+  private _seen?: { id: string; count: number };
+  private _flashTimer?: ReturnType<typeof setTimeout>;
+
+  constructor() {
+    effect(() => {
+      const game = this.game();
+      const count = game.events?.length ?? 0;
+      const seen = this._seen;
+      this._seen = { id: game.id, count };
+      // Only a goal that comes in while the table is shown: not the log found on opening it,
+      // not an undo, not another game.
+      if (!seen || seen.id !== game.id || count <= seen.count) {
+        if (seen && (seen.id !== game.id || count < seen.count)) {
+          this.flash.set(null);
+        }
+        return;
+      }
+      const last = game.events!.at(-1)!;
+      if (last.type === 'swap') {
+        return;
+      }
+      const name = this._players.getPlayerName(last.player);
+      const from = this._transloco.translate(
+        last.position === 'defence' ? 'position.fromDefence' : 'position.fromOffence',
+      );
+      this.flash.set({
+        color: last.type === 'own' ? (last.team === 'red' ? 'blue' : 'red') : last.team,
+        who:
+          last.type === 'own'
+            ? this._transloco.translate('board.own', { name })
+            : `${name} ${from}`,
+        red: teamScore(game, 'red'),
+        blue: teamScore(game, 'blue'),
+      });
+      clearTimeout(this._flashTimer);
+      this._flashTimer = setTimeout(() => this.flash.set(null), 3500);
+    });
+  }
 
   /** The rod (and figure) of the last goal, when it was told that precisely. */
   private readonly _last = computed(() => {

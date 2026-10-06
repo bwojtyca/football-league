@@ -762,5 +762,9 @@
     "potato": "Potato",
     "week": "This week",
     "games": "{n, plural, one {game} other {games}}"
+  },
+  "board": {
+    "goal": "GOAL",
+    "own": "own goal: {name}"
   }
 }

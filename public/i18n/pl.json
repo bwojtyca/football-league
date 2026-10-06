@@ -762,5 +762,9 @@
     "potato": "Ziemniak",
     "week": "Ten tydzień",
     "games": "{n, plural, one {mecz} few {mecze} many {meczów} other {meczu}}"
+  },
+  "board": {
+    "goal": "GOL",
+    "own": "samobój: {name}"
   }
 }
