@@ -771,7 +771,6 @@
   },
   "kit": {
     "title": "Kit",
-    "edit": "Change the kit",
     "preview": "The figure in this kit",
     "number": "Number",
     "noNumber": "no number",

@@ -99,3 +99,35 @@ test('games deleted with a league or tournament remember it', async ({ request }
   expect(await update(request, `games/${id}`, { deletedWith: 5 })).toBe(403);
   expect(await update(request, `games/${id}`, { deleted: false, start: 'x' })).toBe(403);
 });
+
+test('players: only their kit may change, and only to a kit the app can draw', async ({
+  request,
+}) => {
+  const path = `players/kit-${tag()}`;
+  const kit = (data: Record<string, Value>): Record<string, Value> => ({ kit: data });
+  expect(await create(request, path, { name: 'Koszulka' })).toBe(200);
+
+  expect(
+    await update(request, path, kit({ pattern: 'stripes', c1: 'white', c2: 'black', num: 10 })),
+  ).toBe(200);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue' }))).toBe(200);
+  // Never: another name or counter, a colour outside the palette, an unknown pattern, a number
+  // out of 1–99, a field the app does not know, a kit missing a colour, a kit that is no map.
+  expect(await update(request, path, { name: 'Ktoś inny' })).toBe(403);
+  expect(await update(request, path, { wins: 5 })).toBe(403);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: '#ff00ff', c2: 'blue' }))).toBe(
+    403,
+  );
+  expect(await update(request, path, kit({ pattern: 'dots', c1: 'red', c2: 'blue' }))).toBe(403);
+  expect(
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 100 })),
+  ).toBe(403);
+  expect(
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 0 })),
+  ).toBe(403);
+  expect(
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', logo: 'x' })),
+  ).toBe(403);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red' }))).toBe(403);
+  expect(await update(request, path, { kit: 'red' })).toBe(403);
+});

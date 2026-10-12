@@ -64,13 +64,12 @@ let nextId = 0;
           stroke="#0e1a12"
           stroke-width="2"
           paint-order="stroke"
-        >{{ num }}</text>
+        >
+          {{ num }}
+        </text>
       }
       @if (!bust()) {
-        <path
-          d="M19 58 L41 58 L42.5 70 L31.5 70 L30 66 L28.5 70 L17.5 70 Z"
-          [attr.fill]="c2()"
-        />
+        <path d="M19 58 L41 58 L42.5 70 L31.5 70 L30 66 L28.5 70 L17.5 70 Z" [attr.fill]="c2()" />
         <path d="M20 70 L40 70 L38.5 88 L21.5 88 Z" [attr.fill]="c1()" />
         <path d="M21.5 87 L38.5 87 L38 93 Q37 98 30 98 Q23 98 22 93 Z" fill="#1f1f1f" />
       }

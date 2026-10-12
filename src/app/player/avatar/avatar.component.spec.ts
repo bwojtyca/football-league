@@ -10,7 +10,9 @@ describe('AvatarComponent', () => {
   beforeEach(() => {
     players.clear();
     TestBed.configureTestingModule({
-      providers: [{ provide: PlayerService, useValue: { player: (id: string) => players.get(id) } }],
+      providers: [
+        { provide: PlayerService, useValue: { player: (id: string) => players.get(id) } },
+      ],
     });
   });
 
@@ -49,6 +51,6 @@ describe('AvatarComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.classList).toContain('kit');
     expect(element.querySelector('fl-kit-figure svg')).not.toBeNull();
-    expect(element.querySelector('text')?.textContent).toBe('7');
+    expect(element.querySelector('text')?.textContent?.trim()).toBe('7');
   });
 });
