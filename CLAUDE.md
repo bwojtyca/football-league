@@ -53,8 +53,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   new games, tournaments or players), `minGames?` (fewest games to be ranked), `deleted?`
   (hidden, restorable), `gamesDeleted?` (its games were deleted with it and come back with it). The 2017 league is still the document `leagues/legacy` ("Najdroższa
   Liga Świata"); see the migration note below.
-- `players/{id}`: `name`. Documents from 2017 also hold `wins`, `loses` and `id`; these are
-  legacy and unused.
+- `players/{id}`: `name`, `kit?` = `{ pattern, c1, c2, num? }` (pattern `plain | stripes |
+  hoops | halves | sash | quarters`, colours by name from the palette in `player/kit.ts`,
+  number 1–99; the only field that may change). Documents from 2017 also hold `wins`, `loses`
+  and `id`; these are legacy and unused.
 - `games/{id}`: `league?`, `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
   `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. A game without `league`
   belongs to the league `legacy` (`leagueOf()` in `league/league.ts`). Games started since
@@ -86,7 +88,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   (`tournament/tournament.ts`), so devices never have to agree on shared state.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
 - The database is publicly readable; `firestore.rules` allows only the writes the app makes
-  (create leagues, rename or archive them and add players; create players; create games; one
+  (create leagues, rename or archive them and add players; create players and dress them in a
+  kit; create games; one
   goal per update with its event, a swap of positions or undoing the last event; close a won
   game; delete running games; create tournaments, append one entry at a time, rename and end
   them, change the rules of their next games while they run, delete and restore them softly).
@@ -166,6 +169,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   of the table queue and streaks, draw-your-partner draws (fewest games first, new partners,
   even teams), round robin fixtures (circle method) and tables. A tournament game sends the
   scoring device back to the tournament page, where the next game starts with one tap.
+- Kits (canvas P23, `Fig`): `player/kit.ts` (model, palette, `kitOf()`), `kit-figure.component.ts`
+  (the figure, whole or as a bust), `kit-dialog.component.ts` (the editor, from the "Koszulka"
+  pill on the profile). `fl-avatar` shows the bust on the felt when a player has a kit, initials
+  otherwise; on the table everyone plays in the team's colours.
 - `game/game.ts`, `player/player.ts` and `player/rating.ts` hold the pure scoring, ranking and
   Elo functions; `rating.ts` also rates defence and attack separately (2 vs 2 games only).
   `player/records.ts` has the profile records, achievements (clean sheet, comeback from 4
