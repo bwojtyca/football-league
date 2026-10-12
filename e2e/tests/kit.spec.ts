@@ -12,7 +12,7 @@ test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   // Without a kit, the initials.
   const avatar = page.locator('section.hero fl-avatar');
   await expect(avatar).toHaveText(/\w/);
-  await expect(avatar).not.toHaveClass(/kit/);
+  await expect(avatar).not.toHaveClass(/with-kit/);
 
   await page
     .locator('section.hero')
@@ -35,11 +35,11 @@ test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   await expect(editor).toBeHidden();
 
   // The figure in the kit, with its number; it is saved on the player, so it stays.
-  await expect(avatar).toHaveClass(/kit/);
+  await expect(avatar).toHaveClass(/with-kit/);
   await expect(avatar.locator('text')).toHaveText('10');
   await shot(page, 'profile-kit');
   await page.reload();
-  await expect(avatar).toHaveClass(/kit/);
+  await expect(avatar).toHaveClass(/with-kit/);
 
   // Without a number, the shirt is plain.
   await page

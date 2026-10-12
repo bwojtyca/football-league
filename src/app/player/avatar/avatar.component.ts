@@ -49,7 +49,7 @@ const COLORS = [
       text-transform: uppercase;
       user-select: none;
     }
-    :host(.kit) {
+    :host(.with-kit) {
       background: var(--fl-felt-bg);
     }
     fl-kit-figure {
@@ -60,7 +60,7 @@ const COLORS = [
   host: {
     role: 'img',
     '[attr.aria-label]': 'name()',
-    '[class.kit]': '!!kit()',
+    '[class.with-kit]': '!!kit()',
     '[style.background-color]': 'kit() ? null : color()',
     '[style.width.px]': 'size()',
     '[style.height.px]': 'size()',

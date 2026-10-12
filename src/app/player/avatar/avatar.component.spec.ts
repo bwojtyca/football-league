@@ -49,7 +49,7 @@ describe('AvatarComponent', () => {
     await fixture.whenStable();
 
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.classList).toContain('kit');
+    expect(element.classList).toContain('with-kit');
     expect(element.querySelector('fl-kit-figure svg')).not.toBeNull();
     expect(element.querySelector('text')?.textContent?.trim()).toBe('7');
   });

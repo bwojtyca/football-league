@@ -28,7 +28,7 @@
 }
 
 /* The kit: a pill on the felt, opening the shirt editor. */
-.head .kit {
+.head .kit-pill {
   flex: none;
   align-self: flex-start;
   display: inline-flex;
@@ -44,7 +44,7 @@
   cursor: pointer;
 }
 
-.head .kit .mat-icon {
+.head .kit-pill .mat-icon {
   width: 20px;
   height: 20px;
   font-size: 20px;
