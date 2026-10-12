@@ -1,0 +1,56 @@
+name: Tour
+
+# Every screen, sheet and dialog with lifelike data at five screen sizes (e2e/tests/tour.spec.ts),
+# for design reviews: after each push to master, or on demand for a branch
+# (`gh workflow run tour.yml --ref <branch>`). The screenshots are kept as the "tour" artifact.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tour-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tour:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            e2e/package-lock.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npx ng build -c production,emulator
+      - run: npm ci
+        working-directory: e2e
+      - run: npx playwright install --with-deps chromium
+        working-directory: e2e
+      - name: Tour of every screen
+        run: >-
+          npx -y firebase-tools@15 emulators:exec --only firestore
+          --project demo-football-league "cd e2e && npx playwright test tour"
+        env:
+          CI: true
+          TOUR: 1
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tour
+          path: |
+            e2e/screenshots/tour
+            e2e/test-results
+          retention-days: 14
+          if-no-files-found: ignore
