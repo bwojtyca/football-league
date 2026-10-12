@@ -281,7 +281,9 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       min-height: 0;
       container-type: size;
     }
+    /* --boards: the height the two end boards and their gaps take from the upright table. */
     .frame {
+      --boards: calc(2 * 48px + 2 * 8px);
       display: grid;
       justify-items: center;
       gap: 8px;
@@ -301,7 +303,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     }
     /* Upright: the table stands, red goal on top, with a board at each end. */
     .vertical .pitch {
-      width: min(100cqw, calc((100cqh - 96px) * 390 / 674));
+      width: min(100cqw, calc((100cqh - var(--boards)) * 390 / 674));
       aspect-ratio: 390 / 674;
     }
     .vertical .table {
@@ -355,7 +357,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       justify-content: safe center;
       gap: 14px;
       width: 100%;
-      height: 40px;
+      height: 48px;
       padding: 0 12px;
       overflow: hidden;
       border-radius: 6px;
@@ -368,7 +370,6 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     }
     .board:not(.flash) {
       gap: 10px;
-      height: 48px;
       padding-left: 4px;
     }
     .board .count {
@@ -388,10 +389,10 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     /* Little height (a short phone): slimmer boards leave more of it to the table. */
     @container (max-height: 460px) {
       .frame {
+        --boards: calc(2 * 38px + 2 * 5px);
         gap: 5px;
       }
-      .board,
-      .board:not(.flash) {
+      .board {
         height: 38px;
         font-size: 0.88rem;
       }
