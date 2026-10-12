@@ -21,6 +21,7 @@ import {
 import { GameService } from '../game/game.service';
 import { openNewGameDialog } from '../game/game-new/game-new-dialog/game-new-dialog.component';
 import { ModeLabelComponent } from '../game/mode/mode-label.component';
+import { AvatarComponent } from '../player/avatar/avatar.component';
 import { potatoState } from '../player/potato';
 import { PlayerService } from '../player/player.service';
 import { TournamentService } from '../tournament/tournament.service';
@@ -36,6 +37,7 @@ import { TournamentService } from '../tournament/tournament.service';
     MatButtonModule,
     MatIconModule,
     RouterLink,
+    AvatarComponent,
     ModeLabelComponent,
     TranslocoDatePipe,
     TranslocoPipe,
@@ -130,14 +132,20 @@ import { TournamentService } from '../tournament/tournament.service';
         @if (s.leader; as leader) {
           <a [routerLink]="['/l', leagueId(), 'player', leader.id]">
             <small>{{ 'now.leader' | transloco }}</small>
-            <b>{{ leader.name }}</b>
+            <span class="person">
+              <fl-avatar [playerId]="leader.id" [name]="leader.name" [size]="24" />
+              <b>{{ leader.name }}</b>
+            </span>
             <span class="num ball">{{ leader.rating }}</span>
           </a>
         }
         @if (s.potato; as potato) {
           <a [routerLink]="['/l', leagueId(), 'player', potato.id]">
             <small>{{ 'now.potato' | transloco }}</small>
-            <b>{{ potato.name }}</b>
+            <span class="person">
+              <fl-avatar [playerId]="potato.id" [name]="potato.name" [size]="24" />
+              <b>{{ potato.name }}</b>
+            </span>
             <span class="note">🥔</span>
           </a>
         }
@@ -327,6 +335,12 @@ import { TournamentService } from '../tournament/tournament.service';
       font-size: 0.72rem;
       font-weight: 700;
       color: var(--fl-ink-2);
+    }
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
     }
     .facts b {
       overflow: hidden;

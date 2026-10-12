@@ -4,6 +4,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { MarqueeDirective } from '../../shared/marquee.directive';
 
+import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
 import { FIGURES, Game, GoalDetail, Position, Rod, TeamColor, teamScore } from '../game';
 
@@ -60,7 +61,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
  */
 @Component({
   selector: 'fl-table',
-  imports: [MarqueeDirective, NgTemplateOutlet, TranslocoPipe],
+  imports: [AvatarComponent, MarqueeDirective, NgTemplateOutlet, TranslocoPipe],
   template: `
     <div
       class="frame"
@@ -261,7 +262,9 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
               <span class="team">{{ 'team.' + end.color | transloco }}</span>
               @for (player of end.players; track player.position) {
                 <span class="who"
-                  >{{ player.name }}<b>{{ player.goals }}</b></span
+                  ><fl-avatar [playerId]="player.id" [name]="player.name" [size]="24" />{{
+                    player.name
+                  }}<b>{{ player.goals }}</b></span
                 >
               }
             </div>
@@ -580,6 +583,7 @@ export class TableComponent {
         score: teamScore(game, color),
         players: positions.map((position) => ({
           position,
+          id: team[position].player,
           name: this._players.getPlayerName(team[position].player),
           goals: team[position].goals,
         })),

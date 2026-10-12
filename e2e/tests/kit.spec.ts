@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, players, shot, t, tag } from './helpers';
+import { addPlayers, createLeague, players, shot, startGame, t, tag } from './helpers';
 
 test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   const id = tag();
-  const [a] = players(id);
+  const [a, b] = players(id);
   await createLeague(page, `E2E koszulki ${id}`);
-  await addPlayers(page, [a]);
+  await addPlayers(page, [a, b]);
   await page.locator('fl-ranking').getByText(a).click();
 
   // Without a kit, the initials.
@@ -53,4 +53,13 @@ test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   await expect(editor.getByRole('button', { name: t('kit.less') })).toBeDisabled();
   await editor.getByRole('button', { name: t('kit.save') }).click();
   await expect(avatar.locator('text')).toHaveCount(0);
+
+  // In a game, the board at the player's end of the table shows the figure next to the name.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.ranking') })
+    .click();
+  await startGame(page, { red: [a], blue: [b] });
+  await expect(page.locator('fl-table .board fl-avatar.with-kit')).toHaveCount(1);
+  await shot(page, 'game-kit');
 });
