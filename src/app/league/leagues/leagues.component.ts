@@ -11,7 +11,7 @@ import { teamPlayers, teamScore } from '../../game/game';
 import { GameService } from '../../game/game.service';
 import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
-import { crestOf } from '../league-hub.component';
+import { crestOf } from '../league';
 import { openLeagueNewDialog } from '../league-new-dialog.component';
 import { League } from '../league';
 import { LeagueService } from '../league.service';

@@ -89,12 +89,9 @@ for (const size of SIZES) {
       await page.goto(`${league}/t/${data.tournament}`);
       await expect(page.locator('fl-tournament-page')).toContainText('Turniej piątkowy');
       await shot('07-tournament');
-      await page.goto(`${league}/more`);
-      await expect(page.locator('fl-league-hub')).toContainText(t('hub.players'));
-      await shot('08-league-hub');
       await page.goto(`${league}/players`);
       await expect(page.locator('fl-league-players fl-avatar').first()).toBeVisible();
-      await shot('09-players');
+      await shot('08-players');
       await page.goto(`${league}/settings`);
       await expect(page.locator('fl-league-settings')).toBeVisible();
       await shot('10-settings');

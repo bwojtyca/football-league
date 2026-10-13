@@ -12,7 +12,7 @@ import { Notifier } from '../notifier';
 import { AvatarComponent } from '../player/avatar/avatar.component';
 import { compareNames } from '../player/player';
 import { PlayerService } from '../player/player.service';
-import { crestOf } from './league-hub.component';
+import { crestOf } from './league';
 import { LeagueService } from './league.service';
 
 export function openLeagueNewDialog(dialog: MatDialog) {

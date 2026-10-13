@@ -536,12 +536,14 @@
     "games": "Mecze",
     "tournaments": "Turnieje",
     "new": "Nowa rozgrywka",
-    "league": "Liga"
+    "players": "Gracze"
   },
   "switcher": {
     "title": "Ligi",
-    "open": "{name}: zmień ligę",
-    "manage": "Wszystkie ligi i nowa liga"
+    "open": "{name}: menu ligi",
+    "manage": "Wszystkie ligi, szukaj albo załóż nową",
+    "invite": "Zaproś: udostępnij link do ligi",
+    "change": "Zmień ligę"
   },
   "play": {
     "title": "Co gramy?",
@@ -715,12 +717,10 @@
     }
   },
   "hub": {
-    "league": "Liga",
     "players": "Gracze",
-    "inLeague": "W lidze ({n})",
     "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
-    "share": "Udostępnij link do ligi",
-    "copied": "Link do ligi skopiowany"
+    "copied": "Link do ligi skopiowany",
+    "playersHint": "Dotknij gracza, żeby zobaczyć jego profil, statystyki i koszulkę."
   },
   "gameList": {
     "today": "Dziś",

@@ -25,3 +25,14 @@ export const LEGACY_LEAGUE_ID = 'legacy';
 export function leagueOf(game: Pick<Game, 'league'>): string {
   return game.league ?? LEGACY_LEAGUE_ID;
 }
+
+/** Up to three initials of a league's name, as its crest until leagues get one. */
+export function crestOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter((word) => /^\p{L}/u.test(word))
+    .map((word) => word[0])
+    .join('')
+    .slice(0, 3)
+    .toUpperCase();
+}

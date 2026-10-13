@@ -13,11 +13,11 @@ import { filter, map } from 'rxjs';
 import { Notifier } from '../notifier';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
-import { crestOf } from './league-hub.component';
+import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 
-type Section = 'ranking' | 'games' | 'tournaments' | 'more';
+type Section = 'ranking' | 'games' | 'tournaments' | 'players';
 
 /**
  * A league's pages with the bottom navigation: ranking, games, the "new play" button,
@@ -287,7 +287,7 @@ export class LeagueLayoutComponent {
       icon: 'emoji_events',
       label: 'nav.tournaments',
     },
-    { section: 'more', path: ['more'], icon: 'shield', label: 'nav.league' },
+    { section: 'players', path: ['players'], icon: 'groups', label: 'nav.players' },
   ] as const;
 
   protected readonly leagueId = toSignal(
@@ -316,15 +316,15 @@ export class LeagueLayoutComponent {
     { initialValue: this._router.url },
   );
 
-  /** The section the page belongs to: profiles to the ranking, statistics to the games. */
+  /** The section the page belongs to: statistics to the games, profiles to the players. */
   protected readonly section = computed<Section>(() => {
     const part = this._url().split('?')[0].split('/')[3] ?? '';
     return part === 'games' || part === 'stats'
       ? 'games'
       : part === 'tournaments' || part === 't'
         ? 'tournaments'
-        : part === 'more' || part === 'settings' || part === 'players'
-          ? 'more'
+        : part === 'players' || part === 'player' || part === 'compare'
+          ? 'players'
           : 'ranking';
   });
 

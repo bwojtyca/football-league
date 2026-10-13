@@ -44,7 +44,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
   ],
   template: `
     @let current = league();
-    <fl-top-bar [title]="'settings.title' | transloco" [back]="['/l', leagueId(), 'more']" />
+    <fl-top-bar [title]="'settings.title' | transloco" [back]="['/l', leagueId()]" />
     <main class="page">
       @if (current === null) {
         <p class="empty">{{ 'league.notFound' | transloco }}</p>

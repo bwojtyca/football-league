@@ -536,12 +536,14 @@
     "games": "Games",
     "tournaments": "Tournaments",
     "new": "New play",
-    "league": "League"
+    "players": "Players"
   },
   "switcher": {
     "title": "Leagues",
-    "open": "{name}: switch league",
-    "manage": "All leagues and a new one"
+    "open": "{name}: league menu",
+    "manage": "All leagues, search or start one",
+    "invite": "Invite: share the league's link",
+    "change": "Switch league"
   },
   "play": {
     "title": "What are we playing?",
@@ -715,12 +717,10 @@
     }
   },
   "hub": {
-    "league": "League",
     "players": "Players",
-    "inLeague": "In the league ({n})",
     "settingsHint": "name, ranking, locking new games, deleting",
-    "share": "Share a link to the league",
-    "copied": "Link to the league copied"
+    "copied": "Link to the league copied",
+    "playersHint": "Tap a player to see their profile, statistics and kit."
   },
   "gameList": {
     "today": "Today",

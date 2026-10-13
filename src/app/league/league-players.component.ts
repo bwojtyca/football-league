@@ -13,11 +13,15 @@ import { GameService } from '../game/game.service';
 import { AvatarComponent } from '../player/avatar/avatar.component';
 import { compareNames } from '../player/player';
 import { PlayerService } from '../player/player.service';
+import { MeService } from '../shared/me.service';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
 import { LeagueService } from './league.service';
 
-/** The league's players (canvas P16, before accounts and roles): games, Elo, a new player. */
+/**
+ * The players tab (canvas R6-gracze): everyone in the league with their kit, games and Elo,
+ * the way to each profile, and a new player.
+ */
 @Component({
   selector: 'fl-league-players',
   imports: [
@@ -31,7 +35,7 @@ import { LeagueService } from './league.service';
   ],
   template: `
     @let current = league();
-    <fl-top-bar [title]="'hub.players' | transloco" [back]="['/l', leagueId(), 'more']">
+    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()">
       @if (current && !current.archived) {
         <button
           matIconButton
@@ -48,16 +52,22 @@ import { LeagueService } from './league.service';
       } @else if (!rows()) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
-        <h2 class="fl-kicker">
-          {{ 'hub.inLeague' | transloco: { n: rows()!.length } }}
+        <h2 class="title">
+          {{ 'hub.players' | transloco }} <span>{{ rows()!.length }}</span>
         </h2>
+        <p class="hint">{{ 'hub.playersHint' | transloco }}</p>
         <ul class="players">
           @for (row of rows(); track row.id) {
             <li>
               <a [routerLink]="['/l', leagueId(), 'player', row.id]">
                 <fl-avatar [playerId]="row.id" [name]="row.name" [size]="40" />
                 <span class="who">
-                  <b>{{ row.name }}</b>
+                  <b
+                    >{{ row.name }}
+                    @if (row.id === me.id()) {
+                      <span class="you">{{ 'me.you' | transloco }}</span>
+                    }
+                  </b>
                   <small>
                     @if (row.games) {
                       {{ 'count.games' | transloco: { n: row.games } }}
@@ -82,8 +92,26 @@ import { LeagueService } from './league.service';
     </main>
   `,
   styles: `
-    h2 {
-      margin: 4px 0 6px;
+    .title {
+      margin: 4px 0 2px;
+      font: 800 1.3rem/1.2 var(--fl-display);
+    }
+    .title span {
+      color: var(--fl-ink-2);
+    }
+    .hint {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
+      color: var(--fl-ink-2);
+    }
+    .you {
+      margin-left: 6px;
+      padding: 1px 7px;
+      border-radius: 9px;
+      background: var(--fl-ball);
+      color: var(--fl-on-ball);
+      font: 800 0.7rem/1.4 var(--fl-display);
+      vertical-align: 2px;
     }
     .players {
       margin: 0 0 16px;
@@ -127,6 +155,8 @@ export class LeaguePlayersComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
   private readonly _dialog = inject(MatDialog);
+  /** Whoever uses this device: their row is marked. */
+  protected readonly me = inject(MeService);
 
   protected readonly leagueId = toSignal(
     inject(ActivatedRoute).paramMap.pipe(map((params) => params.get('leagueId') ?? '')),

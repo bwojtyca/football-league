@@ -26,9 +26,9 @@ test('a new league: players, the bottom navigation, language and the league swit
   await expect(page).toHaveURL(/\/games$/);
   await nav.getByRole('link', { name: t('nav.tournaments') }).click();
   await expect(page).toHaveURL(/\/tournaments$/);
-  await nav.getByRole('link', { name: t('nav.league') }).click();
-  await expect(page).toHaveURL(/\/more$/);
-  await shot(page, 'league-hub');
+  await nav.getByRole('link', { name: t('nav.players') }).click();
+  await expect(page).toHaveURL(/\/players$/);
+  await shot(page, 'league-players');
 
   // The language is the app's, in its menu.
   await page.getByRole('button', { name: t('appMenu.open') }).click();
@@ -121,8 +121,14 @@ test('restoring a league with its games leaves a game deleted on its own deleted
   await expect(games).toHaveCount(1);
 
   // ...then the league with its games, and back again.
-  await nav.getByRole('link', { name: t('nav.league') }).click();
-  await page.getByRole('link', { name: t('settings.title') }).click();
+  // The league's settings are in the menu under its name.
+  await page
+    .getByRole('button', { name: t('switcher.open', { name: `E2E przywróć ${id}` }) })
+    .click();
+  await page
+    .locator('fl-league-switcher')
+    .getByRole('link', { name: t('settings.title') })
+    .click();
   await expect(page).toHaveURL(/\/settings$/);
   await shot(page, 'league-settings');
   await page.getByRole('button', { name: t('settings.archiveOrDelete') }).click();

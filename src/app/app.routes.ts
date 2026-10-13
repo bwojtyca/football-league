@@ -46,9 +46,9 @@ export const routes: Routes = [
           import('./league/league-tournaments.component').then((m) => m.LeagueTournamentsComponent),
       },
       {
+        // The league's hub (round 4) is gone: players are a tab, the rest is in the league menu.
         path: 'more',
-        loadComponent: () =>
-          import('./league/league-hub.component').then((m) => m.LeagueHubComponent),
+        redirectTo: 'players',
       },
       {
         path: 'players',
