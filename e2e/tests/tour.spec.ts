@@ -1,13 +1,18 @@
 import { APIRequestContext, expect, Page, test } from '@playwright/test';
-import { join } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import { t, tag } from './helpers';
 import { create, OWNER, Value } from './rest';
 
 /**
  * A tour of every screen, sheet and dialog with lifelike data, at five screen sizes, for design
- * reviews (owner, 12 Oct 2026): screenshots in `screenshots/tour/<size>/`. It runs only in the
- * Tour workflow (`TOUR=1`), not in every Check: `gh workflow run tour.yml --ref <branch>`.
+ * reviews (owner, 12 Oct 2026): screenshots in `screenshots/tour/<size>/`. A second league with
+ * awkward data (long and short names, many players and games, long games, one on one, timed,
+ * paused) is shot at three sizes as `awkward-*` (owner, 13 Oct). Every shot has an audit next to
+ * it (`.json`): the left edges of the blocks on the page (to spot misalignment), the texts cut
+ * by an ellipsis and the tap targets under 40 px. It runs only in the Tour workflow
+ * (`TOUR=1`), not in every Check: `gh workflow run tour.yml --ref <branch>`.
  */
 test.skip(!process.env['TOUR'], 'Only in the Tour workflow');
 
@@ -192,6 +197,276 @@ for (const size of SIZES) {
   });
 }
 
+/** Names that strain a layout: very long, very short, Polish letters, two words of the same. */
+const AWKWARD_NAMES = [
+  'Krzysztof-Maksymilian Brzęczyszczykiewicz',
+  'Bo',
+  'Żaneta Ślęczkowska-Wójtowicz',
+  'Łukasz',
+  'Małgorzata Zielińska-Nowakowska',
+  'Xi',
+  'Grzegorz Brzęczyszczykiewicz',
+  'Anna Maria',
+  'Zbigniew',
+  'Ola',
+  'Piotr Wiśniewski',
+  'Kasia',
+  'Tomasz Ołdakowski',
+  'Jędrzej',
+  'Natalia Nowak',
+  'Wiktor',
+];
+const AWKWARD_KITS: (Record<string, Value> | null)[] = AWKWARD_NAMES.map((_, i) =>
+  i % 3 === 2
+    ? null
+    : {
+        pattern: ['plain', 'stripes', 'hoops', 'halves', 'sash', 'quarters'][i % 6],
+        c1: ['white', 'black', 'yellow', 'red', 'blue', 'green', 'maroon', 'orange'][i % 8],
+        c2: ['black', 'white', 'blue', 'yellow', 'white', 'black', 'orange', 'maroon'][i % 8],
+        ...(i % 4 === 3 ? {} : { num: [88, 99, 7, 1, 23, 10][i % 6] }),
+      },
+);
+
+interface AwkwardSeed {
+  league: string;
+  players: string[];
+  longGame: string;
+  running: string;
+  tournament: string;
+}
+
+let awkward: Promise<AwkwardSeed> | undefined;
+
+for (const size of SIZES.filter((s) =>
+  ['1-phone-small', '2-phone', '4-desktop'].includes(s.name),
+)) {
+  test.describe(`${size.name}, awkward data`, () => {
+    test.use({
+      viewport: size.viewport,
+      deviceScaleFactor: size.scale,
+      isMobile: size.mobile,
+      hasTouch: size.mobile,
+    });
+
+    test('every screen with awkward data', async ({ page, request }) => {
+      test.setTimeout(300_000);
+      const data = await (awkward ??= seedAwkward(request));
+      // This phone belongs to the player with the longest name.
+      await page.addInitScript((me) => localStorage.setItem('fl.me', me), data.players[0]);
+      const shot = shooter(page, size.name);
+      const league = `/#/l/${data.league}`;
+      const [a, b] = data.players;
+
+      await page.goto(league);
+      await expect(page.locator('fl-ranking .row').first()).toBeVisible();
+      await shot('awkward-01-ranking');
+      for (const [view, name] of [
+        ['league.duets', 'awkward-02-duets'],
+        ['potato.title', 'awkward-03-potato'],
+      ]) {
+        const radio = page.getByRole('radio', { name: t(view) });
+        if (await radio.isEnabled()) {
+          await radio.click();
+          await shot(name);
+        }
+      }
+      await page.getByRole('radio', { name: 'Elo' }).click();
+      await page.goto(`${league}/games`);
+      await expect(page.locator('fl-game-list .day').first()).toBeVisible();
+      await shot('awkward-04-games');
+      await page.goto(`${league}/stats`);
+      await expect(page.locator('fl-league-stats canvas').first()).toBeVisible();
+      await shot('awkward-05-stats');
+      await page.goto(`${league}/players`);
+      await expect(page.locator('fl-league-players fl-avatar').first()).toBeVisible();
+      await shot('awkward-06-players');
+      await page.goto(`${league}/player/${a}`);
+      await expect(page.locator('section.hero')).toBeVisible();
+      await shot('awkward-07-profile');
+      await page.getByRole('tab', { name: t('player.tabs.stats') }).click();
+      await shot('awkward-08-profile-stats');
+      await page.goto(`${league}/compare/${a}/${b}`);
+      await expect(page.locator('fl-compare-page')).toBeVisible();
+      await shot('awkward-09-compare');
+      await page.goto(`${league}/t/${data.tournament}`);
+      await expect(page.locator('fl-tournament-page')).toBeVisible();
+      await shot('awkward-10-tournament');
+      await page.goto(`${league}/tournaments`);
+      await shot('awkward-11-tournaments');
+      await page.goto(`/#/game/${data.longGame}`);
+      await expect(page.locator('fl-game-timeline')).toBeVisible();
+      await shot('awkward-12-game-finished');
+      await page.goto(league);
+      await expect(page.locator('fl-ranking .row').first()).toBeVisible();
+      await page
+        .getByRole('button', { name: t('switcher.open', { name: AWKWARD_LEAGUE }) })
+        .click();
+      await expect(page.locator('fl-league-switcher')).toBeVisible();
+      await shot('awkward-13-league-menu', false);
+      await page.keyboard.press('Escape');
+      await page.goto(`/#/game/${data.running}`);
+      await expect(page.locator('fl-table')).toBeVisible();
+      await shot('awkward-14-game-running', false);
+    });
+  });
+}
+
+const AWKWARD_LEAGUE = 'Międzynarodowa Liga Piłkarzyków Działu Księgowości i Kadr 2026';
+
+/**
+ * A league that strains the layout: a long name, 16 players (three without games), 120 games
+ * over two months with long win-by-two games, one on one and timed ones, a game being played
+ * and one paused, and a tournament with a long name.
+ */
+async function seedAwkward(request: APIRequestContext): Promise<AwkwardSeed> {
+  const id = tag();
+  const put = async (path: string, data: Record<string, Value>): Promise<void> => {
+    expect(await create(request, path, data, OWNER), path).toBe(200);
+  };
+  const now = Date.now();
+  const players = AWKWARD_NAMES.map((_, i) => `awk-${id}-p${i}`);
+  await Promise.all(
+    players.map((player, i) => {
+      const kit = AWKWARD_KITS[i];
+      return put(
+        `players/${player}`,
+        kit ? { name: AWKWARD_NAMES[i], kit } : { name: AWKWARD_NAMES[i] },
+      );
+    }),
+  );
+  const league = `awk-${id}`;
+  const tournament = `awk-${id}-t`;
+  await put(`leagues/${league}`, {
+    name: AWKWARD_LEAGUE,
+    created: iso(now - 70 * DAY),
+    players,
+    minGames: 5,
+  });
+  const active = players.slice(0, 13);
+  await put(`tournaments/${tournament}`, {
+    league,
+    name: 'Wielki Jesienny Turniej o Puchar Prezesa i Złotą Piłeczkę',
+    format: 'open',
+    created: iso(now - 3 * DAY),
+    mode: MODE,
+    teamSize: 2,
+    entries: active.slice(0, 8).map((player, i) => ({ player, at: iso(now - 3 * DAY + i * 1000) })),
+  });
+
+  const random = mulberry32(13);
+  const games: Record<string, Value>[] = [];
+  for (let n = 0; n < 120; n++) {
+    const daysAgo = 60 - Math.floor(n / 2);
+    const start = now - daysAgo * DAY - 4 * 3600_000 + (n % 2) * 1800_000;
+    const kind = n % 10;
+    // The first player plays most, the rest less and less.
+    const pool = shuffle(active, random).sort(() => random() - 0.6);
+    const four = (n % 3 === 0 ? [active[0], ...pool.filter((p) => p !== active[0])] : pool).slice(
+      0,
+      4,
+    );
+    const long = kind === 3 || n === 119;
+    const solo = kind === 5;
+    const timed = kind === 7;
+    const lineup = solo ? [four[0], four[0], four[1], four[1]] : four;
+    const [winGoals, loseGoals] = long ? [15, 13] : timed ? [4, 3] : [8, Math.floor(random() * 7)];
+    games.push({
+      ...match(
+        random,
+        lineup,
+        winGoals,
+        loseGoals,
+        start,
+        timed ? { target: 8, minutes: 5 } : MODE,
+      ),
+      league,
+      ...(daysAgo <= 3 && !solo ? { tournament } : {}),
+    });
+  }
+  await Promise.all(games.map((data, n) => put(`games/awk-${id}-g${n}`, data)));
+
+  // Being played: the two longest names against each other's partners, 6:6 in a long game.
+  const running = match(
+    random,
+    [players[0], players[2], players[4], players[6]],
+    6,
+    6,
+    now - 9 * 60_000,
+    MODE,
+  );
+  delete running['end'];
+  delete running['win'];
+  await put(`games/awk-${id}-live`, { ...running, league });
+  const paused = match(
+    random,
+    [players[1], players[3], players[5], players[7]],
+    3,
+    2,
+    now - 40 * 60_000,
+    MODE,
+  );
+  delete paused['end'];
+  delete paused['win'];
+  await put(`games/awk-${id}-paused`, {
+    ...paused,
+    league,
+    paused: iso(now - 30 * 60_000),
+    pausedFor: 0,
+  });
+
+  return { league, players, longGame: `awk-${id}-g119`, running: `awk-${id}-live`, tournament };
+}
+
+/**
+ * A game with given goals: `winGoals` for the winner (the first two players are red, unless the
+ * random draw makes blue win), `loseGoals` for the loser, the winner's goal last. Players may
+ * repeat (one on one: the same player in defence and attack).
+ */
+function match(
+  random: () => number,
+  [redDefence, redOffence, blueDefence, blueOffence]: string[],
+  winGoals: number,
+  loseGoals: number,
+  start: number,
+  mode: Record<string, Value>,
+): Record<string, Value> {
+  const lineup = {
+    red: { defence: redDefence, offence: redOffence },
+    blue: { defence: blueDefence, offence: blueOffence },
+  };
+  const win = random() < 0.5 ? 'red' : 'blue';
+  const lose = win === 'red' ? 'blue' : 'red';
+  const order: ('red' | 'blue')[] =
+    winGoals === loseGoals
+      ? shuffle([...Array(winGoals).fill(win), ...Array(loseGoals).fill(lose)], random)
+      : [
+          ...shuffle([...Array(winGoals - 1).fill(win), ...Array(loseGoals).fill(lose)], random),
+          win,
+        ];
+  const scored = { red: { defence: 0, offence: 0 }, blue: { defence: 0, offence: 0 } };
+  const events: Value[] = [];
+  let at = 0;
+  for (const team of order) {
+    at += 20_000 + Math.floor(random() * 40_000);
+    const position = random() < 0.5 ? 'defence' : 'offence';
+    scored[team][position]++;
+    events.push({ at, type: 'goal', team, position, player: lineup[team][position] });
+  }
+  const side = (team: 'red' | 'blue') => ({
+    defence: { player: lineup[team].defence, goals: scored[team].defence, ownGoals: 0 },
+    offence: { player: lineup[team].offence, goals: scored[team].offence, ownGoals: 0 },
+  });
+  return {
+    players: [...new Set([redDefence, redOffence, blueDefence, blueOffence])],
+    start: iso(start),
+    end: iso(start + at + 5_000),
+    win,
+    teams: { red: side('red'), blue: side('blue') },
+    mode,
+    events,
+  };
+}
+
 /** Takes a screenshot (the whole page unless `fullPage` is false) and checks for sideways scroll. */
 function shooter(page: Page, size: string) {
   return async (name: string, fullPage = true): Promise<void> => {
@@ -208,7 +483,59 @@ function shooter(page: Page, size: string) {
     expect
       .soft(overflow, `${size}/${name}: the page is wider than the screen`)
       .toBeLessThanOrEqual(1);
+    const path = join(__dirname, '..', 'screenshots', 'tour', size, `${name}.json`);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, JSON.stringify(await page.evaluate(audit), null, 1));
   };
+}
+
+/**
+ * What a design review checks by measuring (runs in the page): how many blocks start at each
+ * left edge (a few edges is a grid, many is misalignment), the texts an ellipsis cuts, and the
+ * tap targets smaller than 40 px.
+ */
+function audit() {
+  const visible = (el: Element) => {
+    const r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none';
+  };
+  const label = (el: Element) =>
+    (el.getAttribute('aria-label') || el.textContent || '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 40);
+  const root =
+    document.querySelector('.cdk-overlay-pane') ?? document.querySelector('main') ?? document.body;
+  const lefts: Record<string, { n: number; e: string[] }> = {};
+  for (const el of root.querySelectorAll(
+    'h1, h2, h3, p, section, ol, ul, table, a, button, label, .card',
+  )) {
+    if (!visible(el)) {
+      continue;
+    }
+    const edge = (lefts[String(Math.round(el.getBoundingClientRect().left))] ??= { n: 0, e: [] });
+    edge.n++;
+    if (edge.e.length < 3) {
+      edge.e.push(`${el.tagName.toLowerCase()} ${label(el)}`);
+    }
+  }
+  const truncated = [...root.querySelectorAll('*')]
+    .filter((el) => {
+      const s = getComputedStyle(el);
+      return s.textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1 && visible(el);
+    })
+    .map(label);
+  const small = [...document.querySelectorAll('a, button, [role=radio], [role=tab]')]
+    .filter((el) => {
+      const r = el.getBoundingClientRect();
+      return visible(el) && (r.width < 40 || r.height < 40);
+    })
+    .map((el) => {
+      const r = el.getBoundingClientRect();
+      return `${Math.round(r.width)}x${Math.round(r.height)} ${label(el)}`;
+    });
+  return { width: window.innerWidth, lefts, truncated, small };
 }
 
 /** Writes a league with seven players, 30 finished games, a game being played and a tournament. */
