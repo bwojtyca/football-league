@@ -107,3 +107,21 @@ problem, the information architecture is.
    device settings (remembered, changed on the game screen).
 8. Visual polish after the structure: LED only for scores and clocks, felt only for the table
    and "now", one list style, one heading scale, emoji replaced by one icon set.
+
+## After round 6 (13 Oct 2026)
+
+Tour run 38389307617 on the branch, everything shipped to `master` the same day.
+
+| Dimension | Before | After | What changed |
+| --- | --- | --- | --- |
+| Visual system | 6 | 7 | LED only for scores, clocks and boards; felt only for the table, games and "now"; icons instead of emoji. |
+| Consistency | 5 | 7 | One heading scale; data lists are rows, actions are cards; the hub is gone; main actions named. |
+| Readability | 6 | 7 | One ranking selector with a "?"; at most two title icons a row; earned badges first. |
+| Information architecture | 3 | 6 | The first visit says what the app is; "This is me" gives a "You" card; tabs name what is inside; statistics in sight; empty states lead to one action. |
+
+Still to look at (next increments, after the owner tries round 6):
+- Larger screens: the leagues page has no rail and is a narrow column; the profile and the
+  statistics use a single column even at 1920 px.
+- The league statistics are one long page: a short summary first, the rest below.
+- The tournaments tab and a tournament's page were not re-thought in round 6.
+- Finding a player across leagues (only league lists and the overall ranking today).
