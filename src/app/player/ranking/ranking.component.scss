@@ -277,7 +277,7 @@
 }
 
 /* A narrow ranking (a small phone): the name keeps its room; one title, no form dots. */
-@container ranking (max-width: 400px) {
+@container ranking (max-width: 350px) {
   .row fl-form,
   .line .title ~ .title,
   .more-titles {
