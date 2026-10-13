@@ -1,9 +1,25 @@
 <fl-top-bar [title]="'leagues.title' | transloco" />
 
 <main class="page">
-  <button matButton="filled" class="fl-cta new-league" (click)="newLeague()">
-    <mat-icon>add</mat-icon>{{ 'leagues.new' | transloco }}
-  </button>
+  @if (firstVisit()) {
+    <!-- A first visit: what the app is for, before any list (canvas R6-witaj). -->
+    <section class="welcome">
+      <div class="pitch fl-felt" aria-hidden="true">
+        <fl-kit-figure [kit]="kits[0]" />
+        <b class="score"><span class="r">8</span>:<span class="b">6</span></b>
+        <fl-kit-figure [kit]="kits[1]" />
+      </div>
+      <h1>{{ 'welcome.title' | transloco }}</h1>
+      <ul>
+        <li>{{ 'welcome.goals' | transloco }}</li>
+        <li>{{ 'welcome.ranking' | transloco }}</li>
+        <li>{{ 'welcome.link' | transloco }}</li>
+      </ul>
+      <button matButton="filled" class="fl-cta wide" (click)="search.focus()">
+        <mat-icon>search</mat-icon>{{ 'welcome.find' | transloco }}
+      </button>
+    </section>
+  }
 
   <label class="search">
     <mat-icon aria-hidden="true">search</mat-icon>
@@ -14,6 +30,7 @@
       [placeholder]="'leagues.search' | transloco"
       [value]="query()"
       (input)="query.set($any($event.target).value)"
+      #search
     />
   </label>
 
@@ -63,6 +80,10 @@
   } @else {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   }
+
+  <button matButton="filled" class="new-league" (click)="newLeague()">
+    <mat-icon>add</mat-icon>{{ 'leagues.new' | transloco }}
+  </button>
 
   <h2 class="fl-kicker together">{{ 'leagues.together' | transloco }}</h2>
   <a routerLink="/ranking" class="global">

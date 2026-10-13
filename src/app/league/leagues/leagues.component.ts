@@ -8,6 +8,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { teamPlayers, teamScore } from '../../game/game';
+import { Kit } from '../../player/kit';
+import { KitFigureComponent } from '../../player/kit-figure.component';
 import { GameService } from '../../game/game.service';
 import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
@@ -32,6 +34,7 @@ const SUGGESTED = 5;
     MatIconModule,
     MatProgressSpinnerModule,
     RouterLink,
+    KitFigureComponent,
     TopBarComponent,
     TranslocoDatePipe,
     TranslocoPipe,
@@ -47,6 +50,14 @@ export class LeaguesComponent {
 
   /** What was typed in the search. */
   protected readonly query = signal('');
+
+  /** No league opened on this device yet: the page starts by saying what the app is. */
+  protected readonly firstVisit = computed(() => !this._leagueService.recent().length);
+  /** Two figures for the welcome. */
+  protected readonly kits: Kit[] = [
+    { pattern: 'halves', c1: 'yellow', c2: 'blue', num: 9 },
+    { pattern: 'stripes', c1: 'white', c2: 'black', num: 10 },
+  ];
 
   /** Every league with its crest, games, last game and a game running in it. */
   private readonly _all = computed(() =>

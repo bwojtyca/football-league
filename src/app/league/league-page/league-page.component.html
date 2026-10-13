@@ -35,16 +35,37 @@
     </aside>
 
     <section class="main">
-      @if (!canPlay() && !current.archived) {
-        <p class="empty">{{ 'league.noPlayers' | transloco }}</p>
+      @if (!played() && !current.archived) {
+        <!-- Nothing played yet: one clear action (canvas R6-pusta-liga). -->
+        <section class="first">
+          <h2>{{ (canPlay() ? 'league.firstGame' : 'league.addPlayersFirst') | transloco }}</h2>
+          <p>{{ (canPlay() ? 'league.firstGameHint' : 'league.noPlayers') | transloco }}</p>
+          @if (current.players.length) {
+            <div class="faces">
+              @for (id of current.players; track id) {
+                <fl-avatar [playerId]="id" [name]="playerName(id)" [size]="40" />
+              }
+            </div>
+          }
+          @if (canPlay()) {
+            <button matButton="filled" class="fl-cta wide" (click)="play()">
+              {{ 'league.firstGameStart' | transloco }}
+            </button>
+          } @else {
+            <button matButton="filled" class="fl-cta wide" (click)="addPlayer()">
+              <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
+            </button>
+          }
+        </section>
+      } @else {
+        <fl-ranking
+          [players]="ranking()!"
+          [games]="games()"
+          [minGames]="current.minGames ?? 0"
+          [playerLink]="playerLink"
+          [titles]="titles()"
+        />
       }
-      <fl-ranking
-        [players]="ranking()!"
-        [games]="games()"
-        [minGames]="current.minGames ?? 0"
-        [playerLink]="playerLink"
-        [titles]="titles()"
-      />
     </section>
   }
 </main>

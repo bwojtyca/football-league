@@ -6,8 +6,34 @@
   color: var(--fl-ink-2);
 }
 
-.empty {
+.first {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--fl-card-2);
+}
+
+.first h2 {
+  margin: 0;
+  font: 800 1.4rem/1.2 var(--fl-display);
+}
+
+.first p {
+  margin: 0;
   color: var(--fl-ink-2);
+  line-height: 1.45;
+}
+
+.faces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wide {
+  width: 100%;
+  --mat-button-filled-container-height: 52px;
 }
 
 /* A wide screen, next to the rail: two columns, the side one stays in view while scrolling. */

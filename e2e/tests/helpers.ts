@@ -66,7 +66,14 @@ export async function addPlayers(page: Page, names: string[]): Promise<void> {
     await dialog.getByRole('combobox', { name: t('addPlayer.name') }).fill(name);
     await dialog.getByRole('button', { name: t('addPlayer.add'), exact: true }).click();
     await expect(dialog).toBeHidden();
-    await expect(page.locator('fl-ranking').getByText(name)).toBeVisible();
+    // In the ranking once the league has games, before that among the faces of the first game.
+    await expect(
+      page
+        .locator('fl-ranking')
+        .getByText(name)
+        .or(page.locator('section.first').getByRole('img', { name, exact: true }))
+        .first(),
+    ).toBeVisible();
   }
 }
 

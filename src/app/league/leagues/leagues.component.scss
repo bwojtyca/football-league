@@ -38,9 +38,61 @@
   gap: 8px;
 }
 
+/* "New league": after the lists, a secondary action (the welcome's main one is finding one). */
 .new-league {
   width: 100%;
+  margin: 16px 0 8px;
+  --mat-button-filled-container-height: 52px;
+  --mat-button-filled-container-color: var(--fl-card-2);
+  --mat-button-filled-label-text-color: var(--fl-ink);
+}
+
+.welcome {
+  display: grid;
+  gap: 12px;
   margin: 4px 0 16px;
+}
+
+.welcome .pitch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  height: 176px;
+  border-radius: 20px;
+}
+
+.welcome fl-kit-figure {
+  width: 60px;
+  height: 100px;
+}
+
+.welcome .score {
+  font: 900 3rem/1 var(--fl-led);
+}
+
+.welcome .score .r {
+  color: var(--fl-red-board);
+}
+
+.welcome .score .b {
+  color: var(--fl-blue-board);
+}
+
+.welcome h1 {
+  margin: 4px 0 0;
+  font: 800 1.8rem/1.1 var(--fl-display);
+}
+
+.welcome ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--fl-ink-2);
+  line-height: 1.5;
+}
+
+.welcome .wide {
+  width: 100%;
   --mat-button-filled-container-height: 52px;
 }
 

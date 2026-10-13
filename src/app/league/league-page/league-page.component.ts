@@ -16,6 +16,8 @@ import { leagueTitles, titlesByPlayer } from '../../stats/titles';
 import { SkeletonComponent } from '../../shared/skeleton.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
+import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-dialog.component';
+import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { NowCardComponent } from '../now-card.component';
 import { YouCardComponent } from '../you-card.component';
 import { LeagueService } from '../league.service';
@@ -31,6 +33,7 @@ import { LeagueService } from '../league.service';
     RouterLink,
     RankingComponent,
     NowCardComponent,
+    AvatarComponent,
     YouCardComponent,
     TopBarComponent,
     TranslocoPipe,
@@ -81,6 +84,16 @@ export class LeaguePageComponent {
   protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
 
   protected readonly canPlay = computed(() => (this.league()?.players.length ?? 0) >= 2);
+  /** Any game finished or under way in the league. */
+  protected readonly played = computed(() => this.games().length > 0);
+
+  protected playerName(id: string): string {
+    return this._playerService.getPlayerName(id);
+  }
+
+  protected play(): void {
+    openNewGameDialog(this._dialog, { leagueId: this.leagueId() });
+  }
 
   protected addPlayer(): void {
     openAddPlayerDialog(this._dialog, { leagueId: this.leagueId() });

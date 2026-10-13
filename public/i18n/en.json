@@ -77,7 +77,11 @@
     "duets": "Pairs",
     "duetsHint": "Pairs with at least {n} games together come first, by win rate.",
     "deletedNote": "This league is deleted. You can restore it.",
-    "lockedNote": "New games are locked in this league."
+    "lockedNote": "New games are locked in this league.",
+    "firstGame": "Play your first game",
+    "firstGameHint": "The ranking comes from the games: everyone starts at 1500 Elo, and beating stronger players gives more. After a few games you will see who rules the table.",
+    "firstGameStart": "Start a game",
+    "addPlayersFirst": "Add the players"
   },
   "addPlayer": {
     "title": "Add player",
@@ -826,5 +830,12 @@
     "profile": "Your profile, statistics and kit",
     "device": "Playing on this phone",
     "deviceNone": "Who are you on this phone?"
+  },
+  "welcome": {
+    "title": "Foosball scores for your league",
+    "goals": "Record goals by tapping the figures on the table.",
+    "ranking": "An Elo ranking, statistics, tournaments and the potato of the day.",
+    "link": "No accounts, nothing to install: a league is just a link.",
+    "find": "Find your league"
   }
 }

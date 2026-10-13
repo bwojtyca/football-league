@@ -128,7 +128,7 @@ for (const size of SIZES) {
       await expect(page.locator('section.hero')).toBeVisible();
       await shot('18-overall-profile');
       await page.goto(`/#/l/${data.empty}`);
-      await expect(page.locator('fl-ranking')).toBeVisible();
+      await expect(page.locator('section.first')).toBeVisible();
       await shot('19-empty-league');
       await page.goto('/#/leagues');
       await expect(page.getByText('Biuro 2026').first()).toBeVisible();

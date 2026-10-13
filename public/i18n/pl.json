@@ -77,7 +77,11 @@
     "duets": "Duety",
     "duetsHint": "Duety z co najmniej {n} wspólnymi meczami są na górze, według procentu wygranych.",
     "deletedNote": "Ta liga jest usunięta. Możesz ją przywrócić.",
-    "lockedNote": "Nowe mecze w tej lidze są zablokowane."
+    "lockedNote": "Nowe mecze w tej lidze są zablokowane.",
+    "firstGame": "Zagrajcie pierwszy mecz",
+    "firstGameHint": "Ranking powstaje z meczów: każdy zaczyna od 1500 Elo, a wygrana z silniejszymi daje więcej. Po kilku meczach zobaczycie, kto rządzi przy stole.",
+    "firstGameStart": "Zacznij mecz",
+    "addPlayersFirst": "Dodajcie graczy"
   },
   "addPlayer": {
     "title": "Dodaj gracza",
@@ -826,5 +830,12 @@
     "profile": "Twój profil, statystyki i koszulka",
     "device": "Na tym telefonie gra",
     "deviceNone": "Kim jesteś na tym telefonie?"
+  },
+  "welcome": {
+    "title": "Wyniki piłkarzyków w Twojej lidze",
+    "goals": "Zapisujecie gole tapnięciem w figurki na stole.",
+    "ranking": "Ranking Elo, statystyki, turnieje i ziemniak dnia.",
+    "link": "Bez kont i instalacji: lidze wystarczy link.",
+    "find": "Znajdź swoją ligę"
   }
 }

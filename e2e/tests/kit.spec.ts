@@ -7,7 +7,11 @@ test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   const [a, b] = players(id);
   await createLeague(page, `E2E koszulki ${id}`);
   await addPlayers(page, [a, b]);
-  await page.locator('fl-ranking').getByText(a).click();
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.players') })
+    .click();
+  await page.locator('fl-league-players').getByText(a).click();
 
   // Without a kit, the initials.
   const avatar = page.locator('section.hero fl-avatar');
