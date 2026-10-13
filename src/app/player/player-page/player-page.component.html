@@ -177,7 +177,7 @@
     <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: earned }" />
   }
   @if (open.length) {
-    <details class="to-earn">
+    <details class="to-earn fl-fold">
       <summary>{{ 'achievements.toEarn' | transloco: { n: open.length } }}</summary>
       <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: open }" />
     </details>

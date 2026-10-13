@@ -17,12 +17,12 @@ import { tournamentSummary } from './stats';
       <div class="fl-stats">
         <section>
           <h2>{{ 'tournamentStats.title' | transloco }}</h2>
-          <div class="fl-tiles">
+          <div class="fl-tiles fl-tiles--three">
             <div>
               <b>{{ s.games }}</b>
               <small>{{ 'leagueStats.games' | transloco }}</small>
             </div>
-            <div class="wide">
+            <div>
               <b>{{ 'leagueStats.hours' | transloco: hours(s.seconds) }}</b>
               <small>{{ 'leagueStats.time' | transloco }}</small>
             </div>

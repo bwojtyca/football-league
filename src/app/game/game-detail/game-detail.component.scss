@@ -488,9 +488,11 @@
 }
 
 .player b {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font: 700 0.95rem/1.2 var(--fl-display);
   color: rgb(255 255 255 / 0.75);
 }

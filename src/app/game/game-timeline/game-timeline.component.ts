@@ -60,7 +60,8 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
           </li>
         }
         @for (color of colors; track color) {
-          @if (story.biggestLead[color]; as lead) {
+          @let lead = story.biggestLead[color];
+          @if (lead && lead.lead >= 2) {
             <li>
               {{
                 'timeline.lead'

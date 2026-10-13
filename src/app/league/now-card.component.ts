@@ -57,12 +57,20 @@ import { TournamentService } from '../tournament/tournament.service';
               <span class="rules">· <fl-mode-label [mode]="mode" /></span>
             }
           </span>
-          <span class="side side--red">{{ game.red }}</span>
+          <span class="side side--red">
+            @for (name of game.lineup.red; track $index) {
+              <span>{{ name }}</span>
+            }
+          </span>
           <span class="score"
             ><span class="r">{{ game.score.red }}</span
             ><span class="sep">:</span><span class="b">{{ game.score.blue }}</span></span
           >
-          <span class="side side--blue">{{ game.blue }}</span>
+          <span class="side side--blue">
+            @for (name of game.lineup.blue; track $index) {
+              <span>{{ name }}</span>
+            }
+          </span>
           <span class="go">{{ 'now.back' | transloco }}</span>
         </a>
       }
@@ -115,12 +123,20 @@ import { TournamentService } from '../tournament/tournament.service';
             · <fl-mode-label [mode]="mode" />
           }
         </span>
-        <span class="side side--red">{{ last.red }}</span>
+        <span class="side side--red">
+          @for (name of last.lineup.red; track $index) {
+            <span>{{ name }}</span>
+          }
+        </span>
         <span class="score"
           ><span class="r">{{ last.score.red }}</span
           ><span class="sep">:</span><span class="b">{{ last.score.blue }}</span></span
         >
-        <span class="side side--blue">{{ last.blue }}</span>
+        <span class="side side--blue">
+          @for (name of last.lineup.blue; track $index) {
+            <span>{{ name }}</span>
+          }
+        </span>
         <span class="buttons">
           <button matButton="filled" class="fl-cta" (click)="rematch(last.game)">
             {{ 'game.rematch' | transloco }}
@@ -211,12 +227,17 @@ import { TournamentService } from '../tournament/tournament.service';
       font: 900 0.95rem/1 var(--fl-led);
       color: var(--fl-ball);
     }
+    /* Each player on a line of their own (long names do not wrap into a column of words). */
     .side {
+      display: grid;
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
       font-weight: 700;
       line-height: 1.25;
+    }
+    .side span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .side--red {
       text-align: right;
@@ -418,15 +439,14 @@ export class NowCardComponent {
   }
 
   private _row(game: Game) {
-    const names = (color: TeamColor) =>
-      teamPlayers(game.teams[color])
-        .map((id) => this._playerService.getPlayerName(id))
-        .join(' & ');
+    const lineup = (color: TeamColor) =>
+      teamPlayers(game.teams[color]).map((id) => this._playerService.getPlayerName(id));
     return {
       id: game.id,
       game,
-      red: names('red'),
-      blue: names('blue'),
+      red: lineup('red').join(' & '),
+      blue: lineup('blue').join(' & '),
+      lineup: { red: lineup('red'), blue: lineup('blue') },
       score: { red: teamScore(game, 'red'), blue: teamScore(game, 'blue') },
       mode: isDefaultMode(game.mode) ? null : modeOf(game),
     };

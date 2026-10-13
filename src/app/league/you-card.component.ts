@@ -105,6 +105,9 @@ import { openWhoSheet } from './who-sheet.component';
       font-size: 0.85rem;
     }
     .text .fl-kicker {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 0.75rem;
     }
     .led {

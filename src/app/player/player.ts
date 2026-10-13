@@ -71,6 +71,9 @@ export function rankPlayers(players: Player[], games: Game[], ratings: Ratings):
     .sort((a, b) => (b.rating ?? -Infinity) - (a.rating ?? -Infinity) || compareNames(a, b));
 }
 
+const NAMES = new Intl.Collator('pl', { sensitivity: 'base' });
+
+/** Names in alphabetical order, Polish letters where they belong (Ł after L, Ż after Z). */
 export function compareNames(a: Pick<Player, 'name'>, b: Pick<Player, 'name'>): number {
-  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+  return NAMES.compare(a.name, b.name);
 }

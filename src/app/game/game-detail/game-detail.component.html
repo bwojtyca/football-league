@@ -76,9 +76,13 @@
           </button>
         }
       } @else if (game.deleted) {
-        <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
+        <button matButton="filled" class="fl-cta" (click)="restore()">
+          {{ 'common.restore' | transloco }}
+        </button>
       } @else if (game.tournament) {
-        <a matButton="filled" [routerLink]="backLink()">{{ 'tournament.back' | transloco }}</a>
+        <a matButton="filled" class="fl-cta" [routerLink]="backLink()">{{
+          'tournament.back' | transloco
+        }}</a>
       } @else if (series()?.next; as next) {
         <button matButton="filled" class="fl-cta" (click)="nextInSeries()">
           {{ 'series.next' | transloco: { n: next } }}
@@ -166,7 +170,10 @@
         @if (game.paused) {
           <fl-pause-overlay
             [score]="score()"
-            (resume)="resume()" (leave)="leaveForLater()" (remove)="remove()" />
+            (resume)="resume()"
+            (leave)="leaveForLater()"
+            (remove)="remove()"
+          />
         }
         <fl-table
           [game]="game"

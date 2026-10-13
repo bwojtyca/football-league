@@ -54,7 +54,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
     }
     <h2 class="fl-kicker">{{ 'switcher.change' | transloco }}</h2>
     <nav>
-      @for (league of leagues(); track league.id) {
+      @for (league of others(); track league.id) {
         <a
           [routerLink]="['/l', league.id]"
           (click)="close()"
@@ -110,7 +110,11 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       min-width: 0;
     }
     .about b {
-      font: 800 1.3rem/1.2 var(--fl-display);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      font: var(--fl-sheet-title);
     }
     .about small {
       color: var(--fl-ink-2);
@@ -198,6 +202,11 @@ export class LeagueSwitcherComponent {
   private readonly _transloco = inject(TranslocoService);
 
   protected readonly current = inject<string | null>(MAT_BOTTOM_SHEET_DATA);
+
+  /** The leagues to switch to: the current one is at the top already. */
+  protected readonly others = computed(() =>
+    this.leagues().filter((league) => league.id !== this.current),
+  );
 
   /** The current league with its number of games, when the menu is opened from one. */
   protected readonly league = computed(() => this.leagues().find((l) => l.id === this.current));

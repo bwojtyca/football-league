@@ -148,6 +148,7 @@
 
 .others span {
   display: inline-block;
+  margin-right: 0.35em;
   font-weight: 700;
 }
 
@@ -179,11 +180,6 @@
   margin: 12px 0 88px;
   font-size: 0.85rem;
   color: var(--fl-ink-2);
-}
-
-.rules summary {
-  cursor: pointer;
-  font: 700 0.9rem/1.4 var(--fl-display);
 }
 
 .rules ul {
@@ -246,6 +242,8 @@
 }
 
 .line b {
+  flex: 0 1 auto;
+  min-width: 4.5em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -254,6 +252,21 @@
 .line .title {
   flex: none;
   cursor: help;
+}
+
+.who small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A narrow ranking (a small phone): the name keeps its room; one title, no form dots. */
+@container ranking (max-width: 400px) {
+  .row fl-form,
+  .line .title ~ .title,
+  .more-titles {
+    display: none;
+  }
 }
 
 .more {

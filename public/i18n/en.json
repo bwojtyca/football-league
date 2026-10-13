@@ -574,7 +574,7 @@
     "games": "Games",
     "goals": "Goals",
     "perGame": "per game",
-    "hours": "{h} h {m} min",
+    "hours": "{h, plural, =0 {{m} min} other {{h} h {m} min}}",
     "time": "Time played",
     "avgGame": "Average game",
     "shutouts": "Shutouts",
@@ -633,7 +633,7 @@
   },
   "tournamentStats": {
     "title": "Summary",
-    "goalsPerGame": "goals per game",
+    "goalsPerGame": "Goals per game",
     "scorer": "Top scorer",
     "mostWins": "Most wins",
     "defence": "Tightest defence",

@@ -574,7 +574,7 @@
     "games": "Mecze",
     "goals": "Gole",
     "perGame": "na mecz",
-    "hours": "{h} h {m} min",
+    "hours": "{h, plural, =0 {{m} min} other {{h} h {m} min}}",
     "time": "Czas gry",
     "avgGame": "Średni mecz",
     "shutouts": "Do zera",
@@ -633,7 +633,7 @@
   },
   "tournamentStats": {
     "title": "Podsumowanie",
-    "goalsPerGame": "gole na mecz",
+    "goalsPerGame": "Gole na mecz",
     "scorer": "Najlepszy strzelec",
     "mostWins": "Najwięcej wygranych",
     "defence": "Najszczelniejsza obrona",
