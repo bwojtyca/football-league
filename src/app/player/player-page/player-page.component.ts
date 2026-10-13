@@ -116,6 +116,14 @@ export class PlayerPageComponent {
   /** Whoever uses this device. */
   protected readonly me = inject(MeService);
 
+  protected earnedOf<T extends { count: number }>(list: T[]): T[] {
+    return list.filter((badge) => badge.count > 0);
+  }
+
+  protected openOf<T extends { count: number }>(list: T[]): T[] {
+    return list.filter((badge) => badge.count === 0);
+  }
+
   /** Chooses the player's kit (shirt), shown wherever their avatar is. */
   protected editKit(playerId: string): void {
     openKitDialog(this._dialog, { playerId });

@@ -169,7 +169,22 @@
   }
 </main>
 
+<!-- Earned badges first; the ones still to earn are folded under one line (round 6). -->
 <ng-template #badges let-list>
+  @let earned = earnedOf(list);
+  @let open = openOf(list);
+  @if (earned.length) {
+    <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: earned }" />
+  }
+  @if (open.length) {
+    <details class="to-earn">
+      <summary>{{ 'achievements.toEarn' | transloco: { n: open.length } }}</summary>
+      <ng-container *ngTemplateOutlet="badgeList; context: { $implicit: open }" />
+    </details>
+  }
+</ng-template>
+
+<ng-template #badgeList let-list>
   <ul class="achievements">
     @for (badge of list; track badge.id) {
       <li [class.earned]="badge.count > 0">

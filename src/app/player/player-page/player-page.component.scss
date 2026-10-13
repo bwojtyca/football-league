@@ -268,3 +268,15 @@ h2 {
 .tabs button {
   flex: 1;
 }
+
+/* The badges still to earn, folded under one line. */
+.to-earn {
+  margin-top: 8px;
+}
+
+.to-earn summary {
+  padding: 8px 0;
+  color: var(--fl-ink-2);
+  font-weight: 700;
+  cursor: pointer;
+}

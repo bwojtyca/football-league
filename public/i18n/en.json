@@ -465,7 +465,8 @@
       "underTable": "Lose without scoring.",
       "ownGoal": "Score an own goal.",
       "lossStreak": "Lose {n} games in a row."
-    }
+    },
+    "toEarn": "Still to earn ({n})"
   },
   "settings": {
     "title": "League settings",

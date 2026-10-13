@@ -465,7 +465,8 @@
       "underTable": "Przegraj, nie strzelając gola.",
       "ownGoal": "Strzel samobója.",
       "lossStreak": "Przegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu."
-    }
+    },
+    "toEarn": "Do zdobycia ({n})"
   },
   "settings": {
     "title": "Ustawienia ligi",
