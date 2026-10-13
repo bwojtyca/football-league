@@ -272,3 +272,18 @@
     margin: 0 10px 0 14px;
   }
 }
+
+/* The player on this device: a fill and a "You" tag, no outline. */
+.row.me {
+  border-radius: 12px;
+  background: var(--fl-card-2);
+}
+
+.you {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 9px;
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
+  font: 800 0.7rem/1.4 var(--fl-display);
+}

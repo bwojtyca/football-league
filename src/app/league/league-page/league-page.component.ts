@@ -17,6 +17,7 @@ import { SkeletonComponent } from '../../shared/skeleton.component';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { openAddPlayerDialog } from '../add-player-dialog.component';
 import { NowCardComponent } from '../now-card.component';
+import { YouCardComponent } from '../you-card.component';
 import { LeagueService } from '../league.service';
 
 /** A league's home: what is going on now (or the last game) and the ranking. */
@@ -30,6 +31,7 @@ import { LeagueService } from '../league.service';
     RouterLink,
     RankingComponent,
     NowCardComponent,
+    YouCardComponent,
     TopBarComponent,
     TranslocoPipe,
   ],

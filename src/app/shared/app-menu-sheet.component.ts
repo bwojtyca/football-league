@@ -1,11 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { LeagueService } from '../league/league.service';
+import { openWhoSheet } from '../league/who-sheet.component';
+import { PlayerService } from '../player/player.service';
 import { InstallService } from './install.service';
 import { LanguageSwitchComponent } from './language-switch.component';
+import { MeService } from './me.service';
 
 export function openAppMenu(sheet: MatBottomSheet) {
   return sheet.open(AppMenuSheetComponent);
@@ -25,6 +29,18 @@ export function openAppMenu(sheet: MatBottomSheet) {
       <span class="label">{{ 'more.language' | transloco }}</span>
       <fl-language-switch />
     </div>
+    @if (league; as leagueId) {
+      <button class="row" (click)="who(leagueId)">
+        <mat-icon aria-hidden="true">person_pin</mat-icon>
+        <span class="label">
+          @if (meName(); as name) {
+            <b>{{ 'me.device' | transloco }}: {{ name }}</b>
+          } @else {
+            <b>{{ 'me.deviceNone' | transloco }}</b>
+          }
+        </span>
+      </button>
+    }
     @if (!install.installed()) {
       @if (install.canInstall()) {
         <button class="row" (click)="install.install()">
@@ -101,6 +117,20 @@ export function openAppMenu(sheet: MatBottomSheet) {
 export class AppMenuSheetComponent {
   private readonly _ref = inject(MatBottomSheetRef<AppMenuSheetComponent>);
   protected readonly install = inject(InstallService);
+  private readonly _sheet = inject(MatBottomSheet);
+  private readonly _me = inject(MeService);
+  private readonly _players = inject(PlayerService);
+
+  /** The league last opened on this device: whose players to choose from. */
+  protected readonly league = inject(LeagueService).lastLeague;
+  protected readonly meName = computed(() => {
+    const id = this._me.id();
+    return id ? this._players.getPlayerName(id) : null;
+  });
+
+  protected who(leagueId: string): void {
+    openWhoSheet(this._sheet, { leagueId });
+  }
 
   protected close(): void {
     this._ref.dismiss();

@@ -44,6 +44,16 @@
   cursor: pointer;
 }
 
+.head .you-tag {
+  flex: none;
+  align-self: flex-start;
+  padding: 2px 9px;
+  border-radius: 10px;
+  background: var(--fl-ball);
+  color: var(--fl-on-ball);
+  font: 800 0.8rem/1.5 var(--fl-display);
+}
+
 .head .kit-pill .mat-icon {
   width: 20px;
   height: 20px;

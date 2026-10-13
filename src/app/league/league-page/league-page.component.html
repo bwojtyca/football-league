@@ -18,6 +18,12 @@
     <fl-skeleton class="skeleton" />
   } @else {
     <aside class="side">
+      <fl-you-card
+        [leagueId]="current.id"
+        [players]="ranking()!"
+        [games]="games()"
+        [minGames]="current.minGames ?? 0"
+      />
       @if (current.archived) {
         <p class="note">
           {{ 'league.lockedNote' | transloco }}

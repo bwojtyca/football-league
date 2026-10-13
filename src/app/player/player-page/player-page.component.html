@@ -32,6 +32,13 @@
             </div>
           }
         </div>
+        @if (me.id() === p.id) {
+          <span class="you-tag">{{ 'me.you' | transloco }}</span>
+        } @else if (!me.id()) {
+          <button class="kit-pill" (click)="me.set(p.id)">
+            <mat-icon aria-hidden="true">person_pin</mat-icon>{{ 'me.itsMe' | transloco }}
+          </button>
+        }
         <button class="kit-pill" (click)="editKit(p.id)">
           <mat-icon aria-hidden="true">checkroom</mat-icon>{{ 'kit.title' | transloco }}
         </button>

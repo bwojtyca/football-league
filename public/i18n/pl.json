@@ -799,5 +799,23 @@
       "maroon": "Bordowy",
       "orange": "Pomarańczowy"
     }
+  },
+  "me": {
+    "title": "Którym graczem jesteś?",
+    "hint": "Zapamiętamy to na tym telefonie: liga pokaże Twoje miejsce, Twoje mecze i profil jednym tapnięciem. Bez konta.",
+    "askHint": "Zobaczysz od razu swoje miejsce i mecze.",
+    "pick": "Wybierz",
+    "notListed": "Nie ma mnie na liście: dodaj gracza",
+    "confirm": "To ja: {name}",
+    "choose": "Wybierz siebie z listy",
+    "clear": "Nie gram na tym telefonie",
+    "you": "Ty",
+    "itsMe": "To ja",
+    "place": "{n}. miejsce",
+    "today": "dziś {games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, {wins, plural, one {# wygrany} few {# wygrane} many {# wygranych} other {# wygranego}}",
+    "missing": "do rankingu brakuje {n, plural, one {# meczu} few {# meczów} many {# meczów} other {# meczu}}",
+    "profile": "Twój profil, statystyki i koszulka",
+    "device": "Na tym telefonie gra",
+    "deviceNone": "Kim jesteś na tym telefonie?"
   }
 }

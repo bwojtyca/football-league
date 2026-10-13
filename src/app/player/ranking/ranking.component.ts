@@ -8,6 +8,7 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { Game, POSITIONS, Position, TEAM_COLORS } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
+import { MeService } from '../../shared/me.service';
 import { places } from '../../shared/places';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { AvatarComponent } from '../avatar/avatar.component';
@@ -44,6 +45,8 @@ const DUET_GAMES = 3;
 })
 export class RankingComponent {
   private readonly _playerService = inject(PlayerService);
+  /** Whoever uses this device: their row is marked. */
+  protected readonly me = inject(MeService);
 
   public readonly players = input.required<RankedPlayer[]>();
   /** Games the pairs are counted from. */

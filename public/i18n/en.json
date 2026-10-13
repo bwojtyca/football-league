@@ -799,5 +799,23 @@
       "maroon": "Maroon",
       "orange": "Orange"
     }
+  },
+  "me": {
+    "title": "Which player are you?",
+    "hint": "This phone will remember it: the league shows your place, your games and your profile in one tap. No account needed.",
+    "askHint": "See your place and your games right away.",
+    "pick": "Choose",
+    "notListed": "I'm not on the list: add a player",
+    "confirm": "That's me: {name}",
+    "choose": "Choose yourself from the list",
+    "clear": "I don't play on this phone",
+    "you": "You",
+    "itsMe": "That's me",
+    "place": "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} place",
+    "today": "today {games, plural, one {# game} other {# games}}, {wins, plural, one {# win} other {# wins}}",
+    "missing": "{n, plural, one {# more game} other {# more games}} to be ranked",
+    "profile": "Your profile, statistics and kit",
+    "device": "Playing on this phone",
+    "deviceNone": "Who are you on this phone?"
   }
 }

@@ -161,12 +161,16 @@
     [class.unrated]="position === null"
     [class.provisional]="player.provisional"
     [class.first]="position === 1"
+    [class.me]="player.id === me.id()"
   >
     <span class="pos">{{ position }}</span>
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">
       <span class="line">
         <b>{{ player.name }}</b>
+        @if (player.id === me.id()) {
+          <span class="you">{{ 'me.you' | transloco }}</span>
+        }
         @for (title of titles().get(player.id) ?? []; track title.id) {
           @let label =
             ('titles.' + title.id + '.name' | transloco) +

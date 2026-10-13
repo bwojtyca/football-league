@@ -19,6 +19,7 @@ import { GamesStatsComponent } from '../../game/games-stats/games-stats.componen
 import { GameService } from '../../game/game.service';
 import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
+import { MeService } from '../../shared/me.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import {
   ACHIEVEMENTS,
@@ -110,6 +111,8 @@ export class PlayerPageComponent {
   private readonly _playerService = inject(PlayerService);
   private readonly _leagueService = inject(LeagueService);
   private readonly _dialog = inject(MatDialog);
+  /** Whoever uses this device. */
+  protected readonly me = inject(MeService);
 
   /** Chooses the player's kit (shirt), shown wherever their avatar is. */
   protected editKit(playerId: string): void {
