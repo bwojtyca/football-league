@@ -190,6 +190,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
     .click();
   // The rematch chosen with figures opens on the whole table (the screen is reused).
   const rematch = page.locator('fl-game-new-dialog');
+  await rematch.locator('details.input summary').click();
   await rematch.getByRole('radio', { name: t('newGame.inputs.man') }).click();
   await rematch.getByRole('button', { name: t('newGame.start') }).click();
   await expect(page.locator('fl-table button.hit.man').first()).toBeVisible();

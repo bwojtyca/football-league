@@ -206,7 +206,8 @@
     "screen": "Ekran meczu",
     "upright": "Pionowo",
     "sideways": "Poziomo",
-    "missing": "Wybierz graczy na wszystkie miejsca."
+    "missing": "Wybierz graczy na wszystkie miejsca.",
+    "device": "Ekran i zapis goli"
   },
   "game": {
     "ownGoal": "samobój",

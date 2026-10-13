@@ -62,7 +62,11 @@ export async function createLeague(page: Page, name: string): Promise<string> {
 export async function addPlayers(page: Page, names: string[]): Promise<void> {
   const dialog = page.locator('fl-add-player-dialog');
   for (const name of names) {
-    await page.getByRole('button', { name: t('league.addPlayer') }).click();
+    // The top bar's button (an empty league also offers one in its card).
+    await page
+      .locator('fl-top-bar')
+      .getByRole('button', { name: t('league.addPlayer') })
+      .click();
     await dialog.getByRole('combobox', { name: t('addPlayer.name') }).fill(name);
     await dialog.getByRole('button', { name: t('addPlayer.add'), exact: true }).click();
     await expect(dialog).toBeHidden();

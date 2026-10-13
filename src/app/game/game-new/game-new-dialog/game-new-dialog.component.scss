@@ -239,3 +239,35 @@ mat-dialog-actions {
 .empty {
   color: var(--fl-ink-2);
 }
+
+/* The device's settings, folded under one line that says what they are now. */
+details.input summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 10px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+details.input summary::-webkit-details-marker {
+  display: none;
+}
+
+details.input summary::after {
+  content: 'expand_more';
+  margin-left: auto;
+  font: 24px/1 'Material Icons';
+  font-feature-settings: 'liga';
+  color: var(--fl-ink-2);
+}
+
+details.input[open] summary::after {
+  content: 'expand_less';
+}
+
+details.input .current {
+  color: var(--fl-ink);
+  font-weight: 600;
+}

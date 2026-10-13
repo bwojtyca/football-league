@@ -100,8 +100,15 @@
         }
       </section>
 
-      <!-- How goals are entered on the game screen (kept on this device). -->
-      <section class="input">
+      <!-- The device's settings, folded (round 6): how goals are entered, the screen. -->
+      <details class="input">
+        <summary>
+          <span class="fl-kicker">{{ 'newGame.device' | transloco }}</span>
+          <span class="current"
+            >{{ 'newGame.inputs.' + inputMode() | transloco }} ·
+            {{ (upright() ? 'newGame.upright' : 'newGame.sideways') | transloco }}</span
+          >
+        </summary>
         <h3 class="fl-kicker">{{ 'newGame.input' | transloco }}</h3>
         <div class="fl-switch" role="radiogroup" [attr.aria-label]="'newGame.input' | transloco">
           @for (option of inputModes; track option) {
@@ -126,7 +133,7 @@
           </div>
         </div>
         <p class="hint">{{ 'newGame.inputHint.' + inputMode() | transloco }}</p>
-      </section>
+      </details>
 
       <section class="summary" aria-live="polite">
         <div class="summary-head">

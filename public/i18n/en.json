@@ -206,7 +206,8 @@
     "screen": "Game screen",
     "upright": "Upright",
     "sideways": "Sideways",
-    "missing": "Pick players for every place."
+    "missing": "Pick players for every place.",
+    "device": "Screen and goals"
   },
   "game": {
     "ownGoal": "own goal",
