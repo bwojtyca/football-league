@@ -1,5 +1,10 @@
 @if (step() === 1) {
-  <h2 mat-dialog-title>{{ 'tournament.new' | transloco }}</h2>
+  <header class="step-head">
+    <button matIconButton mat-dialog-close [attr.aria-label]="'common.cancel' | transloco">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h2 mat-dialog-title>{{ 'tournament.new' | transloco }}</h2>
+  </header>
   <mat-dialog-content>
     <!-- How you play (P50): each format with what it needs. -->
     <p class="intro">{{ 'tournament.pickIntro' | transloco }}</p>
@@ -22,13 +27,17 @@
       }
     </div>
   </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button matButton mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
-  </mat-dialog-actions>
 } @else {
+  <!-- Step 2: back to the formats, the format's name, its settings. -->
   <header class="step-head">
+    <button
+      matIconButton
+      (click)="step.set(1)"
+      [attr.aria-label]="'tournament.changeFormat' | transloco"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
     <h2 mat-dialog-title>{{ 'tournament.format.' + chip() | transloco }}</h2>
-    <button matButton (click)="step.set(1)">{{ 'tournament.changeFormat' | transloco }}</button>
   </header>
 
   <mat-dialog-content>
@@ -155,9 +164,8 @@
     }
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button matButton mat-dialog-close>{{ 'common.cancel' | transloco }}</button>
-    <button matButton="filled" class="fl-cta" (click)="create()" [disabled]="!!problem()">
+  <mat-dialog-actions>
+    <button matButton="filled" class="fl-cta wide" (click)="create()" [disabled]="!!problem()">
       {{ 'tournament.start' | transloco }}
     </button>
   </mat-dialog-actions>

@@ -40,7 +40,7 @@ export interface TournamentNewDialogData {
 export function openTournamentNewDialog(dialog: MatDialog, data: TournamentNewDialogData) {
   return dialog.open<TournamentNewDialogComponent, TournamentNewDialogData>(
     TournamentNewDialogComponent,
-    { data, width: '560px', maxWidth: '95vw' },
+    { data, width: '560px', maxWidth: '100vw', panelClass: 'fl-full-on-phone' },
   );
 }
 

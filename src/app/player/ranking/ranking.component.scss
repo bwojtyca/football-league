@@ -157,6 +157,8 @@
 }
 
 .others a {
+  display: inline-block;
+  padding: 8px 2px;
   color: var(--fl-ink);
   font-weight: 600;
 }
