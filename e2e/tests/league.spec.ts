@@ -51,7 +51,9 @@ test('a new league: players, the bottom navigation, language and the league swit
   await page.setViewportSize(phone);
   await page.getByRole('button', { name: t('switcher.open', { name }) }).click();
   const switcher = page.locator('fl-league-switcher');
-  await expect(switcher.getByText(name)).toBeVisible();
+  // The league menu: the league at a glance on top, the leagues to switch to below.
+  await expect(switcher.locator('header')).toContainText(name);
+  await shot(page, 'league-menu');
   await switcher.getByRole('link', { name: t('switcher.manage') }).click();
   await expect(page).toHaveURL(/#\/leagues$/);
   await expect(page.getByRole('link', { name })).toBeVisible();

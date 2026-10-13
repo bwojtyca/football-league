@@ -30,7 +30,7 @@ test('statistics: the league, two players compared, a profile and a game against
     .locator('nav.tabs')
     .getByRole('link', { name: t('nav.games') })
     .click();
-  await page.getByRole('link', { name: t('leagueStats.stats') }).click();
+  await page.getByRole('link', { name: t('leagueStats.title') }).click();
   await expect(page).toHaveURL(/\/stats$/);
   const stats = page.locator('fl-league-stats');
   await expect(stats.getByRole('heading', { name: t('leagueStats.numbers') })).toBeVisible();

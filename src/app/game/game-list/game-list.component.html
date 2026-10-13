@@ -65,8 +65,16 @@
   @if (!loading()) {
     <p class="empty">
       {{
-        (playerId() ? 'player.noGames' : tournamentId() ? 'tournament.noGames' : 'league.noGames')
-          | transloco
+        (only() === 'today'
+          ? 'gameList.noneToday'
+          : only() === 'tournament'
+            ? 'gameList.noneTournament'
+            : playerId()
+              ? 'player.noGames'
+              : tournamentId()
+                ? 'tournament.noGames'
+                : 'league.noGames'
+        ) | transloco
       }}
     </p>
   }

@@ -39,4 +39,19 @@ test('"this is me" on the device: the question, the choice, the "You" card and t
   await page.getByRole('button', { name: t('appMenu.open') }).click();
   await expect(page.locator('fl-app-menu')).toContainText(`${t('me.device')}: ${a}`);
   await page.keyboard.press('Escape');
+  await expect(page.locator('fl-app-menu')).toBeHidden();
+
+  // Games: the statistics on top, and filters for mine, today's and tournament games.
+  await page
+    .locator('nav.tabs')
+    .getByRole('link', { name: t('nav.games') })
+    .click();
+  const games = page.locator('fl-game-list a.game');
+  await page.getByRole('radio', { name: t('gameList.mine') }).click();
+  await expect(games).toHaveCount(1);
+  await page.getByRole('radio', { name: t('gameList.today') }).click();
+  await expect(games).toHaveCount(1);
+  await page.getByRole('radio', { name: t('gameList.tournament') }).click();
+  await expect(page.locator('fl-game-list')).toContainText(t('gameList.noneTournament'));
+  await shot(page, 'games-filters');
 });

@@ -3,19 +3,19 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 
+import { TranslocoPipe } from '@jsverse/transloco';
+
 import { TopBarComponent } from '../shared/top-bar.component';
 import { LeagueStatsComponent } from '../stats/league-stats.component';
-import { GamesSwitchComponent } from './games-switch.component';
 import { LeagueService } from './league.service';
 
-/** A league's statistics, next to its list of games. */
+/** A league's statistics, opened from the top of its games (and from its ranking). */
 @Component({
   selector: 'fl-league-stats-page',
-  imports: [GamesSwitchComponent, LeagueStatsComponent, TopBarComponent],
+  imports: [LeagueStatsComponent, TopBarComponent, TranslocoPipe],
   template: `
-    <fl-top-bar [title]="league()?.name ?? ''" [switcher]="leagueId()" />
+    <fl-top-bar [title]="'leagueStats.title' | transloco" [back]="['/l', leagueId(), 'games']" />
     <main class="page">
-      <fl-games-switch [leagueId]="leagueId()" current="stats" />
       <fl-league-stats [leagueId]="leagueId()" />
     </main>
   `,

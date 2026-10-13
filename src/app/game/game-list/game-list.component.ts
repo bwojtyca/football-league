@@ -37,6 +37,8 @@ export class GameListComponent {
   public readonly playerId = input<string | null>(null);
   /** Shows only the games of this tournament. */
   public readonly tournamentId = input<string | null>(null);
+  /** Shows only today's games, or only those of any tournament. */
+  public readonly only = input<'today' | 'tournament' | null>(null);
   /** With `playerId`: only the games this player played too, with or against them. */
   public readonly versus = input<string | null>(null);
   public readonly pageSize = input(20);
@@ -51,10 +53,14 @@ export class GameListComponent {
       (playerId
         ? this._gameService.playerGames(this.leagueId(), playerId)
         : this._gameService.leagueGames(this.leagueId())) ?? [];
+    const only = this.only();
+    const today = new Date().toDateString();
     return games.filter(
       (game) =>
         (!tournamentId || game.tournament === tournamentId) &&
-        (!versus || game.players.includes(versus)),
+        (!versus || game.players.includes(versus)) &&
+        (only !== 'today' || new Date(game.start).toDateString() === today) &&
+        (only !== 'tournament' || !!game.tournament),
     );
   });
 

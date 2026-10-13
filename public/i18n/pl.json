@@ -559,9 +559,6 @@
     "league": "Ustawienia ligi"
   },
   "leagueStats": {
-    "view": "Widok meczów",
-    "list": "Lista",
-    "stats": "Statystyki",
     "none": "Statystyki pojawią się po pierwszym zakończonym meczu.",
     "numbers": "W liczbach",
     "games": "Mecze",
@@ -596,7 +593,9 @@
     "fromLog": "Z {n, plural, one {# meczu} other {# meczów}} z zapisem goli (od października 2026).",
     "firstGoal": "pierwszy gol średnio po",
     "goalGap": "gol średnio co",
-    "jump": "Przejdź do"
+    "jump": "Przejdź do",
+    "title": "Statystyki ligi",
+    "teaser": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} · rekordy, kiedy gramy, Elo w czasie"
   },
   "thirds": {
     "title": "Gole w częściach meczu",
@@ -728,7 +727,13 @@
     "running": "Trwa",
     "paused": "Wstrzymany",
     "win": "W",
-    "lost": "P"
+    "lost": "P",
+    "filter": "Które mecze",
+    "all": "Wszystkie",
+    "mine": "Moje",
+    "tournament": "Turniejowe",
+    "noneToday": "Dziś jeszcze nikt nie grał.",
+    "noneTournament": "Nie ma jeszcze meczów turniejowych."
   },
   "leagueNew": {
     "who": "Kto gra?",
