@@ -125,3 +125,43 @@ Still to look at (next increments, after the owner tries round 6):
 - The league statistics are one long page: a short summary first, the rest below.
 - The tournaments tab and a tournament's page were not re-thought in round 6.
 - Finding a player across leagues (only league lists and the overall ranking today).
+
+## Design pass with awkward data (13 Oct 2026)
+
+The Tour now also seeds an awkward league (`awkward-*` shots at 360, 412 and 1280 px): a
+62-character league name, 16 players with names from "Bo" to "Krzysztof-Maksymilian
+Brzęczyszczykiewicz" and Polish letters, three without games, 120 games over two months with
+15:13 win-by-two games, one on one and timed ones, a game being played and one paused, a
+tournament with a long name, the longest name as the phone's player. Every shot has a JSON
+audit: blocks per left edge, texts cut by an ellipsis, tap targets under 40 px.
+
+Found and fixed:
+- Alignment: the page column keeps one left edge on every page (16 px on a phone, the column's
+  edge on a computer); a finished game on a wide screen was 1240 px wide (time to score) and is
+  one 720 px column now; the new tournament dialog floated over the page while the other
+  dialogs are full screen on a phone.
+- Long names: ranking rows on a 360 px phone kept 3 letters of a name, none next to "You";
+  "Now in the league" wrapped two long names into a column of ten words; the finished game cut
+  names after one line. Now: the name has priority, title icons fit whole or not at all, one
+  title and no form dots on a narrow ranking, each player on a line of their own in "Now", two
+  lines on the finished game, the league menu's name in two lines.
+- Content: a one-goal "biggest lead 0:1" was told; "0 h 45 min"; names sorted by code point (Ł
+  and Ż last); "Fewer than 5 games:Jędrzej" without a space; "gole na mecz" in lower case
+  among capitalised labels; the current league listed twice in its menu; a hole under the
+  tournament summary's three tiles.
+- Consistency: three folded sections with three styles (now `fl-fold`); next steps on a
+  finished game in white instead of the yellow ball; pills and switches of 36 and 38 px (now
+  40 px and up), name links 16 px high.
+
+Scores after this pass:
+
+| Dimension | Round 6 | Now |
+| --- | --- | --- |
+| Visual system | 7 | 7.5 |
+| Consistency | 7 | 8 |
+| Readability (with awkward data) | 6 | 7.5 |
+| Information architecture | 6 | 6.5 |
+
+Still weak: a computer shows phone pages in a column (leagues page without the rail, profile
+and statistics in one column); the statistics page is long; the tournament pages were not
+reworked; inline name links in the statistics stay small (text links, 17 px).
