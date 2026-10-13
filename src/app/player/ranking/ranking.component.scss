@@ -245,14 +245,17 @@
 
 .line b {
   flex: 0 1 auto;
-  min-width: 4.5em;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+/* When the row is tight, the titles are clipped before the name loses a letter. */
 .line .title {
-  flex: none;
+  flex: 0 1000 auto;
+  min-width: 0;
+  overflow: hidden;
   cursor: help;
 }
 
@@ -268,6 +271,11 @@
   .line .title ~ .title,
   .more-titles {
     display: none;
+  }
+
+  .views button {
+    padding: 0 9px;
+    font-size: 0.85rem;
   }
 }
 
