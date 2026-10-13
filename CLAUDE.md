@@ -297,12 +297,35 @@ Owner feedback, to do at the end (after the planned stages):
   number of games.)
 - (Done: deleting a league can delete its games too; restoring brings both back.)
 
+Owner feedback, round 6 (12 October 2026): the UI a little under 7/10, the placement of content
+2/10 ("would a user know what the app is for, where to click, how to reach the data?"). Review
+of every screen from the Tour workflow (`.github/workflows/tour.yml`, `e2e/tests/tour.spec.ts`:
+every screen at five sizes with lifelike data; run it with `gh workflow run tour.yml --ref
+<branch>`): `docs/superpowers/reviews/2026-10-12-tour-review.md`. Designed on the canvas page
+"Runda 6: układ treści", built in steps (plan: `docs/superpowers/plans/2026-10-06-next.md`).
+The information architecture now:
+- "This is me" on the device, no account (`shared/me.service.ts`, `fl.me`): the league page asks
+  "Which player are you?" (`league/who-sheet.component.ts`) and then opens with a "You" card
+  (`league/you-card.component.ts`: place, Elo, today's games, to the profile); the ranking and
+  the players mark the own row; the app menu says who plays on the phone.
+- Bottom bar: Ranking (the "You" card, "Now in the league", the ranking with one selector Elo /
+  win % / pairs / potato and a "?" sheet, `player/ranking/ranking-help-sheet.component.ts`) /
+  Games (the statistics card on top, filters all / mine / today / tournament; `l/:id/stats`
+  has a back arrow) / + / Tournaments / Players (`l/:id/players`; `more` redirects there).
+  The league's name opens the league menu (`league-switcher.component.ts`): the league at a
+  glance, invite by link, settings, switch league, all leagues. The league hub is gone.
+- First visit: the leagues page starts with what the app is for and "Find your league"; "New
+  league" sits after the lists. A league without games shows "Play your first game" (or "Add
+  the players") with one button instead of an empty ranking.
+- The new game dialog folds the device's settings (goal detail, screen) into "Screen and goals".
+- Look: LED digits only for scores, clocks and boards; felt only for the table, games and "now".
+
 Owner feedback, round I (6 October 2026: scale and polish; designed first on the canvas page
 "Runda 4", then built in steps; the owner wants the agent to design, build and self-review in
 increments without waiting for confirmation):
 - (Done) The app menu (gear in every top bar, `shared/app-menu-sheet.component.ts`) holds what
   belongs to the app: the language, installing on the phone (`shared/install.service.ts`), the
-  overall ranking, the leagues. The league hub keeps only the league and shares its link.
+  overall ranking, the leagues (round 6: also who plays on the phone; the hub is gone).
 - (Done) The leagues page scales: leagues opened on this device (`LeagueService.recent`,
   `fl.recentLeagues`; on a first visit the ones played lately), a search over all leagues by
   name, the new league, the overall ranking, the deleted leagues.
