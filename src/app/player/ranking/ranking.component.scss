@@ -235,28 +235,39 @@
   margin: 0;
 }
 
-/* The name, then the title icons (each with its tooltip). */
+/*
+ * The name, then the title icons (each with its tooltip), on one line: icons that do not fit
+ * wrap to a second line, which is hidden, so an icon is shown whole or not at all.
+ */
 .line {
   display: flex;
-  align-items: baseline;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 4px;
   min-width: 0;
+  max-height: 1.4em;
+  overflow: hidden;
+  font-size: 1.05rem;
+  line-height: 1.4;
 }
 
 .line b {
   flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* When the row is tight, the titles are clipped before the name loses a letter. */
 .line .title {
-  flex: 0 1000 auto;
-  min-width: 0;
-  overflow: hidden;
+  flex: none;
   cursor: help;
+}
+
+/* The "You" tag stays on the line next to a long name. */
+.line:has(.you) b {
+  max-width: calc(100% - 2.9em);
 }
 
 .who small {
