@@ -75,7 +75,7 @@ for (const size of SIZES) {
           await shot(name);
         }
       }
-      await page.getByRole('radio', { name: t('league.players') }).click();
+      await page.getByRole('radio', { name: 'Elo' }).click();
 
       await page.goto(`${league}/games`);
       await expect(page.locator('fl-game-list .day').first()).toBeVisible();

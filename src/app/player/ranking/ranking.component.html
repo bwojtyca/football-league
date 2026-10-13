@@ -1,12 +1,23 @@
 <div class="controls">
-  <div class="fl-switch" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
-    <button role="radio" [attr.aria-checked]="view() === 'players'" (click)="view.set('players')">
-      {{ 'league.players' | transloco }}
+  <div class="fl-switch views" role="radiogroup" [attr.aria-label]="'league.rankingOf' | transloco">
+    <button
+      role="radio"
+      [attr.aria-checked]="view() === 'players' && sortBy() === 'elo'"
+      (click)="show('players', 'elo')"
+    >
+      Elo
+    </button>
+    <button
+      role="radio"
+      [attr.aria-checked]="view() === 'players' && sortBy() === 'winRate'"
+      (click)="show('players', 'winRate')"
+    >
+      {{ 'ranking.winRate' | transloco }}
     </button>
     <button
       role="radio"
       [attr.aria-checked]="view() === 'duets'"
-      (click)="view.set('duets')"
+      (click)="show('duets')"
       [disabled]="!duets().length"
     >
       {{ 'league.duets' | transloco }}
@@ -14,29 +25,20 @@
     <button
       role="radio"
       [attr.aria-checked]="view() === 'potato'"
-      (click)="view.set('potato')"
+      (click)="show('potato')"
       [disabled]="!potatoes().length"
     >
       🥔 {{ 'potato.title' | transloco }}
     </button>
   </div>
-  @if (view() === 'players') {
-    <div class="order">
-      <span>{{ 'ranking.order' | transloco }}</span>
-      <div class="fl-switch" role="radiogroup" [attr.aria-label]="'ranking.sortBy' | transloco">
-        <button role="radio" [attr.aria-checked]="sortBy() === 'elo'" (click)="sortBy.set('elo')">
-          Elo
-        </button>
-        <button
-          role="radio"
-          [attr.aria-checked]="sortBy() === 'winRate'"
-          (click)="sortBy.set('winRate')"
-        >
-          {{ 'ranking.winRate' | transloco }}
-        </button>
-      </div>
-    </div>
-  }
+  <button
+    matIconButton
+    class="help"
+    (click)="help()"
+    [attr.aria-label]="'ranking.help' | transloco"
+  >
+    <mat-icon>help_outline</mat-icon>
+  </button>
 </div>
 
 @if (view() === 'potato') {
@@ -171,7 +173,8 @@
         @if (player.id === me.id()) {
           <span class="you">{{ 'me.you' | transloco }}</span>
         }
-        @for (title of titles().get(player.id) ?? []; track title.id) {
+        @let held = titles().get(player.id) ?? [];
+        @for (title of held.slice(0, 2); track title.id) {
           @let label =
             ('titles.' + title.id + '.name' | transloco) +
             ': ' +
@@ -187,6 +190,9 @@
             #tip="matTooltip"
             >{{ title.icon }}</span
           >
+        }
+        @if (held.length > 2) {
+          <span class="more-titles">+{{ held.length - 2 }}</span>
         }
       </span>
       @if (player.games === 0) {

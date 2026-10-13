@@ -1,6 +1,8 @@
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, signal } from '@angular/core';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -17,10 +19,10 @@ import { PlayerService } from '../player.service';
 import { PROVISIONAL_GAMES } from '../rating';
 import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../potato';
 import { duets } from '../records';
+import { DUET_GAMES, openRankingHelp } from './ranking-help-sheet.component';
 import { Title, TITLE_GAMES } from '../../stats/titles';
 
 /** Fewest games together for a pair to be ranked. */
-const DUET_GAMES = 3;
 
 /**
  * Players by Elo, win rate or potato points, or pairs by win rate. Players with fewer than
@@ -32,6 +34,7 @@ const DUET_GAMES = 3;
     DecimalPipe,
     NgTemplateOutlet,
     MatButtonModule,
+    MatIconModule,
     MatTooltipModule,
     RouterLink,
     AvatarComponent,
@@ -75,6 +78,19 @@ export class RankingComponent {
   /** What is ranked (players, pairs or potatoes), and players by what: Elo or win rate. */
   protected readonly view = signal<'players' | 'duets' | 'potato'>('players');
   protected readonly sortBy = signal<'elo' | 'winRate'>('elo');
+  private readonly _sheet = inject(MatBottomSheet);
+
+  /** One selector for what the ranking shows (canvas R6-liga): Elo, win %, pairs, potato. */
+  protected show(view: 'players' | 'duets' | 'potato', sortBy?: 'elo' | 'winRate'): void {
+    this.view.set(view);
+    if (sortBy) {
+      this.sortBy.set(sortBy);
+    }
+  }
+
+  protected help(): void {
+    openRankingHelp(this._sheet);
+  }
 
   private readonly _threshold = computed(() => Math.max(1, this.minGames()));
 

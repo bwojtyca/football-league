@@ -5,17 +5,33 @@
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
   margin: 8px 0 4px;
 }
 
-.order {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
+/* One selector; on a narrow phone it scrolls sideways inside itself. */
+.views {
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.views button {
+  flex: none;
+  white-space: nowrap;
+}
+
+.help {
+  flex: none;
   color: var(--fl-ink-2);
+}
+
+.more-titles {
+  flex: none;
+  color: var(--fl-ink-2);
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 .ranking {

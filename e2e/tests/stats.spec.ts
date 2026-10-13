@@ -69,7 +69,12 @@ test('statistics: the league, two players compared, a profile and a game against
   await page.getByRole('radio', { name: t('potato.title') }).click();
   await expect(page.locator('.potato-today li')).toHaveCount(4);
   await shot(page, 'stats-potato-today');
-  await page.getByRole('radio', { name: t('league.players') }).click();
+  // How to read the ranking: one tap away.
+  await page.getByRole('button', { name: t('ranking.help') }).click();
+  await expect(page.locator('fl-ranking-help')).toContainText(t('titles.title'));
+  await shot(page, 'ranking-help');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('fl-ranking-help')).toBeHidden();
   const elo = page.getByRole('radio', { name: 'Elo' });
   await elo.click();
   await expect(elo).toHaveAttribute('aria-checked', 'true');

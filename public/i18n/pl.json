@@ -74,7 +74,6 @@
     "unrated": "jeszcze bez meczów",
     "tournaments": "Turnieje",
     "rankingOf": "Ranking",
-    "players": "Gracze",
     "duets": "Duety",
     "duetsHint": "Duety z co najmniej {n} wspólnymi meczami są na górze, według procentu wygranych.",
     "deletedNote": "Ta liga jest usunięta. Możesz ją przywrócić.",
@@ -488,16 +487,21 @@
     "deleteOption": "Usuń"
   },
   "ranking": {
-    "sortBy": "Sortuj według",
     "winRate": "% wygranych",
     "belowThreshold": "Mniej niż {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
     "global": "Ranking ogólny",
     "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
     "allLeagues": "Wszystkie ligi",
     "overallProfile": "profil ogólny",
-    "order": "Kolejność",
     "colGames": "mecze",
-    "colWon": "wygranych"
+    "colWon": "wygranych",
+    "help": "Jak czytać ranking",
+    "helpTitle": "Jak czytać ranking",
+    "helpElo": "Każdy zaczyna od 1500. Po meczu zwycięzcy zyskują tyle, ile przegrani tracą; wygrana z silniejszymi daje więcej, a drużyna liczy się jak średnia swoich graczy. Przez pierwsze {n} meczów Elo jest jeszcze niepewne i wygląda na przezroczyste.",
+    "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
+    "helpDuets": "Pary, które zagrały razem co najmniej {n} mecze, według procentu wygranych.",
+    "helpFormTitle": "Kropki przy graczu",
+    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka."
   },
   "potato": {
     "title": "Ziemniak",

@@ -49,7 +49,7 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
       <fl-game-list
         [leagueId]="leagueId()"
         [playerId]="filter() === 'mine' ? me.id() : null"
-        [only]="filter() === 'today' || filter() === 'tournament' ? filter() : null"
+        [only]="only()"
         [pageSize]="30"
       />
     </main>
@@ -107,6 +107,10 @@ export class LeagueGamesComponent {
   );
 
   protected readonly filter = signal<Filter>('all');
+  protected readonly only = computed(() => {
+    const filter = this.filter();
+    return filter === 'today' || filter === 'tournament' ? filter : null;
+  });
   /** "Mine" only on a device that knows who plays here. */
   protected readonly filters = computed<Filter[]>(() => {
     const me = this.me.id();

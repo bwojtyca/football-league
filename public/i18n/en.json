@@ -74,7 +74,6 @@
     "unrated": "no games yet",
     "tournaments": "Tournaments",
     "rankingOf": "Ranking",
-    "players": "Players",
     "duets": "Pairs",
     "duetsHint": "Pairs with at least {n} games together come first, by win rate.",
     "deletedNote": "This league is deleted. You can restore it.",
@@ -488,16 +487,21 @@
     "deleteOption": "Delete"
   },
   "ranking": {
-    "sortBy": "Sort by",
     "winRate": "Win %",
     "belowThreshold": "Fewer than {n, plural, one {# game} other {# games}}",
     "global": "Overall ranking",
     "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
     "allLeagues": "All leagues",
     "overallProfile": "overall profile",
-    "order": "Order",
     "colGames": "games",
-    "colWon": "won"
+    "colWon": "won",
+    "help": "How to read the ranking",
+    "helpTitle": "How to read the ranking",
+    "helpElo": "Everyone starts at 1500. After a game the winners gain what the losers lose; beating stronger players gives more, and a team counts as the average of its players. For the first {n} games the rating is not settled yet and looks faded.",
+    "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
+    "helpDuets": "Pairs who played at least {n} games together, by the share of games won.",
+    "helpFormTitle": "The dots next to a player",
+    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss."
   },
   "potato": {
     "title": "Potato",
