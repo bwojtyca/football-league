@@ -20,6 +20,7 @@ import { GameService } from '../../game/game.service';
 import { LeagueService } from '../../league/league.service';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { MeService } from '../../shared/me.service';
+import { TitleIconComponent } from '../../shared/title-icon.component';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import {
   ACHIEVEMENTS,
@@ -94,6 +95,7 @@ const BADGES: Record<AchievementId, { icon: string; key: string; params: object 
     GameListComponent,
     GamesStatsComponent,
     RatingChangeComponent,
+    TitleIconComponent,
     TopBarComponent,
     TranslocoDatePipe,
     TranslocoDecimalPipe,

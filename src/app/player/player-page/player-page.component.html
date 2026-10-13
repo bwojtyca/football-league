@@ -26,7 +26,8 @@
             <div class="titles">
               @for (title of titles(); track title.id) {
                 <span class="title"
-                  >{{ title.icon }} {{ 'titles.' + title.id + '.name' | transloco }}</span
+                  ><fl-title-icon [name]="title.icon" />
+                  {{ 'titles.' + title.id + '.name' | transloco }}</span
                 >
               }
             </div>

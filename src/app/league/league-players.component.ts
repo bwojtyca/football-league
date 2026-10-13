@@ -94,7 +94,7 @@ import { LeagueService } from './league.service';
   styles: `
     .title {
       margin: 4px 0 2px;
-      font: 800 1.3rem/1.2 var(--fl-display);
+      font: var(--fl-section);
     }
     .title span {
       color: var(--fl-ink-2);

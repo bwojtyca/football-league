@@ -98,7 +98,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
     }
     h2 {
       margin: 0;
-      font: 800 1.3rem/1.2 var(--fl-display);
+      font: var(--fl-sheet-title);
     }
     .hint {
       margin: -4px 0 0;

@@ -8,19 +8,20 @@ import { finished, gameSeconds } from './stats';
 
 /**
  * Titles of a league, held now by the best (or worst) at something; ties share a title. The
- * order is the order they are shown in.
+ * order is the order they are shown in; each has a Material icon (`fl-title-icon`, the potato
+ * its own drawing).
  */
 export const TITLES = {
-  leader: '👑',
-  potato: '🥔',
-  sniper: '🎯',
-  wall: '🧱',
-  onFire: '🔥',
-  veteran: '🎖️',
-  marathoner: '⏱️',
-  comebackKing: '💪',
-  duo: '🤝',
-  goalieScorer: '🧤',
+  leader: 'star',
+  potato: 'potato',
+  sniper: 'gps_fixed',
+  wall: 'shield',
+  onFire: 'local_fire_department',
+  veteran: 'military_tech',
+  marathoner: 'timer',
+  comebackKing: 'trending_up',
+  duo: 'handshake',
+  goalieScorer: 'sports_handball',
 } as const;
 export type TitleId = keyof typeof TITLES;
 

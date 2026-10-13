@@ -36,6 +36,9 @@ html {
   --fl-display: 'Archivo', system-ui, sans-serif;
   /* LED dot-matrix digits (letters stay Archivo): only from about 18px. */
   --fl-led: 'Doto Digits', 'Archivo', system-ui, sans-serif;
+  /* One heading scale (round 6): sections of a page, and the titles of sheets and dialogs. */
+  --fl-section: 800 1.25rem/1.2 var(--fl-display);
+  --fl-sheet-title: 800 1.4rem/1.2 var(--fl-display);
 
   --fl-paper: #000000;
   --fl-card: #0b0c0d;
@@ -412,7 +415,7 @@ a {
 
 .fl-stats h2 {
   margin: 0 0 10px;
-  font: 800 1.15rem/1.25 var(--fl-display);
+  font: var(--fl-section);
 }
 
 .fl-stats .hint {

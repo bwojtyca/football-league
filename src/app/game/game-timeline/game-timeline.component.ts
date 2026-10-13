@@ -117,7 +117,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     }
     h2 {
       margin: 4px 0 8px;
-      font: 800 1.35rem/1.2 var(--fl-display);
+      font: var(--fl-section);
     }
     .canvas {
       position: relative;

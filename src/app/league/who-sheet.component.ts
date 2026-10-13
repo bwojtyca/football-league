@@ -73,7 +73,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
     }
     .title {
       margin: 0;
-      font: 800 1.5rem/1.2 var(--fl-display);
+      font: var(--fl-sheet-title);
     }
     .hint {
       margin: 0 0 4px;

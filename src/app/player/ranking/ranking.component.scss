@@ -193,8 +193,9 @@
 
 /* Titles held now, as small icons after the name. */
 .title {
+  display: inline-flex;
   margin-left: 4px;
-  font-size: 0.85em;
+  font-size: 1rem;
 }
 
 /* Today's points in the potato view: the first is the potato if the day ended now. */
@@ -230,10 +231,6 @@
 
 .potato-today li.next {
   font-weight: 700;
-}
-
-.potato-today li.next span::after {
-  content: ' 🥔?';
 }
 
 .potato-today .hint {

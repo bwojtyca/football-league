@@ -158,7 +158,7 @@ export function openLeagueNewDialog(dialog: MatDialog) {
       display: grid;
       margin: 0;
       padding: 0;
-      font: 800 1.4rem/1.2 var(--fl-display);
+      font: var(--fl-sheet-title);
     }
     .head h2::before {
       display: none;

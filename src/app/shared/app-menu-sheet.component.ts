@@ -76,7 +76,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
     }
     h2 {
       margin: 0 0 6px;
-      font: 800 1.3rem/1.2 var(--fl-display);
+      font: var(--fl-sheet-title);
     }
     .row {
       display: flex;

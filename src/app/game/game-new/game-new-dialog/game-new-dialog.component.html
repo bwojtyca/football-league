@@ -3,13 +3,9 @@
     <mat-icon>close</mat-icon>
   </button>
   <h2 mat-dialog-title>{{ (series ? 'newGame.seriesTitle' : 'newGame.title') | transloco }}</h2>
-  <button
-    matIconButton
-    class="switch"
-    (click)="switchTeams()"
-    [attr.aria-label]="'newGame.switchTeams' | transloco"
-  >
-    <mat-icon>swap_vert</mat-icon>
+  <!-- Named, not a bare ⇅: it swaps the red and the blue team. -->
+  <button matButton class="switch" (click)="switchTeams()">
+    <mat-icon>swap_vert</mat-icon>{{ 'newGame.switchTeams' | transloco }}
   </button>
 </header>
 

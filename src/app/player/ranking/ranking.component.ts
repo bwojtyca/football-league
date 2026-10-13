@@ -11,6 +11,7 @@ import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 import { Game, POSITIONS, Position, TEAM_COLORS } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { MeService } from '../../shared/me.service';
+import { TitleIconComponent } from '../../shared/title-icon.component';
 import { places } from '../../shared/places';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { AvatarComponent } from '../avatar/avatar.component';
@@ -42,6 +43,7 @@ import { Title, TITLE_GAMES } from '../../stats/titles';
     RatingChangeComponent,
     TranslocoDatePipe,
     TranslocoPipe,
+    TitleIconComponent,
   ],
   templateUrl: './ranking.component.html',
   styleUrl: './ranking.component.scss',

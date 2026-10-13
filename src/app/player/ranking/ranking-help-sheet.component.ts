@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { TitleIconComponent } from '../../shared/title-icon.component';
 import { TITLE_GAMES, TITLES, TitleId } from '../../stats/titles';
 import { POTATO_DAY_GAMES, POTATO_POINTS } from '../potato';
 import { PROVISIONAL_GAMES } from '../rating';
@@ -19,7 +20,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
  */
 @Component({
   selector: 'fl-ranking-help',
-  imports: [TranslocoPipe],
+  imports: [TitleIconComponent, TranslocoPipe],
   template: `
     <h2 class="title">{{ 'ranking.helpTitle' | transloco }}</h2>
     <section>
@@ -35,7 +36,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
       <p>{{ 'ranking.helpDuets' | transloco: { n: duetGames } }}</p>
     </section>
     <section>
-      <h3>🥔 {{ 'potato.title' | transloco }}</h3>
+      <h3><fl-title-icon name="potato" /> {{ 'potato.title' | transloco }}</h3>
       <ul>
         <li>{{ 'potato.ruleDay' | transloco: { n: potatoDayGames } }}</li>
         <li>{{ 'potato.ruleLoss' | transloco: { n: points.loss, m: -points.win } }}</li>
@@ -51,7 +52,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
         @for (title of titles; track title.id) {
           <div>
             <dt>
-              <span aria-hidden="true">{{ title.icon }}</span>
+              <fl-title-icon [name]="title.icon" />
               {{ 'titles.' + title.id + '.name' | transloco }}
             </dt>
             <dd>{{ 'titles.' + title.id + '.hint' | transloco: { n: titleGames } }}</dd>
@@ -71,7 +72,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
     }
     .title {
       margin: 0 0 8px;
-      font: 800 1.5rem/1.2 var(--fl-display);
+      font: var(--fl-sheet-title);
     }
     section + section {
       margin-top: 14px;

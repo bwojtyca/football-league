@@ -48,7 +48,12 @@
       <ol>
         @for (row of potatoToday(); track row.player; let first = $first) {
           <li [class.next]="first">
-            <span>{{ row.name }}</span>
+            <span
+              >{{ row.name }}
+              @if (first) {
+                <fl-title-icon name="potato" />?
+              }
+            </span>
             <small>{{ 'count.games' | transloco: { n: row.games } }}</small>
             <b>{{ row.points }} {{ 'potato.points' | transloco }}</b>
           </li>
@@ -67,7 +72,7 @@
             <b
               >{{ row.name }}
               @if (row.isPotato) {
-                🥔
+                <fl-title-icon name="potato" />
               }
             </b>
             <small>
@@ -188,8 +193,8 @@
             matTooltipTouchGestures="on"
             (click)="$event.preventDefault(); $event.stopPropagation(); tip.toggle()"
             #tip="matTooltip"
-            >{{ title.icon }}</span
-          >
+            ><fl-title-icon [name]="title.icon"
+          /></span>
         }
         @if (held.length > 2) {
           <span class="more-titles">+{{ held.length - 2 }}</span>

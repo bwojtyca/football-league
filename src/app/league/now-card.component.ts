@@ -22,6 +22,7 @@ import { GameService } from '../game/game.service';
 import { openNewGameDialog } from '../game/game-new/game-new-dialog/game-new-dialog.component';
 import { ModeLabelComponent } from '../game/mode/mode-label.component';
 import { AvatarComponent } from '../player/avatar/avatar.component';
+import { TitleIconComponent } from '../shared/title-icon.component';
 import { potatoState } from '../player/potato';
 import { PlayerService } from '../player/player.service';
 import { TournamentService } from '../tournament/tournament.service';
@@ -38,6 +39,7 @@ import { TournamentService } from '../tournament/tournament.service';
     MatIconModule,
     RouterLink,
     AvatarComponent,
+    TitleIconComponent,
     ModeLabelComponent,
     TranslocoDatePipe,
     TranslocoPipe,
@@ -146,7 +148,7 @@ import { TournamentService } from '../tournament/tournament.service';
               <fl-avatar [playerId]="potato.id" [name]="potato.name" [size]="24" />
               <b>{{ potato.name }}</b>
             </span>
-            <span class="note">🥔</span>
+            <span class="note"><fl-title-icon name="potato" /></span>
           </a>
         }
         <a [routerLink]="['/l', leagueId(), 'stats']">

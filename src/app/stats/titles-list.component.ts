@@ -3,19 +3,20 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { PlayerService } from '../player/player.service';
+import { TitleIconComponent } from '../shared/title-icon.component';
 import { hoursAndMinutes } from './format';
 import { Title, TITLE_GAMES } from './titles';
 
 /** The titles of a league and who holds them now, with what earned them. */
 @Component({
   selector: 'fl-titles-list',
-  imports: [RouterLink, TranslocoPipe],
+  imports: [RouterLink, TitleIconComponent, TranslocoPipe],
   template: `
     <dl class="fl-records">
       @for (row of rows(); track row.id) {
         <div>
           <dt>
-            <span aria-hidden="true">{{ row.icon }}</span>
+            <fl-title-icon [name]="row.icon" />
             {{ 'titles.' + row.id + '.name' | transloco }}
           </dt>
           <dd>
