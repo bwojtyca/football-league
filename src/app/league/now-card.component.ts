@@ -348,7 +348,7 @@ import { TournamentService } from '../tournament/tournament.service';
       white-space: nowrap;
     }
     .num {
-      font: 900 1.15rem/1.1 var(--fl-led);
+      font: 800 1.15rem/1.1 var(--fl-display);
     }
     .num.ball {
       color: var(--fl-ball);

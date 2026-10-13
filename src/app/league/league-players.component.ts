@@ -145,7 +145,7 @@ import { LeagueService } from './league.service';
       color: var(--fl-ink-2);
     }
     .rating {
-      font: 900 1.3rem/1 var(--fl-led);
+      font: 800 1.15rem/1 var(--fl-display);
       font-variant-numeric: tabular-nums;
     }
   `,

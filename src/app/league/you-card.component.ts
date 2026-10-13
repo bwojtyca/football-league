@@ -108,7 +108,8 @@ import { openWhoSheet } from './who-sheet.component';
       font-size: 0.75rem;
     }
     .led {
-      font: 900 1.3rem/1 var(--fl-led);
+      font: 800 1.2rem/1 var(--fl-display);
+      font-variant-numeric: tabular-nums;
     }
     .you mat-icon {
       color: var(--fl-ink-2);

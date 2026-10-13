@@ -167,7 +167,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
       color: var(--fl-ball);
     }
     .rating {
-      font: 900 1.2rem/1 var(--fl-led);
+      font: 800 1.1rem/1 var(--fl-display);
       font-variant-numeric: tabular-nums;
     }
     .add {

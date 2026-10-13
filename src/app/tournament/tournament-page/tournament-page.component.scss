@@ -169,7 +169,7 @@ ol.people li.empty::before {
 /* The leaders: their place lights up like the ball. */
 .table tr.first td:first-child {
   color: var(--fl-ball);
-  font: 900 1.1rem/1 var(--fl-led);
+  font: 800 1.05rem/1 var(--fl-display);
 }
 
 .fixtures {
