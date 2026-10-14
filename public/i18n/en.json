@@ -234,7 +234,6 @@
       "goal": "{name} scores {from}",
       "own": "{name} scores an own goal {from}",
       "swap": "{team} swap positions",
-      "none": "Every goal shows up here. Undo a mistake with one tap.",
       "goalRod": "{name} scores with {rod}",
       "goalMan": "{name} scores with {rod} (no. {n})",
       "ownRod": "{name} scores an own goal with {rod}",
@@ -260,7 +259,13 @@
     "ownArm": "Own goal…",
     "ownCancel": "Cancel own goal",
     "fullscreenOn": "Full screen",
-    "fullscreenOff": "Leave full screen"
+    "fullscreenOff": "Leave full screen",
+    "howTo": "How to record a goal",
+    "firstStep": {
+      "position": "Tap a rod of the player who scored.",
+      "rod": "Tap the rod the goal came from.",
+      "man": "Tap the figure that scored."
+    }
   },
   "modes": {
     "title": "Mode",

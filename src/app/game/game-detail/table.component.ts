@@ -258,16 +258,14 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
         <div class="board board--{{ end.color }}" aria-hidden="true">
           <b class="count">{{ end.score }}</b>
           <div class="names">
-            <div class="track" flMarquee>
-              <span class="team">{{ 'team.' + end.color | transloco }}</span>
-              @for (player of end.players; track player.position) {
-                <span class="who"
-                  ><fl-avatar [playerId]="player.id" [name]="player.name" [size]="24" />{{
-                    player.name
-                  }}<b>{{ player.goals }}</b></span
-                >
-              }
-            </div>
+            <span class="team">{{ 'team.' + end.color | transloco }}</span>
+            @for (player of end.players; track player.position) {
+              <span class="who">
+                <fl-avatar [playerId]="player.id" [name]="player.name" [size]="24" />
+                <span class="name">{{ player.name }}</span>
+                <b>{{ player.goals }}</b>
+              </span>
+            }
           </div>
         </div>
       }
@@ -379,12 +377,36 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       font: 900 2.3rem/1 var(--fl-led);
       text-align: center;
     }
+    /* The players share the board; a long name is cut, never the avatar or the goals. */
     .names {
       flex: 1;
       min-width: 0;
       display: flex;
-      justify-content: safe center;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .names .team {
+      flex: none;
+    }
+    .names .who {
+      flex: 0 1 auto;
+    }
+    .names .who fl-avatar,
+    .names .who b {
+      flex: none;
+    }
+    .names .name {
+      min-width: 0;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    /* A narrow board: the score's colour names the team. */
+    @container (max-width: 420px) {
+      .names .team {
+        display: none;
+      }
     }
     /* Little height (a short phone): slimmer boards leave more of it to the table. */
     @container (max-height: 460px) {
@@ -480,8 +502,6 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       align-items: center;
       gap: 6px;
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .board b {
       font: 900 1.3rem/1 var(--fl-led);

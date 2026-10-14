@@ -12,7 +12,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await startGame(page, { red: [a, b], blue: [c, d] });
 
   const bar = page.locator('footer.bar');
-  await expect(bar).toContainText(t('game.event.none'));
+  await expect(bar).toContainText(t('game.firstStep.position'));
   await goal(page, a);
   await expect(score(page)).toHaveText('1:0');
   await expect(bar).toContainText(
@@ -20,7 +20,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   );
   await bar.getByRole('button', { name: t('game.undo'), exact: true }).click();
   await expect(score(page)).toHaveText('0:0');
-  await expect(bar).toContainText(t('game.event.none'));
+  await expect(bar).toContainText(t('game.firstStep.position'));
 
   // Red swap positions: Ala goes to attack.
   await page.getByRole('button', { name: `${t('game.swap')}: ${t('team.red')}` }).click();

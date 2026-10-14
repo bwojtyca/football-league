@@ -336,3 +336,24 @@
   color: var(--fl-on-ball);
   font: 800 0.7rem/1.4 var(--fl-display);
 }
+
+/* A pair: each name cut on its own, so a long first name never hides the partner. */
+.who b.pair {
+  display: flex;
+  gap: 0.3em;
+  min-width: 0;
+}
+
+.pair span {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pair i {
+  flex: none;
+  font-style: normal;
+  color: var(--fl-ink-2);
+}

@@ -204,16 +204,18 @@
       @let last = lastEvent();
       <footer class="bar" role="status">
         <span class="text">
-          <small>{{ 'game.last' | transloco }}</small>
           @if (ownArmed()) {
+            <small>{{ 'game.last' | transloco }}</small>
             <span class="event armed">{{ 'game.ownPick' | transloco }}</span>
           } @else if (last) {
+            <small>{{ 'game.last' | transloco }}</small>
             <span class="event">{{ eventText(last) }}</span>
           } @else {
-            <span class="event placeholder">{{ 'game.event.none' | transloco }}</span>
+            <small>{{ 'game.howTo' | transloco }}</small>
+            <span class="event first">{{ 'game.firstStep.' + inputDetail() | transloco }}</span>
           }
         </span>
-        <button matButton="filled" class="fl-cta" (click)="undo()" [disabled]="!last">
+        <button matButton="filled" class="undo" (click)="undo()" [disabled]="!last">
           <mat-icon>undo</mat-icon>{{ 'game.undo' | transloco }}
         </button>
         <div class="tools">

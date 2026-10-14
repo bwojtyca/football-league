@@ -234,7 +234,6 @@
       "goal": "{name} strzela gola {from}",
       "own": "{name} strzela samobója {from}",
       "swap": "{team} zamieniają pozycje",
-      "none": "Tu pojawi się każdy gol. Pomyłkę cofniesz jednym tapnięciem.",
       "goalRod": "{name} strzela gola {rod}",
       "goalMan": "{name} strzela gola {rod} nr {n}",
       "ownRod": "{name} strzela samobója {rod}",
@@ -260,7 +259,13 @@
     "ownArm": "Samobój…",
     "ownCancel": "Anuluj samobój",
     "fullscreenOn": "Pełny ekran",
-    "fullscreenOff": "Zamknij pełny ekran"
+    "fullscreenOff": "Zamknij pełny ekran",
+    "howTo": "Jak zapisać gola",
+    "firstStep": {
+      "position": "Dotknij drążka gracza, który strzelił.",
+      "rod": "Dotknij drążka, z którego padł gol.",
+      "man": "Dotknij figurki, która strzeliła."
+    }
   },
   "modes": {
     "title": "Tryb",

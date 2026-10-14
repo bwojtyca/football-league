@@ -116,7 +116,10 @@
           <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
         </span>
         <span class="who">
-          <b>{{ duet.names.join(' & ') }}</b>
+          <b class="pair"
+            ><span>{{ duet.names[0] }}</span
+            ><i aria-hidden="true">&</i><span>{{ duet.names[1] }}</span></b
+          >
           <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
         </span>
         <span class="rating">

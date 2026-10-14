@@ -272,15 +272,20 @@
   font-weight: 600;
 }
 
-.bar .event.placeholder {
-  color: var(--fl-ink-2);
-  font-size: 0.85rem;
-  font-weight: 400;
-  white-space: normal;
+.bar .undo {
+  --mat-button-filled-container-height: 48px;
+  --mat-button-filled-container-color: var(--fl-card-2);
+  --mat-button-filled-label-text-color: var(--fl-ink);
 }
 
-.bar .fl-cta {
-  --mat-button-filled-container-height: 48px;
+.bar .undo .mat-icon {
+  color: var(--fl-ball);
+}
+
+/* Before the first goal: what to do, in the ball's colour. */
+.bar .event.first {
+  color: var(--fl-ball);
+  white-space: normal;
 }
 
 .deleted-note {
