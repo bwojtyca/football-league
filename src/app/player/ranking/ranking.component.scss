@@ -357,3 +357,12 @@
   font-style: normal;
   color: var(--fl-ink-2);
 }
+
+/* The pairs with too few games together, under their own heading. */
+.few {
+  margin: 20px 0 4px;
+}
+
+.ranking:has(+ .few) {
+  padding-bottom: 0;
+}

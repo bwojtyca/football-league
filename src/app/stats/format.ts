@@ -6,15 +6,22 @@ export function hoursAndMinutes(seconds: number): { h: number; m: number } {
   return { h: Math.floor(minutes / 60), m: minutes % 60 };
 }
 
-/** The score as "red:blue". */
+/** The score, the winners first ("8:6"). */
 export function scoreOf(game: Game): string {
-  return `${teamScore(game, 'red')}:${teamScore(game, 'blue')}`;
+  const [first, second] = order(game);
+  return `${teamScore(game, first)}:${teamScore(game, second)}`;
 }
 
-/** "Ala & Bartek – Celina & Darek". */
+/** The winners first, so a record reads "8:0" and never "0:8"; red first without a winner. */
+function order(game: Game): [TeamColor, TeamColor] {
+  return game.win === 'blue' ? ['blue', 'red'] : ['red', 'blue'];
+}
+
+/** "Ala & Bartek – Celina & Darek", the winners first. */
 export function sidesOf(game: Game, name: (playerId: string) => string): string {
   const team = (color: TeamColor) => lineupPlayers(game.teams[color]).map(name).join(' & ');
-  return `${team('red')} – ${team('blue')}`;
+  const [first, second] = order(game);
+  return `${team(first)} – ${team(second)}`;
 }
 
 /** Whole percentages of the counts that add up to 100 (largest remainders get the rest). */

@@ -11,11 +11,13 @@
       <div class="head">
         <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
         <div class="who">
+          <!-- The full name (the top bar may shorten it), then the league on one line. -->
+          <b class="name">{{ p.name }}</b>
           <div class="league">
             @if (overall()) {
               {{ 'ranking.allLeagues' | transloco }}
             } @else {
-              {{ league()?.name }} ·
+              <span class="league-name">{{ league()?.name }}</span>
               <a [routerLink]="['/player', p.id]">{{ 'ranking.overallProfile' | transloco }}</a>
             }
           </div>
@@ -146,8 +148,10 @@
               <div class="col">
                 <h2>{{ 'achievements.title' | transloco }}</h2>
                 <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
-                <h2>{{ 'achievements.mishaps' | transloco }}</h2>
-                <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
+                <div class="mishaps">
+                  <h2>{{ 'achievements.mishaps' | transloco }}</h2>
+                  <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
+                </div>
               </div>
             }
           </div>

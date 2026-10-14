@@ -148,11 +148,14 @@ export class RankingComponent {
   protected readonly potatoPoints = POTATO_POINTS;
   protected readonly potatoDayGames = POTATO_DAY_GAMES;
   /** Days as the potato, the potatoes now marked. */
+  /**
+   * The potato view: the potatoes now first, then everyone by days as the potato. It is a hall
+   * of shame, not a podium, so it shows no places (a "1" read as the winner).
+   */
   protected readonly potatoes = computed(() =>
-    potatoRanking(this.games()).map((row) => ({
-      ...row,
-      name: this._playerService.getPlayerName(row.player),
-    })),
+    potatoRanking(this.games())
+      .map((row) => ({ ...row, name: this._playerService.getPlayerName(row.player) }))
+      .sort((a, b) => Number(b.isPotato) - Number(a.isPotato)),
   );
   /** Today's points, worst first: who would be the potato if the day ended now. */
   protected readonly potatoToday = computed(() =>
@@ -162,10 +165,6 @@ export class RankingComponent {
     })),
   );
 
-  protected readonly potatoPlaces = computed(() =>
-    places(this.potatoes(), (a, b) => a.days === b.days),
-  );
-
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));
   protected readonly duets = computed(() =>
     duets(this.games(), this.duetGames()).map((duet) => ({
@@ -173,7 +172,14 @@ export class RankingComponent {
       names: duet.players.map((id) => this._playerService.getPlayerName(id)),
     })),
   );
+  protected readonly rankedDuets = computed(() =>
+    this.duets().filter((duet) => duet.games >= this.duetGames()),
+  );
+  /** Pairs with too few games together: listed apart, without a place. */
+  protected readonly fewDuets = computed(() =>
+    this.duets().filter((duet) => duet.games < this.duetGames()),
+  );
   protected readonly duetPlaces = computed(() =>
-    places(this.duets(), (a, b) => Math.round(a.winRatio) === Math.round(b.winRatio)),
+    places(this.rankedDuets(), (a, b) => Math.round(a.winRatio) === Math.round(b.winRatio)),
   );
 }

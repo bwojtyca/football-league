@@ -81,7 +81,8 @@
     "firstGame": "Play your first game",
     "firstGameHint": "The ranking comes from the games: everyone starts at 1500 Elo, and beating stronger players gives more. After a few games you will see who rules the table.",
     "firstGameStart": "Start a game",
-    "addPlayersFirst": "Add the players"
+    "addPlayersFirst": "Add the players",
+    "duetsFew": "Too few games together (under {n}), no place"
   },
   "addPlayer": {
     "title": "Add player",
@@ -144,7 +145,8 @@
     "modes": "Rules",
     "tournaments": "Tournaments",
     "tournamentsPlayed": "played",
-    "tournamentsWon": "won"
+    "tournamentsWon": "won",
+    "gamesShort": "games"
   },
   "newGame": {
     "title": "New game",

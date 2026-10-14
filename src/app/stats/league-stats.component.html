@@ -63,31 +63,33 @@
         </section>
       }
 
-      <section>
-        <h2>{{ 'leagueStats.months' | transloco }}</h2>
-        <div class="fl-chart">
-          <canvas
-            baseChart
-            type="bar"
-            [data]="monthsChart()"
-            [options]="barOptions"
-            [attr.aria-label]="'leagueStats.months' | transloco"
-          ></canvas>
-        </div>
-        <table class="sr-only">
-          <caption>
-            {{
-              'leagueStats.months' | transloco
-            }}
-          </caption>
-          @for (month of months(); track month.label) {
-            <tr>
-              <th scope="row">{{ month.label }}</th>
-              <td>{{ month.games }}</td>
-            </tr>
-          }
-        </table>
-      </section>
+      @if (months().length > 1) {
+        <section>
+          <h2>{{ 'leagueStats.months' | transloco }}</h2>
+          <div class="fl-chart">
+            <canvas
+              baseChart
+              type="bar"
+              [data]="monthsChart()"
+              [options]="barOptions"
+              [attr.aria-label]="'leagueStats.months' | transloco"
+            ></canvas>
+          </div>
+          <table class="sr-only">
+            <caption>
+              {{
+                'leagueStats.months' | transloco
+              }}
+            </caption>
+            @for (month of months(); track month.label) {
+              <tr>
+                <th scope="row">{{ month.label }}</th>
+                <td>{{ month.games }}</td>
+              </tr>
+            }
+          </table>
+        </section>
+      }
 
       @if (week(); as week) {
         <section id="stats-when">

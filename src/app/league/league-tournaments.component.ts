@@ -51,9 +51,6 @@ import { LeagueService } from './league.service';
                 class="tournament"
                 [class.running]="!tournament.end"
               >
-                @if (!tournament.end) {
-                  <span class="tag">{{ 'tournament.runningList' | transloco }}</span>
-                }
                 <span class="name">{{ tournament.name }}</span>
                 <span class="meta">
                   {{ 'tournament.format.' + tournament.format | transloco }} ·

@@ -252,6 +252,13 @@
 
 <ng-template #rivals let-list="list">
   <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>{{ 'stats.gamesShort' | transloco }}</th>
+        <th>{{ 'stats.winRate' | transloco }}</th>
+      </tr>
+    </thead>
     <tbody>
       @for (rival of list; track rival.playerId) {
         <tr>
@@ -260,10 +267,9 @@
               playerService.getPlayerName(rival.playerId)
             }}</a>
           </th>
-          <td>{{ 'count.games' | transloco: { n: rival.games } }}</td>
+          <td>{{ rival.games }}</td>
           <td>
             {{ percent(rival.wins, rival.games) | translocoDecimal: { maximumFractionDigits: 0 } }}%
-            {{ 'stats.winRate' | transloco }}
           </td>
         </tr>
       }

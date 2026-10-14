@@ -81,7 +81,8 @@
     "firstGame": "Zagrajcie pierwszy mecz",
     "firstGameHint": "Ranking powstaje z meczów: każdy zaczyna od 1500 Elo, a wygrana z silniejszymi daje więcej. Po kilku meczach zobaczycie, kto rządzi przy stole.",
     "firstGameStart": "Zacznij mecz",
-    "addPlayersFirst": "Dodajcie graczy"
+    "addPlayersFirst": "Dodajcie graczy",
+    "duetsFew": "Za mało meczów razem (mniej niż {n}), bez miejsca"
   },
   "addPlayer": {
     "title": "Dodaj gracza",
@@ -144,7 +145,8 @@
     "modes": "Zasady",
     "tournaments": "Turnieje",
     "tournamentsPlayed": "rozegrane",
-    "tournamentsWon": "wygrane"
+    "tournamentsWon": "wygrane",
+    "gamesShort": "mecze"
   },
   "newGame": {
     "title": "Nowy mecz",

@@ -63,11 +63,34 @@
   color: var(--fl-ink);
 }
 
+.name {
+  display: block;
+  overflow-wrap: anywhere;
+  font: 800 1.15rem/1.25 var(--fl-display);
+}
+
+/* The league's name, cut on one line, and the link to the overall profile after it. */
 .league {
+  display: flex;
+  gap: 0.4em;
+  min-width: 0;
   font-weight: 600;
+  color: var(--fl-ink-2);
+}
+
+.league-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.league-name::after {
+  content: ' ·';
 }
 
 .league a {
+  flex: none;
   color: var(--fl-ink);
 }
 
@@ -224,10 +247,15 @@ h2 {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--fl-ball);
-  color: var(--fl-on-ball);
+  background: var(--fl-felt);
+  color: #fff;
   font-size: 20px;
   opacity: 1;
+}
+
+/* Mishaps are not rewards: their earned discs are red. */
+.mishaps .achievements li.earned mat-icon {
+  background: var(--fl-red);
 }
 
 .achievements span {

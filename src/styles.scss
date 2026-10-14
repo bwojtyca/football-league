@@ -611,3 +611,8 @@ details.fl-fold[open] > summary::after {
 .fl-dialog-head > .close {
   order: 10;
 }
+
+/* Sheets and dialogs stand apart from the page behind them (evaluation 1: the scrim was weak). */
+.cdk-overlay-dark-backdrop {
+  background: rgb(0 0 0 / 0.66);
+}

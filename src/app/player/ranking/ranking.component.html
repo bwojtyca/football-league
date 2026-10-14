@@ -66,15 +66,14 @@
     @for (row of potatoes(); track row.player; let i = $index) {
       <li>
         <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
-          <span class="pos">{{ potatoPlaces()[i] }}</span>
+          <span class="pos" aria-hidden="true">
+            @if (row.isPotato) {
+              <fl-title-icon name="potato" />
+            }
+          </span>
           <fl-avatar [playerId]="row.player" [name]="row.name" [size]="36" />
           <span class="who">
-            <b
-              >{{ row.name }}
-              @if (row.isPotato) {
-                <fl-title-icon name="potato" />
-              }
-            </b>
+            <b>{{ row.name }} </b>
             <small>
               {{ 'count.games' | transloco: { n: row.games } }}
               @if (row.since; as since) {
@@ -108,26 +107,24 @@
   </details>
 } @else if (view() === 'duets') {
   <ol class="ranking">
-    @for (duet of duets(); track duet.players.join(); let i = $index) {
-      <li class="row" [class.unrated]="duet.games < duetGames()">
-        <span class="pos">{{ duet.games < duetGames() ? '' : duetPlaces()[i] }}</span>
-        <span class="avatars">
-          <fl-avatar [playerId]="duet.players[0]" [name]="duet.names[0]" [size]="28" />
-          <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
-        </span>
-        <span class="who">
-          <b class="pair"
-            ><span>{{ duet.names[0] }}</span
-            ><i aria-hidden="true">&</i><span>{{ duet.names[1] }}</span></b
-          >
-          <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
-        </span>
-        <span class="rating">
-          <b>{{ duet.winRatio | number: '1.0-0' }}%</b>
-        </span>
+    @for (duet of rankedDuets(); track duet.players.join(); let i = $index) {
+      <li class="row">
+        <span class="pos">{{ duetPlaces()[i] }}</span>
+        <ng-container *ngTemplateOutlet="duetRow; context: { $implicit: duet }" />
       </li>
     }
   </ol>
+  @if (fewDuets().length) {
+    <h3 class="fl-kicker few">{{ 'league.duetsFew' | transloco: { n: duetGames() } }}</h3>
+    <ol class="ranking">
+      @for (duet of fewDuets(); track duet.players.join()) {
+        <li class="row unrated">
+          <span class="pos"></span>
+          <ng-container *ngTemplateOutlet="duetRow; context: { $implicit: duet }" />
+        </li>
+      }
+    </ol>
+  }
   <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
 } @else {
   @if (ranked().length) {
@@ -248,4 +245,21 @@
       </span>
     }
   </a>
+</ng-template>
+
+<ng-template #duetRow let-duet>
+  <span class="avatars">
+    <fl-avatar [playerId]="duet.players[0]" [name]="duet.names[0]" [size]="28" />
+    <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
+  </span>
+  <span class="who">
+    <b class="pair"
+      ><span>{{ duet.names[0] }}</span
+      ><i aria-hidden="true">&</i><span>{{ duet.names[1] }}</span></b
+    >
+    <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
+  </span>
+  <span class="rating">
+    <b>{{ duet.winRatio | number: '1.0-0' }}%</b>
+  </span>
 </ng-template>

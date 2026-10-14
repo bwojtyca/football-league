@@ -4,9 +4,8 @@ section {
 }
 
 h3 {
-  margin: 0 0 8px;
-  font: 700 0.85rem/1.2 var(--fl-display);
-  color: var(--fl-ink-2);
+  margin: 4px 0 10px;
+  font: var(--fl-section);
 }
 
 dl {
@@ -43,6 +42,7 @@ td {
   padding: 5px 4px;
   text-align: right;
   border-bottom: 1px solid var(--fl-line);
+  white-space: nowrap;
 }
 
 tr:last-child th,
