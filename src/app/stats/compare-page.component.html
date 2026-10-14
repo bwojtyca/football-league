@@ -1,7 +1,7 @@
 @let p = players();
 <fl-top-bar [title]="'compare.title' | transloco" [back]="playerLink(a())" />
 
-<main class="page">
+<main class="page fl-wide-page">
   @if (p === null) {
     <p class="empty">{{ 'player.notFound' | transloco }}</p>
   } @else if (!p || !h2h()) {

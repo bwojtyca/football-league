@@ -1,6 +1,11 @@
 @if (step() === 1) {
-  <header class="step-head">
-    <button matIconButton mat-dialog-close [attr.aria-label]="'common.cancel' | transloco">
+  <header class="fl-dialog-head">
+    <button
+      matIconButton
+      class="close"
+      mat-dialog-close
+      [attr.aria-label]="'common.cancel' | transloco"
+    >
       <mat-icon>close</mat-icon>
     </button>
     <h2 mat-dialog-title>{{ 'tournament.new' | transloco }}</h2>
@@ -29,9 +34,10 @@
   </mat-dialog-content>
 } @else {
   <!-- Step 2: back to the formats, the format's name, its settings. -->
-  <header class="step-head">
+  <header class="fl-dialog-head">
     <button
       matIconButton
+      class="back"
       (click)="step.set(1)"
       [attr.aria-label]="'tournament.changeFormat' | transloco"
     >

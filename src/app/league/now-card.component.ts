@@ -430,7 +430,7 @@ import { TournamentService } from '../tournament/tournament.service';
       min-width: 0;
     }
     .facts small {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--fl-ink-2);
     }

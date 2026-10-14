@@ -412,6 +412,52 @@
 }
 
 /*
+ * A computer or a TV next to the table (wide and tall enough): a wider panel, the score in
+ * big LED digits for reading from the table, controls of 44 px, centred next to the table.
+ */
+@media (min-width: 1000px) and (min-height: 600px) {
+  .screen.landscape {
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 24vw, 380px);
+    grid-template-rows: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
+    grid-template-areas:
+      'table .'
+      'table top'
+      'table board'
+      'table bar'
+      'table .';
+  }
+
+  .landscape .top {
+    --mat-icon-button-state-layer-size: 44px;
+  }
+
+  .landscape .top .mat-mdc-icon-button {
+    padding: 10px;
+  }
+
+  .landscape .board {
+    padding: 10px 16px;
+  }
+
+  .landscape .bug {
+    font-size: clamp(4rem, 6vw, 6rem);
+  }
+
+  .landscape .bar small,
+  .landscape .swaps span {
+    font-size: 0.85rem;
+  }
+
+  .landscape .own-arm {
+    --mat-button-outlined-container-height: 48px;
+  }
+
+  .landscape .swap-dot {
+    height: 48px;
+  }
+}
+
+/*
  * A portrait screen showing the landscape layout, for a phone lying flat or with the rotation
  * locked: the whole screen turned a quarter, clockwise or not, so either long side of the phone
  * can face the table. The safe areas follow the turn.

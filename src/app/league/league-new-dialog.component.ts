@@ -40,13 +40,23 @@ export function openLeagueNewDialog(dialog: MatDialog) {
     TranslocoPipe,
   ],
   template: `
-    <header class="head">
+    <header class="fl-dialog-head">
       @if (step() === 2) {
-        <button matIconButton (click)="step.set(1)" [attr.aria-label]="'common.back' | transloco">
+        <button
+          matIconButton
+          class="back"
+          (click)="step.set(1)"
+          [attr.aria-label]="'common.back' | transloco"
+        >
           <mat-icon>arrow_back</mat-icon>
         </button>
       } @else {
-        <button matIconButton mat-dialog-close [attr.aria-label]="'common.cancel' | transloco">
+        <button
+          matIconButton
+          class="close"
+          mat-dialog-close
+          [attr.aria-label]="'common.cancel' | transloco"
+        >
           <mat-icon>close</mat-icon>
         </button>
       }
@@ -147,26 +157,6 @@ export function openLeagueNewDialog(dialog: MatDialog) {
     </mat-dialog-actions>
   `,
   styles: `
-    .head {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      padding: 6px 8px 0 4px;
-    }
-    .head h2 {
-      flex: 1;
-      display: grid;
-      margin: 0;
-      padding: 0;
-      font: var(--fl-sheet-title);
-    }
-    .head h2::before {
-      display: none;
-    }
-    .head small {
-      font: 600 0.8rem/1.2 var(--fl-display);
-      color: var(--fl-ink-2);
-    }
     .crest-row {
       display: flex;
       align-items: flex-start;

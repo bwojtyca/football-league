@@ -113,25 +113,6 @@ h3 {
   color: var(--fl-ink-2);
 }
 
-/* The header of both steps, as in the other full-screen dialogs: close or back, the title. */
-.step-head {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 8px 0 4px;
-}
-
-.step-head h2 {
-  flex: 1;
-  margin: 0;
-  padding: 0;
-  font: var(--fl-sheet-title);
-}
-
-.step-head h2::before {
-  display: none;
-}
-
 mat-dialog-actions {
   padding: 10px 24px calc(16px + env(safe-area-inset-bottom, 0px));
 }

@@ -1,26 +1,4 @@
 /* The new game (P31): the lineups on a small table, the rules, how goals are entered. */
-.head {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 8px 0 4px;
-}
-
-.head h2 {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font: var(--fl-sheet-title);
-}
-
-.head h2::before {
-  display: none;
-}
-
 .switch {
   flex: none;
   background: var(--fl-card-2);
@@ -113,7 +91,7 @@ mat-dialog-content {
 }
 
 .slot .who small {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 

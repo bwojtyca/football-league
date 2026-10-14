@@ -57,7 +57,7 @@
     "restoreHint": "usunięta, otwórz, żeby przywrócić",
     "search": "Szukaj ligi po nazwie",
     "found": "Znalezione",
-    "recent": "Na tym telefonie",
+    "recent": "Na tym urządzeniu",
     "active": "Ostatnio grane",
     "noneFound": "Żadna liga nie ma takiej nazwy."
   },
@@ -92,10 +92,10 @@
     "add": "Dodaj"
   },
   "player": {
-    "rating": "rating",
+    "rating": "Elo",
     "record": "wygrane – porażki",
     "winRate": "wygranych",
-    "ratingHistory": "Rating po każdym meczu",
+    "ratingHistory": "Elo po każdym meczu",
     "stats": "Statystyki",
     "history": "Mecze",
     "noGames": "Jeszcze bez meczów w tej lidze.",
@@ -107,7 +107,7 @@
     "records": "Rekordy",
     "longestWinStreak": "Najdłuższa seria wygranych",
     "longestLossStreak": "Najdłuższa seria porażek",
-    "peakRating": "Najwyższy rating",
+    "peakRating": "Najwyższe Elo",
     "biggestWin": "Najwyższa wygrana",
     "tabs": {
       "label": "Części profilu",
@@ -344,7 +344,7 @@
     "team": "Drużyna",
     "gamesShort": "M",
     "winsShort": "W",
-    "goalsShort": "Bramki",
+    "goalsShort": "Gole",
     "playersNow": "W grze ({n})",
     "fixtures": "Terminarz",
     "live": "trwa",
@@ -471,13 +471,13 @@
       "ownGoal": "Strzel samobója.",
       "lossStreak": "Przegraj {n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} z rzędu."
     },
-    "toEarn": "Do zdobycia ({n})"
+    "toEarn": "Jeszcze nie ({n})"
   },
   "settings": {
     "title": "Ustawienia ligi",
     "lock": "Zablokuj nowe mecze",
     "lockHint": "Nie da się zaczynać meczów i turniejów ani dodawać graczy. Historia i rankingi zostają.",
-    "minGames": "Ranking od",
+    "minGames": "Ranking od liczby meczów",
     "minGamesHint": "Gracze z mniejszą liczbą meczów są pokazani osobno, bez miejsca w rankingu.",
     "everyone": "Wszyscy",
     "delete": "Usuń ligę",
@@ -556,7 +556,7 @@
   "switcher": {
     "title": "Ligi",
     "open": "{name}: menu ligi",
-    "manage": "Wszystkie ligi, szukaj albo załóż nową",
+    "manage": "Wszystkie ligi",
     "invite": "Zaproś: udostępnij link do ligi",
     "change": "Zmień ligę"
   },
@@ -602,12 +602,12 @@
     "fastestGoal": "Najszybszy gol",
     "streak": "Najdłuższa seria wygranych",
     "elo": "Elo w czasie",
-    "eloHint": "Rating po każdym meczu ligi. Wybierz gracza, żeby go wyróżnić.",
+    "eloHint": "Elo po każdym meczu ligi. Wybierz gracza, żeby go wyróżnić.",
     "eloPlayer": "Wyróżniony gracz",
     "goalTimes": "Czas goli",
     "fromLog": "Z {n, plural, one {# meczu} other {# meczów}} z zapisem goli (od października 2026).",
     "firstGoal": "pierwszy gol średnio po",
-    "goalGap": "gol średnio co",
+    "goalGap": "średnio między golami",
     "jump": "Przejdź do",
     "title": "Statystyki ligi",
     "teaser": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} · rekordy, kiedy gramy, Elo w czasie"
@@ -769,7 +769,7 @@
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska.",
-    "leagues": "Ligi: moje, szukaj, nowa"
+    "leagues": "Wszystkie ligi"
   },
   "now": {
     "title": "Teraz w lidze",
@@ -835,7 +835,7 @@
     "today": "dziś {games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, {wins, plural, one {# wygrany} few {# wygrane} many {# wygranych} other {# wygranego}}",
     "missing": "do rankingu brakuje {n, plural, one {# meczu} few {# meczów} many {# meczów} other {# meczu}}",
     "profile": "Twój profil, statystyki i koszulka",
-    "device": "Na tym telefonie gra",
+    "device": "Na tym urządzeniu gra",
     "deviceNone": "Kim jesteś na tym telefonie?"
   },
   "welcome": {

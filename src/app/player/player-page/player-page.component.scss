@@ -102,7 +102,7 @@
 
 .tiles small {
   flex-basis: 100%;
-  font: 700 0.72rem/1.2 var(--fl-display);
+  font: 700 0.75rem/1.2 var(--fl-display);
   color: var(--fl-ink-2);
 }
 
@@ -272,4 +272,18 @@ h2 {
 /* The badges still to earn, folded under one line. */
 .to-earn {
   margin-top: 8px;
+}
+
+/* A wide screen: the rating and records on the left, the badges on the right. */
+@media (min-width: 1400px) {
+  .overview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 32px;
+    align-items: start;
+  }
+
+  .overview .col > h2:first-child {
+    margin-top: 16px;
+  }
 }

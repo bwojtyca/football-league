@@ -127,6 +127,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       display: flex;
       align-items: center;
       gap: 12px;
+      box-sizing: border-box;
       width: 100%;
       min-height: 56px;
       padding: 6px 14px;

@@ -22,7 +22,7 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
   selector: 'fl-new-play-sheet',
   imports: [MatIconModule, TranslocoPipe],
   template: `
-    <h2 class="fl-kicker">{{ 'play.title' | transloco }}</h2>
+    <h2 class="title">{{ 'play.title' | transloco }}</h2>
     <div class="options">
       <button class="option" (click)="game()">
         <mat-icon aria-hidden="true">sports_soccer</mat-icon>
@@ -46,8 +46,9 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
       display: block;
       padding: 4px 0 12px;
     }
-    h2 {
-      margin: 4px 0 10px;
+    .title {
+      margin: 4px 0 12px;
+      font: var(--fl-sheet-title);
     }
     .options {
       display: grid;

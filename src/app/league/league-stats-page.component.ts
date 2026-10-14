@@ -15,7 +15,7 @@ import { LeagueService } from './league.service';
   imports: [LeagueStatsComponent, TopBarComponent, TranslocoPipe],
   template: `
     <fl-top-bar [title]="'leagueStats.title' | transloco" [back]="['/l', leagueId(), 'games']" />
-    <main class="page">
+    <main class="page fl-wide-page">
       <fl-league-stats [leagueId]="leagueId()" />
     </main>
   `,

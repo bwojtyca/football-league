@@ -1,7 +1,7 @@
 @let p = player();
 <fl-top-bar [title]="p?.name ?? ''" [back]="backLink()" />
 
-<main class="page">
+<main class="page fl-wide-page">
   @if (p === null) {
     <p class="empty">{{ 'player.notFound' | transloco }}</p>
   } @else if (!p) {
@@ -98,51 +98,59 @@
             }
           </div>
 
-          @if (chart(); as data) {
-            <figure class="chart">
-              <figcaption>{{ 'player.ratingHistory' | transloco }}</figcaption>
-              <div class="canvas">
-                <canvas
-                  baseChart
-                  type="line"
-                  [data]="data"
-                  [options]="chartOptions"
-                  [attr.aria-label]="'player.ratingHistory' | transloco"
-                ></canvas>
-              </div>
-            </figure>
-          }
-
-          @if (records(); as records) {
-            <h2>{{ 'player.records' | transloco }}</h2>
-            <dl class="records">
-              <div>
-                <dt>{{ 'player.longestWinStreak' | transloco }}</dt>
-                <dd>{{ records.longestWinStreak }}</dd>
-              </div>
-              <div>
-                <dt>{{ 'player.longestLossStreak' | transloco }}</dt>
-                <dd>{{ records.longestLossStreak }}</dd>
-              </div>
-              @if (records.peakRating) {
-                <div>
-                  <dt>{{ 'player.peakRating' | transloco }}</dt>
-                  <dd>{{ records.peakRating }}</dd>
-                </div>
+          <!-- Two columns on a wide screen: the rating and records, the badges. -->
+          <div class="overview">
+            <div class="col">
+              @if (chart(); as data) {
+                <figure class="chart">
+                  <figcaption>{{ 'player.ratingHistory' | transloco }}</figcaption>
+                  <div class="canvas">
+                    <canvas
+                      baseChart
+                      type="line"
+                      [data]="data"
+                      [options]="chartOptions"
+                      [attr.aria-label]="'player.ratingHistory' | transloco"
+                    ></canvas>
+                  </div>
+                </figure>
               }
-              @if (records.biggestWin) {
-                <div>
-                  <dt>{{ 'player.biggestWin' | transloco }}</dt>
-                  <dd>{{ records.biggestWin }}</dd>
-                </div>
-              }
-            </dl>
 
-            <h2>{{ 'achievements.title' | transloco }}</h2>
-            <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
-            <h2>{{ 'achievements.mishaps' | transloco }}</h2>
-            <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
-          }
+              @if (records(); as records) {
+                <h2>{{ 'player.records' | transloco }}</h2>
+                <dl class="records">
+                  <div>
+                    <dt>{{ 'player.longestWinStreak' | transloco }}</dt>
+                    <dd>{{ records.longestWinStreak }}</dd>
+                  </div>
+                  <div>
+                    <dt>{{ 'player.longestLossStreak' | transloco }}</dt>
+                    <dd>{{ records.longestLossStreak }}</dd>
+                  </div>
+                  @if (records.peakRating) {
+                    <div>
+                      <dt>{{ 'player.peakRating' | transloco }}</dt>
+                      <dd>{{ records.peakRating }}</dd>
+                    </div>
+                  }
+                  @if (records.biggestWin) {
+                    <div>
+                      <dt>{{ 'player.biggestWin' | transloco }}</dt>
+                      <dd>{{ records.biggestWin }}</dd>
+                    </div>
+                  }
+                </dl>
+              }
+            </div>
+            @if (records()) {
+              <div class="col">
+                <h2>{{ 'achievements.title' | transloco }}</h2>
+                <ng-container *ngTemplateOutlet="badges; context: { $implicit: achievements() }" />
+                <h2>{{ 'achievements.mishaps' | transloco }}</h2>
+                <ng-container *ngTemplateOutlet="badges; context: { $implicit: mishaps() }" />
+              </div>
+            }
+          </div>
         }
       }
       @case ('stats') {

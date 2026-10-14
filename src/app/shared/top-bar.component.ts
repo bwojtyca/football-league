@@ -61,7 +61,9 @@ import { openAppMenu } from './app-menu-sheet.component';
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 8px 8px 8px 8px;
+      max-width: calc(var(--fl-page-max, 720px) + 32px);
+      margin: 0 auto;
+      padding: 8px;
       min-height: 56px;
       box-sizing: border-box;
     }

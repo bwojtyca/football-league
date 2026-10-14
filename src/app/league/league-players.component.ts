@@ -100,7 +100,7 @@ import { LeagueService } from './league.service';
       border-radius: 9px;
       background: var(--fl-ink);
       color: var(--fl-on-ball);
-      font: 800 0.7rem/1.4 var(--fl-display);
+      font: 800 0.75rem/1.4 var(--fl-display);
       vertical-align: 2px;
     }
     .players {

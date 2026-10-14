@@ -57,7 +57,7 @@
     "restoreHint": "deleted, open it to restore",
     "search": "Find a league by name",
     "found": "Found",
-    "recent": "On this phone",
+    "recent": "On this device",
     "active": "Played lately",
     "noneFound": "No league has that name."
   },
@@ -92,10 +92,10 @@
     "add": "Add"
   },
   "player": {
-    "rating": "rating",
+    "rating": "Elo",
     "record": "won – lost",
     "winRate": "won",
-    "ratingHistory": "Rating after each game",
+    "ratingHistory": "Elo after each game",
     "stats": "Stats",
     "history": "Games",
     "noGames": "No games in this league yet.",
@@ -107,7 +107,7 @@
     "records": "Records",
     "longestWinStreak": "Longest winning streak",
     "longestLossStreak": "Longest losing streak",
-    "peakRating": "Best rating",
+    "peakRating": "Best Elo",
     "biggestWin": "Biggest win",
     "tabs": {
       "label": "Profile parts",
@@ -471,13 +471,13 @@
       "ownGoal": "Score an own goal.",
       "lossStreak": "Lose {n} games in a row."
     },
-    "toEarn": "Still to earn ({n})"
+    "toEarn": "Not yet ({n})"
   },
   "settings": {
     "title": "League settings",
     "lock": "Lock new games",
     "lockHint": "No new games, tournaments or players. History and rankings stay.",
-    "minGames": "Ranked from",
+    "minGames": "Ranked from games played",
     "minGamesHint": "Players with fewer games are listed apart, without a place in the ranking.",
     "everyone": "Everyone",
     "delete": "Delete league",
@@ -556,7 +556,7 @@
   "switcher": {
     "title": "Leagues",
     "open": "{name}: league menu",
-    "manage": "All leagues, search or start one",
+    "manage": "All leagues",
     "invite": "Invite: share the league's link",
     "change": "Switch league"
   },
@@ -602,7 +602,7 @@
     "fastestGoal": "Fastest goal",
     "streak": "Longest winning streak",
     "elo": "Elo over time",
-    "eloHint": "Ratings after each game of the league. Pick a player to highlight.",
+    "eloHint": "Elo after each game of the league. Pick a player to highlight.",
     "eloPlayer": "Highlighted player",
     "goalTimes": "Goal times",
     "fromLog": "From {n, plural, one {# game} other {# games}} with a goal log (since October 2026).",
@@ -769,7 +769,7 @@
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar.",
-    "leagues": "Leagues: mine, find, new"
+    "leagues": "All leagues"
   },
   "now": {
     "title": "Now in the league",
@@ -835,7 +835,7 @@
     "today": "today {games, plural, one {# game} other {# games}}, {wins, plural, one {# win} other {# wins}}",
     "missing": "{n, plural, one {# more game} other {# more games}} to be ranked",
     "profile": "Your profile, statistics and kit",
-    "device": "Playing on this phone",
+    "device": "Playing on this device",
     "deviceNone": "Who are you on this phone?"
   },
   "welcome": {

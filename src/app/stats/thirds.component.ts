@@ -1,5 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { percentages } from './format';
 
 /** Goals in the first, middle and last third of their games, as shares on one bar. */
 @Component({
@@ -33,11 +34,11 @@ export class ThirdsComponent {
 
   protected readonly parts = computed(() => {
     const thirds = this.thirds();
-    const total = thirds.reduce((sum, n) => sum + n, 0) || 1;
+    const shares = percentages(thirds);
     return ['thirds.start', 'thirds.middle', 'thirds.end'].map((key, i) => ({
       key,
       count: thirds[i],
-      share: Math.round((thirds[i] / total) * 100),
+      share: shares[i],
       opacity: [0.45, 0.7, 1][i],
     }));
   });

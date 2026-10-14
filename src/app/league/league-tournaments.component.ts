@@ -107,7 +107,7 @@ import { LeagueService } from './league.service';
       border-radius: 999px;
       background: var(--fl-red);
       color: #fff;
-      font: 800 0.72rem/1.3 var(--fl-display);
+      font: 800 0.75rem/1.3 var(--fl-display);
     }
     .name {
       font: 700 1.1rem/1.25 var(--fl-display);
@@ -145,7 +145,7 @@ import { LeagueService } from './league.service';
       border-radius: 9px;
       background: var(--fl-red);
       color: #fff;
-      font: 700 0.7rem/1.2 var(--fl-display);
+      font: 700 0.75rem/1.2 var(--fl-display);
       vertical-align: 3px;
     }
     .empty {

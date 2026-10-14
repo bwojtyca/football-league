@@ -18,7 +18,7 @@ import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 
-type Section = 'ranking' | 'games' | 'tournaments' | 'players';
+type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
 
 /**
  * A league's pages with the bottom navigation: ranking, games, the "new play" button,
@@ -267,7 +267,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players';
         border-radius: 9px;
         background: var(--fl-board);
         color: var(--fl-ink);
-        font: 800 0.7rem/1 var(--fl-display);
+        font: 800 0.75rem/1 var(--fl-display);
       }
       .league.add mat-icon {
         width: 32px;
@@ -337,7 +337,8 @@ export class LeagueLayoutComponent {
     { initialValue: this._router.url },
   );
 
-  /** The section the page belongs to: statistics to the games, profiles to the players. */
+  /** The section the page belongs to: statistics to the games, profiles to the players; the
+   * settings (reached from the gear) to none. */
   protected readonly section = computed<Section>(() => {
     const part = this._url().split('?')[0].split('/')[3] ?? '';
     return part === 'games' || part === 'stats'
@@ -346,7 +347,9 @@ export class LeagueLayoutComponent {
         ? 'tournaments'
         : part === 'players' || part === 'player' || part === 'compare'
           ? 'players'
-          : 'ranking';
+          : part === 'settings'
+            ? 'none'
+            : 'ranking';
   });
 
   constructor() {

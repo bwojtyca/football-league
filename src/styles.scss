@@ -216,10 +216,30 @@ a {
   background-color: var(--fl-card-2);
 }
 
+/*
+ * The page column; the top bar uses the same width (--fl-page-max), so a title sits over its
+ * content on any screen. Pages with two columns on a wide screen set a larger width.
+ */
 .page {
-  max-width: 720px;
+  max-width: var(--fl-page-max, 720px);
   margin: 0 auto;
   padding: 4px 16px 32px;
+}
+
+/* Statistics on a wide screen: the sections in two columns. */
+@media (min-width: 1400px) {
+  .fl-wide-page {
+    --fl-page-max: 1120px;
+  }
+
+  .fl-wide-page .fl-stats {
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  .fl-wide-page .fl-stats > section {
+    break-inside: avoid;
+  }
 }
 
 .loader {
@@ -553,4 +573,41 @@ details.fl-fold > summary::after {
 
 details.fl-fold[open] > summary::after {
   content: 'expand_less';
+}
+
+/*
+ * The header of every full-screen dialog (evaluation 1): the title on the content's left edge,
+ * close at the right end, a back arrow (a later step) at the left.
+ */
+.fl-dialog-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 8px 0 24px;
+}
+
+.fl-dialog-head:has(> .back) {
+  padding-left: 8px;
+}
+
+.fl-dialog-head > h2 {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  font: var(--fl-sheet-title);
+}
+
+.fl-dialog-head > h2::before {
+  display: none;
+}
+
+.fl-dialog-head > h2 small {
+  font: 600 0.8rem/1.2 var(--fl-display);
+  color: var(--fl-ink-2);
+}
+
+.fl-dialog-head > .close {
+  order: 10;
 }

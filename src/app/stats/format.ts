@@ -16,3 +16,20 @@ export function sidesOf(game: Game, name: (playerId: string) => string): string 
   const team = (color: TeamColor) => lineupPlayers(game.teams[color]).map(name).join(' & ');
   return `${team('red')} – ${team('blue')}`;
 }
+
+/** Whole percentages of the counts that add up to 100 (largest remainders get the rest). */
+export function percentages(counts: readonly number[]): number[] {
+  const total = counts.reduce((sum, n) => sum + n, 0);
+  if (!total) {
+    return counts.map(() => 0);
+  }
+  const exact = counts.map((n) => (n / total) * 100);
+  const shares = exact.map(Math.floor);
+  const order = exact
+    .map((value, i) => ({ i, rest: value - Math.floor(value) }))
+    .sort((a, b) => b.rest - a.rest);
+  for (let k = 0; k < 100 - shares.reduce((sum, n) => sum + n, 0); k++) {
+    shares[order[k].i]++;
+  }
+  return shares;
+}

@@ -116,7 +116,7 @@
 }
 
 .rating small {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--fl-ink-2);
 }
 
@@ -158,7 +158,7 @@
 
 .others a {
   display: inline-block;
-  padding: 8px 2px;
+  padding: 8px 0;
   color: var(--fl-ink);
   font-weight: 600;
 }
@@ -313,7 +313,7 @@
   }
 
   .col small {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--fl-ink-2);
   }
 
@@ -334,7 +334,7 @@
   border-radius: 9px;
   background: var(--fl-ink);
   color: var(--fl-on-ball);
-  font: 800 0.7rem/1.4 var(--fl-display);
+  font: 800 0.75rem/1.4 var(--fl-display);
 }
 
 /* A pair: each name cut on its own, so a long first name never hides the partner. */

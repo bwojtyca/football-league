@@ -32,8 +32,13 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
   selector: 'fl-kit-dialog',
   imports: [MatButtonModule, MatDialogModule, MatIconModule, KitFigureComponent, TranslocoPipe],
   template: `
-    <header class="head">
-      <button matIconButton mat-dialog-close [attr.aria-label]="'common.cancel' | transloco">
+    <header class="fl-dialog-head">
+      <button
+        matIconButton
+        class="close"
+        mat-dialog-close
+        [attr.aria-label]="'common.cancel' | transloco"
+      >
         <mat-icon>close</mat-icon>
       </button>
       <h2 mat-dialog-title>
@@ -117,26 +122,6 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
     </mat-dialog-actions>
   `,
   styles: `
-    .head {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      padding: 6px 8px 0 4px;
-    }
-    .head h2 {
-      flex: 1;
-      display: grid;
-      margin: 0;
-      padding: 0;
-      font: var(--fl-sheet-title);
-    }
-    .head h2::before {
-      display: none;
-    }
-    .head small {
-      font: 600 0.8rem/1.2 var(--fl-display);
-      color: var(--fl-ink-2);
-    }
     .top {
       display: flex;
       align-items: center;
@@ -180,7 +165,7 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
       font: 900 1.9rem/1 var(--fl-led);
     }
     output small {
-      font: 600 0.7rem/1.1 var(--fl-display);
+      font: 600 0.75rem/1.1 var(--fl-display);
       color: var(--fl-ink-2);
       text-align: center;
     }
