@@ -107,7 +107,7 @@
 
 /* The leader's rating lights up like the ball. */
 .first .rating b {
-  color: var(--fl-ball);
+  color: var(--fl-ink);
 }
 
 /* Fewer games than a settled rating needs: the rating is translucent, not yet firm. */
@@ -332,7 +332,7 @@
   flex: none;
   padding: 1px 7px;
   border-radius: 9px;
-  background: var(--fl-ball);
+  background: var(--fl-ink);
   color: var(--fl-on-ball);
   font: 800 0.7rem/1.4 var(--fl-display);
 }

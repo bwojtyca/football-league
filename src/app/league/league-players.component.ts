@@ -35,17 +35,7 @@ import { LeagueService } from './league.service';
   ],
   template: `
     @let current = league();
-    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()">
-      @if (current && !current.archived) {
-        <button
-          matIconButton
-          (click)="addPlayer()"
-          [attr.aria-label]="'league.addPlayer' | transloco"
-        >
-          <mat-icon>person_add</mat-icon>
-        </button>
-      }
-    </fl-top-bar>
+    <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
     <main class="page">
       @if (current === null) {
         <p class="empty">{{ 'league.notFound' | transloco }}</p>
@@ -108,7 +98,7 @@ import { LeagueService } from './league.service';
       margin-left: 6px;
       padding: 1px 7px;
       border-radius: 9px;
-      background: var(--fl-ball);
+      background: var(--fl-ink);
       color: var(--fl-on-ball);
       font: 800 0.7rem/1.4 var(--fl-display);
       vertical-align: 2px;

@@ -60,25 +60,22 @@ export async function createLeague(page: Page, name: string): Promise<string> {
 
 /** Adds new players from the league's ranking page. */
 export async function addPlayers(page: Page, names: string[]): Promise<void> {
+  // Players are added on the Players tab; the test goes on from the league's ranking.
+  const nav = page.locator('nav.tabs');
+  await nav.getByRole('link', { name: t('nav.players') }).click();
   const dialog = page.locator('fl-add-player-dialog');
   for (const name of names) {
-    // The top bar's button (an empty league also offers one in its card).
     await page
-      .locator('fl-top-bar')
+      .locator('fl-league-players')
       .getByRole('button', { name: t('league.addPlayer') })
       .click();
     await dialog.getByRole('combobox', { name: t('addPlayer.name') }).fill(name);
     await dialog.getByRole('button', { name: t('addPlayer.add'), exact: true }).click();
     await expect(dialog).toBeHidden();
-    // In the ranking once the league has games, before that among the faces of the first game.
-    await expect(
-      page
-        .locator('fl-ranking')
-        .getByText(name)
-        .or(page.locator('section.first').getByRole('img', { name, exact: true }))
-        .first(),
-    ).toBeVisible();
+    await expect(page.locator('fl-league-players').getByText(name)).toBeVisible();
   }
+  await nav.getByRole('link', { name: t('nav.ranking') }).click();
+  await expect(page).toHaveURL(/#\/l\/[^/]+$/);
 }
 
 /** "+" in the bottom bar, then a game, a series or a tournament. */

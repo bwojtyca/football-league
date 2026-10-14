@@ -67,7 +67,7 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
       text-decoration: none;
     }
     .stats mat-icon:first-child {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .stats mat-icon:last-child {
       color: var(--fl-ink-2);

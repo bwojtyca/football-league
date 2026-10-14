@@ -26,13 +26,16 @@ import { Result } from '../player/player';
       align-items: center;
       height: 16px;
     }
+    /* A loss is a ring (8:1 on black), a win a filled dot. */
     i {
+      box-sizing: border-box;
       width: 8px;
       height: 8px;
+      border: 1.5px solid var(--fl-ink-2);
       border-radius: 50%;
-      background: #2a2d31;
     }
     i.w {
+      border-color: var(--fl-ink);
       background: var(--fl-ink);
     }
   `,

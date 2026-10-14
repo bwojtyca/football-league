@@ -30,7 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
       width: 1.15em;
       height: 1.15em;
       vertical-align: -0.2em;
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     svg,
     mat-icon {

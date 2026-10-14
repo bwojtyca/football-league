@@ -48,30 +48,39 @@ import { TournamentService } from '../tournament/tournament.service';
     @let s = state();
     @if (s.live.length || s.paused.length || s.tournaments.length) {
       <h2 class="fl-kicker">{{ 'now.title' | transloco }}</h2>
+      <!-- A game being played: one compact row on the LED board, the whole row leads back. -->
       @for (game of s.live; track game.id) {
-        <a class="live" [routerLink]="['/game', game.id]">
-          <span class="line">
-            <span class="badge">{{ 'now.live' | transloco }}</span>
-            <span class="clock">{{ clock(game.game) }}</span>
-            @if (game.mode; as mode) {
-              <span class="rules">· <fl-mode-label [mode]="mode" /></span>
-            }
+        <a class="row live" [routerLink]="['/game', game.id]">
+          <span class="tile live-tile" aria-hidden="true">
+            <i class="dot"></i><span class="clock">{{ clock(game.game) }}</span>
           </span>
-          <span class="side side--red">
-            @for (name of game.lineup.red; track $index) {
-              <span>{{ name }}</span>
-            }
+          <span class="text teams">
+            <span class="team r">
+              @for (name of game.lineup.red; track $index; let last = $last) {
+                <span>{{ name }}</span>
+                @if (!last) {
+                  <i>&</i>
+                }
+              }
+            </span>
+            <span class="team b">
+              @for (name of game.lineup.blue; track $index; let last = $last) {
+                <span>{{ name }}</span>
+                @if (!last) {
+                  <i>&</i>
+                }
+              }
+            </span>
           </span>
           <span class="score"
             ><span class="r">{{ game.score.red }}</span
             ><span class="sep">:</span><span class="b">{{ game.score.blue }}</span></span
           >
-          <span class="side side--blue">
-            @for (name of game.lineup.blue; track $index) {
-              <span>{{ name }}</span>
-            }
-          </span>
-          <span class="go">{{ 'now.back' | transloco }}</span>
+          <span class="action"
+            ><span class="sr-only">{{ 'now.live' | transloco }} · </span
+            >{{ 'now.backShort' | transloco
+            }}<mat-icon aria-hidden="true">chevron_right</mat-icon></span
+          >
         </a>
       }
       @for (game of s.paused; track game.id) {
@@ -96,7 +105,10 @@ import { TournamentService } from '../tournament/tournament.service';
                     }
             }}</small>
           </span>
-          <span class="action">{{ 'now.finish' | transloco }}</span>
+          <span class="action"
+            >{{ 'now.finish' | transloco
+            }}<mat-icon aria-hidden="true">chevron_right</mat-icon></span
+          >
         </a>
       }
       @for (tournament of s.tournaments; track tournament.id) {
@@ -109,7 +121,9 @@ import { TournamentService } from '../tournament/tournament.service';
               {{ 'count.games' | transloco: { n: tournament.games } }}</small
             >
           </span>
-          <span class="action">{{ 'now.open' | transloco }}</span>
+          <span class="action"
+            >{{ 'now.open' | transloco }}<mat-icon aria-hidden="true">chevron_right</mat-icon></span
+          >
         </a>
       }
     } @else if (s.last; as last) {
@@ -138,7 +152,8 @@ import { TournamentService } from '../tournament/tournament.service';
           }
         </span>
         <span class="buttons">
-          <button matButton="filled" class="fl-cta" (click)="rematch(last.game)">
+          <button matButton="filled" class="rematch" (click)="rematch(last.game)">
+            <mat-icon>replay</mat-icon>
             {{ 'game.rematch' | transloco }}
           </button>
           <a matButton class="how" [routerLink]="['/game', last.game.id]">{{
@@ -220,12 +235,12 @@ import { TournamentService } from '../tournament/tournament.service';
     .badge {
       padding: 2px 8px;
       border-radius: 999px;
-      background: var(--fl-ball);
-      color: var(--fl-on-ball);
+      background: var(--fl-red);
+      color: #fff;
     }
     .clock {
-      font: 900 0.95rem/1 var(--fl-led);
-      color: var(--fl-ball);
+      font: 900 0.85rem/1 var(--fl-led);
+      color: var(--fl-ink);
     }
     /* Each player on a line of their own (long names do not wrap into a column of words). */
     .side {
@@ -270,22 +285,17 @@ import { TournamentService } from '../tournament/tournament.service';
       font: 800 1.2rem/1 var(--fl-display);
       color: var(--fl-line-2);
     }
-    .go {
-      grid-column: 1 / -1;
-      justify-self: center;
-      margin-top: 4px;
-      padding: 10px 22px;
-      border-radius: 20px;
-      background: var(--fl-ball);
-      color: var(--fl-on-ball);
-      font-weight: 800;
-    }
     .buttons {
       grid-column: 1 / -1;
       display: flex;
       justify-content: center;
       gap: 8px;
       margin-top: 4px;
+    }
+    /* On the felt, both are dark pills: the screen's one yellow is the "+" below. */
+    .rematch {
+      --mat-button-filled-container-color: rgb(0 0 0 / 0.35);
+      --mat-button-filled-label-text-color: #fff;
     }
     .how {
       --mat-button-text-label-text-color: #fff;
@@ -313,7 +323,7 @@ import { TournamentService } from '../tournament/tournament.service';
       color: var(--fl-ink-2);
     }
     .tile.ball {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .text {
       flex: 1;
@@ -335,8 +345,73 @@ import { TournamentService } from '../tournament/tournament.service';
     }
     .action {
       flex: none;
+      display: inline-flex;
+      align-items: center;
       font-weight: 800;
-      color: var(--fl-ball);
+      color: var(--fl-ink);
+    }
+    .action mat-icon {
+      color: var(--fl-ink-2);
+    }
+    /* The game being played: a row on the LED board, a red dot and the clock in its tile. */
+    .row.live {
+      background: var(--fl-board-bg);
+    }
+    .live-tile {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 3px;
+      width: 52px;
+      height: 44px;
+      background: var(--fl-board);
+    }
+    .live-tile .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--fl-red-board);
+      animation: fl-live 1.6s ease-in-out infinite;
+    }
+    @keyframes fl-live {
+      50% {
+        opacity: 0.3;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .live-tile .dot {
+        animation: none;
+      }
+    }
+    .teams {
+      gap: 2px;
+    }
+    .team {
+      display: flex;
+      gap: 0.3em;
+      min-width: 0;
+      font-weight: 700;
+    }
+    .team span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .team i {
+      flex: none;
+      font-style: normal;
+      color: var(--fl-ink-2);
+    }
+    .team.r {
+      color: #ff9a92;
+    }
+    .team.b {
+      color: #9db8ff;
+    }
+    .row.live .score {
+      flex: none;
+      font-size: 1.5rem;
     }
     .facts {
       display: grid;
@@ -374,7 +449,7 @@ import { TournamentService } from '../tournament/tournament.service';
       font: 800 1.15rem/1.1 var(--fl-display);
     }
     .num.ball {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .note {
       font-size: 0.78rem;

@@ -164,7 +164,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
       color: var(--fl-ink-2);
     }
     .who small.placed {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .rating {
       font: 800 1.1rem/1 var(--fl-display);

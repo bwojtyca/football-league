@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,8 +9,9 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
 import { openAppMenu } from './app-menu-sheet.component';
 
 /**
- * Page header: a back link or the league switcher, the title and the page's actions. The
- * sections of a league are reached from the bottom navigation.
+ * Page header: a back link or the league's menu (its name), the title, the page's actions, on
+ * a league's pages the gear to its settings, and the app menu (round 6, evaluation 1: the gear
+ * used to open the app menu while the league's settings were hidden).
  */
 @Component({
   selector: 'fl-top-bar',
@@ -28,20 +29,30 @@ import { openAppMenu } from './app-menu-sheet.component';
           (click)="switchLeague()"
           [attr.aria-label]="'switcher.open' | transloco: { name: title() }"
         >
-          <h1>{{ title() }}</h1>
+          <h1 [class.long]="long()">{{ title() }}</h1>
           <mat-icon aria-hidden="true">expand_more</mat-icon>
         </button>
       } @else {
-        <h1 class="title">{{ title() }}</h1>
+        <h1 class="title" [class.long]="long()">{{ title() }}</h1>
       }
       <ng-content />
+      <!-- On a league's pages the gear is the league's settings; the app has its own menu. -->
+      @if (switcher(); as league) {
+        <a
+          matIconButton
+          [routerLink]="['/l', league, 'settings']"
+          [attr.aria-label]="'settings.title' | transloco"
+        >
+          <mat-icon>settings</mat-icon>
+        </a>
+      }
       <button
         matIconButton
         class="app-menu"
         (click)="appMenu()"
         [attr.aria-label]="'appMenu.open' | transloco"
       >
-        <mat-icon>settings</mat-icon>
+        <mat-icon>menu</mat-icon>
       </button>
     </header>
   `,
@@ -58,13 +69,19 @@ import { openAppMenu } from './app-menu-sheet.component';
       flex: 1;
       min-width: 0;
     }
+    /* A long name: two lines in a smaller size, so the whole name is seen. */
     h1 {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       margin: 0 8px;
       padding-right: 2px;
-      font: 800 1.5rem/1.15 var(--fl-display);
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
+      font: 800 1.5rem/1.15 var(--fl-display);
+    }
+    h1.long {
+      font-size: 1.15rem;
     }
     .switch {
       display: flex;
@@ -98,6 +115,8 @@ export class TopBarComponent {
   public readonly back = input<string | unknown[] | null>(null);
   /** The current league: the title then opens the list of leagues. */
   public readonly switcher = input<string | null>(null);
+
+  protected readonly long = computed(() => this.title().length > 22);
 
   protected appMenu(): void {
     openAppMenu(this._sheet);

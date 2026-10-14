@@ -589,7 +589,7 @@
     "when": "Kiedy gramy",
     "day": "Dzień",
     "busiest": "Najczęściej: {day}, {from}:00–{to}:00 ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}).",
-    "whenHint": "Godzina rozpoczęcia meczu; ciemniej znaczy więcej meczów.",
+    "whenHint": "Godzina rozpoczęcia meczu; jaśniej znaczy więcej meczów.",
     "table": "Stół",
     "colorWins": "wygrane kolorów",
     "positionGoals": "gole w meczach 2 na 2",
@@ -765,7 +765,7 @@
   },
   "appMenu": {
     "title": "Aplikacja",
-    "open": "Aplikacja: język, ranking ogólny, ligi",
+    "open": "Aplikacja: język, kim jesteś, ranking ogólny, ligi",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska.",

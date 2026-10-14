@@ -122,11 +122,11 @@ import { openWhoSheet } from './who-sheet.component';
       width: 32px;
       height: 32px;
       font-size: 32px;
-      color: var(--fl-ball);
+      color: var(--fl-ink-2);
     }
     .pick {
       flex: none;
-      color: var(--fl-ball);
+      color: var(--fl-ink);
       font-weight: 800;
     }
   `,

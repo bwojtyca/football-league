@@ -1,16 +1,5 @@
 @let current = league();
-<fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()">
-  @if (current && !current.archived) {
-    <button
-      matIconButton
-      (click)="addPlayer()"
-      [attr.aria-label]="'league.addPlayer' | transloco"
-      [matTooltip]="'league.addPlayer' | transloco"
-    >
-      <mat-icon>person_add</mat-icon>
-    </button>
-  }
-</fl-top-bar>
+<fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
 
 <!-- On a wide screen (P80): the ranking on the left, what is going on in the league on the right. -->
 <main class="page home">

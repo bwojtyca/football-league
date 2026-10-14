@@ -140,7 +140,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       cursor: pointer;
     }
     .action mat-icon {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .action .name {
       display: grid;

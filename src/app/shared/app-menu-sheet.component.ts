@@ -101,7 +101,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
       color: var(--fl-ink-2);
     }
     .row .mat-icon.ball {
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     .label {
       flex: 1;

@@ -589,7 +589,7 @@
     "when": "When we play",
     "day": "Day",
     "busiest": "Busiest: {day}, {from}:00–{to}:00 ({n, plural, one {# game} other {# games}}).",
-    "whenHint": "The hour a game started; darker means more games.",
+    "whenHint": "The hour a game started; brighter means more games.",
     "table": "The table",
     "colorWins": "wins by colour",
     "positionGoals": "goals in 2 vs 2 games",
@@ -765,7 +765,7 @@
   },
   "appMenu": {
     "title": "App",
-    "open": "App: language, overall ranking, leagues",
+    "open": "App: language, who you are, overall ranking, leagues",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar.",

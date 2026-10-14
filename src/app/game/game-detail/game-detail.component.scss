@@ -49,7 +49,7 @@
   width: 20px;
   height: 20px;
   font-size: 20px;
-  color: var(--fl-ball);
+  color: var(--fl-ink);
 }
 
 .detail span {
@@ -279,7 +279,7 @@
 }
 
 .bar .undo .mat-icon {
-  color: var(--fl-ball);
+  color: var(--fl-ink);
 }
 
 /* Before the first goal: what to do, in the ball's colour. */
@@ -499,15 +499,25 @@
   overflow: hidden;
   overflow-wrap: anywhere;
   font: 700 0.95rem/1.2 var(--fl-display);
-  color: rgb(255 255 255 / 0.75);
-}
-
-.side.won .player b {
   color: #fff;
 }
 
+/* The losers' names a little quieter, still above 4.5:1 on the felt. */
+.side:not(.won) .player b {
+  color: rgb(255 255 255 / 0.9);
+}
+
+/* Elo changes on small dark chips: the win green and loss red stay readable (6:1+). */
 .player fl-change {
-  font-size: 0.75rem;
+  justify-self: start;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--fl-board);
+  font-size: 0.8rem;
+}
+
+.side--red .player fl-change {
+  justify-self: end;
 }
 
 .bug.final {

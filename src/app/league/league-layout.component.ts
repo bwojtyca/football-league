@@ -10,6 +10,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from 
 import { TranslocoPipe } from '@jsverse/transloco';
 import { filter, map } from 'rxjs';
 
+import { GameService } from '../game/game.service';
 import { Notifier } from '../notifier';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
@@ -76,7 +77,8 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players';
         }
         <button
           matButton="filled"
-          class="fl-cta new-play"
+          class="new-play"
+          [class.fl-cta]="!quietPlay()"
           (click)="newPlay()"
           [disabled]="current.archived"
         >
@@ -89,6 +91,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players';
         }
         <button
           class="play"
+          [class.quiet]="quietPlay()"
           (click)="newPlay()"
           [disabled]="current.archived"
           [attr.aria-label]="'nav.new' | transloco"
@@ -173,6 +176,12 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players';
       width: 32px;
       height: 32px;
       font-size: 32px;
+    }
+    /* A page with a main action of its own (a tournament's next game, a league's first game):
+       the "+" steps back, so the screen keeps one yellow ball. */
+    .play.quiet {
+      background: var(--fl-card-2);
+      color: var(--fl-ink);
     }
     .play:disabled {
       background: var(--fl-card-2);
@@ -273,6 +282,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players';
 })
 export class LeagueLayoutComponent {
   private readonly _leagueService = inject(LeagueService);
+  private readonly _gameService = inject(GameService);
   private readonly _notifier = inject(Notifier);
   private readonly _sheet = inject(MatBottomSheet);
   private readonly _dialog = inject(MatDialog);
@@ -307,6 +317,17 @@ export class LeagueLayoutComponent {
 
   /** `undefined` while loading, `null` when there is no such league. */
   protected readonly league = computed(() => this._leagueService.league(this.leagueId()));
+
+  /**
+   * The "+" is the yellow ball unless the page has its own main action: a tournament's page
+   * (its next game) or a league without games yet ("Play your first game").
+   */
+  protected readonly quietPlay = computed(
+    () =>
+      this._url().split('?')[0].split('/')[3] === 't' ||
+      (this._url().split('?')[0].split('/').length <= 3 &&
+        this._gameService.leagueGames(this.leagueId())?.length === 0),
+  );
 
   private readonly _url = toSignal(
     this._router.events.pipe(

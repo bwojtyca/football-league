@@ -96,8 +96,8 @@
 }
 
 .status--running {
-  background: var(--fl-ball);
-  color: var(--fl-on-ball);
+  background: var(--fl-red);
+  color: #fff;
 }
 
 .status--paused {

@@ -129,7 +129,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
     }
     .add {
       background: none;
-      color: var(--fl-ball);
+      color: var(--fl-ink);
       font-weight: 700;
     }
     .wide {
