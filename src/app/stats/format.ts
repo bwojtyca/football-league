@@ -35,7 +35,8 @@ export function percentages(counts: readonly number[]): number[] {
   const order = exact
     .map((value, i) => ({ i, rest: value - Math.floor(value) }))
     .sort((a, b) => b.rest - a.rest);
-  for (let k = 0; k < 100 - shares.reduce((sum, n) => sum + n, 0); k++) {
+  const missing = 100 - shares.reduce((sum, n) => sum + n, 0);
+  for (let k = 0; k < missing; k++) {
     shares[order[k].i]++;
   }
   return shares;
