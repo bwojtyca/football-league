@@ -6,6 +6,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | Round | Date | Tour run | Hierarchy | Consistency | Readability | IA and flow | Responsive | Real data | Overall | Mean |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 14 Oct 2026 | 38458593413 (master 431a788) | 5.8 | 6.0 | 5.0 | 5.3 | 6.0 | 2.3 | 2.3 | 5.1 |
+| 2 | 14 Oct 2026 | 38569971370 (master 8057c0e) | 6.75 | 5.0 | 4.25 | 6.0 | 4.0 | 5.5 | 4.0 | 5.25 |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
