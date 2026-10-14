@@ -158,17 +158,16 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
             }
           </svg>
 
-          @if (!vertical()) {
-            @for (plate of plates(); track plate.key) {
-              <span
-                class="plate plate--{{ plate.color }}"
-                [style.left]="plate.left"
-                [style.top]="plate.top"
-                aria-hidden="true"
-              >
-                {{ plate.name }}<b>{{ plate.goals }}</b>
-              </span>
-            }
+          <!-- Each player's name on the rail by their rods (upright too: along the sides). -->
+          @for (plate of plates(); track plate.key) {
+            <span
+              class="plate plate--{{ plate.color }}"
+              [style.left]="plate.left"
+              [style.top]="plate.top"
+              aria-hidden="true"
+            >
+              <span class="plate-name">{{ plate.name }}</span><b>{{ plate.goals }}</b>
+            </span>
           }
 
           @if (!vertical() && flash(); as goal) {
@@ -335,6 +334,15 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     }
     .from-red .plate {
       transform: translate(-50%, -50%) rotate(180deg);
+    }
+    .plate-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* Upright, the rails run along the sides: the names read along them, at 12 px. */
+    .vertical .plate {
+      font-size: 0.75rem;
     }
     .plate b {
       font: 900 1.3em/1 var(--fl-led);
