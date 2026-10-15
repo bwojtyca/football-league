@@ -258,3 +258,8 @@ button.vs {
 .actions.start {
   margin: 0 0 16px;
 }
+
+/* "Leave" in words, quiet: it is not the page's main action. */
+.leave {
+  --mat-button-text-label-text-color: var(--fl-ink-2);
+}

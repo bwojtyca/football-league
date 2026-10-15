@@ -37,10 +37,11 @@ describe('calculateStats', () => {
     expect(stats.time).toEqual({ total: 900, wins: 300, loses: 600 });
   });
 
-  it('splits goals by position and colour', () => {
+  it('splits goals by position (one on one apart) and colour', () => {
     expect(stats.goals).toEqual({ total: 6, own: 1 });
-    expect(stats.positions.defender).toEqual({ games: 2, wins: 1, loses: 1, goals: 4, own: 1 });
-    expect(stats.positions.attacker).toEqual({ games: 1, wins: 0, loses: 1, goals: 2, own: 0 });
+    expect(stats.positions.defender).toEqual({ games: 1, wins: 1, loses: 0, goals: 3, own: 0 });
+    expect(stats.positions.attacker).toEqual({ games: 0, wins: 0, loses: 0, goals: 0, own: 0 });
+    expect(stats.positions.solo).toEqual({ games: 1, wins: 0, loses: 1, goals: 3, own: 1 });
     expect(stats.colors.red).toEqual({ games: 1, wins: 1, loses: 0, goals: 3, own: 0 });
     expect(stats.colors.blue).toEqual({ games: 1, wins: 0, loses: 1, goals: 3, own: 1 });
   });

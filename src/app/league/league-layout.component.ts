@@ -266,13 +266,13 @@ export class LeagueLayoutComponent {
    * settings (reached from the gear) to none. */
   protected readonly section = computed<Section>(() => {
     const part = this._url().split('?')[0].split('/')[3] ?? '';
-    return part === 'games' || part === 'stats'
+    return part === 'games'
       ? 'games'
       : part === 'tournaments' || part === 't'
         ? 'tournaments'
         : part === 'players' || part === 'player' || part === 'compare'
           ? 'players'
-          : part === 'settings'
+          : part === 'settings' || part === 'stats'
             ? 'none'
             : 'ranking';
   });

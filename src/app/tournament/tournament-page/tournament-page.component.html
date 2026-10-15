@@ -145,11 +145,12 @@
                 <span class="who">{{ name(player) }}</span>
                 @if (!current.end) {
                   <button
-                    matIconButton
+                    matButton
+                    class="leave"
                     (click)="leave(player)"
                     [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
                   >
-                    <mat-icon>logout</mat-icon>
+                    <mat-icon>logout</mat-icon>{{ 'tournament.leaveShort' | transloco }}
                   </button>
                 }
               </li>
@@ -407,11 +408,12 @@
           <span class="who">{{ name(player) }}</span>
           @if (!current?.end) {
             <button
-              matIconButton
+              matButton
+              class="leave"
               (click)="leave(player)"
               [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
             >
-              <mat-icon>logout</mat-icon>
+              <mat-icon>logout</mat-icon>{{ 'tournament.leaveShort' | transloco }}
             </button>
           }
         </li>

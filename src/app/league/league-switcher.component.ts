@@ -19,7 +19,8 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
 
 /**
  * The league menu, opened from the league's name (canvas R6-menu-ligi): the league at a glance,
- * inviting by its link, its settings, and the leagues of this device to switch to.
+ * inviting by its link, and the leagues of this device to switch to (its settings are behind
+ * the gear).
  */
 @Component({
   selector: 'fl-league-switcher',
@@ -43,13 +44,6 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
           <mat-icon aria-hidden="true">share</mat-icon>
           <span class="name">{{ 'switcher.invite' | transloco }}</span>
         </button>
-        <a class="action" [routerLink]="['/l', league.id, 'settings']" (click)="close()">
-          <mat-icon aria-hidden="true">tune</mat-icon>
-          <span class="name"
-            >{{ 'settings.title' | transloco
-            }}<small>{{ 'hub.settingsHint' | transloco }}</small></span
-          >
-        </a>
       </div>
     }
     <h2 class="fl-kicker">{{ 'switcher.change' | transloco }}</h2>

@@ -26,7 +26,8 @@
     "offence": "Atak",
     "defence": "Obrona",
     "fromDefence": "z obrony",
-    "fromOffence": "z ataku"
+    "fromOffence": "z ataku",
+    "solo": "1 na 1"
   },
   "result": {
     "win": "wygrana",
@@ -421,7 +422,8 @@
       "dyp": "od 4 osób",
       "roundRobin": "od 3 drużyn",
       "cup": "od 3 drużyn"
-    }
+    },
+    "leaveShort": "Wypisz"
   },
   "timeline": {
     "title": "Przebieg meczu",
@@ -737,7 +739,6 @@
   },
   "hub": {
     "players": "Gracze",
-    "settingsHint": "nazwa, ranking, blokada nowych meczów, usuwanie",
     "copied": "Link do ligi skopiowany",
     "playersHint": "Dotknij gracza, żeby zobaczyć jego profil, statystyki i koszulkę."
   },
@@ -774,8 +775,7 @@
     "open": "Aplikacja: język, kim jesteś, ranking ogólny, ligi",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
-    "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska.",
-    "leagues": "Wszystkie ligi"
+    "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska."
   },
   "now": {
     "title": "Teraz w lidze",

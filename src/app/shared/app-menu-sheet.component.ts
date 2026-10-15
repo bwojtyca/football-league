@@ -64,10 +64,6 @@ export function openAppMenu(sheet: MatBottomSheet) {
       <mat-icon aria-hidden="true">leaderboard</mat-icon>
       <span class="label">{{ 'ranking.global' | transloco }}</span>
     </a>
-    <a class="row" routerLink="/leagues" (click)="close()">
-      <mat-icon aria-hidden="true">list</mat-icon>
-      <span class="label">{{ 'appMenu.leagues' | transloco }}</span>
-    </a>
   `,
   styles: `
     :host {

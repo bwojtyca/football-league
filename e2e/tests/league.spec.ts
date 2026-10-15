@@ -127,12 +127,9 @@ test('restoring a league with its games leaves a game deleted on its own deleted
   await expect(games).toHaveCount(1);
 
   // ...then the league with its games, and back again.
-  // The league's settings are in the menu under its name.
+  // The league's settings are behind the gear of its pages.
   await page
-    .getByRole('button', { name: t('switcher.open', { name: `E2E przywróć ${id}` }) })
-    .click();
-  await page
-    .locator('fl-league-switcher')
+    .locator('fl-top-bar')
     .getByRole('link', { name: t('settings.title') })
     .click();
   await expect(page).toHaveURL(/\/settings$/);

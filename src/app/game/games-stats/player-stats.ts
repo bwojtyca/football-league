@@ -22,7 +22,8 @@ export interface PlayerStats {
   /** Seconds played. */
   time: { total: number; wins: number; loses: number };
   games: { total: number; wins: number; loses: number };
-  positions: { defender: SideStats; attacker: SideStats };
+  /** One on one games are counted apart, so defence + attack + solo = all games. */
+  positions: { defender: SideStats; attacker: SideStats; solo: SideStats };
   colors: { red: SideStats; blue: SideStats };
   /** Team mates, best win ratio first. */
   allies: RivalStats[];
@@ -43,7 +44,7 @@ export function calculateStats(games: Game[], playerId: string): PlayerStats {
     goals: { total: 0, own: 0 },
     time: { total: 0, wins: 0, loses: 0 },
     games: { total: 0, wins: 0, loses: 0 },
-    positions: { defender: sideStats(), attacker: sideStats() },
+    positions: { defender: sideStats(), attacker: sideStats(), solo: sideStats() },
     colors: { red: sideStats(), blue: sideStats() },
     allies: [],
     enemies: [],
@@ -87,9 +88,10 @@ export function calculateStats(games: Game[], playerId: string): PlayerStats {
     }
     addResult(stats.colors[color], won);
 
+    const solo = team.defence.player === playerId && team.offence.player === playerId;
     const positions = [
-      { score: team.defence, side: stats.positions.defender },
-      { score: team.offence, side: stats.positions.attacker },
+      { score: team.defence, side: solo ? stats.positions.solo : stats.positions.defender },
+      { score: team.offence, side: solo ? stats.positions.solo : stats.positions.attacker },
     ];
     for (const { score, side } of positions) {
       if (score.player !== playerId) {
@@ -101,7 +103,14 @@ export function calculateStats(games: Game[], playerId: string): PlayerStats {
       stats.colors[color].own += score.ownGoals;
       side.goals += score.goals;
       side.own += score.ownGoals;
-      addResult(side, won);
+    }
+    if (solo) {
+      addResult(stats.positions.solo, won);
+    } else {
+      addResult(
+        team.defence.player === playerId ? stats.positions.defender : stats.positions.attacker,
+        won,
+      );
     }
 
     for (const allyId of teamPlayers(team).filter((id) => id !== playerId)) {

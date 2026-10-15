@@ -189,8 +189,10 @@
         [ngTemplateOutletContext]="{
           a: s.positions.defender,
           b: s.positions.attacker,
+          c: s.positions.solo,
           aLabel: 'position.defence',
           bLabel: 'position.offence',
+          cLabel: 'position.solo',
         }"
       />
     </section>
@@ -223,35 +225,55 @@
   }
 }
 
-<ng-template #sides let-a="a" let-b="b" let-aLabel="aLabel" let-bLabel="bLabel">
+<ng-template
+  #sides
+  let-a="a"
+  let-b="b"
+  let-c="c"
+  let-aLabel="aLabel"
+  let-bLabel="bLabel"
+  let-cLabel="cLabel"
+>
+  @let cols = c?.games ? [a, b, c] : [a, b];
   <table>
     <thead>
       <tr>
         <th></th>
         <th>{{ aLabel | transloco }}</th>
         <th>{{ bLabel | transloco }}</th>
+        @if (c?.games) {
+          <th>{{ cLabel | transloco }}</th>
+        }
       </tr>
     </thead>
     <tbody>
       <tr>
         <th>{{ 'stats.games' | transloco }}</th>
-        <td>{{ a.games }}</td>
-        <td>{{ b.games }}</td>
+        @for (col of cols; track $index) {
+          <td>{{ col.games }}</td>
+        }
       </tr>
       <tr>
         <th>{{ 'stats.winRate' | transloco }}</th>
-        <td>{{ percent(a.wins, a.games) | translocoDecimal: { maximumFractionDigits: 0 } }}%</td>
-        <td>{{ percent(b.wins, b.games) | translocoDecimal: { maximumFractionDigits: 0 } }}%</td>
+        @for (col of cols; track $index) {
+          <td>
+            {{ percent(col.wins, col.games) | translocoDecimal: { maximumFractionDigits: 0 } }}%
+          </td>
+        }
       </tr>
       <tr>
         <th>{{ 'stats.scored' | transloco }}</th>
-        <td>{{ ratio(a.goals, a.games) | translocoDecimal: { maximumFractionDigits: 1 } }}</td>
-        <td>{{ ratio(b.goals, b.games) | translocoDecimal: { maximumFractionDigits: 1 } }}</td>
+        @for (col of cols; track $index) {
+          <td>
+            {{ ratio(col.goals, col.games) | translocoDecimal: { maximumFractionDigits: 1 } }}
+          </td>
+        }
       </tr>
       <tr>
         <th>{{ 'stats.own' | transloco }}</th>
-        <td>{{ ratio(a.own, a.games) | translocoDecimal: { maximumFractionDigits: 1 } }}</td>
-        <td>{{ ratio(b.own, b.games) | translocoDecimal: { maximumFractionDigits: 1 } }}</td>
+        @for (col of cols; track $index) {
+          <td>{{ ratio(col.own, col.games) | translocoDecimal: { maximumFractionDigits: 1 } }}</td>
+        }
       </tr>
     </tbody>
   </table>

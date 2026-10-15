@@ -115,15 +115,19 @@
     }
   </ol>
   @if (fewDuets().length) {
-    <h3 class="fl-kicker few">{{ 'league.duetsFew' | transloco: { n: duetGames() } }}</h3>
-    <ol class="ranking">
-      @for (duet of fewDuets(); track duet.players.join()) {
-        <li class="row unrated">
-          <span class="pos"></span>
-          <ng-container *ngTemplateOutlet="duetRow; context: { $implicit: duet }" />
-        </li>
-      }
-    </ol>
+    <details class="fl-fold few">
+      <summary>
+        {{ 'league.duetsFew' | transloco: { n: duetGames() } }} ({{ fewDuets().length }})
+      </summary>
+      <ol class="ranking">
+        @for (duet of fewDuets(); track duet.players.join()) {
+          <li class="row unrated">
+            <span class="pos"></span>
+            <ng-container *ngTemplateOutlet="duetRow; context: { $implicit: duet }" />
+          </li>
+        }
+      </ol>
+    </details>
   }
   <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
 } @else {

@@ -26,7 +26,8 @@
     "offence": "Attack",
     "defence": "Defence",
     "fromDefence": "from defence",
-    "fromOffence": "from attack"
+    "fromOffence": "from attack",
+    "solo": "1 on 1"
   },
   "result": {
     "win": "won",
@@ -421,7 +422,8 @@
       "dyp": "from 4 people",
       "roundRobin": "from 3 teams",
       "cup": "from 3 teams"
-    }
+    },
+    "leaveShort": "Remove"
   },
   "timeline": {
     "title": "How it went",
@@ -737,7 +739,6 @@
   },
   "hub": {
     "players": "Players",
-    "settingsHint": "name, ranking, locking new games, deleting",
     "copied": "Link to the league copied",
     "playersHint": "Tap a player to see their profile, statistics and kit."
   },
@@ -774,8 +775,7 @@
     "open": "App: language, who you are, overall ranking, leagues",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
-    "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar.",
-    "leagues": "All leagues"
+    "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar."
   },
   "now": {
     "title": "Now in the league",
