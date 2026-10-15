@@ -148,7 +148,10 @@
           }
           <p class="when">
             {{ game.start | translocoDate: { dateStyle: 'full', timeStyle: 'short' } }} ·
-            {{ 'gameDetails.played' | transloco: { time: clock().time } }}
+            @let length = playedFor();
+            {{
+              'gameDetails.played' | transloco: { time: (length.key | transloco: length.params) }
+            }}
             @if (mode(); as rules) {
               · <fl-mode-label [mode]="rules" />
             }

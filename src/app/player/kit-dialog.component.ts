@@ -222,7 +222,7 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
     }
     .hint {
       margin: 14px 0 0;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       line-height: 1.4;
       color: var(--fl-ink-2);
     }

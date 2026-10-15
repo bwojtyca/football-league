@@ -103,8 +103,8 @@
     "notFound": "Nie ma takiego gracza.",
     "mostlyDefence": "Głównie w obronie",
     "mostlyOffence": "Głównie w ataku",
-    "inDefence": "w obronie ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}})",
-    "inAttack": "w ataku ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}})",
+    "inDefence": "Elo w obronie ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} 2 na 2)",
+    "inAttack": "Elo w ataku ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} 2 na 2)",
     "records": "Rekordy",
     "longestWinStreak": "Najdłuższa seria wygranych",
     "longestLossStreak": "Najdłuższa seria porażek",
@@ -233,13 +233,13 @@
     "undoLast": "Cofnij ostatni gol",
     "next": "Dalej",
     "event": {
-      "goal": "{name} strzela gola {from}",
-      "own": "{name} strzela samobója {from}",
+      "goal": "Gol {from}: {name}",
+      "own": "Samobój {from}: {name}",
       "swap": "{team} zamieniają pozycje",
-      "goalRod": "{name} strzela gola {rod}",
-      "goalMan": "{name} strzela gola {rod} nr {n}",
-      "ownRod": "{name} strzela samobója {rod}",
-      "ownMan": "{name} strzela samobója {rod} nr {n}"
+      "goalRod": "Gol {rod}: {name}",
+      "goalMan": "Gol {rod} nr {n}: {name}",
+      "ownRod": "Samobój {rod}: {name}",
+      "ownMan": "Samobój {rod} nr {n}: {name}"
     },
     "leaveTitle": "Mecz trwa",
     "leaveText": "Wstrzymać zegar, zanim wyjdziesz? Mecz dokończysz później.",
@@ -515,12 +515,13 @@
     "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
     "helpDuets": "Pary, które zagrały razem co najmniej {n} mecze, według procentu wygranych.",
     "helpFormTitle": "Kropki przy graczu",
-    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka."
+    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka.",
+    "legend": "Kropki: ostatnie 5 meczów,"
   },
   "potato": {
     "title": "Ziemniak",
     "points": "pkt",
-    "days": "{n, plural, one {dzień} other {dni}}",
+    "days": "{n, plural, one {dzień jako ziemniak} other {dni jako ziemniak}}",
     "since": "ziemniak od {date}",
     "today": "Dziś",
     "todayHint": "Kto zbierze najwięcej punktów do końca dnia, zostanie ziemniakiem.",
@@ -587,7 +588,7 @@
     "avgGame": "Średni mecz",
     "shutouts": "Do zera",
     "ownGoals": "Samobóje",
-    "players": "Grali",
+    "players": "Gracze z meczami",
     "months": "Mecze w miesiącach",
     "when": "Kiedy gramy",
     "day": "Dzień",
@@ -609,7 +610,7 @@
     "eloPlayer": "Wyróżniony gracz",
     "goalTimes": "Czas goli",
     "fromLog": "Z {n, plural, one {# meczu} other {# meczów}} z zapisem goli (od października 2026).",
-    "firstGoal": "pierwszy gol średnio po",
+    "firstGoal": "średni czas do 1. gola",
     "goalGap": "średnio między golami",
     "jump": "Przejdź do",
     "title": "Statystyki ligi",
@@ -752,7 +753,8 @@
     "mine": "Moje",
     "tournament": "Turniejowe",
     "noneToday": "Dziś jeszcze nikt nie grał.",
-    "noneTournament": "Nie ma jeszcze meczów turniejowych."
+    "noneTournament": "Nie ma jeszcze meczów turniejowych.",
+    "since": "od {time}"
   },
   "leagueNew": {
     "who": "Kto gra?",
@@ -779,7 +781,7 @@
     "title": "Teraz w lidze",
     "live": "Trwa",
     "back": "Wróć do meczu",
-    "paused": "Wstrzymany: {date}",
+    "paused": "Wstrzymany, zaczęty {date}",
     "finish": "Dokończ",
     "open": "Otwórz",
     "quiet": "Teraz nic nie trwa · ostatni mecz",
@@ -848,5 +850,10 @@
     "ranking": "Ranking Elo, statystyki, turnieje i ziemniak dnia.",
     "link": "Bez kont i instalacji: lidze wystarczy link.",
     "find": "Znajdź swoją ligę"
+  },
+  "duration": {
+    "hm": "{h} h {m} min",
+    "ms": "{m} min {s} s",
+    "s": "{s} s"
   }
 }

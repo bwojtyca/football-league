@@ -41,8 +41,8 @@ html {
   --fl-sheet-title: 800 1.4rem/1.2 var(--fl-display);
 
   --fl-paper: #000000;
-  --fl-card: #0b0c0d;
-  --fl-card-2: #17191c;
+  --fl-card: #16181b;
+  --fl-card-2: #202328;
   --fl-dialog: #16181a;
   --fl-sheet: #121416;
   --fl-ink: #f2f4f0;
@@ -234,12 +234,37 @@ a {
  * same width), statistics in two columns, games in two columns of days.
  */
 @media (min-width: 1400px) {
-  fl-league-stats-page,
-  fl-player-page,
-  fl-compare-page,
-  fl-league-games,
-  fl-global-ranking {
+  /* Every page next to the rail: one width, so the edges never jump between pages. */
+  fl-league-layout,
+  .fl-with-rail {
     --fl-page-max: 1120px;
+  }
+
+  /* Lists and cards in two columns, so the width is used (evaluation 3: half the screen empty). */
+  fl-league-players .players,
+  fl-leagues .leagues,
+  fl-league-tournaments .tournaments {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 32px;
+  }
+
+  fl-league-settings .page {
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  fl-league-settings .page > * {
+    break-inside: avoid;
+  }
+
+  fl-tournament-page .page {
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  fl-tournament-page .page > * {
+    break-inside: avoid;
   }
 
   fl-league-games fl-game-list {
@@ -372,7 +397,7 @@ a {
 /* A small label above a section or a number. */
 .fl-kicker {
   margin: 0;
-  font: 700 0.82rem/1.2 var(--fl-display);
+  font: 700 0.875rem/1.2 var(--fl-display);
   color: var(--fl-ink-2);
 }
 
@@ -461,7 +486,7 @@ a {
 .fl-stats .hint {
   margin: -4px 0 10px;
   color: var(--fl-ink-2);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
 }
 
 .fl-tiles {
@@ -497,7 +522,7 @@ a {
 
 .fl-tiles small {
   color: var(--fl-ink-2);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   line-height: 1.25;
 }
 
@@ -557,7 +582,7 @@ a {
 .fl-records .about {
   grid-column: 1 / -1;
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   text-align: left;
   color: var(--fl-ink-2);
 }
@@ -627,7 +652,7 @@ details.fl-fold[open] > summary::after {
 }
 
 .fl-dialog-head > h2 small {
-  font: 600 0.8rem/1.2 var(--fl-display);
+  font: 600 0.875rem/1.2 var(--fl-display);
   color: var(--fl-ink-2);
 }
 

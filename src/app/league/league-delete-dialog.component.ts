@@ -84,7 +84,7 @@ export function openLeagueDeleteDialog(dialog: MatDialog, data: LeagueDeleteData
     }
     .hint {
       margin: 0 0 0 40px;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .delete {

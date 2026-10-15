@@ -132,7 +132,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     }
     h3 {
       margin: 16px 0 0;
-      font: 700 0.85rem/1.2 var(--fl-display);
+      font: 700 0.875rem/1.2 var(--fl-display);
       color: var(--mat-sys-on-surface-variant);
     }
     .goals {

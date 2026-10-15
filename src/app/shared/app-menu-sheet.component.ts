@@ -109,7 +109,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
       min-width: 0;
     }
     .label small {
-      font: 400 0.8rem/1.3 var(--fl-display);
+      font: 400 0.875rem/1.3 var(--fl-display);
       color: var(--fl-ink-2);
     }
   `,

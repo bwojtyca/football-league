@@ -74,7 +74,7 @@ export function openTournamentEditDialog(dialog: MatDialog, tournament: Tourname
     }
     .hint {
       margin: 8px 0 0;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
   `,

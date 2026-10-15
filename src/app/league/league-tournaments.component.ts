@@ -112,7 +112,7 @@ import { LeagueService } from './league.service';
     .meta {
       grid-column: 1;
       color: var(--fl-ink-2);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
     .tournament .go {
       grid-row: 1 / span 3;

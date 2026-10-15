@@ -41,3 +41,15 @@ export function percentages(counts: readonly number[]): number[] {
   }
   return shares;
 }
+
+/** A duration in words' keys: "7 min 15 s", "1 h 2 min", "45 s" (`duration.*` texts). */
+export function spokenDuration(seconds: number): { key: string; params: Record<string, number> } {
+  const total = Math.round(seconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h) {
+    return { key: 'duration.hm', params: { h, m } };
+  }
+  return m ? { key: 'duration.ms', params: { m, s } } : { key: 'duration.s', params: { s } };
+}

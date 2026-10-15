@@ -41,8 +41,17 @@
               }
               @if (game.status; as status) {
                 <b class="status status--{{ status }}">{{ 'gameList.' + status | transloco }}</b>
+                {{
+                  'gameList.since'
+                    | transloco
+                      : {
+                          time:
+                            (game.start | translocoDate: { hour: '2-digit', minute: '2-digit' }),
+                        }
+                }}
+              } @else {
+                {{ game.start | translocoDate: { hour: '2-digit', minute: '2-digit' } }}
               }
-              {{ game.start | translocoDate: { hour: '2-digit', minute: '2-digit' } }}
               @if (game.mode; as mode) {
                 <fl-mode-label [mode]="mode" />
               }

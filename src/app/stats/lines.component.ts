@@ -37,7 +37,7 @@ import { LineStats } from './stats';
     .hint {
       margin: 0 0 8px;
       color: var(--fl-ink-2);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
     table {
       width: 100%;
@@ -60,7 +60,7 @@ import { LineStats } from './stats';
     }
     .men {
       color: var(--fl-ink-2);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
   `,
 })

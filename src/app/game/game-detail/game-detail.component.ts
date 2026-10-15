@@ -69,6 +69,7 @@ import { FinishPanelComponent, FinishPlayer } from './finish-panel.component';
 import { openLeaveDialog } from './leave-dialog.component';
 import { PauseOverlayComponent } from './pause-overlay.component';
 import { TableComponent, TableGoal } from './table.component';
+import { spokenDuration } from '../../stats/format';
 
 /** A decided game waits this long (for an undo, or "Next") before its result is recorded. */
 const FINISH_AFTER_MS = 8000;
@@ -179,6 +180,12 @@ export class GameDetailComponent implements LeaveGuarded {
   });
 
   /** Time played, or for a running timed game the time left; `golden` on a tie after it. */
+  /** A finished game's length in words. */
+  protected readonly playedFor = computed(() => {
+    const game = this.game();
+    return spokenDuration(game?.end ? playTime(game, Date.parse(game.end)) / 1000 : 0);
+  });
+
   protected readonly clock = computed(() => {
     const game = this.game();
     if (!game) {

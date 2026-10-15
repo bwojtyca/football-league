@@ -78,7 +78,7 @@ import { TournamentService } from '../tournament/tournament.service';
                   | transloco
                     : {
                         date:
-                          (game.game.paused ?? game.game.start
+                          (game.game.start
                           | translocoDate: { weekday: 'long', hour: '2-digit', minute: '2-digit' }),
                       },
               }
@@ -167,26 +167,26 @@ import { TournamentService } from '../tournament/tournament.service';
       </div>
     }
 
+    <!-- A scoreboard: each team on a line of its own with its goals at the end. -->
     <ng-template #teams let-game let-note="note">
       <span class="text teams">
         @for (color of colors; track color) {
           <span class="team" [class.r]="color === 'red'" [class.b]="color === 'blue'">
-            @for (name of game.lineup[color]; track $index; let last = $last) {
-              <span>{{ name }}</span>
-              @if (!last) {
-                <i>&</i>
+            <span class="names">
+              @for (name of game.lineup[color]; track $index; let last = $last) {
+                <span>{{ name }}</span>
+                @if (!last) {
+                  <i>&</i>
+                }
               }
-            }
+            </span>
+            <b class="pts">{{ game.score[color] }}</b>
           </span>
         }
         @if (note) {
           <small>{{ note }}</small>
         }
       </span>
-      <span class="score"
-        ><span class="r">{{ game.score.red }}</span
-        ><span class="sep">:</span><span class="b">{{ game.score.blue }}</span></span
-      >
     </ng-template>
   `,
   styles: `
@@ -224,7 +224,7 @@ import { TournamentService } from '../tournament/tournament.service';
       flex-wrap: wrap;
       align-items: center;
       gap: 4px 8px;
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       font-weight: 700;
       color: var(--fl-ink-2);
     }
@@ -238,7 +238,7 @@ import { TournamentService } from '../tournament/tournament.service';
       color: #fff;
     }
     .clock {
-      font: 900 0.85rem/1 var(--fl-led);
+      font: 900 0.875rem/1 var(--fl-led);
       color: var(--fl-ink);
     }
     /* Each player on a line of their own (long names do not wrap into a column of words). */
@@ -336,7 +336,7 @@ import { TournamentService } from '../tournament/tournament.service';
       white-space: nowrap;
     }
     .text small {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .mini {
@@ -387,11 +387,30 @@ import { TournamentService } from '../tournament/tournament.service';
     }
     .team {
       display: flex;
-      gap: 0.3em;
+      align-items: center;
+      gap: 8px;
       min-width: 0;
       font-weight: 700;
     }
-    .team span {
+    .names {
+      flex: 1;
+      display: flex;
+      gap: 0.3em;
+      min-width: 0;
+    }
+    .team .pts {
+      flex: none;
+      min-width: 1.4em;
+      text-align: right;
+      font: 900 1.25rem/1.1 var(--fl-led);
+    }
+    .team.r .pts {
+      color: var(--fl-red-board);
+    }
+    .team.b .pts {
+      color: var(--fl-blue-board);
+    }
+    .names span {
       flex: 0 1 auto;
       min-width: 0;
       max-width: calc(50% - 0.6em);
@@ -399,14 +418,14 @@ import { TournamentService } from '../tournament/tournament.service';
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .team span:only-of-type {
+    .names span:only-of-type {
       max-width: 100%;
     }
     .go {
       flex: none;
       color: var(--fl-ink-2);
     }
-    .team i {
+    .names i {
       flex: none;
       font-style: normal;
       color: var(--fl-ink-2);
@@ -416,10 +435,6 @@ import { TournamentService } from '../tournament/tournament.service';
     }
     .team.b {
       color: #9db8ff;
-    }
-    .row .score {
-      flex: none;
-      font-size: 1.5rem;
     }
     .facts {
       display: grid;
@@ -460,7 +475,7 @@ import { TournamentService } from '../tournament/tournament.service';
       color: var(--fl-ink);
     }
     .note {
-      font-size: 0.78rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
   `,

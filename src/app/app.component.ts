@@ -59,10 +59,11 @@ export class AppComponent {
 
   /**
    * Pages outside a league that get the app's rail on a wide screen; a league's pages have
-   * their own (with the league's sections), a game has none.
+   * their own (with the league's sections). A game being played covers it; a finished one is a
+   * page next to it.
    */
   protected readonly withRail = computed(() =>
-    /^\/(leagues|ranking|player\/|compare\/)/.test(this._url()),
+    /^\/(leagues|ranking|player\/|compare\/|game\/)/.test(this._url()),
   );
 
   /** The progress bar on top: a page loading, or the data not there yet. */

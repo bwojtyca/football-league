@@ -243,7 +243,7 @@ export function openLeagueNewDialog(dialog: MatDialog) {
     }
     .hint {
       color: var(--fl-ink-2);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
     mat-dialog-actions {
       padding: 10px 24px calc(16px + env(safe-area-inset-bottom, 0px));

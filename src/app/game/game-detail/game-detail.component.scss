@@ -1,7 +1,9 @@
 /* The game screen: the table at night, an LED scoreboard above it, the last move below. */
+/* A game being played covers everything, the rail of a wide screen included. */
 .screen {
   position: fixed;
   inset: 0;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
@@ -41,7 +43,7 @@
   border-radius: 20px;
   background: var(--fl-card-2);
   color: var(--fl-ink);
-  font: 700 0.85rem/1 var(--fl-display);
+  font: 700 0.875rem/1 var(--fl-display);
   cursor: pointer;
 }
 
@@ -62,11 +64,29 @@
 
 .status {
   flex: 1;
-  min-width: 0;
+  min-width: 6ch;
   display: grid;
   justify-items: center;
   line-height: 1.1;
   text-align: center;
+}
+
+/*
+ * A narrow phone (evaluation 3: the pause button covered the clock at 360 px): the goal-detail
+ * pill keeps its icon, the swap row drops its label, nothing leaves the screen.
+ */
+@media (max-width: 400px) {
+  .screen:not(.landscape) .detail span {
+    display: none;
+  }
+
+  .screen:not(.landscape) .detail {
+    padding: 0 10px;
+  }
+
+  .screen:not(.landscape) .swaps > span {
+    display: none;
+  }
 }
 
 .status small {
@@ -92,6 +112,7 @@
 }
 
 .clock {
+  white-space: nowrap;
   font: 900 1.25rem/1.2 var(--fl-led);
   font-variant-numeric: tabular-nums;
   color: var(--fl-ball);
@@ -218,7 +239,7 @@
   border-radius: 20px;
   background: var(--fl-card-2);
   cursor: pointer;
-  min-width: 44px;
+  min-width: 40px;
 }
 
 .swap-dot i {
@@ -453,7 +474,7 @@
 
   .landscape .bar small,
   .landscape .swaps span {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
   }
 
   .landscape .own-arm {
@@ -567,7 +588,7 @@
   padding: 1px 6px;
   border-radius: 8px;
   background: var(--fl-board);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .side--red .player fl-change {
@@ -599,7 +620,7 @@
   grid-column: 1 / -1;
   margin: 4px 0 0;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: #cfe6d8;
 }
 
@@ -611,4 +632,12 @@
 /* A finished game is a page: its header over the content's column, not at the window's edges. */
 .ended .top {
   padding-inline: max(4px, calc((100% - 752px) / 2));
+}
+
+/* A finished game is a page: next to the rail of a wide screen, as every other page. */
+@media (min-width: 1000px) {
+  .screen.ended {
+    left: 256px;
+    z-index: auto;
+  }
 }

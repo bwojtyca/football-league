@@ -54,7 +54,7 @@ export function openTournamentDeleteDialog(dialog: MatDialog, data: TournamentDe
       margin: 0 0 8px;
     }
     .hint {
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .delete {

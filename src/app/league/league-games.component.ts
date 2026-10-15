@@ -83,7 +83,7 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
     }
     .text small {
       color: var(--fl-ink-2);
-      font-size: 0.82rem;
+      font-size: 0.875rem;
     }
     .filters {
       margin-bottom: 8px;

@@ -162,7 +162,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
     }
     .hint {
       margin: 0 0 8px;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .row .hint {

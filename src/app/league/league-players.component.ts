@@ -91,7 +91,7 @@ import { LeagueService } from './league.service';
     }
     .hint {
       margin: 0 0 8px;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .you {
@@ -131,7 +131,7 @@ import { LeagueService } from './league.service';
       font: 700 1.05rem/1.3 var(--fl-display);
     }
     .who small {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .rating {

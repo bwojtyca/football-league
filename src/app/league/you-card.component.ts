@@ -102,7 +102,7 @@ import { openWhoSheet } from './who-sheet.component';
     }
     .text small {
       color: var(--fl-ink-2);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
     }
     .text .fl-kicker {
       overflow: hidden;

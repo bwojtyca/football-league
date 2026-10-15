@@ -159,6 +159,16 @@
       }
     </p>
   }
+  @if (ranked().length) {
+    <!-- What the dots mean, once, under the list. -->
+    <p class="legend">
+      {{ 'ranking.legend' | transloco }}
+      <span class="dots" aria-hidden="true"><i class="w"></i></span>
+      {{ 'result.win' | transloco }}
+      <span class="dots" aria-hidden="true"><i></i></span>
+      {{ 'result.loss' | transloco }}
+    </p>
+  }
 }
 
 <ng-template #row let-player let-position="position">

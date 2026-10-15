@@ -71,6 +71,7 @@ import { openAppMenu } from './app-menu-sheet.component';
     @media (min-width: 1000px) {
       :host-context(fl-league-layout) .bar,
       :host-context(.fl-with-rail) .bar {
+        max-width: none;
         margin-left: 0;
       }
     }

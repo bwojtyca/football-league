@@ -160,7 +160,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
       font: 700 1rem/1.3 var(--fl-display);
     }
     .who small {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
       color: var(--fl-ink-2);
     }
     .who small.placed {

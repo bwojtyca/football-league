@@ -148,7 +148,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       font: 700 1rem/1.3 var(--fl-display);
     }
     .action small {
-      font: 400 0.8rem/1.3 var(--fl-display);
+      font: 400 0.875rem/1.3 var(--fl-display);
       color: var(--fl-ink-2);
     }
     nav {

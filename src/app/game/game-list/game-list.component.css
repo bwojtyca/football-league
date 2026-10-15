@@ -42,12 +42,10 @@
   font-weight: 600;
 }
 
-/* The player whose games these are: a soft highlight (underlines mean links). */
+/* The player whose games these are: in ink and heavier (underlines mean links). */
 .team .current {
-  padding: 0 4px;
-  border-radius: 6px;
-  background: var(--fl-card-2);
   color: var(--fl-ink);
+  font-weight: 800;
 }
 
 /* The score on a small LED panel. */
@@ -74,7 +72,7 @@
   grid-column: 1 / -1;
   justify-self: center;
   margin-top: 6px;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   color: var(--fl-ink-2);
   display: flex;
   flex-wrap: wrap;

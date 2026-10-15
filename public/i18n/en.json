@@ -103,8 +103,8 @@
     "notFound": "Player not found.",
     "mostlyDefence": "Mostly in defence",
     "mostlyOffence": "Mostly in attack",
-    "inDefence": "in defence ({n, plural, one {# game} other {# games}})",
-    "inAttack": "in attack ({n, plural, one {# game} other {# games}})",
+    "inDefence": "Elo in defence ({n, plural, one {# 2-on-2 game} other {# 2-on-2 games}})",
+    "inAttack": "Elo in attack ({n, plural, one {# 2-on-2 game} other {# 2-on-2 games}})",
     "records": "Records",
     "longestWinStreak": "Longest winning streak",
     "longestLossStreak": "Longest losing streak",
@@ -233,13 +233,13 @@
     "undoLast": "Undo last goal",
     "next": "Next",
     "event": {
-      "goal": "{name} scores {from}",
-      "own": "{name} scores an own goal {from}",
+      "goal": "Goal {from}: {name}",
+      "own": "Own goal {from}: {name}",
       "swap": "{team} swap positions",
-      "goalRod": "{name} scores with {rod}",
-      "goalMan": "{name} scores with {rod} (no. {n})",
-      "ownRod": "{name} scores an own goal with {rod}",
-      "ownMan": "{name} scores an own goal with {rod} (no. {n})"
+      "goalRod": "Goal with {rod}: {name}",
+      "goalMan": "Goal with {rod} (no. {n}): {name}",
+      "ownRod": "Own goal with {rod}: {name}",
+      "ownMan": "Own goal with {rod} (no. {n}): {name}"
     },
     "leaveTitle": "The game is on",
     "leaveText": "Stop the clock before you leave? You can finish the game later.",
@@ -515,12 +515,13 @@
     "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
     "helpDuets": "Pairs who played at least {n} games together, by the share of games won.",
     "helpFormTitle": "The dots next to a player",
-    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss."
+    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss.",
+    "legend": "Dots: the last 5 games,"
   },
   "potato": {
     "title": "Potato",
     "points": "pts",
-    "days": "{n, plural, one {day} other {days}}",
+    "days": "{n, plural, one {day as the potato} other {days as the potato}}",
     "since": "potato since {date}",
     "today": "Today",
     "todayHint": "Whoever has the most points at the end of the day becomes the potato.",
@@ -587,7 +588,7 @@
     "avgGame": "Average game",
     "shutouts": "Shutouts",
     "ownGoals": "Own goals",
-    "players": "Played",
+    "players": "Players with games",
     "months": "Games per month",
     "when": "When we play",
     "day": "Day",
@@ -609,8 +610,8 @@
     "eloPlayer": "Highlighted player",
     "goalTimes": "Goal times",
     "fromLog": "From {n, plural, one {# game} other {# games}} with a goal log (since October 2026).",
-    "firstGoal": "first goal on average after",
-    "goalGap": "a goal on average every",
+    "firstGoal": "average time to the first goal",
+    "goalGap": "average between goals",
     "jump": "Jump to",
     "title": "League statistics",
     "teaser": "{n, plural, one {# game} other {# games}} · records, when we play, Elo over time"
@@ -752,7 +753,8 @@
     "mine": "Mine",
     "tournament": "Tournament",
     "noneToday": "Nobody has played today yet.",
-    "noneTournament": "No tournament games yet."
+    "noneTournament": "No tournament games yet.",
+    "since": "since {time}"
   },
   "leagueNew": {
     "who": "Who plays?",
@@ -765,7 +767,7 @@
     "found": "Found"
   },
   "gameDetails": {
-    "played": "{time} played"
+    "played": "{time} of play"
   },
   "appMenu": {
     "title": "App",
@@ -779,7 +781,7 @@
     "title": "Now in the league",
     "live": "Live",
     "back": "Back to the game",
-    "paused": "Paused: {date}",
+    "paused": "Paused, started {date}",
     "finish": "Finish it",
     "open": "Open",
     "quiet": "Nothing going on · the last game",
@@ -848,5 +850,10 @@
     "ranking": "An Elo ranking, statistics, tournaments and the potato of the day.",
     "link": "No accounts, nothing to install: a league is just a link.",
     "find": "Find your league"
+  },
+  "duration": {
+    "hm": "{h} h {m} min",
+    "ms": "{m} min {s} s",
+    "s": "{s} s"
   }
 }
