@@ -4,4 +4,7 @@
     <i></i>
   </div>
 }
-<router-outlet />
+@if (withRail()) {
+  <fl-app-rail />
+}
+<div [class.fl-with-rail]="withRail()"><router-outlet /></div>

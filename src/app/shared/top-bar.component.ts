@@ -67,6 +67,13 @@ import { openAppMenu } from './app-menu-sheet.component';
       min-height: 56px;
       box-sizing: border-box;
     }
+    /* Next to the rail of a wide screen, the bar starts at the pages' left edge too. */
+    @media (min-width: 1000px) {
+      :host-context(fl-league-layout) .bar,
+      :host-context(.fl-with-rail) .bar {
+        margin-left: 0;
+      }
+    }
     .title {
       flex: 1;
       min-width: 0;

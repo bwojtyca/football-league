@@ -14,12 +14,13 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { distinctUntilChanged, filter, map, of, switchMap, timer } from 'rxjs';
 
 import { GameService } from './game/game.service';
+import { AppRailComponent } from './shared/app-rail.component';
 import { LeagueService } from './league/league.service';
 import { PlayerService } from './player/player.service';
 
 @Component({
   selector: 'fl-root',
-  imports: [RouterOutlet, TranslocoPipe],
+  imports: [RouterOutlet, AppRailComponent, TranslocoPipe],
   templateUrl: './app.component.html',
 })
 export class AppComponent {
@@ -45,6 +46,23 @@ export class AppComponent {
       switchMap((started) => (started ? timer(150).pipe(map(() => true)) : of(false))),
     ),
     { initialValue: false },
+  );
+
+  private readonly _router = inject(Router);
+  private readonly _url = toSignal(
+    this._router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this._router.url),
+    ),
+    { initialValue: this._router.url },
+  );
+
+  /**
+   * Pages outside a league that get the app's rail on a wide screen; a league's pages have
+   * their own (with the league's sections), a game has none.
+   */
+  protected readonly withRail = computed(() =>
+    /^\/(leagues|ranking|player\/|compare\/)/.test(this._url()),
   );
 
   /** The progress bar on top: a page loading, or the data not there yet. */

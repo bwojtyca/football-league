@@ -63,12 +63,6 @@
   color: var(--fl-ink);
 }
 
-.name {
-  display: block;
-  overflow-wrap: anywhere;
-  font: 800 1.15rem/1.25 var(--fl-display);
-}
-
 /* The league's name, cut on one line, and the link to the overall profile after it. */
 .league {
   display: flex;

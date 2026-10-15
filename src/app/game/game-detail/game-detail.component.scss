@@ -601,3 +601,8 @@
 .ended .status .clock {
   display: none;
 }
+
+/* A finished game is a page: its header over the content's column, not at the window's edges. */
+.ended .top {
+  padding-inline: max(4px, calc((100% - 752px) / 2));
+}
