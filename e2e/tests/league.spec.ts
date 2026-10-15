@@ -47,7 +47,7 @@ test('a new league: players, the bottom navigation, language and the league swit
   // On a wide screen the league's sections move to a rail on the left.
   const phone = page.viewportSize()!;
   await page.setViewportSize({ width: 1280, height: 800 });
-  await expect(page.locator('nav.rail')).toBeVisible();
+  await expect(page.locator('nav.fl-rail')).toBeVisible();
   await expect(nav).toBeHidden();
   await shot(page, 'desktop');
   await page.setViewportSize(phone);

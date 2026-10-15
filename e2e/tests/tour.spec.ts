@@ -157,7 +157,7 @@ for (const size of SIZES) {
       await shot('23-league-switcher', false);
       await page.keyboard.press('Escape');
       await expect(page.locator('fl-league-switcher')).toBeHidden();
-      const play = page.locator('nav.tabs button.play:visible, nav.rail .new-play:visible');
+      const play = page.locator('nav.tabs button.play:visible, nav.fl-rail .new-play:visible');
       const sheet = page.locator('fl-new-play-sheet');
       await play.click();
       await expect(sheet).toBeVisible();
