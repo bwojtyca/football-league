@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,6 +18,7 @@ import {
   teamPlayers,
   teamScore,
   TeamColor,
+  TEAM_COLORS,
 } from '../game/game';
 import { GameService } from '../game/game.service';
 import { openNewGameDialog } from '../game/game-new/game-new-dialog/game-new-dialog.component';
@@ -35,6 +37,7 @@ import { TournamentService } from '../tournament/tournament.service';
 @Component({
   selector: 'fl-now-card',
   imports: [
+    NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,
     RouterLink,
@@ -48,67 +51,41 @@ import { TournamentService } from '../tournament/tournament.service';
     @let s = state();
     @if (s.live.length || s.paused.length || s.tournaments.length) {
       <h2 class="fl-kicker">{{ 'now.title' | transloco }}</h2>
-      <!-- A game being played: one compact row on the LED board, the whole row leads back. -->
+      <!--
+        A game being played (on the LED board) or paused: the two teams on lines of their own,
+        each name cut fairly, the score, and a chevron (the whole row leads to the game).
+      -->
       @for (game of s.live; track game.id) {
         <a class="row live" [routerLink]="['/game', game.id]">
           <span class="tile live-tile" aria-hidden="true">
             <i class="dot"></i><span class="clock">{{ clock(game.game) }}</span>
           </span>
-          <span class="text teams">
-            <span class="team r">
-              @for (name of game.lineup.red; track $index; let last = $last) {
-                <span>{{ name }}</span>
-                @if (!last) {
-                  <i>&</i>
-                }
-              }
-            </span>
-            <span class="team b">
-              @for (name of game.lineup.blue; track $index; let last = $last) {
-                <span>{{ name }}</span>
-                @if (!last) {
-                  <i>&</i>
-                }
-              }
-            </span>
-          </span>
-          <span class="score"
-            ><span class="r">{{ game.score.red }}</span
-            ><span class="sep">:</span><span class="b">{{ game.score.blue }}</span></span
-          >
-          <span class="action"
-            ><span class="sr-only">{{ 'now.live' | transloco }} · </span
-            >{{ 'now.backShort' | transloco
-            }}<mat-icon aria-hidden="true">chevron_right</mat-icon></span
-          >
+          <ng-container *ngTemplateOutlet="teams; context: { $implicit: game }" />
+          <span class="sr-only">{{ 'now.back' | transloco }}</span>
+          <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
         </a>
       }
       @for (game of s.paused; track game.id) {
         <a class="row" [routerLink]="['/game', game.id]">
           <mat-icon class="tile" aria-hidden="true">pause</mat-icon>
-          <span class="text">
-            <b
-              >{{ game.red }}
-              <span class="mini"
-                ><span class="r">{{ game.score.red }}</span
-                >:<span class="b">{{ game.score.blue }}</span></span
-              >
-              {{ game.blue }}</b
-            >
-            <small>{{
-              'now.paused'
-                | transloco
-                  : {
-                      date:
-                        (game.game.paused ?? game.game.start
-                        | translocoDate: { weekday: 'long', hour: '2-digit', minute: '2-digit' }),
-                    }
-            }}</small>
-          </span>
-          <span class="action"
-            >{{ 'now.finish' | transloco
-            }}<mat-icon aria-hidden="true">chevron_right</mat-icon></span
-          >
+          <ng-container
+            *ngTemplateOutlet="
+              teams;
+              context: {
+                $implicit: game,
+                note:
+                  'now.paused'
+                  | transloco
+                    : {
+                        date:
+                          (game.game.paused ?? game.game.start
+                          | translocoDate: { weekday: 'long', hour: '2-digit', minute: '2-digit' }),
+                      },
+              }
+            "
+          />
+          <span class="sr-only">{{ 'now.finish' | transloco }}</span>
+          <mat-icon class="go" aria-hidden="true">chevron_right</mat-icon>
         </a>
       }
       @for (tournament of s.tournaments; track tournament.id) {
@@ -189,6 +166,28 @@ import { TournamentService } from '../tournament/tournament.service';
         </a>
       </div>
     }
+
+    <ng-template #teams let-game let-note="note">
+      <span class="text teams">
+        @for (color of colors; track color) {
+          <span class="team" [class.r]="color === 'red'" [class.b]="color === 'blue'">
+            @for (name of game.lineup[color]; track $index; let last = $last) {
+              <span>{{ name }}</span>
+              @if (!last) {
+                <i>&</i>
+              }
+            }
+          </span>
+        }
+        @if (note) {
+          <small>{{ note }}</small>
+        }
+      </span>
+      <span class="score"
+        ><span class="r">{{ game.score.red }}</span
+        ><span class="sep">:</span><span class="b">{{ game.score.blue }}</span></span
+      >
+    </ng-template>
   `,
   styles: `
     :host {
@@ -393,10 +392,19 @@ import { TournamentService } from '../tournament/tournament.service';
       font-weight: 700;
     }
     .team span {
+      flex: 0 1 auto;
       min-width: 0;
+      max-width: calc(50% - 0.6em);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    .team span:only-of-type {
+      max-width: 100%;
+    }
+    .go {
+      flex: none;
+      color: var(--fl-ink-2);
     }
     .team i {
       flex: none;
@@ -409,7 +417,7 @@ import { TournamentService } from '../tournament/tournament.service';
     .team.b {
       color: #9db8ff;
     }
-    .row.live .score {
+    .row .score {
       flex: none;
       font-size: 1.5rem;
     }
@@ -462,6 +470,8 @@ export class NowCardComponent {
   private readonly _playerService = inject(PlayerService);
   private readonly _tournamentService = inject(TournamentService);
   private readonly _dialog = inject(MatDialog);
+
+  protected readonly colors = TEAM_COLORS;
 
   public readonly leagueId = input.required<string>();
 
