@@ -57,3 +57,20 @@ Round 2 runs on the Tour of 8057c0e (run 38569971370).
   ranking.
 
 Round 3 runs on the Tour of c55c523 (run 38698154807).
+
+## After round 3: fixed (15 Oct 2026, on `master` at 8977cc2)
+
+- Blocker: the 360 px game header (pause over the clock): icon-only goal-detail pill, a fixed
+  clock width, the swap row without its label.
+- Majors: times agree ("od 09:18" for a game still on, start times for paused games, a finished
+  game's length in words); supporting copy at 14 px; from 1400 px every page 1120 px wide with
+  lists in two columns and a top bar spanning the content; the live card as a scoreboard (each
+  team on its own line with its goals); moves read first ("Gol z ataku: Ala").
+- Minors: form-dots legend; clearer labels (days as the potato, Elo per position for 2-on-2
+  games, time to the first goal, players with games); cards a visible step from the page; the
+  current player in ink, not a highlight bar; one on one games apart in the positions table;
+  folded pairs with too few games; one way to each place (settings by the gear, all leagues in
+  the league menu and the rail); no tab lit on statistics; "Wypisz" by the leave icon; a finished
+  game next to the rail.
+
+Round 4 runs on the Tour of 8977cc2 (run 38802418867).
