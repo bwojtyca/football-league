@@ -136,7 +136,7 @@ for (const size of SIZES) {
       await expect(page.locator('section.first')).toBeVisible();
       await shot('19-empty-league');
       await page.goto('/#/leagues');
-      await expect(page.getByText('Biuro 2026').first()).toBeVisible();
+      await expect(page.locator('fl-leagues').getByText('Biuro 2026').first()).toBeVisible();
       await shot('20-leagues');
       await page.getByRole('button', { name: t('leagues.new') }).click();
       await expect(page.locator('fl-league-new-dialog')).toBeVisible();
