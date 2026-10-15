@@ -54,6 +54,14 @@
           [playerLink]="playerLink"
           [titles]="titles()"
         />
+        <a class="stats" [routerLink]="['/l', current.id, 'stats']">
+          <mat-icon aria-hidden="true">insights</mat-icon>
+          <span>
+            <b>{{ 'leagueStats.title' | transloco }}</b>
+            <small>{{ 'leagueStats.teaser' | transloco: { n: finished() } }}</small>
+          </span>
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
+        </a>
       }
     </section>
   }

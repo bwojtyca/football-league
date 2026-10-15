@@ -6,6 +6,39 @@
   color: var(--fl-ink-2);
 }
 
+/* The ranking's own room for the "+" moves below the statistics link. */
+fl-ranking {
+  --fl-ranking-end: 16px;
+}
+
+/* After the ranking: the league's statistics, one tap away. */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 88px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--fl-card-2);
+  color: var(--fl-ink);
+  text-decoration: none;
+}
+
+.stats span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  line-height: 1.3;
+}
+
+.stats small {
+  color: var(--fl-ink-2);
+}
+
+.stats mat-icon:last-child {
+  color: var(--fl-ink-2);
+}
+
 .first {
   display: grid;
   gap: 12px;

@@ -839,8 +839,8 @@
     "today": "today {games, plural, one {# game} other {# games}}, {wins, plural, one {# win} other {# wins}}",
     "missing": "{n, plural, one {# more game} other {# more games}} to be ranked",
     "profile": "Your profile, statistics and kit",
-    "device": "Playing on this device",
-    "deviceNone": "Who are you on this phone?"
+    "device": "You play as",
+    "deviceNone": "Which player are you?"
   },
   "welcome": {
     "title": "Foosball scores for your league",

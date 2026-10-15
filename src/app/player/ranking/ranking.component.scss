@@ -39,7 +39,7 @@
 .ranking {
   list-style: none;
   margin: 0;
-  padding: 0 0 88px;
+  padding: 0 0 var(--fl-ranking-end, 88px);
 }
 
 .row {
@@ -134,13 +134,13 @@
 }
 
 .hint {
-  margin: 8px 0 88px;
+  margin: 8px 0 var(--fl-ranking-end, 88px);
   font-size: 0.875rem;
   color: var(--fl-ink-2);
 }
 
 .others {
-  margin: 16px 0 88px;
+  margin: 16px 0 var(--fl-ranking-end, 88px);
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--fl-ink-2);
@@ -179,7 +179,7 @@
 }
 
 .rules {
-  margin: 12px 0 88px;
+  margin: 12px 0 var(--fl-ranking-end, 88px);
   font-size: 0.85rem;
   color: var(--fl-ink-2);
 }
@@ -292,7 +292,7 @@
 
 .more {
   display: flex;
-  margin: 8px auto 88px;
+  margin: 8px auto var(--fl-ranking-end, 88px);
 }
 
 /* Columns only a wide ranking has room for. */

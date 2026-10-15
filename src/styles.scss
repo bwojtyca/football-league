@@ -133,6 +133,7 @@ html {
 
   /* Chips: a chosen chip is light on the dark page. */
   --mat-chip-container-shape-radius: 20px;
+  --mat-chip-container-height: 40px;
   /* Chips are tonal too, without outlines. */
   --mat-chip-outline-color: transparent;
   --mat-chip-elevated-container-color: var(--fl-card-2);
@@ -615,6 +616,9 @@ details.fl-fold[open] > summary::after {
   display: grid;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font: var(--fl-sheet-title);
 }
 

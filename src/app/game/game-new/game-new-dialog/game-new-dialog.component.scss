@@ -4,6 +4,16 @@
   background: var(--fl-card-2);
 }
 
+@media (max-width: 400px) {
+  .switch .label {
+    display: none;
+  }
+
+  .switch .mat-icon {
+    margin: 0;
+  }
+}
+
 mat-dialog-content {
   display: grid;
   gap: 16px;

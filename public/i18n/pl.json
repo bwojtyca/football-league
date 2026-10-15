@@ -839,8 +839,8 @@
     "today": "dziś {games, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, {wins, plural, one {# wygrany} few {# wygrane} many {# wygranych} other {# wygranego}}",
     "missing": "do rankingu brakuje {n, plural, one {# meczu} few {# meczów} many {# meczów} other {# meczu}}",
     "profile": "Twój profil, statystyki i koszulka",
-    "device": "Na tym urządzeniu gra",
-    "deviceNone": "Kim jesteś na tym telefonie?"
+    "device": "Grasz jako",
+    "deviceNone": "Którym graczem jesteś?"
   },
   "welcome": {
     "title": "Wyniki piłkarzyków w Twojej lidze",

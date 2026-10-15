@@ -68,8 +68,8 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
             <span class="league-name">{{ league.name }}</span>
           </a>
         }
-        <a routerLink="/leagues" class="league add">
-          <mat-icon aria-hidden="true">add</mat-icon>{{ 'switcher.manage' | transloco }}
+        <a routerLink="/leagues" class="league">
+          <mat-icon aria-hidden="true">list</mat-icon>{{ 'switcher.manage' | transloco }}
         </a>
         <h2 class="fl-kicker">{{ current.name }}</h2>
         @for (tab of tabs; track tab.section) {

@@ -84,6 +84,8 @@ export class LeaguePageComponent {
   protected readonly playerLink = (playerId: string) => ['/l', this.leagueId(), 'player', playerId];
 
   protected readonly canPlay = computed(() => (this.league()?.players.length ?? 0) >= 2);
+  protected readonly finished = computed(() => this.games().filter((game) => game.end).length);
+
   /** Any game finished or under way in the league. */
   protected readonly played = computed(() => this.games().length > 0);
 

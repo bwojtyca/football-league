@@ -75,7 +75,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
         </a>
       }
       <a routerLink="/leagues" (click)="close()" class="item link">
-        <mat-icon aria-hidden="true">add</mat-icon>
+        <mat-icon aria-hidden="true">list</mat-icon>
         <span class="name">{{ 'switcher.manage' | transloco }}</span>
       </a>
     </nav>

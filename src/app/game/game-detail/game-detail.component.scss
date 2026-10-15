@@ -218,6 +218,7 @@
   border-radius: 20px;
   background: var(--fl-card-2);
   cursor: pointer;
+  min-width: 44px;
 }
 
 .swap-dot i {
@@ -400,6 +401,11 @@
 .landscape .tools {
   flex-direction: column;
   align-items: stretch;
+}
+
+.landscape .tools .own-arm,
+.landscape .tools .swaps {
+  flex: none;
 }
 
 .landscape .bar .event {

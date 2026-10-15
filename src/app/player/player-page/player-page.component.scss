@@ -85,6 +85,10 @@
 
 .league a {
   flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin: -10px 0;
   color: var(--fl-ink);
 }
 
@@ -112,8 +116,12 @@
   gap: 4px;
 }
 
+.tiles div {
+  min-width: 0;
+}
+
 .tiles b {
-  font: 800 1.7rem/1 var(--fl-display);
+  font: 800 clamp(1.25rem, 5.6vw, 1.7rem) / 1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 
