@@ -37,3 +37,22 @@ in the report.
   badges felt green, mishaps red; stronger scrim; one month = no chart; no repeated "running".
 
 Round 2 runs on the Tour of 8057c0e (run 38569971370).
+
+## After round 2: fixed (15 Oct 2026, on `master` at c55c523)
+
+- Blockers: the raw key `now.backShort` (CI now runs `scripts/check-i18n.mjs`); live and paused
+  games show both teams on lines of their own with each name at most half a line.
+- Majors: one shell on a wide screen (the rail on every page but a game, `fl-app-rail` outside
+  a league, every page and title at the same left edge); 1120 px pages with their top bar from
+  1400 px (statistics, profile, comparison, overall ranking, games in two columns); duets split
+  fairly; the undo bar's event on two lines; no sideways scroll at 360 (rules table); the potato
+  title as a count when several; counts of finished games everywhere; "Gol: kto strzelił" pill.
+- Minors: sheets centred on a wide screen; finished game header over its column; profile card
+  without the repeated name; "3 wygrane z rzędu"; "Wróć do turnieju"; chips 40 px with a visible
+  container; off switches outlined; pause disc and format icons out of yellow; "Nowa liga" as the
+  leagues page's primary; days capitalised; tabs centred; hints 14 px; current player
+  highlighted, not underlined; unplayed players last without a place; own goal 48 px on a
+  computer; one-line dialog titles; one wording for "who plays here"; stats linked under the
+  ranking.
+
+Round 3 runs on the Tour of c55c523 (run 38698154807).
