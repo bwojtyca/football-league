@@ -56,8 +56,8 @@
   display: inline-block;
 }
 
-.detail span::first-letter {
-  text-transform: uppercase;
+.detail span {
+  white-space: nowrap;
 }
 
 .status {
@@ -266,9 +266,11 @@
 }
 
 .bar .event {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-weight: 600;
 }
 

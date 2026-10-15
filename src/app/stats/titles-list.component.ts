@@ -22,6 +22,9 @@ import { Title, TITLE_GAMES } from './titles';
           <dd>
             @if (row.id === 'marathoner') {
               {{ 'leagueStats.hours' | transloco: hours(row.value) }}
+            } @else if (row.id === 'potato' && row.players.length > 1) {
+              <!-- Several potatoes at once: one count of days would belong to only one of them. -->
+              {{ 'titles.potato.many' | transloco: { count: row.players.length } }}
             } @else {
               {{ 'titles.' + row.id + '.value' | transloco: { n: row.n, count: row.count } }}
             }

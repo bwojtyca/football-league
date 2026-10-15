@@ -180,6 +180,8 @@ html {
   --mat-slide-toggle-selected-focus-handle-color: var(--fl-on-ball);
   --mat-slide-toggle-selected-pressed-handle-color: var(--fl-on-ball);
   --mat-slide-toggle-selected-icon-color: var(--fl-ball);
+  /* An off switch keeps a visible outline (the default was 2:1 on the cards). */
+  --mat-slide-toggle-unselected-track-outline-color: var(--fl-ink-2);
   --mat-checkbox-selected-icon-color: var(--fl-ball);
   --mat-checkbox-selected-hover-icon-color: var(--fl-ball);
   --mat-checkbox-selected-focus-icon-color: var(--fl-ball);

@@ -56,7 +56,8 @@ import { GameMode, MINUTES, TARGETS } from '../game';
       gap: 8px;
     }
     mat-chip-listbox {
-      --mat-chip-container-height: 36px;
+      --mat-chip-container-height: 40px;
+      --mat-chip-elevated-container-color: #262a2e;
     }
     .hint {
       margin: -4px 0 0;

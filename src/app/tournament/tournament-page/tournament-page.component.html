@@ -334,7 +334,7 @@
     <tbody>
       @for (row of rows; track row.team) {
         <tr [class.first]="row.place === 1 && row.games">
-          <td>{{ row.place }}</td>
+          <td>{{ row.place || '' }}</td>
           <th scope="row" class="name">{{ teamName(row.team) }}</th>
           <td>{{ row.games }}</td>
           <td>
@@ -384,7 +384,7 @@
     <tbody>
       @for (row of standings(); track row.player) {
         <tr [class.first]="row.place === 1 && row.games">
-          <td>{{ row.place }}</td>
+          <td>{{ row.place || '' }}</td>
           <th scope="row" class="name">{{ name(row.player) }}</th>
           <td>{{ row.games }}</td>
           <td>

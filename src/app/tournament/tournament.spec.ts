@@ -128,6 +128,16 @@ describe('drawRound', () => {
       ['d', 0],
     ]);
   });
+
+  it('puts players who have not played last, without a place', () => {
+    const games = [play(0, ['a'], ['b'], 'blue')];
+    const table = playerStandings(['a', 'b', 'c'], games);
+    expect(table.map((row) => [row.player, row.place])).toEqual([
+      ['b', 1],
+      ['a', 2],
+      ['c', 0],
+    ]);
+  });
 });
 
 describe('round robin', () => {

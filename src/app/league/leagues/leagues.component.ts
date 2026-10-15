@@ -66,7 +66,7 @@ export class LeaguesComponent {
       return {
         ...league,
         crest: crestOf(league.name),
-        games: games?.length,
+        games: games?.filter((game) => game.end).length,
         lastGame: games?.[0]?.start,
         live: this._live(games?.find((game) => !game.end && !game.paused)),
       };

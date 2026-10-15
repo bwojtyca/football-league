@@ -237,10 +237,16 @@ export class LeagueSwitcherComponent {
     const ids = [
       ...new Set([...(this.current ? [this.current] : []), ...this._leagueService.recent()]),
     ];
-    return ids
-      .map((id) => all.find((league) => league.id === id))
-      .filter((league): league is NonNullable<typeof league> => !!league)
-      .map((league) => ({ ...league, games: this._gameService.leagueGames(league.id)?.length }));
+    return (
+      ids
+        .map((id) => all.find((league) => league.id === id))
+        .filter((league): league is NonNullable<typeof league> => !!league)
+        // Finished games, as the statistics count them.
+        .map((league) => ({
+          ...league,
+          games: this._gameService.leagueGames(league.id)?.filter((game) => game.end).length,
+        }))
+    );
   });
 
   protected close(): void {

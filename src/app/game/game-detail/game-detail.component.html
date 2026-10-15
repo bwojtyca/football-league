@@ -26,7 +26,9 @@
             "
           >
             <mat-icon aria-hidden="true">{{ detailIcons[detail()] }}</mat-icon>
-            <span>{{ 'game.detailLevel.' + detail() | transloco }}</span>
+            <span>{{
+              'game.detailPill' | transloco: { level: ('newGame.inputs.' + detail() | transloco) }
+            }}</span>
           </button>
         }
       }

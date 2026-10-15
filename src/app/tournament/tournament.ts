@@ -185,7 +185,10 @@ export interface PlayerStanding {
   goalsAgainst: number;
 }
 
-/** Individual table: most wins first, then goal difference, then fewer games. */
+/**
+ * Individual table: most wins first, then goal difference, then fewer games. Players who have
+ * not played yet come last without a place (`place` 0).
+ */
 export function playerStandings(players: string[], games: Game[]): PlayerStanding[] {
   const table = new Map(
     players.map((player) => [
@@ -207,10 +210,13 @@ export function playerStandings(players: string[], games: Game[]): PlayerStandin
     }
   }
   const compare = (a: PlayerStanding, b: PlayerStanding) =>
+    Number(!a.games) - Number(!b.games) ||
     b.wins - a.wins ||
     b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
     a.games - b.games;
-  return withPlaces([...table.values()].sort(compare), compare);
+  const rows = withPlaces([...table.values()].sort(compare), compare);
+  rows.filter((row) => !row.games).forEach((row) => (row.place = 0));
+  return rows;
 }
 
 /** Sets the places of a sorted table: rows the comparison finds equal share one. */

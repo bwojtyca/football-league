@@ -267,7 +267,8 @@
       "position": "Tap a rod of the player who scored.",
       "rod": "Tap the rod the goal came from.",
       "man": "Tap the figure that scored."
-    }
+    },
+    "detailPill": "Goal: {level}"
   },
   "modes": {
     "title": "Mode",
@@ -344,8 +345,8 @@
     "table": "Table",
     "player": "Player",
     "team": "Team",
-    "gamesShort": "P",
-    "winsShort": "W",
+    "gamesShort": "Games",
+    "winsShort": "Won",
     "goalsShort": "Goals",
     "playersNow": "Playing ({n})",
     "fixtures": "Fixtures",
@@ -355,7 +356,7 @@
     "games": "Tournament games",
     "running": "running",
     "none": "No tournaments yet.",
-    "back": "Tournament",
+    "back": "Back to the tournament",
     "groupsLabel": "Group stage",
     "groupsNone": "Straight to the cup",
     "groupsTwo": "Two groups first",
@@ -434,7 +435,7 @@
     "title": "Achievements",
     "shutout": "Clean sheet",
     "comeback": "Came back from {n} down",
-    "streak": "{n} wins in a row",
+    "streak": "{n, plural, one {# win} other {# wins}} in a row",
     "milestone": "Game number {n}",
     "times": "{n} times",
     "locked": "not yet",
@@ -449,7 +450,7 @@
     "mishaps": "Mishaps",
     "underTable": "Under the table",
     "ownGoal": "Own goal",
-    "lossStreak": "{n} losses in a row",
+    "lossStreak": "{n, plural, one {# loss} other {# losses}} in a row",
     "how": {
       "firstWin": "Win your first game.",
       "shutout": "Win without conceding.",
@@ -586,7 +587,7 @@
     "avgGame": "Average game",
     "shutouts": "Shutouts",
     "ownGoals": "Own goals",
-    "players": "Players",
+    "players": "Played",
     "months": "Games per month",
     "when": "When we play",
     "day": "Day",
@@ -689,7 +690,8 @@
     "potato": {
       "name": "Potato",
       "hint": "the weakest of their last day of play",
-      "value": "{count, plural, one {# day} other {# days}} as the potato"
+      "value": "{count, plural, one {# day} other {# days}} as the potato",
+      "many": "{count, plural, one {# potato} other {# potatoes}} at once"
     },
     "sniper": {
       "name": "Sniper",

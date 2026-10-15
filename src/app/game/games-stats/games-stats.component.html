@@ -134,17 +134,24 @@
     @if (modes().length > 1) {
       <section>
         <h3>{{ 'stats.modes' | transloco }}</h3>
-        <table>
+        <!-- As partners and rivals: the units in a header row, the numbers alone. -->
+        <table class="rivals">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{ 'stats.gamesShort' | transloco }}</th>
+              <th>{{ 'stats.winRate' | transloco }}</th>
+            </tr>
+          </thead>
           <tbody>
             @for (row of modes(); track $index) {
               <tr>
                 <th><fl-mode-label [mode]="row.mode" /></th>
-                <td>{{ 'count.games' | transloco: { n: row.games } }}</td>
+                <td>{{ row.games }}</td>
                 <td>
                   {{
                     percent(row.wins, row.games) | translocoDecimal: { maximumFractionDigits: 0 }
                   }}%
-                  {{ 'stats.winRate' | transloco }}
                 </td>
               </tr>
             }
@@ -251,7 +258,7 @@
 </ng-template>
 
 <ng-template #rivals let-list="list">
-  <table>
+  <table class="rivals">
     <thead>
       <tr>
         <th></th>

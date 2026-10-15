@@ -42,9 +42,12 @@
   font-weight: 600;
 }
 
+/* The player whose games these are: a soft highlight (underlines mean links). */
 .team .current {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--fl-card-2);
+  color: var(--fl-ink);
 }
 
 /* The score on a small LED panel. */
@@ -82,6 +85,11 @@
 .day h3 {
   margin: 16px 0 2px;
   text-transform: none;
+}
+
+/* Every day starts with a capital ("Poniedziałek, 12 października" as "Dziś, środa"). */
+.day h3::first-letter {
+  text-transform: uppercase;
 }
 
 .day:first-child h3 {

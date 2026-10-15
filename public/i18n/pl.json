@@ -267,7 +267,8 @@
       "position": "Dotknij drążka gracza, który strzelił.",
       "rod": "Dotknij drążka, z którego padł gol.",
       "man": "Dotknij figurki, która strzeliła."
-    }
+    },
+    "detailPill": "Gol: {level}"
   },
   "modes": {
     "title": "Tryb",
@@ -344,8 +345,8 @@
     "table": "Tabela",
     "player": "Gracz",
     "team": "Drużyna",
-    "gamesShort": "M",
-    "winsShort": "W",
+    "gamesShort": "Mecze",
+    "winsShort": "Wygr.",
     "goalsShort": "Gole",
     "playersNow": "W grze ({n})",
     "fixtures": "Terminarz",
@@ -355,7 +356,7 @@
     "games": "Mecze turnieju",
     "running": "trwa",
     "none": "Nie ma jeszcze turniejów.",
-    "back": "Turniej",
+    "back": "Wróć do turnieju",
     "groupsLabel": "Faza grupowa",
     "groupsNone": "Od razu puchar",
     "groupsTwo": "Najpierw 2 grupy",
@@ -434,7 +435,7 @@
     "title": "Osiągnięcia",
     "shutout": "Do zera",
     "comeback": "Powrót z {n} goli straty",
-    "streak": "{n} wygranych z rzędu",
+    "streak": "{n, plural, one {# wygrana} few {# wygrane} many {# wygranych} other {# wygranej}} z rzędu",
     "milestone": "{n}. mecz",
     "times": "{n} razy",
     "locked": "jeszcze nie",
@@ -449,7 +450,7 @@
     "mishaps": "Wpadki",
     "underTable": "Pod stołem",
     "ownGoal": "Samobój",
-    "lossStreak": "{n} porażek z rzędu",
+    "lossStreak": "{n, plural, one {# porażka} few {# porażki} many {# porażek} other {# porażki}} z rzędu",
     "how": {
       "firstWin": "Wygraj pierwszy mecz.",
       "shutout": "Wygraj, nie tracąc gola.",
@@ -586,7 +587,7 @@
     "avgGame": "Średni mecz",
     "shutouts": "Do zera",
     "ownGoals": "Samobóje",
-    "players": "Gracze",
+    "players": "Grali",
     "months": "Mecze w miesiącach",
     "when": "Kiedy gramy",
     "day": "Dzień",
@@ -689,7 +690,8 @@
     "potato": {
       "name": "Ziemniak",
       "hint": "najsłabszy ostatniego dnia gry",
-      "value": "{count, plural, one {# dzień} other {# dni}} jako ziemniak"
+      "value": "{count, plural, one {# dzień} other {# dni}} jako ziemniak",
+      "many": "{count, plural, one {# ziemniak} few {# ziemniaki} other {# ziemniaków}} naraz"
     },
     "sniper": {
       "name": "Snajper",

@@ -135,7 +135,7 @@
 
 .hint {
   margin: 8px 0 88px;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--fl-ink-2);
 }
 
@@ -347,6 +347,7 @@
 .pair span {
   flex: 0 1 auto;
   min-width: 0;
+  max-width: calc(50% - 0.6em);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

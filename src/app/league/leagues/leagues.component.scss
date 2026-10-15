@@ -33,6 +33,9 @@
   width: 100%;
   margin: 16px 0 8px;
   --mat-button-filled-container-height: 52px;
+}
+
+.new-league:not(.fl-cta) {
   --mat-button-filled-container-color: var(--fl-card-2);
   --mat-button-filled-label-text-color: var(--fl-ink);
 }

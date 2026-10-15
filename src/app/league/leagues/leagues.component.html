@@ -81,7 +81,13 @@
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   }
 
-  <button matButton="filled" class="new-league" (click)="newLeague()">
+  <!-- The page's main action, unless the welcome's "Find your league" is. -->
+  <button
+    matButton="filled"
+    class="new-league"
+    [class.fl-cta]="!firstVisit()"
+    (click)="newLeague()"
+  >
     <mat-icon>add</mat-icon>{{ 'leagues.new' | transloco }}
   </button>
 

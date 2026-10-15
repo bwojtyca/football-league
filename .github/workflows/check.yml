@@ -34,6 +34,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
+      # Every translation key written in the code exists in pl.json and en.json.
+      - run: node scripts/check-i18n.mjs
       - run: npm test
       # The production bundle, talking to the emulator instead of the real project.
       - run: npx ng build -c production,emulator
