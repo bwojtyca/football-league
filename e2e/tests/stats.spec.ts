@@ -43,8 +43,10 @@ test('statistics: the league, two players compared, a profile and a game against
   await expect(stats.getByRole('heading', { name: t('titles.title') })).toBeVisible();
   await expect(stats.locator('fl-titles-list dt').first()).toContainText(t('titles.leader.name'));
   await shot(page, 'stats-league');
-  await stats.getByRole('option', { name: d }).click();
-  await expect(stats.locator('mat-chip-option', { hasText: d })).toHaveClass(
+  // The chart's chips show short names (the first name, unique in this league).
+  const short = d.split(' ')[0];
+  await stats.getByRole('option', { name: short }).click();
+  await expect(stats.locator('mat-chip-option', { hasText: short })).toHaveClass(
     /mat-mdc-chip-selected/,
   );
   await page.locator('fl-league-stats canvas').last().scrollIntoViewIfNeeded();
