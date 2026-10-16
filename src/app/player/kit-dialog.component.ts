@@ -159,7 +159,7 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
       width: 64px;
       height: 48px;
       border-radius: 10px;
-      color: var(--fl-ball);
+      color: var(--fl-ink);
     }
     output b {
       font: 900 1.9rem/1 var(--fl-led);

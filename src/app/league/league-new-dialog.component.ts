@@ -171,7 +171,7 @@ export function openLeagueNewDialog(dialog: MatDialog) {
       height: 56px;
       border-radius: 16px;
       background: var(--fl-board);
-      color: var(--fl-ball);
+      color: var(--fl-ink);
       font: 800 1.1rem/1 var(--fl-display);
     }
     .full {

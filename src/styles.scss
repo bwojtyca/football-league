@@ -725,7 +725,7 @@ details.fl-fold[open] > summary::after {
   }
 
   .fl-rail .tab.active mat-icon {
-    color: var(--fl-ball);
+    color: var(--fl-ink);
   }
 
   .fl-rail .league-name {
@@ -754,6 +754,12 @@ details.fl-fold[open] > summary::after {
   .fl-rail .new-play {
     margin-top: 16px;
     --mat-button-filled-container-height: 48px;
+  }
+
+  /* Quiet (a page with its own main action): tonal, as the phone's "+". */
+  .fl-rail .new-play:not(.fl-cta) {
+    --mat-button-filled-container-color: var(--fl-card-2);
+    --mat-button-filled-label-text-color: var(--fl-ink);
   }
 
   /* Next to the rail, every page starts at the same left edge (the title over its content). */

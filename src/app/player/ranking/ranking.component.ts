@@ -22,6 +22,7 @@ import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../
 import { duets } from '../records';
 import { DUET_GAMES, openRankingHelp } from './ranking-help-sheet.component';
 import { Title, TITLE_GAMES } from '../../stats/titles';
+import { shortNames } from '../short-names';
 
 /** Fewest games together for a pair to be ranked. */
 
@@ -166,10 +167,16 @@ export class RankingComponent {
   );
 
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));
+  /** Short names among the ranking's players, for pairs (two names on one line). */
+  private readonly _short = computed(() =>
+    shortNames(new Map(this.players().map((player) => [player.id, player.name]))),
+  );
   protected readonly duets = computed(() =>
     duets(this.games(), this.duetGames()).map((duet) => ({
       ...duet,
-      names: duet.players.map((id) => this._playerService.getPlayerName(id)),
+      names: duet.players.map(
+        (id) => this._short().get(id) ?? this._playerService.getPlayerName(id),
+      ),
     })),
   );
   protected readonly rankedDuets = computed(() =>

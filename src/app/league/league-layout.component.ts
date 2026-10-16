@@ -146,7 +146,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       color: var(--fl-ink);
       box-shadow: inset 0 1px 0 var(--fl-line);
     }
-    .tab {
+    .tabs .tab {
       display: grid;
       justify-items: center;
       align-content: center;
@@ -155,8 +155,17 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       text-decoration: none;
       font: 700 0.75rem/1 var(--fl-display);
     }
-    .tab.active {
-      color: var(--fl-ball);
+    /* The current tab: ink and a pill behind its icon (yellow is the "+" alone). */
+    .tabs .tab.active {
+      color: var(--fl-ink);
+    }
+    .tabs .tab mat-icon {
+      box-sizing: content-box;
+      padding: 2px 16px;
+      border-radius: 14px;
+    }
+    .tabs .tab.active mat-icon {
+      background: var(--fl-card-2);
     }
     .play {
       justify-self: center;
@@ -189,7 +198,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       cursor: default;
     }
     .play:focus-visible,
-    .tab:focus-visible {
+    .tabs .tab:focus-visible {
       outline: 3px solid var(--fl-ball);
       outline-offset: 2px;
     }

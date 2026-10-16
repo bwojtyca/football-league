@@ -96,7 +96,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       height: 48px;
       border-radius: 14px;
       background: var(--fl-board);
-      color: var(--fl-ball);
+      color: var(--fl-ink);
       font: 800 0.95rem/1 var(--fl-display);
     }
     .about {
