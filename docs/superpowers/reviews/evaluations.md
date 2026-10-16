@@ -75,3 +75,21 @@ Round 3 runs on the Tour of c55c523 (run 38698154807).
   game next to the rail.
 
 Round 4 runs on the Tour of 8977cc2 (run 38802418867).
+
+## After round 4: fixed (16 Oct 2026, on the branch at 9bdcb6c)
+
+- Major: the rail's league sections are rows like the leagues above them (the bottom bar's tab
+  style no longer leaks into the rail); the game page's rail shows its league and sections.
+- Minors: short labels for the game screen's controls at 360 px and a tap hint after the first
+  goal; the hamburger only on pages without a back arrow; yellow kept to the main action (tabs,
+  clock, the rail's quiet button in grey); one centred 1120 px column with its top bar on every
+  page next to the rail, lists in two columns from 1000 px, a 380 px side column; one tile
+  pattern (number over a sentence-case label) for league stats, profile records and stats;
+  durations in words, goals with a dash, whole percentages, tile numbers never wrap; short names
+  in the live card, the duets and the table's plates and boards; end boards as wide as the
+  table; duet avatars side by side; two-letter crests; the potato view with one days column;
+  "Wstrzymany · start"; a compact profile card (pills on one line, titles on one scrolled
+  line); the profile's player on a chip in game lists, bold only for winners; dates on the Elo
+  chart and its chips on one scrolled row; a numbered scale under the heat map; no month in the
+  goal-log note; close buttons always on a disc; the new game dialog without stretched gaps;
+  tablet sheets as wide as the page; the live clock in Archivo digits.
