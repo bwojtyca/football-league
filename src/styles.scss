@@ -229,18 +229,6 @@ a {
   padding: 4px 16px 32px;
 }
 
-/* A wide screen: statistics in two columns (the wider column is set next to the rail). */
-@media (min-width: 1400px) {
-  .fl-wide-page .fl-stats {
-    columns: 2;
-    column-gap: 32px;
-  }
-
-  .fl-wide-page .fl-stats > section {
-    break-inside: avoid;
-  }
-}
-
 .loader {
   display: flex;
   justify-content: center;
@@ -747,24 +735,38 @@ details.fl-fold[open] > summary::after {
     column-gap: 32px;
   }
 
-  fl-league-settings .page,
-  fl-tournament-page .page {
+  fl-league-settings .page {
     columns: 2;
     column-gap: 32px;
   }
 
-  fl-league-settings .page > *,
-  fl-tournament-page .page > * {
+  fl-league-settings .page > * {
     break-inside: avoid;
   }
 
-  fl-league-games fl-game-list {
-    display: block;
+  /* A tournament: what is played and the table, beside the summary and its games. */
+  fl-tournament-page .page:has(> .main) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 32px;
+  }
+
+  /* The games of a day in two columns, read left to right; days follow down the page. */
+  fl-league-games fl-game-list .games {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 32px;
+  }
+
+  /* Statistics in two columns of whole sections (from 1400 px before: one stretched column
+     at 1280). */
+  .fl-wide-page .fl-stats {
     columns: 2;
     column-gap: 32px;
   }
 
-  fl-league-games fl-game-list .day {
+  .fl-wide-page .fl-stats > section {
     break-inside: avoid;
   }
 }
@@ -775,6 +777,15 @@ details.fl-fold[open] > summary::after {
     width: 720px;
     max-width: calc(100vw - 32px) !important;
   }
+}
+
+/* Every sheet has its close disc at the top right; its first line leaves room for it. */
+.mat-bottom-sheet-container {
+  position: relative;
+}
+
+.mat-bottom-sheet-container > * > :first-child {
+  padding-right: 48px;
 }
 
 /* A wide screen: sheets open as a panel in the middle, not docked far from what opened them. */

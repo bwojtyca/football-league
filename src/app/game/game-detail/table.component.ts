@@ -300,6 +300,11 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
     .from-red .pitch {
       transform: rotate(180deg);
     }
+    /* Upright: the boards span the whole width (evaluation 5: as wide as the table, they cut
+       names to an initial at 360 px), the table stands between them. */
+    .frame.vertical {
+      justify-self: stretch;
+    }
     /* Upright: the table stands, red goal on top, with a board at each end. */
     .vertical .pitch {
       width: min(100cqw, calc((100cqh - var(--boards)) * 390 / 674));
@@ -414,9 +419,15 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    /* A narrow board: the score's colour names the team. */
+    /* A narrow board: the score's colour names the team; under 380 px the names keep the room
+       the avatars took. */
     @container (max-width: 420px) {
       .names .team {
+        display: none;
+      }
+    }
+    @container (max-width: 380px) {
+      .names .who fl-avatar {
         display: none;
       }
     }

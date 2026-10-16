@@ -15,6 +15,7 @@ import { PlayerService } from '../player/player.service';
 import { MeService } from '../shared/me.service';
 import { openAddPlayerDialog } from './add-player-dialog.component';
 import { LeagueService } from './league.service';
+import { SheetCloseComponent } from '../shared/sheet-close.component';
 
 export interface WhoSheetData {
   leagueId: string;
@@ -30,7 +31,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
  */
 @Component({
   selector: 'fl-who-sheet',
-  imports: [MatButtonModule, MatIconModule, AvatarComponent, TranslocoPipe],
+  imports: [SheetCloseComponent, MatButtonModule, MatIconModule, AvatarComponent, TranslocoPipe],
   template: `
     <h2 class="title">{{ 'me.title' | transloco }}</h2>
     <p class="hint">{{ 'me.hint' | transloco }}</p>
@@ -64,6 +65,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
     @if (me.id()) {
       <button matButton class="clear" (click)="clear()">{{ 'me.clear' | transloco }}</button>
     }
+    <fl-sheet-close />
   `,
   styles: `
     :host {

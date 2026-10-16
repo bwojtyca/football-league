@@ -12,6 +12,7 @@ import { openNewGameDialog } from '../game/game-new/game-new-dialog/game-new-dia
 import { NEW_GAME_MODE } from '../game/game';
 import { GameService } from '../game/game.service';
 import { openTournamentNewDialog } from '../tournament/tournament-new-dialog/tournament-new-dialog.component';
+import { SheetCloseComponent } from '../shared/sheet-close.component';
 
 export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
   return sheet.open(NewPlaySheetComponent, { data: leagueId });
@@ -20,7 +21,7 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
 /** What to play next: one game, a series between two teams, or a tournament. */
 @Component({
   selector: 'fl-new-play-sheet',
-  imports: [MatIconModule, TranslocoPipe],
+  imports: [SheetCloseComponent, MatIconModule, TranslocoPipe],
   template: `
     <h2 class="title">{{ 'play.title' | transloco }}</h2>
     <div class="options">
@@ -40,6 +41,7 @@ export function openNewPlaySheet(sheet: MatBottomSheet, leagueId: string) {
         <small>{{ 'play.tournamentHint' | transloco }}</small>
       </button>
     </div>
+    <fl-sheet-close />
   `,
   styles: `
     :host {

@@ -3,12 +3,13 @@
 Each round: the Tour's shots, a fresh evaluator agent briefed with `rubric.md` only (no earlier
 reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dimension.
 
-| Round | Date | Tour run | Hierarchy | Consistency | Readability | IA and flow | Responsive | Real data | Overall | Mean |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 14 Oct 2026 | 38458593413 (master 431a788) | 5.8 | 6.0 | 5.0 | 5.3 | 6.0 | 2.3 | 2.3 | 5.1 |
-| 2 | 14 Oct 2026 | 38569971370 (master 8057c0e) | 6.75 | 5.0 | 4.25 | 6.0 | 4.0 | 5.5 | 4.0 | 5.25 |
-| 3 | 15 Oct 2026 | 38698154807 (master c55c523) | 7.25 | 7.25 | 4.25 | 7.0 | 5.5 | 6.75 | 4.25 | 6.3 |
-| 4 | 16 Oct 2026 | 38802418867 (master 8977cc2) | 7.5 | 5.75 | 6.5 | 5.75 | 6.75 | 6.75 | 5.75 | 6.5 |
+| Round | Date        | Tour run                     | Hierarchy | Consistency | Readability | IA and flow | Responsive | Real data | Overall | Mean |
+| ----- | ----------- | ---------------------------- | --------- | ----------- | ----------- | ----------- | ---------- | --------- | ------- | ---- |
+| 1     | 14 Oct 2026 | 38458593413 (master 431a788) | 5.8       | 6.0         | 5.0         | 5.3         | 6.0        | 2.3       | 2.3     | 5.1  |
+| 2     | 14 Oct 2026 | 38569971370 (master 8057c0e) | 6.75      | 5.0         | 4.25        | 6.0         | 4.0        | 5.5       | 4.0     | 5.25 |
+| 3     | 15 Oct 2026 | 38698154807 (master c55c523) | 7.25      | 7.25        | 4.25        | 7.0         | 5.5        | 6.75      | 4.25    | 6.3  |
+| 4     | 16 Oct 2026 | 38802418867 (master 8977cc2) | 7.5       | 5.75        | 6.5         | 5.75        | 6.75       | 6.75      | 5.75    | 6.5  |
+| 5     | 16 Oct 2026 | 38838805463 (master 1f4d76c) | 7.3       | 5.5         | 6.3         | 5.0         | 6.3        | 6.8       | 5.0     | 6.2  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -93,3 +94,5 @@ Round 4 runs on the Tour of 8977cc2 (run 38802418867).
   chart and its chips on one scrolled row; a numbered scale under the heat map; no month in the
   goal-log note; close buttons always on a disc; the new game dialog without stretched gaps;
   tablet sheets as wide as the page; the live clock in Archivo digits.
+
+Round 5 runs on the Tour of 1f4d76c (run 38838805463); report in `eval-5.md`.

@@ -33,291 +33,302 @@
     <p class="note">{{ 'tournament.deletedNote' | transloco }}</p>
     <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
   } @else {
-    <p class="meta">
-      {{ 'tournament.format.' + current.format | transloco }} ·
-      <fl-mode-label [mode]="current.mode" /> ·
-      {{ (current.teamSize === 2 ? 'newGame.mode2v2' : 'newGame.mode1v1') | transloco }}
-    </p>
-
-    @if (current.end) {
-      <p class="note">
-        {{ 'tournament.ended' | transloco }}
-        @if (winner(); as winner) {
-          <b>{{
-            'tournament.winner' | transloco: { name: winner.join(', '), n: winner.length }
-          }}</b>
-        }
+    <!-- Two columns on a wide screen: what is played and the table, then the summary and the
+         games (evaluation 5: CSS columns split sections from their headings). -->
+    <div class="main">
+      <p class="meta">
+        {{ 'tournament.format.' + current.format | transloco }} ·
+        <fl-mode-label [mode]="current.mode" /> ·
+        {{ (current.teamSize === 2 ? 'newGame.mode2v2' : 'newGame.mode1v1') | transloco }}
       </p>
-    }
 
-    <!-- What is played now, or what comes next. -->
-    @if (running(); as game) {
-      <a class="card now" [routerLink]="['/game', game.id]">
-        <h2>{{ 'tournament.playing' | transloco }}</h2>
-        <span class="matchup">
-          <span class="side r">{{ gameSide(game, 'red') }}</span>
-          <b class="vs">{{ score(game) }}</b>
-          <span class="side b">{{ gameSide(game, 'blue') }}</span>
-        </span>
-      </a>
-    } @else if (!current.end) {
-      @switch (current.format) {
-        @case ('king') {
-          @if (king()?.next; as next) {
-            <section class="card now">
-              <h2>{{ 'tournament.next' | transloco }}</h2>
-              <span class="matchup">
-                <span class="side r">
-                  @if (king()?.champions?.color === 'red') {
-                    <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
-                      >emoji_events</mat-icon
-                    >
-                  }
-                  {{ lineupName(next.red) }}
-                </span>
-                <b class="vs">{{ 'tournament.vs' | transloco }}</b>
-                <span class="side b">
-                  @if (king()?.champions?.color === 'blue') {
-                    <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
-                      >emoji_events</mat-icon
-                    >
-                  }
-                  {{ lineupName(next.blue) }}
-                </span>
-              </span>
-              <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
-                {{ 'newGame.start' | transloco }}
-              </button>
-            </section>
-          } @else {
-            <p class="note">{{ 'tournament.waitingKing' | transloco }}</p>
+      @if (current.end) {
+        <p class="note">
+          {{ 'tournament.ended' | transloco }}
+          @if (winner(); as winner) {
+            <b>{{
+              'tournament.winner' | transloco: { name: winner.join(', '), n: winner.length }
+            }}</b>
           }
-        }
-        @case ('dyp') {
-          @if (draw(); as draw) {
-            <section class="card now">
-              <h2>{{ 'tournament.drawn' | transloco }}</h2>
-              <span class="matchup">
-                <span class="side r">{{ lineupName(draw.red) }}</span>
-                <b class="vs">{{ 'tournament.vs' | transloco }}</b>
-                <span class="side b">{{ lineupName(draw.blue) }}</span>
-              </span>
-              <div class="actions">
-                <button matButton (click)="redraw()">
-                  <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
-                </button>
-                <button matButton="filled" class="fl-cta" (click)="start(draw.red, draw.blue)">
+        </p>
+      }
+
+      <!-- What is played now, or what comes next. -->
+      @if (running(); as game) {
+        <a class="card now" [routerLink]="['/game', game.id]">
+          <h2>{{ 'tournament.playing' | transloco }}</h2>
+          <span class="matchup">
+            <span class="side r">{{ gameSide(game, 'red') }}</span>
+            <b class="vs">{{ score(game) }}</b>
+            <span class="side b">{{ gameSide(game, 'blue') }}</span>
+          </span>
+        </a>
+      } @else if (!current.end) {
+        @switch (current.format) {
+          @case ('king') {
+            @if (king()?.next; as next) {
+              <section class="card now">
+                <h2>{{ 'tournament.next' | transloco }}</h2>
+                <span class="matchup">
+                  <span class="side r">
+                    @if (king()?.champions?.color === 'red') {
+                      <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
+                        >emoji_events</mat-icon
+                      >
+                    }
+                    {{ lineupName(next.red) }}
+                  </span>
+                  <b class="vs">{{ 'tournament.vs' | transloco }}</b>
+                  <span class="side b">
+                    @if (king()?.champions?.color === 'blue') {
+                      <mat-icon class="crown" [attr.aria-label]="'tournament.champions' | transloco"
+                        >emoji_events</mat-icon
+                      >
+                    }
+                    {{ lineupName(next.blue) }}
+                  </span>
+                </span>
+                <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
                   {{ 'newGame.start' | transloco }}
                 </button>
-              </div>
-            </section>
-          } @else {
-            <p class="note">{{ 'tournament.needDyp' | transloco }}</p>
+              </section>
+            } @else {
+              <p class="note">{{ 'tournament.waitingKing' | transloco }}</p>
+            }
+          }
+          @case ('dyp') {
+            @if (draw(); as draw) {
+              <section class="card now">
+                <h2>{{ 'tournament.drawn' | transloco }}</h2>
+                <span class="matchup">
+                  <span class="side r">{{ lineupName(draw.red) }}</span>
+                  <b class="vs">{{ 'tournament.vs' | transloco }}</b>
+                  <span class="side b">{{ lineupName(draw.blue) }}</span>
+                </span>
+                <div class="actions">
+                  <button matButton (click)="redraw()">
+                    <mat-icon>casino</mat-icon>{{ 'tournament.redraw' | transloco }}
+                  </button>
+                  <button matButton="filled" class="fl-cta" (click)="start(draw.red, draw.blue)">
+                    {{ 'newGame.start' | transloco }}
+                  </button>
+                </div>
+              </section>
+            } @else {
+              <p class="note">{{ 'tournament.needDyp' | transloco }}</p>
+            }
           }
         }
       }
-    }
 
-    @switch (current.format) {
-      @case ('king') {
-        @let state = king();
-        @if (state?.champions; as champions) {
-          <p class="line">
-            <mat-icon class="crown">emoji_events</mat-icon>
-            {{ 'tournament.kingIs' | transloco: { name: lineupName(champions.lineup) } }} ·
-            {{ 'tournament.streak' | transloco: { n: champions.streak } }}
-          </p>
-        }
-        @if (state?.record; as record) {
-          <p class="line">
-            <mat-icon>military_tech</mat-icon>
-            {{
-              'tournament.record' | transloco: { name: lineupName(record.lineup), n: record.streak }
-            }}
-          </p>
-        }
-        <section>
-          <h2>{{ 'tournament.queue' | transloco }}</h2>
-          <ol class="people">
-            @for (player of state?.queue; track player) {
-              <li>
-                <fl-avatar [playerId]="player" [name]="name(player)" [size]="32" />
-                <span class="who">{{ name(player) }}</span>
-                @if (!current.end) {
-                  <button
-                    matButton
-                    class="leave"
-                    (click)="leave(player)"
-                    [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
-                  >
-                    <mat-icon>logout</mat-icon>{{ 'tournament.leaveShort' | transloco }}
-                  </button>
-                }
-              </li>
-            } @empty {
-              <li class="empty">{{ 'tournament.queueEmpty' | transloco }}</li>
-            }
-          </ol>
-        </section>
-      }
-      @case ('dyp') {
-        <section>
-          <h2>{{ 'tournament.table' | transloco }}</h2>
-          <ng-container *ngTemplateOutlet="playerTable" />
-        </section>
-        <ng-container *ngTemplateOutlet="presentList" />
-      }
-      @case ('series') {
-        @if (series(); as state) {
-          <section class="card series">
-            <h2>{{ 'tournament.seriesTo' | transloco: { n: winsNeeded(current.bestOf ?? 3) } }}</h2>
-            <div class="matchup">
-              <span class="side">{{ teamName(0) }}</span>
-              <b class="vs big">{{ state.wins[0] }} : {{ state.wins[1] }}</b>
-              <span class="side">{{ teamName(1) }}</span>
-            </div>
-            @if (state.winner !== undefined) {
-              <p class="line">
-                <mat-icon class="crown">emoji_events</mat-icon>
-                {{ 'tournament.seriesWinner' | transloco: { name: teamName(state.winner) } }}
-              </p>
-            } @else if (state.next; as next) {
-              <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
-                {{ 'tournament.startGame' | transloco: { n: state.number } }}
-              </button>
-            }
-          </section>
-        }
-      }
-      @case ('open') {
-        @if (!current.end && !running()) {
-          <div class="actions start">
-            @if (lastGame(); as last) {
-              <button matButton="tonal" (click)="rematchLast()">
-                {{ 'game.rematch' | transloco }}
-              </button>
-            }
-            <button matButton="filled" class="fl-cta" (click)="newOpenGame()">
-              <mat-icon>add</mat-icon>{{ 'league.newGame' | transloco }}
-            </button>
-          </div>
-        }
-        <section>
-          <h2>{{ 'tournament.table' | transloco }}</h2>
-          <ng-container *ngTemplateOutlet="playerTable" />
-        </section>
-        <ng-container *ngTemplateOutlet="presentList" />
-      }
-      @case ('rotation') {
-        <section>
-          <h2>{{ 'tournament.table' | transloco }}</h2>
-          <ng-container *ngTemplateOutlet="playerTable" />
-        </section>
-        <section>
-          <h2>{{ 'tournament.fixtures' | transloco }}</h2>
-          <ol class="fixtures">
-            @for (fixture of rotation(); track $index) {
-              <li>
-                <span class="side r">{{ lineupName(fixture.red) }}</span>
-                @if (fixture.game; as game) {
-                  <a class="vs" [routerLink]="['/game', game.id]">{{
-                    game.end ? score(game) : ('tournament.live' | transloco)
-                  }}</a>
-                } @else if (!current.end && !running()) {
-                  <button matButton="tonal" class="vs" (click)="start(fixture.red, fixture.blue)">
-                    <mat-icon>play_arrow</mat-icon>{{ 'tournament.play' | transloco }}
-                  </button>
-                } @else {
-                  <span class="vs">{{ 'tournament.vs' | transloco }}</span>
-                }
-                <span class="side b">{{ lineupName(fixture.blue) }}</span>
-              </li>
-            }
-          </ol>
-        </section>
-      }
-      @case ('roundRobin') {
-        <section>
-          <h2>{{ 'tournament.table' | transloco }}</h2>
-          <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: table() }" />
-        </section>
-        <section>
-          <h2>{{ 'tournament.fixtures' | transloco }}</h2>
-          <ol class="fixtures">
-            @for (fixture of fixtures(); track $index) {
-              <ng-container
-                *ngTemplateOutlet="
-                  fixtureRow;
-                  context: { red: fixture.red, blue: fixture.blue, game: fixture.game }
-                "
-              />
-            }
-          </ol>
-        </section>
-      }
-      @case ('cup') {
-        @if (cup(); as cup) {
-          @if (cup.champion !== undefined && !current.end) {
-            <p class="note champion">
+      @switch (current.format) {
+        @case ('king') {
+          @let state = king();
+          @if (state?.champions; as champions) {
+            <p class="line">
               <mat-icon class="crown">emoji_events</mat-icon>
-              {{ 'tournament.cupWinner' | transloco: { name: teamName(cup.champion) } }}
+              {{ 'tournament.kingIs' | transloco: { name: lineupName(champions.lineup) } }} ·
+              {{ 'tournament.streak' | transloco: { n: champions.streak } }}
             </p>
           }
-          @if (cup.ready.length && !current.end) {
-            <section>
-              <h2>{{ 'tournament.toPlay' | transloco }}</h2>
-              <ol class="fixtures">
-                @for (match of cup.ready; track match.matchId) {
-                  <ng-container
-                    *ngTemplateOutlet="
-                      fixtureRow;
-                      context: { red: match.red, blue: match.blue, game: match.game }
-                    "
-                  />
-                }
-              </ol>
+          @if (state?.record; as record) {
+            <p class="line">
+              <mat-icon>military_tech</mat-icon>
+              {{
+                'tournament.record'
+                  | transloco: { name: lineupName(record.lineup), n: record.streak }
+              }}
+            </p>
+          }
+          <section>
+            <div class="people-head">
+              <h2>{{ 'tournament.queue' | transloco }}</h2>
+              <ng-container *ngTemplateOutlet="editPeople" />
+            </div>
+            <ol class="people">
+              @for (player of state?.queue; track player) {
+                <li>
+                  <fl-avatar [playerId]="player" [name]="name(player)" [size]="32" />
+                  <span class="who">{{ name(player) }}</span>
+                  @if (!current.end && editing()) {
+                    <button
+                      matButton
+                      class="leave"
+                      (click)="leave(player)"
+                      [attr.aria-label]="'tournament.leave' | transloco: { name: name(player) }"
+                    >
+                      <mat-icon>logout</mat-icon>{{ 'tournament.leaveShort' | transloco }}
+                    </button>
+                  }
+                </li>
+              } @empty {
+                <li class="empty">{{ 'tournament.queueEmpty' | transloco }}</li>
+              }
+            </ol>
+          </section>
+        }
+        @case ('dyp') {
+          <section>
+            <h2>{{ 'tournament.table' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="playerTable" />
+          </section>
+          <ng-container *ngTemplateOutlet="presentList" />
+        }
+        @case ('series') {
+          @if (series(); as state) {
+            <section class="card series">
+              <h2>
+                {{ 'tournament.seriesTo' | transloco: { n: winsNeeded(current.bestOf ?? 3) } }}
+              </h2>
+              <div class="matchup">
+                <span class="side">{{ teamName(0) }}</span>
+                <b class="vs big">{{ state.wins[0] }} : {{ state.wins[1] }}</b>
+                <span class="side">{{ teamName(1) }}</span>
+              </div>
+              @if (state.winner !== undefined) {
+                <p class="line">
+                  <mat-icon class="crown">emoji_events</mat-icon>
+                  {{ 'tournament.seriesWinner' | transloco: { name: teamName(state.winner) } }}
+                </p>
+              } @else if (state.next; as next) {
+                <button matButton="filled" class="fl-cta" (click)="start(next.red, next.blue)">
+                  {{ 'tournament.startGame' | transloco: { n: state.number } }}
+                </button>
+              }
             </section>
           }
-          @for (group of cup.groups; track $index) {
-            <section>
-              <h2>{{ 'tournament.group' | transloco: { n: $index + 1 } }}</h2>
-              <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: group }" />
-            </section>
+        }
+        @case ('open') {
+          @if (!current.end && !running()) {
+            <div class="actions start">
+              @if (lastGame(); as last) {
+                <button matButton="tonal" (click)="rematchLast()">
+                  {{ 'game.rematch' | transloco }}
+                </button>
+              }
+              <button matButton="filled" class="fl-cta" (click)="newOpenGame()">
+                <mat-icon>add</mat-icon>{{ 'league.newGame' | transloco }}
+              </button>
+            </div>
           }
-          @if (cup.phase === 'groups') {
-            <p class="hint">{{ 'tournament.groupsHint' | transloco }}</p>
+          <section>
+            <h2>{{ 'tournament.table' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="playerTable" />
+          </section>
+          <ng-container *ngTemplateOutlet="presentList" />
+        }
+        @case ('rotation') {
+          <section>
+            <h2>{{ 'tournament.table' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="playerTable" />
+          </section>
+          <section>
+            <h2>{{ 'tournament.fixtures' | transloco }}</h2>
+            <ol class="fixtures">
+              @for (fixture of rotation(); track $index) {
+                <li>
+                  <span class="side r">{{ lineupName(fixture.red) }}</span>
+                  @if (fixture.game; as game) {
+                    <a class="vs" [routerLink]="['/game', game.id]">{{
+                      game.end ? score(game) : ('tournament.live' | transloco)
+                    }}</a>
+                  } @else if (!current.end && !running()) {
+                    <button matButton="tonal" class="vs" (click)="start(fixture.red, fixture.blue)">
+                      <mat-icon>play_arrow</mat-icon>{{ 'tournament.play' | transloco }}
+                    </button>
+                  } @else {
+                    <span class="vs">{{ 'tournament.vs' | transloco }}</span>
+                  }
+                  <span class="side b">{{ lineupName(fixture.blue) }}</span>
+                </li>
+              }
+            </ol>
+          </section>
+        }
+        @case ('roundRobin') {
+          <section>
+            <h2>{{ 'tournament.table' | transloco }}</h2>
+            <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: table() }" />
+          </section>
+          <section>
+            <h2>{{ 'tournament.fixtures' | transloco }}</h2>
+            <ol class="fixtures">
+              @for (fixture of fixtures(); track $index) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    fixtureRow;
+                    context: { red: fixture.red, blue: fixture.blue, game: fixture.game }
+                  "
+                />
+              }
+            </ol>
+          </section>
+        }
+        @case ('cup') {
+          @if (cup(); as cup) {
+            @if (cup.champion !== undefined && !current.end) {
+              <p class="note champion">
+                <mat-icon class="crown">emoji_events</mat-icon>
+                {{ 'tournament.cupWinner' | transloco: { name: teamName(cup.champion) } }}
+              </p>
+            }
+            @if (cup.ready.length && !current.end) {
+              <section>
+                <h2>{{ 'tournament.toPlay' | transloco }}</h2>
+                <ol class="fixtures">
+                  @for (match of cup.ready; track match.matchId) {
+                    <ng-container
+                      *ngTemplateOutlet="
+                        fixtureRow;
+                        context: { red: match.red, blue: match.blue, game: match.game }
+                      "
+                    />
+                  }
+                </ol>
+              </section>
+            }
+            @for (group of cup.groups; track $index) {
+              <section>
+                <h2>{{ 'tournament.group' | transloco: { n: $index + 1 } }}</h2>
+                <ng-container *ngTemplateOutlet="teamTable; context: { $implicit: group }" />
+              </section>
+            }
+            @if (cup.phase === 'groups') {
+              <p class="hint">{{ 'tournament.groupsHint' | transloco }}</p>
+            }
+            @if (cup.bracket) {
+              <section>
+                <h2>{{ 'tournament.bracket' | transloco }}</h2>
+                <div id="cup-bracket" class="brackets-viewer bracket" #bracket></div>
+              </section>
+            }
+          } @else {
+            <div class="loader"><mat-spinner [diameter]="32" /></div>
           }
-          @if (cup.bracket) {
-            <section>
-              <h2>{{ 'tournament.bracket' | transloco }}</h2>
-              <div id="cup-bracket" class="brackets-viewer bracket" #bracket></div>
-            </section>
-          }
-        } @else {
-          <div class="loader"><mat-spinner [diameter]="32" /></div>
         }
       }
-    }
 
-    @if (
-      (current.format === 'king' || current.format === 'dyp') && !current.end && absent().length
-    ) {
-      <button matButton class="join" [matMenuTriggerFor]="joinMenu">
-        <mat-icon>person_add</mat-icon>{{ 'tournament.join' | transloco }}
-      </button>
-      <mat-menu #joinMenu="matMenu">
-        @for (player of absent(); track player) {
-          <button mat-menu-item (click)="join(player)">{{ name(player) }}</button>
-        }
-      </mat-menu>
-    }
+      @if (
+        (current.format === 'king' || current.format === 'dyp') && !current.end && absent().length
+      ) {
+        <button matButton class="join" [matMenuTriggerFor]="joinMenu">
+          <mat-icon>person_add</mat-icon>{{ 'tournament.join' | transloco }}
+        </button>
+        <mat-menu #joinMenu="matMenu">
+          @for (player of absent(); track player) {
+            <button mat-menu-item (click)="join(player)">{{ name(player) }}</button>
+          }
+        </mat-menu>
+      }
+    </div>
+    <div class="side">
+      <fl-tournament-summary [games]="games()!" />
 
-    <fl-tournament-summary [games]="games()!" />
-
-    <section>
-      <h2>{{ 'tournament.games' | transloco }}</h2>
-      <fl-game-list [leagueId]="current.league" [tournamentId]="current.id" [pageSize]="30" />
-    </section>
+      <section>
+        <h2>{{ 'tournament.games' | transloco }}</h2>
+        <fl-game-list [leagueId]="current.league" [tournamentId]="current.id" [pageSize]="30" />
+      </section>
+    </div>
   }
 </main>
 
@@ -400,13 +411,16 @@
 
 <ng-template #presentList>
   <section>
-    <h2>{{ 'tournament.playersNow' | transloco: { n: present().length } }}</h2>
+    <div class="people-head">
+      <h2>{{ 'tournament.playersNow' | transloco: { n: present().length } }}</h2>
+      <ng-container *ngTemplateOutlet="editPeople" />
+    </div>
     <ul class="people">
       @for (player of present(); track player) {
         <li>
           <fl-avatar [playerId]="player" [name]="name(player)" [size]="32" />
           <span class="who">{{ name(player) }}</span>
-          @if (!current?.end) {
+          @if (!current?.end && editing()) {
             <button
               matButton
               class="leave"
@@ -420,4 +434,14 @@
       }
     </ul>
   </section>
+</ng-template>
+
+<!-- Removing someone is rare: one switch per list instead of a button on every row
+     (evaluation 5: eight "Remove" buttons outweighed the table). -->
+<ng-template #editPeople>
+  @if (!tournament()?.end) {
+    <button matButton class="edit-people" (click)="editing.set(!editing())">
+      {{ (editing() ? 'tournament.editDone' : 'tournament.editPeople') | transloco }}
+    </button>
+  }
 </ng-template>

@@ -229,8 +229,12 @@
             ><fl-title-icon [name]="title.icon"
           /></span>
         }
+        <!-- Titles that do not fit, counted: two shown, or one on a narrow ranking. -->
         @if (held.length > 2) {
-          <span class="more-titles">+{{ held.length - 2 }}</span>
+          <span class="more-titles wide">+{{ held.length - 2 }}</span>
+        }
+        @if (held.length > 1) {
+          <span class="more-titles narrow">+{{ held.length - 1 }}</span>
         }
       </span>
       @if (player.games === 0) {

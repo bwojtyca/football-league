@@ -42,22 +42,23 @@ import { LeagueService } from './league.service';
       } @else if (!rows()) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
-        <h2 class="title">
-          {{ 'hub.players' | transloco }} <span>{{ rows()!.length }}</span>
+        <!-- A list kicker, as the other tabs' lists have (evaluation 5: only this tab had a page
+             heading). -->
+        <h2 class="fl-kicker list-title">
+          {{ 'count.players' | transloco: { n: rows()!.length } }}
         </h2>
-        <p class="hint">{{ 'hub.playersHint' | transloco }}</p>
         <ul class="players">
           @for (row of rows(); track row.id) {
             <li>
               <a [routerLink]="['/l', leagueId(), 'player', row.id]">
                 <fl-avatar [playerId]="row.id" [name]="row.name" [size]="40" />
                 <span class="who">
-                  <b
-                    >{{ row.name }}
+                  <span class="name-line">
+                    <b>{{ row.name }}</b>
                     @if (row.id === me.id()) {
                       <span class="you">{{ 'me.you' | transloco }}</span>
                     }
-                  </b>
+                  </span>
                   <small>
                     @if (row.games) {
                       {{ 'count.games' | transloco: { n: row.games } }}
@@ -82,26 +83,23 @@ import { LeagueService } from './league.service';
     </main>
   `,
   styles: `
-    .title {
-      margin: 4px 0 2px;
-      font: var(--fl-section);
+    .list-title {
+      margin: 8px 0 4px;
     }
-    .title span {
-      color: var(--fl-ink-2);
-    }
-    .hint {
-      margin: 0 0 8px;
-      font-size: 0.875rem;
-      color: var(--fl-ink-2);
+    /* The name gives way, the "You" tag stays whole beside it. */
+    .name-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
     }
     .you {
-      margin-left: 6px;
+      flex: none;
       padding: 1px 7px;
       border-radius: 9px;
       background: var(--fl-ink);
       color: var(--fl-on-ball);
       font: 800 0.75rem/1.4 var(--fl-display);
-      vertical-align: 2px;
     }
     .players {
       margin: 0 0 16px;
@@ -110,6 +108,12 @@ import { LeagueService } from './league.service';
     }
     .players li + li {
       border-top: 1px solid var(--fl-line);
+    }
+    /* Two columns on a wide screen: the right one starts without a rule. */
+    @media (min-width: 1000px) {
+      .players li + li:nth-child(2) {
+        border-top: 0;
+      }
     }
     .players a {
       display: flex;
@@ -125,6 +129,7 @@ import { LeagueService } from './league.service';
       min-width: 0;
     }
     .who b {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

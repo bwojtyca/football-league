@@ -6,6 +6,7 @@ import { TitleIconComponent } from '../../shared/title-icon.component';
 import { TITLE_GAMES, TITLES, TitleId } from '../../stats/titles';
 import { POTATO_DAY_GAMES, POTATO_POINTS } from '../potato';
 import { PROVISIONAL_GAMES } from '../rating';
+import { SheetCloseComponent } from '../../shared/sheet-close.component';
 
 /** Fewest games together for a pair to be in the ranking of duets. */
 export const DUET_GAMES = 3;
@@ -20,7 +21,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
  */
 @Component({
   selector: 'fl-ranking-help',
-  imports: [TitleIconComponent, TranslocoPipe],
+  imports: [SheetCloseComponent, TitleIconComponent, TranslocoPipe],
   template: `
     <h2 class="title">{{ 'ranking.helpTitle' | transloco }}</h2>
     <section>
@@ -64,6 +65,7 @@ export function openRankingHelp(sheet: MatBottomSheet) {
       <h3>{{ 'ranking.helpFormTitle' | transloco }}</h3>
       <p>{{ 'ranking.helpForm' | transloco }}</p>
     </section>
+    <fl-sheet-close />
   `,
   styles: `
     :host {

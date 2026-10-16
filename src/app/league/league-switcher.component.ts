@@ -12,6 +12,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { GameService } from '../game/game.service';
 import { crestOf } from './league';
 import { LeagueService } from './league.service';
+import { SheetCloseComponent } from '../shared/sheet-close.component';
 
 export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string | null) {
   return sheet.open(LeagueSwitcherComponent, { data: currentLeague });
@@ -24,7 +25,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
  */
 @Component({
   selector: 'fl-league-switcher',
-  imports: [MatIconModule, RouterLink, TranslocoPipe],
+  imports: [SheetCloseComponent, MatIconModule, RouterLink, TranslocoPipe],
   template: `
     @if (league(); as league) {
       <header class="head">
@@ -73,6 +74,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
         <span class="name">{{ 'switcher.manage' | transloco }}</span>
       </a>
     </nav>
+    <fl-sheet-close />
   `,
   styles: `
     :host {

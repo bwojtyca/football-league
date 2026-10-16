@@ -10,6 +10,7 @@ import { PlayerService } from '../player/player.service';
 import { InstallService } from './install.service';
 import { LanguageSwitchComponent } from './language-switch.component';
 import { MeService } from './me.service';
+import { SheetCloseComponent } from './sheet-close.component';
 
 export function openAppMenu(sheet: MatBottomSheet) {
   return sheet.open(AppMenuSheetComponent);
@@ -21,7 +22,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
  */
 @Component({
   selector: 'fl-app-menu',
-  imports: [MatIconModule, RouterLink, LanguageSwitchComponent, TranslocoPipe],
+  imports: [SheetCloseComponent, MatIconModule, RouterLink, LanguageSwitchComponent, TranslocoPipe],
   template: `
     <h2>{{ 'appMenu.title' | transloco }}</h2>
     <div class="row">
@@ -64,6 +65,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
       <mat-icon aria-hidden="true">leaderboard</mat-icon>
       <span class="label">{{ 'ranking.global' | transloco }}</span>
     </a>
+    <fl-sheet-close />
   `,
   styles: `
     :host {

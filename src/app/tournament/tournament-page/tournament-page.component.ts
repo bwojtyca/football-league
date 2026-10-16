@@ -89,6 +89,8 @@ export class TournamentPageComponent {
 
   private readonly _params = toSignal(inject(ActivatedRoute).paramMap, { requireSync: true });
   protected readonly leagueId = computed(() => this._params().get('leagueId') ?? '');
+  /** Whether the lists show a "Remove" button by each player. */
+  protected readonly editing = signal(false);
 
   /** `undefined` while loading, `null` when there is no such tournament. */
   protected readonly tournament = computed(() =>

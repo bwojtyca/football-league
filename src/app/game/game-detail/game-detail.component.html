@@ -13,14 +13,20 @@
         <mat-icon>arrow_back</mat-icon>
       </a>
       @if (!game.end) {
-        <button matIconButton (click)="rotate()" [attr.aria-label]="'game.rotate' | transloco">
+        <button
+          matIconButton
+          class="rotate"
+          (click)="rotate()"
+          [attr.aria-label]="'game.rotate' | transloco"
+        >
           <mat-icon>screen_rotation</mat-icon>
         </button>
         @if (game.events) {
-          <!-- How much a goal tells, named (P42/R5): position, rod or figure. -->
+          <!-- How goals are recorded: a setting with its choices, not an action (evaluation 5:
+               the pill read as "record a goal"). -->
           <button
             class="detail"
-            (click)="cycleDetail()"
+            [matMenuTriggerFor]="detailMenu"
             [attr.aria-label]="
               'game.detail' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
             "
@@ -30,7 +36,24 @@
               'game.detailPill' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
             }}</span>
             <span class="short">{{ 'game.detailLevel.' + detail() | transloco }}</span>
+            <mat-icon class="chevron" aria-hidden="true">expand_more</mat-icon>
           </button>
+          <mat-menu #detailMenu="matMenu">
+            <p class="menu-title fl-kicker">{{ 'newGame.input' | transloco }}</p>
+            @for (option of goalDetails; track option) {
+              <button
+                mat-menu-item
+                role="menuitemradio"
+                [attr.aria-checked]="detail() === option"
+                (click)="setDetail(option)"
+              >
+                <mat-icon>{{
+                  detail() === option ? 'radio_button_checked' : 'radio_button_unchecked'
+                }}</mat-icon
+                >{{ 'newGame.inputs.' + option | transloco }}
+              </button>
+            }
+          </mat-menu>
         }
       }
       <!-- The series or the rules above the clock. -->
@@ -105,6 +128,12 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #gameMenu="matMenu">
+          @if (!game.end) {
+            <!-- On a narrow phone the turn lives here, so the header keeps room for the clock. -->
+            <button mat-menu-item class="rotate-item" (click)="rotate()">
+              <mat-icon>screen_rotation</mat-icon>{{ 'game.rotate' | transloco }}
+            </button>
+          }
           @if (fullscreenAvailable && !game.end) {
             <button mat-menu-item class="fullscreen" (click)="toggleFullscreen()">
               <mat-icon>{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon
@@ -209,16 +238,20 @@
     } @else if (!game.end && game.events) {
       @let last = lastEvent();
       <footer class="bar" role="status">
+        @if (last && !ownArmed()) {
+          <!-- How to record a goal, in words, for the whole game (evaluation 5: it was a 12 px
+               fragment after the first goal). -->
+          <p class="how">
+            <mat-icon aria-hidden="true">touch_app</mat-icon
+            >{{ 'game.firstStep.' + inputDetail() | transloco }}
+          </p>
+        }
         <span class="text">
           @if (ownArmed()) {
             <small>{{ 'game.last' | transloco }}</small>
             <span class="event armed">{{ 'game.ownPick' | transloco }}</span>
           } @else if (last) {
-            <!-- After the first goal the hint stays, short, next to "Last". -->
-            <small
-              >{{ 'game.last' | transloco }} ·
-              <span class="tap">{{ 'game.tapHint.' + inputDetail() | transloco }}</span></small
-            >
+            <small>{{ 'game.last' | transloco }}</small>
             <span class="event">{{ eventText(last) }}</span>
           } @else {
             <small>{{ 'game.howTo' | transloco }}</small>

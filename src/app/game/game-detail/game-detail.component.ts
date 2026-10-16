@@ -400,12 +400,9 @@ export class GameDetailComponent implements LeaveGuarded {
   protected readonly detail = signal<GoalDetail>(readDetail());
   protected readonly detailIcons = { position: 'person', rod: 'view_week', man: 'groups' };
 
-  protected cycleDetail(): void {
-    const detail = GOAL_DETAILS[(GOAL_DETAILS.indexOf(this.detail()) + 1) % GOAL_DETAILS.length];
-    this._setDetail(detail);
-  }
+  protected readonly goalDetails = GOAL_DETAILS;
 
-  private _setDetail(detail: GoalDetail): void {
+  protected setDetail(detail: GoalDetail): void {
     this.detail.set(detail);
     this.ownArmed.set(false);
     saveDetail(detail);

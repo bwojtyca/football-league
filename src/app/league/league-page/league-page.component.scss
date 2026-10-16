@@ -90,10 +90,10 @@ fl-ranking {
     position: sticky;
     top: 16px;
   }
-  /* Nothing to show yet (a league without games): one column, as on a phone. */
+  /* Nothing to show yet (a league without games): one column, as on a phone, at the page's
+     left edge like every other page (evaluation 5: it was centred). */
   .home:has(fl-now-card:empty) {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 720px;
+    grid-template-columns: minmax(0, 720px);
   }
   .home:has(fl-now-card:empty) .side {
     display: none;

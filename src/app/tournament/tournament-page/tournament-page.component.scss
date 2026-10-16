@@ -156,9 +156,15 @@ ol.people li.empty::before {
   text-align: center;
 }
 
+/* Numbers stay whole ("19–8"); a long name wraps instead (evaluation 5). */
+.table td:not(.name) {
+  white-space: nowrap;
+}
+
 .table .name {
   text-align: left;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .table thead th {
@@ -261,5 +267,16 @@ button.vs {
 
 /* "Leave" in words, quiet: it is not the page's main action. */
 .leave {
+  --mat-button-text-label-text-color: var(--fl-ink-2);
+}
+
+.people-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.people-head .edit-people {
   --mat-button-text-label-text-color: var(--fl-ink-2);
 }

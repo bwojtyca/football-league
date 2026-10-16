@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 
 import { AvatarComponent } from '../../player/avatar/avatar.component';
+import { SheetCloseComponent } from '../../shared/sheet-close.component';
 
 /** A player offered for a place in the lineups. */
 export interface PickerOption {
@@ -45,7 +46,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
 /** Picks the player for one place in the lineups, with a search over the league (P32). */
 @Component({
   selector: 'fl-player-picker',
-  imports: [AvatarComponent, MatButtonModule, MatIconModule, TranslocoPipe],
+  imports: [SheetCloseComponent, AvatarComponent, MatButtonModule, MatIconModule, TranslocoPipe],
   template: `
     <h2>{{ data.title }}</h2>
     @if (data.current) {
@@ -89,6 +90,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
     <button matButton class="add" (click)="close({ add: true })">
       <mat-icon>person_add</mat-icon>{{ 'newGame.newPlayer' | transloco }}
     </button>
+    <fl-sheet-close />
   `,
   styles: `
     :host {

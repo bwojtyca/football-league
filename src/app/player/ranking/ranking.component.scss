@@ -236,13 +236,13 @@
  * The name, then the title icons (each with its tooltip), on one line: icons that do not fit
  * wrap to a second line, which is hidden, so an icon is shown whole or not at all.
  */
+/* One line: the name gives way (cut with an ellipsis), the "You" tag and the title icons never
+   do (evaluation 5: icons wrapped onto a hidden second line and vanished). */
 .line {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   column-gap: 4px;
   min-width: 0;
-  max-height: 1.4em;
   overflow: hidden;
   font-size: 1.05rem;
   line-height: 1.4;
@@ -250,8 +250,7 @@
 
 .line b {
   flex: 0 1 auto;
-  min-width: 0;
-  max-width: 100%;
+  min-width: min(5em, 100%);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -262,9 +261,8 @@
   cursor: help;
 }
 
-/* The "You" tag stays on the line next to a long name. */
-.line:has(.you) b {
-  max-width: calc(100% - 2.9em);
+.more-titles.narrow {
+  display: none;
 }
 
 .who small {
@@ -277,8 +275,12 @@
 @container ranking (max-width: 350px) {
   .row fl-form,
   .line .title ~ .title,
-  .more-titles {
+  .more-titles.wide {
     display: none;
+  }
+
+  .more-titles.narrow {
+    display: inline;
   }
 
   .views button {

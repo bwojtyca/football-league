@@ -153,9 +153,14 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   const bar = page.locator('footer.bar');
   const detail = page.locator('header.top button.detail');
   const button = (name: string) => page.getByRole('button', { name, exact: true });
+  // The goal detail is a setting: its menu lists the three choices.
+  const pick = async (option: 'position' | 'rod' | 'man') => {
+    await detail.click();
+    await page.getByRole('menuitemradio', { name: t(`newGame.inputs.${option}`) }).click();
+  };
 
   // By rod, on the upright table; the choice stays on the device.
-  await detail.click();
+  await pick('rod');
   expect(await page.evaluate(() => localStorage.getItem('fl.goalDetail'))).toBe('rod');
   await page.reload();
   // Bartek scores with a forward.
@@ -165,7 +170,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   await shot(page, 'game-detail-rod');
 
   // By figure: Celina scores with her goalkeeper; Ala's own goal with defender 2, undone.
-  await detail.click();
+  await pick('man');
   await button(`${t('game.goalAria', { name: c })} · ${t('rods.goalie')} 1`).click();
   await expect(score(page)).toHaveText('1:1');
   await expect(bar).toContainText(
@@ -182,7 +187,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   await expect(score(page)).toHaveText('1:1');
 
   // Back to positions: the log mixes all three; the profile counts what it knows.
-  await detail.click();
+  await pick('position');
   await goal(page, a, 7);
   await page
     .locator('fl-finish-panel')

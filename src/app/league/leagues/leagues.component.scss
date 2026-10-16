@@ -35,6 +35,14 @@
   --mat-button-filled-container-height: 52px;
 }
 
+/* A wide screen: a button, not a yellow bar across the page (evaluation 5). */
+@media (min-width: 1000px) {
+  .new-league {
+    width: auto;
+    min-width: 280px;
+  }
+}
+
 .new-league:not(.fl-cta) {
   --mat-button-filled-container-color: var(--fl-card-2);
   --mat-button-filled-label-text-color: var(--fl-ink);

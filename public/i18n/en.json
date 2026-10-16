@@ -8,6 +8,7 @@
     "loading": "Loading"
   },
   "common": {
+    "close": "Close",
     "back": "Back",
     "cancel": "Cancel",
     "ok": "OK",
@@ -276,13 +277,8 @@
       "rod": "which rod",
       "man": "which figure"
     },
-    "detailPill": "Goal: {level}",
-    "swapShort": "Swap",
-    "tapHint": {
-      "position": "goal: tap the scorer’s rod",
-      "rod": "goal: tap the rod",
-      "man": "goal: tap the figure"
-    }
+    "detailPill": "Record: {level}",
+    "swapShort": "Swap"
   },
   "modes": {
     "title": "Mode",
@@ -436,7 +432,9 @@
       "roundRobin": "from 3 teams",
       "cup": "from 3 teams"
     },
-    "leaveShort": "Remove"
+    "leaveShort": "Remove",
+    "editPeople": "Remove someone",
+    "editDone": "Done"
   },
   "timeline": {
     "title": "How it went",

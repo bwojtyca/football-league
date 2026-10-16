@@ -8,6 +8,7 @@
     "loading": "Wczytywanie"
   },
   "common": {
+    "close": "Zamknij",
     "back": "Wstecz",
     "cancel": "Anuluj",
     "ok": "OK",
@@ -276,13 +277,8 @@
       "rod": "którą linią",
       "man": "którym zawodnikiem"
     },
-    "detailPill": "Gol: {level}",
-    "swapShort": "Zamień",
-    "tapHint": {
-      "position": "gol: dotknij drążka strzelca",
-      "rod": "gol: dotknij drążka",
-      "man": "gol: dotknij figurki"
-    }
+    "detailPill": "Zapis: {level}",
+    "swapShort": "Zamień"
   },
   "modes": {
     "title": "Tryb",
@@ -436,7 +432,9 @@
       "roundRobin": "od 3 drużyn",
       "cup": "od 3 drużyn"
     },
-    "leaveShort": "Wypisz"
+    "leaveShort": "Wypisz",
+    "editPeople": "Wypisz kogoś",
+    "editDone": "Gotowe"
   },
   "timeline": {
     "title": "Przebieg meczu",
