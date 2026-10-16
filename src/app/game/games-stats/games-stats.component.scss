@@ -16,37 +16,40 @@ dl {
   margin: 0;
 }
 
+/* The number, its label, then what qualifies it ("1.2 a game"), as the league's tiles. */
 dl > div {
   display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
+  flex-direction: column;
   gap: 2px;
   padding: 10px 12px;
   border-radius: 14px;
   background: var(--fl-card);
 }
 
+dd {
+  display: contents;
+}
+
+dd b {
+  order: 1;
+  font: 800 1.5rem/1.1 var(--fl-display);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--fl-ink);
+}
+
 dt {
+  order: 2;
   color: var(--fl-ink-2);
   font-size: 0.875rem;
   line-height: 1.25;
 }
 
-dd {
-  margin: 0;
+dd .sub {
+  order: 3;
   color: var(--fl-ink-2);
   font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-
-dd b {
-  display: block;
-  color: var(--fl-ink);
-}
-
-dd b {
-  font: 800 1.5rem/1.1 var(--fl-display);
-  white-space: nowrap;
+  line-height: 1.25;
 }
 
 table {
@@ -99,6 +102,9 @@ thead th {
   font-size: 0.875rem;
 }
 
+/* A kicker inside its section, as in the league's statistics. */
 h3.thirds {
-  margin-top: 12px;
+  margin: 12px 0 6px;
+  font: 700 0.875rem/1.2 var(--fl-display);
+  color: var(--fl-ink-2);
 }

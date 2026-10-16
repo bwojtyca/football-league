@@ -7,8 +7,8 @@ import { PlayerService } from '../player.service';
 // Jersey colours that sit well on the paper and the dark background.
 const COLORS = [
   '#b8322a',
-  '#c4581d',
-  '#a77a0e',
+  '#b04e18',
+  '#946a0c',
   '#6b7d1f',
   '#2f7d3c',
   '#11786f',

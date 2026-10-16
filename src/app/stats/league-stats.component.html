@@ -106,44 +106,48 @@
                     }
             }}
           </p>
-          <table class="heat">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <span class="sr-only">{{ 'leagueStats.day' | transloco }}</span>
-                </th>
-                @for (hour of week.hours; track hour) {
-                  <th scope="col">{{ hour }}</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              @for (day of week.days; track day.name) {
+          <!-- A grid only when there is a pattern to see: with one or two hours the sentence above
+               says it all (evaluation 5: a one-column map headed "1"). -->
+          @if (week.hours.length >= 3) {
+            <table class="heat">
+              <thead>
                 <tr>
-                  <th scope="row">{{ day.name }}</th>
-                  @for (cell of day.cells; track cell.hour) {
-                    <td
-                      [style.--share]="cell.share"
-                      [class.empty]="!cell.games"
-                      [attr.title]="day.name + ' ' + cell.hour + ':00 · ' + cell.games"
-                    >
-                      <span class="sr-only">{{ cell.games }}</span>
-                    </td>
+                  <th scope="col">
+                    <span class="sr-only">{{ 'leagueStats.day' | transloco }}</span>
+                  </th>
+                  @for (hour of week.hours; track hour) {
+                    <th scope="col">{{ hour }}</th>
                   }
                 </tr>
+              </thead>
+              <tbody>
+                @for (day of week.days; track day.name) {
+                  <tr>
+                    <th scope="row">{{ day.name }}</th>
+                    @for (cell of day.cells; track cell.hour) {
+                      <td
+                        [style.--share]="cell.share"
+                        [class.empty]="!cell.games"
+                        [attr.title]="day.name + ' ' + cell.hour + ':00 · ' + cell.games"
+                      >
+                        <span class="sr-only">{{ cell.games }}</span>
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+            <!-- The scale: from no games to the busiest hour (evaluation 4: no numbers on it). -->
+            <p class="scale" aria-hidden="true">
+              <span>0</span>
+              <i class="empty"></i>
+              @for (share of [0.25, 0.5, 0.75, 1]; track share) {
+                <i [style.--share]="share"></i>
               }
-            </tbody>
-          </table>
-          <!-- The scale: from no games to the busiest hour (evaluation 4: no numbers on it). -->
-          <p class="scale" aria-hidden="true">
-            <span>0</span>
-            <i class="empty"></i>
-            @for (share of [0.25, 0.5, 0.75, 1]; track share) {
-              <i [style.--share]="share"></i>
-            }
-            <span>{{ 'count.games' | transloco: { n: week.busiest.games } }}</span>
-          </p>
-          <p class="hint">{{ 'leagueStats.whenHint' | transloco }}</p>
+              <span>{{ 'count.games' | transloco: { n: week.busiest.games } }}</span>
+            </p>
+            <p class="hint">{{ 'leagueStats.whenHint' | transloco }}</p>
+          }
         </section>
       }
 

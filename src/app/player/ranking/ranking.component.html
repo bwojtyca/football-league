@@ -171,27 +171,6 @@
       }
     </p>
   }
-  @if (ranked().length) {
-    <!-- What the dots mean, once, under the list. -->
-    <p class="legend">
-      {{ 'ranking.legend' | transloco }}
-      <span class="dots" aria-hidden="true"><i class="w"></i></span>
-      {{ 'result.win' | transloco }}
-      <span class="dots" aria-hidden="true"><i></i></span>
-      {{ 'result.loss' | transloco }}
-      <!-- The titles on this list, named once (evaluation 4: icons without a word). -->
-      @if (shownTitles().length) {
-        <span class="break"></span>
-        {{ 'ranking.legendTitles' | transloco }}
-        @for (title of shownTitles(); track title.id; let last = $last) {
-          <span class="legend-title"
-            ><fl-title-icon [name]="title.icon" />{{ 'titles.' + title.id + '.name' | transloco
-            }}{{ last ? '' : ',' }}</span
-          >
-        }
-      }
-    </p>
-  }
 }
 
 <ng-template #row let-player let-position="position">

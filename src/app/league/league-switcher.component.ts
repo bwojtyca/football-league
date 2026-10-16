@@ -47,7 +47,9 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
         </button>
       </div>
     }
-    <h2 class="fl-kicker">{{ 'switcher.change' | transloco }}</h2>
+    @if (others().length) {
+      <h2 class="fl-kicker">{{ 'switcher.change' | transloco }}</h2>
+    }
     <nav>
       @for (league of others(); track league.id) {
         <a
@@ -57,6 +59,8 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
           [class.current]="league.id === current"
           [attr.aria-current]="league.id === current ? 'page' : null"
         >
+          <!-- Each league with its crest, as in the rail (evaluation 5). -->
+          <span class="crest small" aria-hidden="true">{{ crestFor(league.name) }}</span>
           <span class="name">{{ league.name }}</span>
           <small>
             {{ 'count.players' | transloco: { n: league.players.length } }}
@@ -70,7 +74,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
         </a>
       }
       <a routerLink="/leagues" (click)="close()" class="item link">
-        <mat-icon aria-hidden="true">list</mat-icon>
+        <mat-icon aria-hidden="true" class="lead">list</mat-icon>
         <span class="name">{{ 'switcher.manage' | transloco }}</span>
       </a>
     </nav>
@@ -152,7 +156,7 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
     }
     .item {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
       align-items: center;
       column-gap: 12px;
       min-height: 56px;
@@ -164,20 +168,35 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
     .name {
       font: 700 1.1rem/1.25 var(--fl-display);
     }
-    small {
+    .crest.small {
+      grid-row: 1 / span 2;
       grid-column: 1;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .item .name,
+    small {
+      grid-column: 2;
+    }
+    small {
       color: var(--fl-ink-2);
     }
     .item mat-icon {
       grid-row: 1 / span 2;
-      grid-column: 2;
+      grid-column: 3;
+    }
+    .item mat-icon.lead {
+      grid-column: 1;
+      justify-self: center;
     }
     .current {
       background: var(--fl-card-2);
       padding-left: 14px;
     }
     .link {
-      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-columns: 40px minmax(0, 1fr);
     }
     .link mat-icon {
       grid-column: 1;
@@ -208,6 +227,7 @@ export class LeagueSwitcherComponent {
   /** The current league with its number of games, when the menu is opened from one. */
   protected readonly league = computed(() => this.leagues().find((l) => l.id === this.current));
   protected readonly crest = computed(() => crestOf(this.league()?.name ?? ''));
+  protected readonly crestFor = crestOf;
 
   /** Invites by the league's link: the phone's share sheet, or the clipboard. */
   protected async share(): Promise<void> {

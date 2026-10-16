@@ -72,8 +72,9 @@ html {
   --fl-win: #5be394;
   --fl-loss: #ff8a80;
   --fl-gold: #ffc629;
-  /* Two players side by side in a chart (validated for colour blindness on the cards). */
-  --fl-series-1: #3987e5;
+  /* Two players side by side in a chart (validated for colour blindness on the cards); teal,
+     not blue, so a player is never mistaken for the blue team (evaluation 5). */
+  --fl-series-1: #2bb3a0;
   --fl-series-2: #d95926;
 
   /* Material's system colours, mapped onto the palette above. */
@@ -270,6 +271,17 @@ a {
     flex: 1;
     max-height: none;
   }
+
+  /* The pages' 16 px edge, not Material's 24 px (evaluation 5). */
+  .fl-full-on-phone .mat-mdc-dialog-surface .mat-mdc-dialog-content,
+  .fl-full-on-phone .mat-mdc-dialog-surface .mat-mdc-dialog-actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .fl-full-on-phone .fl-dialog-head:not(:has(> .back)) {
+    padding-left: 16px;
+  }
 }
 
 /* The progress bar on top of the screen while a page or its data is on its way. */
@@ -410,6 +422,16 @@ a {
   opacity: 0.5;
 }
 
+/*
+ * Name links inside statistics' lines and tables: a taller tap area (40 px) without moving the
+ * text (evaluation 5: 15-17 px targets).
+ */
+fl-titles-list a,
+fl-league-stats .fl-records a,
+fl-games-stats td a {
+  padding-block: 12px;
+}
+
 /* Statistics: sections with a heading, numbers as tiles, shares as split bars, records as rows. */
 .fl-stats > section {
   padding: 16px 0;
@@ -538,7 +560,6 @@ a {
 /* A folded section (round 6): one line that says what is inside, a chevron on the right. */
 details.fl-fold > summary {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 4px 10px;
   min-height: 44px;
@@ -552,8 +573,15 @@ details.fl-fold > summary::-webkit-details-marker {
   display: none;
 }
 
+/* The text wraps inside the line, the chevron stays at its end (evaluation 5: it dropped to a
+   line of its own). */
+details.fl-fold > summary > * {
+  min-width: 0;
+}
+
 details.fl-fold > summary::after {
   content: 'expand_more';
+  flex: none;
   margin-left: auto;
   font: 24px/1 'Material Icons';
   font-feature-settings: 'liga';

@@ -73,6 +73,10 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         <a routerLink="/leagues" class="league">
           <mat-icon aria-hidden="true">list</mat-icon>{{ 'switcher.manage' | transloco }}
         </a>
+        <!-- The same rail on every page (evaluation 5: this link came and went). -->
+        <a routerLink="/ranking" class="league">
+          <mat-icon aria-hidden="true">leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
+        </a>
         <h2 class="fl-kicker">{{ current.name }}</h2>
         @for (tab of tabs; track tab.section) {
           <ng-container *ngTemplateOutlet="link; context: { $implicit: tab }" />

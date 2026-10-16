@@ -62,16 +62,6 @@ export class RankingComponent {
   public readonly minGames = input(0);
   /** Titles each player holds now, shown as icons next to their name. */
   public readonly titles = input<Map<string, Title[]>>(new Map());
-  /** The titles whose icons the list shows (two a player), each once, for the legend. */
-  protected readonly shownTitles = computed(() => {
-    const shown = new Map<string, Title>();
-    for (const held of this.titles().values()) {
-      for (const title of held.slice(0, 2)) {
-        shown.set(title.id, title);
-      }
-    }
-    return [...shown.values()];
-  });
   /** Shows this many ranked players first, then more on request (the overall ranking). */
   public readonly pageSize = input<number | null>(null);
   private readonly _pages = signal(1);

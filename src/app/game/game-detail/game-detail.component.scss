@@ -115,6 +115,11 @@
   }
 }
 
+.pause-spot {
+  flex: none;
+  width: 48px;
+}
+
 .menu-title {
   margin: 8px 16px 4px;
 }
@@ -688,5 +693,21 @@
   .screen.ended {
     left: 256px;
     z-index: auto;
+  }
+}
+
+/* A big screen: a wider panel and a score that reads from across the room (evaluation 5: the
+   score was small beside a 1500 px table). */
+@media (min-width: 1600px) and (min-height: 800px) {
+  .screen.landscape {
+    grid-template-columns: minmax(0, 1fr) clamp(380px, 26vw, 480px);
+  }
+
+  .landscape .bug {
+    font-size: clamp(6rem, 7vw, 8.5rem);
+  }
+
+  .landscape .bar .event {
+    font-size: 1.15rem;
   }
 }

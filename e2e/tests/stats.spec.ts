@@ -35,7 +35,9 @@ test('statistics: the league, two players compared, a profile and a game against
   const stats = page.locator('fl-league-stats');
   await expect(stats.getByRole('heading', { name: t('leagueStats.numbers') })).toBeVisible();
   await expect(stats.locator('.fl-tiles').first()).toContainText('2');
-  await expect(stats.locator('table.heat')).toBeVisible();
+  // Two games in one hour: when the league plays, said in a sentence (no one-column grid).
+  await expect(stats.locator('#stats-when .hint').first()).toBeVisible();
+  await expect(stats.locator('table.heat')).toHaveCount(0);
   await expect(stats.getByRole('heading', { name: t('leagueStats.records') })).toBeVisible();
   await expect(stats.locator('.fl-records dt')).toContainText([t('leagueStats.longest')]);
   await expect(stats.getByRole('option')).toHaveCount(4);

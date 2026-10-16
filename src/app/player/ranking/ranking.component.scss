@@ -371,48 +371,6 @@
   padding-bottom: 0;
 }
 
-/* The form dots' legend: a lit dot is a win, a ring a loss. */
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 6px;
-  margin: 12px 0 var(--fl-ranking-end, 88px);
-  font-size: 0.875rem;
-  color: var(--fl-ink-2);
-}
-
-.ranking:has(~ .legend),
-.others:has(~ .legend) {
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.legend .break {
-  flex-basis: 100%;
-}
-
-.legend-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  white-space: nowrap;
-}
-
-.legend .dots i {
-  display: inline-block;
-  box-sizing: border-box;
-  width: 8px;
-  height: 8px;
-  border: 1.5px solid var(--fl-ink-2);
-  border-radius: 50%;
-}
-
-.legend .dots i.w {
-  border-color: var(--fl-ink);
-  background: var(--fl-ink);
-}
-
 /* The potato list's one column header: the number on the right is days as the potato. */
 .potato-head {
   display: flex;

@@ -88,9 +88,9 @@
       </div>
       @if (!game.end) {
         @if (game.paused) {
-          <button matIconButton (click)="resume()" [attr.aria-label]="'game.resume' | transloco">
-            <mat-icon>play_arrow</mat-icon>
-          </button>
+          <!-- Paused: the overlay's "Resume" is the one way back (evaluation 5: two of them);
+               the spot keeps the clock in place. -->
+          <span class="pause-spot" aria-hidden="true"></span>
         } @else {
           <button
             matIconButton
@@ -177,7 +177,15 @@
             }
           }
           <p class="when">
-            {{ game.start | translocoDate: { dateStyle: 'full', timeStyle: 'short' } }} ·
+            {{
+              'gameDetails.when'
+                | transloco
+                  : {
+                      date: (game.start | translocoDate: { dateStyle: 'full' }),
+                      time: (game.start | translocoDate: { timeStyle: 'short' }),
+                    }
+            }}
+            ·
             @let length = playedFor();
             {{
               'gameDetails.played' | transloco: { time: (length.key | transloco: length.params) }

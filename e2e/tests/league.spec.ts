@@ -127,9 +127,10 @@ test('restoring a league with its games leaves a game deleted on its own deleted
   await expect(games).toHaveCount(1);
 
   // ...then the league with its games, and back again.
-  // The league's settings are behind the gear of its pages.
+  // The league's settings open from the page's menu.
+  await page.getByRole('button', { name: t('appMenu.open') }).click();
   await page
-    .locator('fl-top-bar')
+    .locator('fl-app-menu')
     .getByRole('link', { name: t('settings.title') })
     .click();
   await expect(page).toHaveURL(/\/settings$/);

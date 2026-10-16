@@ -27,6 +27,12 @@ mat-dialog-content > .summary {
   margin-top: auto;
 }
 
+.lineups-hint {
+  margin: -8px 0 0;
+  color: var(--fl-ink-2);
+  font-size: 0.875rem;
+}
+
 /* The felt with the four places: red across the table, blue near. */
 .lineups {
   position: relative;

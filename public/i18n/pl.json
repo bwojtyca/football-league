@@ -135,8 +135,8 @@
     "avgWin": "Średnia wygrana",
     "avgLoss": "Średnia porażka",
     "perGoal": "Czas na gola",
-    "games": "mecze",
-    "winRate": "wygranych",
+    "games": "Mecze",
+    "winRate": "Wygranych",
     "none": "Jeszcze bez zakończonych meczów.",
     "totalTime": "Łącznie",
     "thisMonth": "W tym miesiącu",
@@ -150,9 +150,10 @@
     "tournaments": "Turnieje",
     "tournamentsPlayed": "Rozegrane",
     "tournamentsWon": "Wygrane",
-    "gamesShort": "mecze"
+    "gamesShort": "Mecze"
   },
   "newGame": {
+    "tapToChange": "Dotknij miejsca, żeby wybrać innego gracza.",
     "title": "Nowy mecz",
     "mode2v2": "2 na 2",
     "mode1v1": "1 na 1",
@@ -520,7 +521,7 @@
     "global": "Ranking ogólny",
     "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
     "allLeagues": "Wszystkie ligi",
-    "overallProfile": "profil ogólny",
+    "overallProfile": "ze wszystkich lig ›",
     "colGames": "mecze",
     "colWon": "wygranych",
     "help": "Jak czytać ranking",
@@ -529,9 +530,7 @@
     "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
     "helpDuets": "Pary, które zagrały razem co najmniej {n} mecze, według procentu wygranych.",
     "helpFormTitle": "Kropki przy graczu",
-    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka.",
-    "legend": "Kropki: ostatnie 5 meczów,",
-    "legendTitles": "Ikony to tytuły:"
+    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka."
   },
   "potato": {
     "title": "Ziemniak",
@@ -650,7 +649,7 @@
     "chance": "Szansa w meczu 1 na 1",
     "chanceHint": "Z obecnego Elo obu graczy.",
     "against": "Przeciw sobie",
-    "againstGames": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, gole {a}:{b}",
+    "againstGames": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}, gole {a}–{b}",
     "latest": "{name}, ostatnie mecze:",
     "neverAgainst": "Nie grali jeszcze przeciw sobie.",
     "together": "Razem w drużynie",
@@ -761,6 +760,7 @@
     "playersHint": "Dotknij gracza, żeby zobaczyć jego profil, statystyki i koszulkę."
   },
   "gameList": {
+    "at": "o {time}",
     "today": "Dziś",
     "yesterday": "Wczoraj",
     "running": "Trwa",
@@ -786,11 +786,12 @@
     "found": "Znalezieni"
   },
   "gameDetails": {
+    "when": "{date}, o {time}",
     "played": "{time} gry"
   },
   "appMenu": {
-    "title": "Aplikacja",
-    "open": "Aplikacja: język, kim jesteś, ranking ogólny, ligi",
+    "title": "Menu",
+    "open": "Menu: ustawienia ligi, język, kim jesteś, ranking ogólny",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska."

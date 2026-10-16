@@ -21,7 +21,9 @@
           <a [routerLink]="['/game', game.id]" class="game" [class]="game.result">
             <span class="team red" [class.won]="game.win === 'red'">
               @for (player of game.red; track $index) {
-                <span [class.current]="player.current">{{ player.name }}</span>
+                <span [class.current]="player.current" [attr.title]="player.full">{{
+                  player.name
+                }}</span>
               }
             </span>
             <span class="score">
@@ -30,7 +32,9 @@
             </span>
             <span class="team blue" [class.won]="game.win === 'blue'">
               @for (player of game.blue; track $index) {
-                <span [class.current]="player.current">{{ player.name }}</span>
+                <span [class.current]="player.current" [attr.title]="player.full">{{
+                  player.name
+                }}</span>
               }
             </span>
             <span class="meta">
@@ -50,7 +54,14 @@
                         }
                 }}
               } @else {
-                {{ game.start | translocoDate: { hour: '2-digit', minute: '2-digit' } }}
+                {{
+                  'gameList.at'
+                    | transloco
+                      : {
+                          time:
+                            (game.start | translocoDate: { hour: '2-digit', minute: '2-digit' }),
+                        }
+                }}
               }
               @if (game.mode; as mode) {
                 <fl-mode-label [mode]="mode" />

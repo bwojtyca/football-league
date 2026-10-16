@@ -135,8 +135,8 @@
     "avgWin": "Average win",
     "avgLoss": "Average loss",
     "perGoal": "Time per goal",
-    "games": "games",
-    "winRate": "won",
+    "games": "Games",
+    "winRate": "Won",
     "none": "No finished games yet.",
     "totalTime": "In all",
     "thisMonth": "This month",
@@ -150,9 +150,10 @@
     "tournaments": "Tournaments",
     "tournamentsPlayed": "Played",
     "tournamentsWon": "Won",
-    "gamesShort": "games"
+    "gamesShort": "Games"
   },
   "newGame": {
+    "tapToChange": "Tap a place to pick another player.",
     "title": "New game",
     "mode2v2": "2 vs 2",
     "mode1v1": "1 vs 1",
@@ -520,7 +521,7 @@
     "global": "Overall ranking",
     "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
     "allLeagues": "All leagues",
-    "overallProfile": "overall profile",
+    "overallProfile": "all leagues ›",
     "colGames": "games",
     "colWon": "won",
     "help": "How to read the ranking",
@@ -529,9 +530,7 @@
     "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
     "helpDuets": "Pairs who played at least {n} games together, by the share of games won.",
     "helpFormTitle": "The dots next to a player",
-    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss.",
-    "legend": "Dots: the last 5 games,",
-    "legendTitles": "Icons are titles:"
+    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss."
   },
   "potato": {
     "title": "Potato",
@@ -650,7 +649,7 @@
     "chance": "Chance one on one",
     "chanceHint": "From both players' current Elo.",
     "against": "Against each other",
-    "againstGames": "{n, plural, one {# game} other {# games}}, goals {a}:{b}",
+    "againstGames": "{n, plural, one {# game} other {# games}}, goals {a}–{b}",
     "latest": "{name}, latest games:",
     "neverAgainst": "They have not played against each other yet.",
     "together": "In the same team",
@@ -761,6 +760,7 @@
     "playersHint": "Tap a player to see their profile, statistics and kit."
   },
   "gameList": {
+    "at": "at {time}",
     "today": "Today",
     "yesterday": "Yesterday",
     "running": "Live",
@@ -786,11 +786,12 @@
     "found": "Found"
   },
   "gameDetails": {
+    "when": "{date}, at {time}",
     "played": "{time} of play"
   },
   "appMenu": {
-    "title": "App",
-    "open": "App: language, who you are, overall ranking, leagues",
+    "title": "Menu",
+    "open": "Menu: league settings, language, who you are, overall ranking",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar."

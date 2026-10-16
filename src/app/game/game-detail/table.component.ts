@@ -333,7 +333,7 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       gap: 6px;
       max-width: 22%;
       transform: translate(-50%, -50%);
-      font: 800 clamp(0.6rem, 2.2cqw, 0.9rem) / 1 var(--fl-display);
+      font: 800 clamp(0.75rem, 1.8cqw, 1.4rem) / 1 var(--fl-display);
       color: var(--fl-ink);
       white-space: nowrap;
       overflow: hidden;
@@ -347,9 +347,9 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    /* Upright, the rails run along the sides: the names read along them, at 12 px. */
+    /* Upright, the rails run along the sides: the names read along them, at 13 px. */
     .vertical .plate {
-      font-size: 0.75rem;
+      font-size: 0.8125rem;
     }
     .plate b {
       font: 900 1.3em/1 var(--fl-led);

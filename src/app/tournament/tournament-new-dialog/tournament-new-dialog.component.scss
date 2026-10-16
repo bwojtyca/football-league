@@ -68,15 +68,16 @@ h3 {
   padding: 12px 14px;
   border: 0;
   border-radius: 16px;
-  background: var(--fl-card);
+  background: var(--fl-card-2);
   color: var(--fl-ink);
   text-align: left;
   cursor: pointer;
 }
 
+/* Cards a step above the dialog, as the choices of "What are we playing?" (evaluation 5). */
 .format:hover,
 .format:focus-visible {
-  background: var(--fl-card-2);
+  background: #2a2e34;
 }
 
 .glyph {
@@ -86,9 +87,8 @@ h3 {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--fl-board);
+  background: rgb(255 255 255 / 0.08);
   color: var(--fl-ink);
-  font: 900 1.1rem/1 var(--fl-led);
 }
 
 .about {

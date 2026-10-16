@@ -9,9 +9,8 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
 import { openAppMenu } from './app-menu-sheet.component';
 
 /**
- * Page header: a back link or the league's menu (its name), the title, the page's actions, on
- * a league's pages the gear to its settings, and the app menu (round 6, evaluation 1: the gear
- * used to open the app menu while the league's settings were hidden).
+ * Page header: a back link or the league's menu (its name), the title, the page's actions and
+ * one menu (on a league's pages it starts with the league's settings).
  */
 @Component({
   selector: 'fl-top-bar',
@@ -36,16 +35,6 @@ import { openAppMenu } from './app-menu-sheet.component';
         <h1 class="title" [class.long]="long()">{{ title() }}</h1>
       }
       <ng-content />
-      <!-- On a league's pages the gear is the league's settings; the app has its own menu. -->
-      @if (switcher(); as league) {
-        <a
-          matIconButton
-          [routerLink]="['/l', league, 'settings']"
-          [attr.aria-label]="'settings.title' | transloco"
-        >
-          <mat-icon>settings</mat-icon>
-        </a>
-      }
       <!-- The app menu on top-level pages; a page with a back arrow keeps one menu, its own. -->
       @if (!back()) {
         <button
@@ -123,7 +112,7 @@ export class TopBarComponent {
   protected readonly long = computed(() => this.title().length > 22);
 
   protected appMenu(): void {
-    openAppMenu(this._sheet);
+    openAppMenu(this._sheet, this.switcher());
   }
 
   protected switchLeague(): void {

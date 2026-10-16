@@ -9,7 +9,7 @@
           <dt>{{ 'stats.scored' | transloco }}</dt>
           <dd>
             <b>{{ s.goals.total }}</b>
-            {{
+            <small class="sub">{{
               'stats.perGame'
                 | transloco
                   : {
@@ -17,14 +17,14 @@
                         (ratio(s.goals.total, s.games.total)
                         | translocoDecimal: { maximumFractionDigits: 1 }),
                     }
-            }}
+            }}</small>
           </dd>
         </div>
         <div>
           <dt>{{ 'stats.own' | transloco }}</dt>
           <dd>
             <b>{{ s.goals.own }}</b>
-            {{
+            <small class="sub">{{
               'stats.perGame'
                 | transloco
                   : {
@@ -32,7 +32,7 @@
                         (ratio(s.goals.own, s.games.total)
                         | translocoDecimal: { maximumFractionDigits: 1 }),
                     }
-            }}
+            }}</small>
           </dd>
         </div>
       </dl>
@@ -51,7 +51,7 @@
           <dt>{{ 'stats.thisMonth' | transloco }}</dt>
           <dd>
             <b>{{ 'leagueStats.hours' | transloco: hours(time().month.seconds) }}</b>
-            {{ 'count.games' | transloco: { n: time().month.games } }}
+            <small class="sub">{{ 'count.games' | transloco: { n: time().month.games } }}</small>
           </dd>
         </div>
         <div>
@@ -119,7 +119,7 @@
             </div>
           }
         </dl>
-        <h3 class="thirds">{{ 'thirds.title' | transloco }}</h3>
+        <h3 class="fl-kicker thirds">{{ 'thirds.title' | transloco }}</h3>
         <fl-thirds [thirds]="moments().thirds" />
       </section>
     }

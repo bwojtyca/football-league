@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { GameMode, Lineup, lineupPlayers, NEW_GAME_MODE } from '../../game/game';
-import { openNewGameDialog } from '../../game/game-new/game-new-dialog/game-new-dialog.component';
 import { ModePickerComponent } from '../../game/mode/mode-picker.component';
 import { LeagueService } from '../../league/league.service';
 import { Notifier } from '../../notifier';
@@ -70,7 +69,6 @@ export class TournamentNewDialogComponent {
   private readonly _transloco = inject(TranslocoService);
   private readonly _notifier = inject(Notifier);
   private readonly _router = inject(Router);
-  private readonly _dialog = inject(MatDialog);
 
   /**
    * Formats offered as chips; rotating partners is a variant of round robin. A series is
@@ -84,8 +82,8 @@ export class TournamentNewDialogComponent {
 
   /** First how you play (P50), then the players and rules of that format (P51). */
   protected readonly step = signal<1 | 2>(1);
+  /** A series is not here: "What are we playing?" offers it (evaluation 5: in two places). */
   protected readonly pickable = [
-    { format: 'series', icon: '' },
     { format: 'open', icon: 'groups' },
     { format: 'king', icon: 'military_tech' },
     { format: 'dyp', icon: 'casino' },
@@ -93,13 +91,8 @@ export class TournamentNewDialogComponent {
     { format: 'cup', icon: 'account_tree' },
   ] as const;
 
-  /** A series is two teams, picked in the new game; the other formats go on to their setup. */
+  /** The format goes on to its setup. */
   protected pick(format: TournamentFormat): void {
-    if (format === 'series') {
-      this._dialogRef.close();
-      openNewGameDialog(this._dialog, { leagueId: this._data.leagueId, series: true });
-      return;
-    }
     this.setFormat(format);
     this.step.set(2);
   }

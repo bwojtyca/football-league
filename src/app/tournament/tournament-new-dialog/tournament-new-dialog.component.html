@@ -16,13 +16,9 @@
     <div class="formats">
       @for (option of pickable; track option.format) {
         <button class="format" [attr.data-format]="option.format" (click)="pick(option.format)">
-          <span class="glyph" aria-hidden="true">
-            @if (option.format === 'series') {
-              2:1
-            } @else {
-              <mat-icon>{{ option.icon }}</mat-icon>
-            }
-          </span>
+          <span class="glyph" aria-hidden="true"
+            ><mat-icon>{{ option.icon }}</mat-icon></span
+          >
           <span class="about">
             <b>{{ 'tournament.format.' + option.format | transloco }}</b>
             <small>{{ 'tournament.pick.' + option.format | transloco }}</small>

@@ -23,27 +23,28 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
   template: `
     <fl-top-bar [title]="league()?.name ?? ''" [switcher]="leagueId()" />
     <main class="page">
-      <a class="stats" [routerLink]="['/l', leagueId(), 'stats']">
-        <mat-icon aria-hidden="true">insights</mat-icon>
-        <span class="text">
-          <b>{{ 'leagueStats.title' | transloco }}</b>
-          <small>{{ 'leagueStats.teaser' | transloco: { n: count() } }}</small>
-        </span>
-        <mat-icon aria-hidden="true">chevron_right</mat-icon>
-      </a>
-      <div
-        class="fl-switch filters"
-        role="radiogroup"
-        [attr.aria-label]="'gameList.filter' | transloco"
-      >
-        @for (option of filters(); track option) {
-          <button
-            role="radio"
-            [attr.aria-checked]="filter() === option"
-            (click)="filter.set(option)"
-          >
-            {{ 'gameList.' + option | transloco }}
-          </button>
+      <!-- The filters first, the statistics beside them: the games are the page (evaluation 5:
+           a card above them pushed them down). -->
+      <div class="head">
+        <div
+          class="fl-switch filters"
+          role="radiogroup"
+          [attr.aria-label]="'gameList.filter' | transloco"
+        >
+          @for (option of filters(); track option) {
+            <button
+              role="radio"
+              [attr.aria-checked]="filter() === option"
+              (click)="filter.set(option)"
+            >
+              {{ 'gameList.' + option | transloco }}
+            </button>
+          }
+        </div>
+        @if (count()) {
+          <a class="stats" [routerLink]="['/l', leagueId(), 'stats']">
+            <mat-icon aria-hidden="true">insights</mat-icon>{{ 'leagueStats.title' | transloco }}
+          </a>
         }
       </div>
       <fl-game-list
@@ -55,38 +56,32 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
     </main>
   `,
   styles: `
-    .stats {
+    .head {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 12px;
-      margin: 4px 0 12px;
-      padding: 12px 14px;
-      border-radius: 16px;
+      justify-content: space-between;
+      gap: 8px 12px;
+      margin: 4px 0 8px;
+    }
+    .stats {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 40px;
+      padding: 0 14px 0 10px;
+      border-radius: 20px;
       background: var(--fl-card-2);
       color: var(--fl-ink);
       text-decoration: none;
+      font: 700 0.875rem/1 var(--fl-display);
     }
-    .stats mat-icon:first-child {
-      color: var(--fl-ink);
-    }
-    .stats mat-icon:last-child {
-      color: var(--fl-ink-2);
-    }
-    .text {
-      flex: 1;
-      min-width: 0;
-      display: grid;
-      line-height: 1.3;
-    }
-    .text b {
-      font: 700 1rem/1.3 var(--fl-display);
-    }
-    .text small {
-      color: var(--fl-ink-2);
-      font-size: 0.875rem;
+    .stats mat-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
     }
     .filters {
-      margin-bottom: 8px;
       max-width: 100%;
       overflow-x: auto;
     }
