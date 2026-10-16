@@ -131,6 +131,9 @@ html {
   --mat-fab-extended-label-text-size: 1rem;
   --mat-fab-extended-label-text-weight: 800;
   --mat-fab-extended-label-text-tracking: 0.01em;
+  /* Field labels and hints without Material's letter spacing (evaluation 5). */
+  --mat-form-field-subscript-text-tracking: normal;
+  --mat-form-field-container-text-tracking: normal;
 
   /* Chips: a chosen chip is light on the dark page. */
   --mat-chip-container-shape-radius: 20px;

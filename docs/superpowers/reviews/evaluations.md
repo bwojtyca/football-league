@@ -96,3 +96,19 @@ Round 4 runs on the Tour of 8977cc2 (run 38802418867).
   tablet sheets as wide as the page; the live clock in Archivo digits.
 
 Round 5 runs on the Tour of 1f4d76c (run 38838805463); report in `eval-5.md`.
+
+## After round 5: fixed (16 Oct 2026, on the branch at 5f5638c and after)
+
+- Majors: the game screen's first step (a sentence over the last move all game; goal detail as
+  a labelled setting with a menu; the turn in the menu on narrow phones); ranking title icons
+  never wrap away (the name gives way, hidden titles counted); tournament goals never break;
+  end boards span the width at 360 px (no avatars under 380 px); wide pages use grids of whole
+  sections (tournament: play and table beside summary and games; a day's games in two columns).
+- Minors: statistics in two columns from 1000 px; one page menu (league settings first, no
+  gear); the legend in the "?" sheet; "Seria" only in "Co gramy?"; tournament formats as cards;
+  "ze wszystkich lig ›"; a hint that new-game places change; taller name links; game lists with
+  first names (initial when shared) and "o 01:58"; avatar colours at 4.5:1; close discs on every
+  sheet; Players tab with a list kicker; the same rail everywhere; the empty league at the left
+  edge; tiles as number, label, qualifier; sentence-case headers; compare in teal and orange,
+  goals with a dash; one resume while paused; a bigger score on big screens; heat map only with
+  3+ hours; fold chevrons on their line; 16 px dialog edges; short "Zamień" at 360; no "vs".

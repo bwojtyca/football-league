@@ -4,13 +4,18 @@
   background: var(--fl-card-2);
 }
 
+/* A narrow phone: a short label, never a bare icon (evaluation 5). */
+.switch .short {
+  display: none;
+}
+
 @media (max-width: 400px) {
   .switch .label {
     display: none;
   }
 
-  .switch .mat-icon {
-    margin: 0;
+  .switch .short {
+    display: inline;
   }
 }
 

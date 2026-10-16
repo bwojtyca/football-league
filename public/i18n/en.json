@@ -159,6 +159,7 @@
     "mode1v1": "1 vs 1",
     "modeStress": "Stress test on {name}",
     "switchTeams": "Switch teams",
+    "switchShort": "Swap",
     "start": "Start game",
     "needPlayers": "This league needs at least two players.",
     "chance": "Win chance",
