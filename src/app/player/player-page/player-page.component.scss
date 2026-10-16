@@ -195,20 +195,26 @@ h2 {
   margin: 0;
 }
 
+/* The number over its label, as every statistics tile (.fl-tiles). */
 .records div {
-  padding: 8px 12px;
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
   background: var(--fl-card);
 }
 
 .records dt {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25;
   color: var(--fl-ink-2);
 }
 
 .records dd {
   margin: 0;
-  font: 800 1.3rem/1.2 var(--fl-display);
+  font: 800 1.5rem/1.1 var(--fl-display);
   font-variant-numeric: tabular-nums;
 }
 

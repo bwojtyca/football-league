@@ -26,9 +26,10 @@
             "
           >
             <mat-icon aria-hidden="true">{{ detailIcons[detail()] }}</mat-icon>
-            <span>{{
+            <span class="long">{{
               'game.detailPill' | transloco: { level: ('newGame.inputs.' + detail() | transloco) }
             }}</span>
+            <span class="short">{{ 'game.detailLevel.' + detail() | transloco }}</span>
           </button>
         }
       }
@@ -213,7 +214,11 @@
             <small>{{ 'game.last' | transloco }}</small>
             <span class="event armed">{{ 'game.ownPick' | transloco }}</span>
           } @else if (last) {
-            <small>{{ 'game.last' | transloco }}</small>
+            <!-- After the first goal the hint stays, short, next to "Last". -->
+            <small
+              >{{ 'game.last' | transloco }} ·
+              <span class="tap">{{ 'game.tapHint.' + inputDetail() | transloco }}</span></small
+            >
             <span class="event">{{ eventText(last) }}</span>
           } @else {
             <small>{{ 'game.howTo' | transloco }}</small>
@@ -235,7 +240,8 @@
             {{ (ownArmed() ? 'game.ownCancel' : 'game.ownArm') | transloco }}
           </button>
           <div class="swaps">
-            <span>{{ 'game.swap' | transloco }}</span>
+            <span class="long">{{ 'game.swap' | transloco }}</span>
+            <span class="short">{{ 'game.swapShort' | transloco }}</span>
             @for (color of colors; track color) {
               <button
                 class="swap-dot swap-dot--{{ color }}"

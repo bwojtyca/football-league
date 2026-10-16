@@ -75,18 +75,25 @@
  * A narrow phone (evaluation 3: the pause button covered the clock at 360 px): the goal-detail
  * pill keeps its icon, the swap row drops its label, nothing leaves the screen.
  */
+.detail .short,
+.swaps .short {
+  display: none;
+}
+
 @media (max-width: 400px) {
-  .screen:not(.landscape) .detail span {
+  .screen:not(.landscape) .detail .long,
+  .screen:not(.landscape) .swaps .long {
     display: none;
   }
 
-  .screen:not(.landscape) .detail {
-    padding: 0 10px;
+  .screen:not(.landscape) .detail .short,
+  .screen:not(.landscape) .swaps .short {
+    display: inline;
   }
+}
 
-  .screen:not(.landscape) .swaps > span {
-    display: none;
-  }
+.bar small .tap {
+  color: var(--fl-ink-2);
 }
 
 .status small {

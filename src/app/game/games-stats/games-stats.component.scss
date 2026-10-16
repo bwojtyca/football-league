@@ -8,26 +8,44 @@ h3 {
   font: var(--fl-section);
 }
 
+/* Numbers as tiles, the number over its label, as in the league's statistics (.fl-tiles). */
 dl {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px 16px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
   margin: 0;
+}
+
+dl > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--fl-card);
 }
 
 dt {
   color: var(--fl-ink-2);
   font-size: 0.875rem;
+  line-height: 1.25;
 }
 
 dd {
   margin: 0;
+  color: var(--fl-ink-2);
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
 dd b {
-  font: 800 1.3rem/1.2 var(--fl-display);
-  margin-right: 4px;
+  display: block;
+  color: var(--fl-ink);
+}
+
+dd b {
+  font: 800 1.5rem/1.1 var(--fl-display);
   white-space: nowrap;
 }
 

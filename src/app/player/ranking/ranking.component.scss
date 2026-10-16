@@ -124,13 +124,10 @@
   color: var(--fl-ink-2);
 }
 
+/* Side by side, not overlapping: an overlap hid the first one's initials. */
 .avatars {
   display: flex;
-}
-
-.avatars fl-avatar + fl-avatar {
-  margin-left: -8px;
-  box-shadow: 0 0 0 2px var(--fl-paper);
+  gap: 2px;
 }
 
 .hint {
@@ -401,4 +398,14 @@
 .legend .dots i.w {
   border-color: var(--fl-ink);
   background: var(--fl-ink);
+}
+
+/* The potato list's one column header: the number on the right is days as the potato. */
+.potato-head {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 4px 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fl-ink-2);
 }

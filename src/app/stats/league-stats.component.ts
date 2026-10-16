@@ -7,12 +7,12 @@ import { TranslocoDatePipe, TranslocoDecimalPipe } from '@jsverse/transloco-loca
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
-import { formatDuration, Game } from '../game/game';
+import { Game } from '../game/game';
 import { GameService } from '../game/game.service';
 import { timelineOf } from '../game/timeline';
 import { PlayerService } from '../player/player.service';
 import { cssColor, withAlpha } from '../shared/css-color';
-import { hoursAndMinutes, scoreOf, sidesOf } from './format';
+import { durationText, hoursAndMinutes, scoreOf, sidesOf } from './format';
 import { LeagueService } from '../league/league.service';
 import { LinesComponent } from './lines.component';
 import { leagueStats, lineStats, ratingTimeline } from './stats';
@@ -267,7 +267,7 @@ export class LeagueStatsComponent {
   };
 
   protected time(seconds: number): string {
-    return formatDuration(seconds);
+    return durationText((key, params) => this._transloco.translate(key, params), seconds);
   }
 
   protected readonly hours = hoursAndMinutes;

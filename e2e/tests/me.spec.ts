@@ -36,6 +36,7 @@ test('"this is me" on the device: the question, the choice, the "You" card and t
   // The card opens the profile, which knows it is yours; the app menu says who plays here.
   await card.getByRole('link').click();
   await expect(page.locator('section.hero .you-tag')).toHaveText(t('me.you'));
+  await page.goBack();
   await page.getByRole('button', { name: t('appMenu.open') }).click();
   await expect(page.locator('fl-app-menu')).toContainText(`${t('me.device')}: ${a}`);
   await page.keyboard.press('Escape');

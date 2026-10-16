@@ -372,6 +372,8 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       background: var(--fl-board-bg);
       font: 800 0.95rem/1 var(--fl-display);
       white-space: nowrap;
+      /* As wide as the table, whatever the names (evaluation 4: long names pushed it out). */
+      contain: inline-size;
     }
     .board .team {
       font-size: 0.75rem;

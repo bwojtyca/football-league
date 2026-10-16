@@ -53,3 +53,12 @@ export function spokenDuration(seconds: number): { key: string; params: Record<s
   }
   return m ? { key: 'duration.ms', params: { m, s } } : { key: 'duration.s', params: { s } };
 }
+
+/** A duration in words, translated ("7 min 15 s"). */
+export function durationText(
+  translate: (key: string, params: Record<string, number>) => string,
+  seconds: number,
+): string {
+  const { key, params } = spokenDuration(seconds);
+  return translate(key, params);
+}

@@ -1,18 +1,17 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { TranslocoDecimalPipe } from '@jsverse/transloco-locale';
 
 import { PlayerService } from '../../player/player.service';
 import { compareLink } from '../../stats/compare-link';
-import { hoursAndMinutes } from '../../stats/format';
+import { durationText, hoursAndMinutes } from '../../stats/format';
 import { LinesComponent } from '../../stats/lines.component';
 import { goalMoments, lineStats, modeRecords, playerTime } from '../../stats/stats';
 import { ThirdsComponent } from '../../stats/thirds.component';
 import { TournamentService } from '../../tournament/tournament.service';
 import { tournamentWinners } from '../../tournament/winners';
-import { formatDuration } from '../game';
 import { GameService } from '../game.service';
 import { ModeLabelComponent } from '../mode/mode-label.component';
 import { calculateStats, ratio } from './player-stats';
@@ -32,6 +31,7 @@ import { calculateStats, ratio } from './player-stats';
   styleUrl: './games-stats.component.scss',
 })
 export class GamesStatsComponent {
+  private readonly _transloco = inject(TranslocoService);
   private readonly _gameService = inject(GameService);
   private readonly _tournamentService = inject(TournamentService);
   protected readonly playerService = inject(PlayerService);
@@ -86,7 +86,9 @@ export class GamesStatsComponent {
   }
 
   protected duration(seconds: number, count: number): string {
-    return count ? formatDuration(seconds / count) : '–';
+    return count
+      ? durationText((key, params) => this._transloco.translate(key, params), seconds / count)
+      : '–';
   }
 
   protected readonly hours = hoursAndMinutes;

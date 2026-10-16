@@ -58,7 +58,9 @@ export class TitlesListComponent {
     const number = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
     return this.titles().map((title) => ({
       ...title,
-      n: number.format(title.id === 'leader' ? Math.round(title.value) : title.value),
+      n: number.format(
+        title.id === 'leader' || title.id === 'duo' ? Math.round(title.value) : title.value,
+      ),
       count: Math.round(title.value),
     }));
   });

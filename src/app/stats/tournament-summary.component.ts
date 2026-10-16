@@ -1,11 +1,11 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { TranslocoDecimalPipe } from '@jsverse/transloco-locale';
 
-import { formatDuration, Game } from '../game/game';
+import { Game } from '../game/game';
 import { PlayerService } from '../player/player.service';
-import { hoursAndMinutes, scoreOf, sidesOf } from './format';
+import { durationText, hoursAndMinutes, scoreOf, sidesOf } from './format';
 import { tournamentSummary } from './stats';
 
 /** A tournament in numbers: its best players and its records. */
@@ -80,6 +80,7 @@ import { tournamentSummary } from './stats';
   `,
 })
 export class TournamentSummaryComponent {
+  private readonly _transloco = inject(TranslocoService);
   private readonly _playerService = inject(PlayerService);
 
   public readonly games = input.required<Game[]>();
@@ -95,7 +96,7 @@ export class TournamentSummaryComponent {
   }
 
   protected time(seconds: number): string {
-    return formatDuration(seconds);
+    return durationText((key, params) => this._transloco.translate(key, params), seconds);
   }
 
   protected readonly hours = hoursAndMinutes;

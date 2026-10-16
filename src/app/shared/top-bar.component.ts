@@ -46,14 +46,17 @@ import { openAppMenu } from './app-menu-sheet.component';
           <mat-icon>settings</mat-icon>
         </a>
       }
-      <button
-        matIconButton
-        class="app-menu"
-        (click)="appMenu()"
-        [attr.aria-label]="'appMenu.open' | transloco"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
+      <!-- The app menu on top-level pages; a page with a back arrow keeps one menu, its own. -->
+      @if (!back()) {
+        <button
+          matIconButton
+          class="app-menu"
+          (click)="appMenu()"
+          [attr.aria-label]="'appMenu.open' | transloco"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
     </header>
   `,
   styles: `
@@ -66,14 +69,6 @@ import { openAppMenu } from './app-menu-sheet.component';
       padding: 8px;
       min-height: 56px;
       box-sizing: border-box;
-    }
-    /* Next to the rail of a wide screen, the bar starts at the pages' left edge too. */
-    @media (min-width: 1000px) {
-      :host-context(fl-league-layout) .bar,
-      :host-context(.fl-with-rail) .bar {
-        max-width: none;
-        margin-left: 0;
-      }
     }
     .title {
       flex: 1;
@@ -113,7 +108,6 @@ import { openAppMenu } from './app-menu-sheet.component';
     }
     .app-menu {
       flex: none;
-      background: var(--fl-card-2);
     }
   `,
 })

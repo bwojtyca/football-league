@@ -62,6 +62,9 @@
       <p class="hint">{{ 'potato.todayHint' | transloco }}</p>
     </section>
   }
+  <p class="potato-head" aria-hidden="true">
+    <span></span><span>{{ 'potato.daysHeader' | transloco }}</span>
+  </p>
   <ol class="ranking">
     @for (row of potatoes(); track row.player; let i = $index) {
       <li>
@@ -88,7 +91,7 @@
           </span>
           <span class="rating">
             <b>{{ row.days }}</b>
-            <small>{{ 'potato.days' | transloco: { n: row.days } }}</small>
+            <span class="sr-only">{{ 'potato.days' | transloco: { n: row.days } }}</span>
           </span>
         </a>
       </li>
