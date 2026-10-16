@@ -250,7 +250,7 @@
 
 .line b {
   flex: 0 1 auto;
-  min-width: min(5em, 100%);
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -271,9 +271,8 @@
   white-space: nowrap;
 }
 
-/* A narrow ranking (a small phone): the name keeps its room; one title, no form dots. */
-@container ranking (max-width: 350px) {
-  .row fl-form,
+/* A phone: one title and a count of the rest, so a long name keeps its room. */
+@container ranking (max-width: 420px) {
   .line .title ~ .title,
   .more-titles.wide {
     display: none;
@@ -281,6 +280,13 @@
 
   .more-titles.narrow {
     display: inline;
+  }
+}
+
+/* A narrow ranking (a small phone): no form dots either. */
+@container ranking (max-width: 350px) {
+  .row fl-form {
+    display: none;
   }
 
   .views button {

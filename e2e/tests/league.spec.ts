@@ -37,7 +37,7 @@ test('a new league: players, the bottom navigation, language and the league swit
   await page.keyboard.press('Escape');
   await expect(nav.getByRole('link', { name: 'Games' })).toBeVisible();
   await page
-    .getByRole('button', { name: 'App: language, who you are, overall ranking, leagues' })
+    .getByRole('button', { name: 'Menu: league settings, language, who you are, overall ranking' })
     .click();
   await page.getByRole('radio', { name: 'Polski' }).click();
   await page.keyboard.press('Escape');
@@ -73,7 +73,7 @@ test('the language can be switched on the leagues page', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: 'Leagues', exact: true })).toBeVisible();
   await page
-    .getByRole('button', { name: 'App: language, who you are, overall ranking, leagues' })
+    .getByRole('button', { name: 'Menu: league settings, language, who you are, overall ranking' })
     .click();
   await page.getByRole('radio', { name: 'Polski' }).click();
   await page.keyboard.press('Escape');
