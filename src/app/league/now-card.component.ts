@@ -239,8 +239,10 @@ import { LeagueService } from './league.service';
       background: var(--fl-red);
       color: #fff;
     }
+    /* Small: Archivo's digits (LED reads badly under about 18 px). */
     .clock {
-      font: 900 0.875rem/1 var(--fl-led);
+      font: 800 0.875rem/1 var(--fl-display);
+      font-variant-numeric: tabular-nums;
       color: var(--fl-ink);
     }
     /* Each player on a line of their own (long names do not wrap into a column of words). */

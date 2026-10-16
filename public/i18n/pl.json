@@ -602,7 +602,7 @@
     "when": "Kiedy gramy",
     "day": "Dzień",
     "busiest": "Najczęściej: {day}, {from}:00–{to}:00 ({n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}).",
-    "whenHint": "Godzina rozpoczęcia meczu; jaśniej znaczy więcej meczów.",
+    "whenHint": "Godzina rozpoczęcia meczu: jaśniejsza kratka to więcej meczów.",
     "table": "Stół",
     "colorWins": "wygrane kolorów",
     "positionGoals": "gole w meczach 2 na 2",

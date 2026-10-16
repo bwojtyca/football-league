@@ -12,12 +12,19 @@
   color: var(--fl-ink-2);
 }
 
-/* Who, then the pills ("That's me", "Kit"), which move to a line of their own when narrow. */
+/* Who: the avatar, the league, the position and the titles; the pills on the next line. */
 .head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pills {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 14px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .head fl-avatar {
@@ -30,9 +37,8 @@
 }
 
 /* The kit: a pill on the felt, opening the shirt editor. */
-.head .kit-pill {
+.pills .kit-pill {
   flex: none;
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -46,9 +52,8 @@
   cursor: pointer;
 }
 
-.head .you-tag {
+.pills .you-tag {
   flex: none;
-  align-self: flex-start;
   padding: 2px 9px;
   border-radius: 10px;
   background: var(--fl-ink);
@@ -56,7 +61,7 @@
   font: 800 0.875rem/1.5 var(--fl-display);
 }
 
-.head .kit-pill .mat-icon {
+.pills .kit-pill .mat-icon {
   width: 20px;
   height: 20px;
   font-size: 20px;
@@ -281,14 +286,19 @@ h2 {
 }
 
 /* Titles held now, on the scoreboard. */
+/* One line, scrolled sideways when there are many (each title has its own page in the help). */
 .titles {
   display: flex;
-  flex-wrap: wrap;
   gap: 4px;
   margin-top: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to left, transparent, #000 24px);
 }
 
 .title {
+  flex: none;
+  white-space: nowrap;
   padding: 2px 8px;
   border-radius: 999px;
   background: rgb(255 255 255 / 0.12);

@@ -42,10 +42,19 @@
   font-weight: 600;
 }
 
-/* The player whose games these are: in ink and heavier (underlines mean links). */
+/* The player whose games these are: on a chip, so bold keeps meaning "won" (evaluation 4). */
 .team .current {
+  justify-self: end;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--fl-card-2);
   color: var(--fl-ink);
-  font-weight: 800;
+}
+
+.team.blue .current {
+  justify-self: start;
 }
 
 /* The score on a small LED panel. */

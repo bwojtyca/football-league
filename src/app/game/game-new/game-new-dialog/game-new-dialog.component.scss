@@ -14,10 +14,17 @@
   }
 }
 
+/* A column: on a tall phone the spare height goes above the summary, not between the
+   sections (evaluation 4: a grid stretched the gaps under "Rules"). */
 mat-dialog-content {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   padding-top: 8px;
+}
+
+mat-dialog-content > .summary {
+  margin-top: auto;
 }
 
 /* The felt with the four places: red across the table, blue near. */

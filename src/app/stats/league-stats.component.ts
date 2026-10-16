@@ -11,11 +11,12 @@ import { Game } from '../game/game';
 import { GameService } from '../game/game.service';
 import { timelineOf } from '../game/timeline';
 import { PlayerService } from '../player/player.service';
+import { shortNames } from '../player/short-names';
 import { cssColor, withAlpha } from '../shared/css-color';
 import { durationText, hoursAndMinutes, scoreOf, sidesOf } from './format';
 import { LeagueService } from '../league/league.service';
 import { LinesComponent } from './lines.component';
-import { leagueStats, lineStats, ratingTimeline } from './stats';
+import { finished, leagueStats, lineStats, ratingTimeline } from './stats';
 import { ThirdsComponent } from './thirds.component';
 import { leagueTitles } from './titles';
 import { TitlesListComponent } from './titles-list.component';
@@ -207,11 +208,14 @@ export class LeagueStatsComponent {
   });
 
   /** Rated players, best first: the one chosen (or the leader) stands out in the chart. */
-  protected readonly rated = computed(() =>
-    [...(this._gameService.ratings(this.leagueId())?.current ?? [])]
+  /** The rated players by Elo, with names short enough for a row of chips. */
+  protected readonly rated = computed(() => {
+    const ids = [...(this._gameService.ratings(this.leagueId())?.current ?? [])]
       .sort((a, b) => b[1] - a[1])
-      .map(([id]) => ({ id, name: this._playerService.getPlayerName(id) })),
-  );
+      .map(([id]) => id);
+    const short = shortNames(new Map(ids.map((id) => [id, this._playerService.getPlayerName(id)])));
+    return ids.map((id) => ({ id, name: short.get(id)! }));
+  });
   protected readonly chosen = signal<string | null>(null);
   protected readonly focus = computed(() => {
     const chosen = this.chosen();
@@ -234,8 +238,10 @@ export class LeagueStatsComponent {
     const muted = withAlpha(cssColor('--fl-ink-2'), 0.35);
     // Chart.js draws the first dataset on top.
     lines.sort(([a], [b]) => Number(b === focus) - Number(a === focus));
+    // The day of each game on the axis (evaluation 4: game numbers showed no time).
+    const day = new Intl.DateTimeFormat(this._locale(), { day: 'numeric', month: 'short' });
     return {
-      labels: lines[0][1].map((_, i) => i + 1),
+      labels: finished(games).map((game) => day.format(new Date(game.end ?? game.start))),
       datasets: lines.map(([player, data]) => ({
         label: this._playerService.getPlayerName(player),
         data,
@@ -261,7 +267,7 @@ export class LeagueStatsComponent {
       },
     },
     scales: {
-      x: { display: false },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 4, maxRotation: 0 } },
       y: { ticks: { maxTicksLimit: 5 }, grid: { color: 'rgba(128, 128, 128, 0.2)' } },
     },
   };

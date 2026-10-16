@@ -5,6 +5,7 @@
 /* When the league plays: one hue, darker for more games. */
 .heat {
   width: 100%;
+  max-width: 600px;
   margin-bottom: 6px;
   border-collapse: separate;
   border-spacing: 2px;
@@ -30,8 +31,33 @@
   background: color-mix(in srgb, var(--fl-chart) calc(12% + var(--share) * 88%), transparent);
 }
 
-.heat td.empty {
+.heat td.empty,
+.scale i.empty {
   background: var(--fl-card-2);
+}
+
+.scale {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 10px;
+  color: var(--fl-ink-2);
+  font-size: 0.875rem;
+}
+
+.scale i {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--fl-chart) calc(12% + var(--share) * 88%), transparent);
+}
+
+.scale span:first-child {
+  margin-right: 4px;
+}
+
+.scale span:last-child {
+  margin-left: 4px;
 }
 
 .labels .what {
@@ -56,9 +82,21 @@
   background: var(--fl-ink-2);
 }
 
+/* One row, scrolled sideways: 16 players made six rows above the chart (evaluation 4). */
 .players {
   display: block;
   margin-bottom: 8px;
+}
+
+.players ::ng-deep .mdc-evolution-chip-set__chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to left, transparent, #000 32px);
+}
+
+.players ::ng-deep .mat-mdc-chip {
+  flex: none;
 }
 
 .thirds {
