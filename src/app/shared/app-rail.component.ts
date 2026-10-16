@@ -20,7 +20,9 @@ import { LeagueService } from '../league/league.service';
   imports: [MatIconModule, RouterLink, RouterLinkActive, TranslocoPipe],
   template: `
     <nav class="fl-rail" [attr.aria-label]="'nav.label' | transloco">
-      <a routerLink="/leagues" class="brand">Football League</a>
+      <a routerLink="/leagues" class="brand"
+        >Football League<small>{{ 'app.tagline' | transloco }}</small></a
+      >
       @if (leagues().length) {
         <h2 class="fl-kicker">{{ 'leagues.recent' | transloco }}</h2>
         @for (league of leagues(); track league.id) {

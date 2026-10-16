@@ -64,6 +64,18 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
               maxlength="60"
               autocomplete="off"
             />
+            <!-- Saved on leaving the field or Enter; a visible save while it differs. -->
+            @if (name().trim() && name().trim() !== current.name) {
+              <button
+                matIconButton
+                matSuffix
+                (click)="saveName()"
+                [attr.aria-label]="'common.save' | transloco"
+              >
+                <mat-icon>check</mat-icon>
+              </button>
+            }
+            <mat-hint>{{ 'settings.nameHint' | transloco }}</mat-hint>
           </mat-form-field>
         </section>
 

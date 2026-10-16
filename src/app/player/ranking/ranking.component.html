@@ -62,41 +62,46 @@
       <p class="hint">{{ 'potato.todayHint' | transloco }}</p>
     </section>
   }
-  <p class="potato-head" aria-hidden="true">
-    <span></span><span>{{ 'potato.daysHeader' | transloco }}</span>
-  </p>
-  <ol class="ranking">
-    @for (row of potatoes(); track row.player; let i = $index) {
-      <li>
-        <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
-          <span class="pos" aria-hidden="true">
-            @if (row.isPotato) {
-              <fl-title-icon name="potato" />
-            }
-          </span>
-          <fl-avatar [playerId]="row.player" [name]="row.name" [size]="36" />
-          <span class="who">
-            <b>{{ row.name }} </b>
-            <small>
-              {{ 'count.games' | transloco: { n: row.games } }}
-              @if (row.since; as since) {
-                ·
-                {{
-                  'potato.since'
-                    | transloco
-                      : { date: (since | translocoDate: { day: 'numeric', month: 'short' }) }
-                }}
+  <!-- Today's potatoes, then the rest, each by days as the potato (evaluation 4: one list
+       without places read as a wrong order). -->
+  @for (group of potatoGroups(); track group.key) {
+    <p class="potato-head">
+      <span>{{ 'potato.group.' + group.key | transloco: { n: group.rows.length } }}</span>
+      <span aria-hidden="true">{{ 'potato.daysHeader' | transloco }}</span>
+    </p>
+    <ol class="ranking">
+      @for (row of group.rows; track row.player) {
+        <li>
+          <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
+            <span class="pos" aria-hidden="true">
+              @if (row.isPotato) {
+                <fl-title-icon name="potato" />
               }
-            </small>
-          </span>
-          <span class="rating">
-            <b>{{ row.days }}</b>
-            <span class="sr-only">{{ 'potato.days' | transloco: { n: row.days } }}</span>
-          </span>
-        </a>
-      </li>
-    }
-  </ol>
+            </span>
+            <fl-avatar [playerId]="row.player" [name]="row.name" [size]="36" />
+            <span class="who">
+              <b>{{ row.name }} </b>
+              <small>
+                {{ 'count.games' | transloco: { n: row.games } }}
+                @if (row.since; as since) {
+                  ·
+                  {{
+                    'potato.since'
+                      | transloco
+                        : { date: (since | translocoDate: { day: 'numeric', month: 'short' }) }
+                  }}
+                }
+              </small>
+            </span>
+            <span class="rating">
+              <b>{{ row.days }}</b>
+              <span class="sr-only">{{ 'potato.days' | transloco: { n: row.days } }}</span>
+            </span>
+          </a>
+        </li>
+      }
+    </ol>
+  }
   <details class="rules fl-fold">
     <summary>{{ 'potato.rules' | transloco }}</summary>
     <ul>
@@ -174,6 +179,17 @@
       {{ 'result.win' | transloco }}
       <span class="dots" aria-hidden="true"><i></i></span>
       {{ 'result.loss' | transloco }}
+      <!-- The titles on this list, named once (evaluation 4: icons without a word). -->
+      @if (shownTitles().length) {
+        <span class="break"></span>
+        {{ 'ranking.legendTitles' | transloco }}
+        @for (title of shownTitles(); track title.id; let last = $last) {
+          <span class="legend-title"
+            ><fl-title-icon [name]="title.icon" />{{ 'titles.' + title.id + '.name' | transloco
+            }}{{ last ? '' : ',' }}</span
+          >
+        }
+      }
     </p>
   }
 }

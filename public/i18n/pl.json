@@ -1,6 +1,8 @@
 {
   "app": {
     "title": "Football League",
+    "tagline": "Liga piłkarzyków",
+    "intro": "Wyniki, ranking i turnieje waszych piłkarzyków. Otwórz swoją ligę albo załóż nową.",
     "updateReady": "Jest nowa wersja aplikacji",
     "reload": "Odśwież",
     "loading": "Wczytywanie"
@@ -269,6 +271,11 @@
       "rod": "Dotknij drążka, z którego padł gol.",
       "man": "Dotknij figurki, która strzeliła."
     },
+    "detailLevel": {
+      "position": "kto strzelił",
+      "rod": "którą linią",
+      "man": "którym zawodnikiem"
+    },
     "detailPill": "Gol: {level}",
     "swapShort": "Zamień",
     "tapHint": {
@@ -486,11 +493,12 @@
   },
   "settings": {
     "title": "Ustawienia ligi",
+    "nameHint": "Zapisuje się po wyjściu z pola.",
     "lock": "Zablokuj nowe mecze",
     "lockHint": "Nie da się zaczynać meczów i turniejów ani dodawać graczy. Historia i rankingi zostają.",
-    "minGames": "Ranking od liczby meczów",
+    "minGames": "Ile meczów do miejsca w rankingu",
     "minGamesHint": "Gracze z mniejszą liczbą meczów są pokazani osobno, bez miejsca w rankingu.",
-    "everyone": "Wszyscy",
+    "everyone": "Od pierwszego meczu",
     "delete": "Usuń ligę",
     "deleteHint": "Liga zniknie z listy. Nic nie jest kasowane, więc można ją przywrócić.",
     "deleteConfirm": "Usunąć ligę „{name}”?",
@@ -524,7 +532,8 @@
     "helpDuets": "Pary, które zagrały razem co najmniej {n} mecze, według procentu wygranych.",
     "helpFormTitle": "Kropki przy graczu",
     "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka.",
-    "legend": "Kropki: ostatnie 5 meczów,"
+    "legend": "Kropki: ostatnie 5 meczów,",
+    "legendTitles": "Ikony to tytuły:"
   },
   "potato": {
     "title": "Ziemniak",
@@ -540,7 +549,11 @@
     "ruleUpset": "Porażka faworyta (szansa co najmniej 65%): dodatkowo +{n}, żeby mocni nie cwaniakowali.",
     "ruleLossToPotato": "Przegrana z ziemniakiem: dodatkowo +{n}.",
     "rulePotatoWin": "Wygrana ziemniaka: dla niego dodatkowo −{n}, żeby mógł się odkuć.",
-    "daysHeader": "Dni jako ziemniak"
+    "daysHeader": "Dni jako ziemniak",
+    "group": {
+      "now": "{n, plural, one {Ziemniak teraz} other {Ziemniaki teraz}}",
+      "rest": "Pozostali"
+    }
   },
   "error": {
     "addPlayer": "Nie udało się dodać gracza. Sprawdź połączenie i spróbuj ponownie.",

@@ -55,7 +55,9 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       <div class="content"><router-outlet /></div>
       <!-- On a wide screen (P80): a rail with the leagues and this league's sections. -->
       <nav class="fl-rail" [attr.aria-label]="'nav.label' | transloco">
-        <a routerLink="/leagues" class="brand">Football League</a>
+        <a routerLink="/leagues" class="brand"
+          >Football League<small>{{ 'app.tagline' | transloco }}</small></a
+        >
         <h2 class="fl-kicker">{{ 'leagues.recent' | transloco }}</h2>
         @for (league of railLeagues(); track league.id) {
           <a

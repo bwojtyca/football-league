@@ -386,6 +386,17 @@
   padding-bottom: 0;
 }
 
+.legend .break {
+  flex-basis: 100%;
+}
+
+.legend-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
 .legend .dots i {
   display: inline-block;
   box-sizing: border-box;

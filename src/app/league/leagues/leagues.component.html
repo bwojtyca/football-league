@@ -19,6 +19,9 @@
         <mat-icon>search</mat-icon>{{ 'welcome.find' | transloco }}
       </button>
     </section>
+  } @else {
+    <!-- What the app is for, in one line, for anyone who lands here (evaluation 4). -->
+    <p class="intro">{{ 'app.intro' | transloco }}</p>
   }
 
   <label class="search">

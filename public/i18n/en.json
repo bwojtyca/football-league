@@ -1,6 +1,8 @@
 {
   "app": {
     "title": "Football League",
+    "tagline": "Table football league",
+    "intro": "Scores, rankings and tournaments for your table football. Open your league or start a new one.",
     "updateReady": "A new version is available",
     "reload": "Reload",
     "loading": "Loading"
@@ -269,6 +271,11 @@
       "rod": "Tap the rod the goal came from.",
       "man": "Tap the figure that scored."
     },
+    "detailLevel": {
+      "position": "who scored",
+      "rod": "which rod",
+      "man": "which figure"
+    },
     "detailPill": "Goal: {level}",
     "swapShort": "Swap",
     "tapHint": {
@@ -486,11 +493,12 @@
   },
   "settings": {
     "title": "League settings",
+    "nameHint": "Saved when you leave the field.",
     "lock": "Lock new games",
     "lockHint": "No new games, tournaments or players. History and rankings stay.",
-    "minGames": "Ranked from games played",
+    "minGames": "Games needed for a place in the ranking",
     "minGamesHint": "Players with fewer games are listed apart, without a place in the ranking.",
-    "everyone": "Everyone",
+    "everyone": "From the first game",
     "delete": "Delete league",
     "deleteHint": "The league disappears from the list. Nothing is erased, so it can be restored.",
     "deleteConfirm": "Delete the league “{name}”?",
@@ -524,7 +532,8 @@
     "helpDuets": "Pairs who played at least {n} games together, by the share of games won.",
     "helpFormTitle": "The dots next to a player",
     "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss.",
-    "legend": "Dots: the last 5 games,"
+    "legend": "Dots: the last 5 games,",
+    "legendTitles": "Icons are titles:"
   },
   "potato": {
     "title": "Potato",
@@ -540,7 +549,11 @@
     "ruleUpset": "A loss as clear favourites (a win chance of 65% or more): +{n} more, so the strong cannot get cocky.",
     "ruleLossToPotato": "Losing to a potato: +{n} more.",
     "rulePotatoWin": "A potato's win: −{n} more for them, to dig their way out.",
-    "daysHeader": "Days as the potato"
+    "daysHeader": "Days as the potato",
+    "group": {
+      "now": "{n, plural, one {The potato now} other {Potatoes now}}",
+      "rest": "Everyone else"
+    }
   },
   "error": {
     "addPlayer": "Could not add the player. Check your connection and try again.",
