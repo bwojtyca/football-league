@@ -129,6 +129,20 @@ import { openWhoSheet } from './who-sheet.component';
       color: var(--fl-ink);
       font-weight: 800;
     }
+    /* A small phone: the question on one line, so the ranking starts higher (evaluation 7). */
+    @media (max-width: 400px) {
+      .ask {
+        padding: 8px 12px;
+      }
+      .ask .text small {
+        display: none;
+      }
+      .ask mat-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+      }
+    }
   `,
 })
 export class YouCardComponent {

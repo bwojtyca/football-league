@@ -19,6 +19,7 @@
 
 .views button {
   flex: none;
+  min-width: 44px;
   padding: 0 11px;
   font-size: 0.92rem;
   white-space: nowrap;
@@ -34,7 +35,7 @@
   flex: none;
   padding: 0 5px;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 1px var(--fl-line);
+  box-shadow: inset 0 0 0 1px #6a706c;
   color: var(--fl-ink-2);
   font: 700 0.75rem/1.4 var(--fl-display);
 }
@@ -334,7 +335,7 @@
   display: none;
 }
 
-@container ranking (min-width: 600px) {
+@container ranking (min-width: 560px) {
   .col {
     display: grid;
     justify-items: end;
@@ -415,4 +416,38 @@
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--fl-ink-2);
+}
+
+/* One line before the list: what the dots and the icons are. */
+.legend {
+  margin: 4px 0 6px;
+  color: var(--fl-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.legend .dots {
+  display: inline-flex;
+  margin: 0 3px 0 6px;
+}
+
+.legend .dots i {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--fl-ink-2);
+  border-radius: 50%;
+}
+
+.legend .dots i.w {
+  border-color: var(--fl-ink);
+  background: var(--fl-ink);
+}
+
+/* No dots on a narrow ranking: no word on them either. */
+@container ranking (max-width: 350px) {
+  .legend-dots {
+    display: none;
+  }
 }

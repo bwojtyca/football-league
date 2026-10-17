@@ -67,7 +67,7 @@ a.card.now {
 
 .side {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .side.r {
@@ -164,7 +164,7 @@ ol.people li.empty::before {
 .table .name {
   text-align: left;
   font-weight: 600;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .table thead th {
@@ -279,4 +279,17 @@ button.vs {
 
 .people-head .edit-people {
   --mat-button-text-label-text-color: var(--fl-ink-2);
+}
+
+/* Who left: named under the list, tagged in the table. */
+.left-note {
+  margin: 8px 0 0;
+  color: var(--fl-ink-2);
+  font-size: 0.875rem;
+}
+
+.left-tag {
+  display: block;
+  color: var(--fl-ink-2);
+  font: 600 0.75rem/1.2 var(--fl-display);
 }

@@ -213,7 +213,8 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.15);
+      /* 3.5:1 on the dialog, so a black swatch is seen (evaluation 7: 1.02:1). */
+      box-shadow: inset 0 0 0 1.5px #6a706c;
     }
     /* The chosen one: a ring like a selected chip, without an outline on the others. */
     .patterns button[aria-checked='true'],

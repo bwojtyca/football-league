@@ -72,7 +72,12 @@
     <ol class="ranking">
       @for (row of group.rows; track row.player) {
         <li>
-          <a [routerLink]="playerLink()(row.player)" class="row" [class.potato]="row.isPotato">
+          <a
+            [routerLink]="playerLink()(row.player)"
+            class="row"
+            [class.potato]="row.isPotato"
+            [class.me]="row.player === me.id()"
+          >
             <span class="pos" aria-hidden="true">
               @if (row.isPotato) {
                 <fl-title-icon name="potato" />
@@ -139,6 +144,18 @@
   }
   <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
 } @else {
+  @if (ranked().length) {
+    <!-- What a row's signs mean, in one line before the list (evaluation 7: dots and "+N"
+         unexplained; evaluation 5: a legend after the list came too late). -->
+    <p class="legend">
+      <span class="legend-dots">
+        {{ 'ranking.legendForm' | transloco }}
+        <span class="dots" aria-hidden="true"><i class="w"></i></span>{{ 'result.win' | transloco }}
+        <span class="dots" aria-hidden="true"><i></i></span>{{ 'result.loss' | transloco }} ·
+      </span>
+      {{ 'ranking.legendTitles' | transloco }}
+    </p>
+  }
   @if (ranked().length) {
     <ol class="ranking">
       @for (player of shown(); track player.id; let i = $index) {

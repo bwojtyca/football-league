@@ -11,6 +11,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 4     | 16 Oct 2026 | 38802418867 (master 8977cc2) | 7.5       | 5.75        | 6.5         | 5.75        | 6.75       | 6.75      | 5.75    | 6.5  |
 | 5     | 16 Oct 2026 | 38838805463 (master 1f4d76c) | 7.3       | 5.5         | 6.3         | 5.0         | 6.3        | 6.8       | 5.0     | 6.2  |
 | 6     | 17 Oct 2026 | 38865369501 (master 4e9a5ca) | 8.5       | 7.0         | 6.0         | 6.75        | 5.5        | 5.5       | 5.5     | 6.55 |
+| 7     | 17 Oct 2026 | 39005288451 (master d011c1d) | 8.3       | 5.5         | 6.0         | 7.0         | 4.0        | 6.8       | 4.0     | 6.25 |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -129,3 +130,8 @@ Round 6 runs on the Tour of 4e9a5ca (run 38865369501); report in `eval-6.md`.
   page edges; potato since-lines wrap; new play in the app rail only on a game's page.
 - Left for later: the desktop games grid leaves a hole after an odd day; record scores in
   Archivo rather than LED.
+
+Round 7 runs on the Tour of d011c1d (run 39005288451); report in `eval-7.md`. Its blocker (the
+compare page's shared games in a two-column grid inside a half-width column) came from round
+6's fix: grids follow the viewport, not their container. Without it and the tap targets the
+overall would be 5.5.

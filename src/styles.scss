@@ -72,10 +72,10 @@ html {
   --fl-win: #5be394;
   --fl-loss: #ff8a80;
   --fl-gold: #ffc629;
-  /* Two players side by side in a chart (validated for colour blindness on the cards); teal,
-     not blue, so a player is never mistaken for the blue team (evaluation 5). */
+  /* Two players side by side in a chart: teal and amber, a pair that stays apart for colour
+     blindness and is never mistaken for the red or the blue team (evaluations 5 and 7). */
   --fl-series-1: #2bb3a0;
-  --fl-series-2: #d95926;
+  --fl-series-2: #e8a33d;
 
   /* Material's system colours, mapped onto the palette above. */
   --mat-sys-background: var(--fl-paper);
@@ -432,8 +432,18 @@ a {
  */
 fl-titles-list a,
 fl-league-stats .fl-records a,
-fl-games-stats td a {
+fl-tournament-summary a {
   padding-block: 12px;
+}
+
+/* A name opening a comparison from a table row: the row's height is its tap area (44 px). */
+fl-games-stats tbody th a {
+  display: block;
+  margin: -5px 0;
+  padding: 12px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Statistics: sections with a heading, numbers as tiles, shares as split bars, records as rows. */
@@ -546,6 +556,12 @@ fl-games-stats td a {
   font: 800 1.2rem/1.2 var(--fl-display);
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+/* A record that is a score: LED digits, as every score (evaluation 7). */
+.fl-records dd.fl-led {
+  font-family: var(--fl-led);
+  font-weight: 900;
 }
 
 .fl-records .about {
@@ -781,14 +797,6 @@ details.fl-fold[open] > summary::after {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
-    column-gap: 32px;
-  }
-
-  /* The games of a day in two columns, read left to right; days follow down the page. */
-  fl-league-games fl-game-list .games,
-  .fl-wide-page fl-game-list .games {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: 32px;
   }
 

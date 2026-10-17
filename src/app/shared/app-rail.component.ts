@@ -81,6 +81,7 @@ export class AppRailComponent {
     { path: ['games'], icon: 'scoreboard', label: 'nav.games' },
     { path: ['tournaments'], icon: 'emoji_events', label: 'nav.tournaments' },
     { path: ['players'], icon: 'groups', label: 'nav.players' },
+    { path: ['settings'], icon: 'settings', label: 'settings.title' },
   ];
 
   private readonly _url = toSignal(

@@ -435,6 +435,8 @@
       "cup": "od 3 drużyn"
     },
     "leaveShort": "Wypisz",
+    "left": "{n, plural, one {Wypisany (#)} other {Wypisani (#)}}",
+    "leftTag": "wypisany",
     "editPeople": "Wypisz kogoś",
     "editDone": "Gotowe"
   },
@@ -526,6 +528,8 @@
     "colGames": "mecze",
     "colWon": "wygranych",
     "help": "Jak czytać ranking",
+    "legendForm": "Ostatnie mecze:",
+    "legendTitles": "ikony: tytuły ligi, +N: kolejne (więcej pod ?)",
     "moreTitles": "{n, plural, one {i # inny tytuł} few {i # inne tytuły} other {i # innych tytułów}}",
     "helpTitle": "Jak czytać ranking",
     "helpElo": "Każdy zaczyna od 1500. Po meczu zwycięzcy zyskują tyle, ile przegrani tracą; wygrana z silniejszymi daje więcej, a drużyna liczy się jak średnia swoich graczy. Przez pierwsze {n} meczów Elo jest jeszcze niepewne i wygląda na przezroczyste.",
@@ -581,7 +585,7 @@
   "switcher": {
     "title": "Ligi",
     "open": "{name}: menu ligi",
-    "manage": "Wszystkie ligi",
+    "manage": "Znajdź ligę",
     "invite": "Zaproś: udostępnij link do ligi",
     "change": "Zmień ligę"
   },

@@ -397,7 +397,12 @@
       @for (row of standings(); track row.player) {
         <tr [class.first]="row.place === 1 && row.games">
           <td>{{ row.place || '' }}</td>
-          <th scope="row" class="name">{{ name(row.player) }}</th>
+          <th scope="row" class="name">
+            {{ name(row.player) }}
+            @if (left().includes(row.player)) {
+              <small class="left-tag">{{ 'tournament.leftTag' | transloco }}</small>
+            }
+          </th>
           <td>{{ row.games }}</td>
           <td>
             <b>{{ row.wins }}</b>
@@ -433,6 +438,14 @@
         </li>
       }
     </ul>
+    @if (left().length) {
+      <p class="left-note">
+        {{ 'tournament.left' | transloco: { n: left().length } }}:
+        @for (player of left(); track player; let last = $last) {
+          {{ name(player) }}{{ last ? '' : ', ' }}
+        }
+      </p>
+    }
   </section>
 </ng-template>
 

@@ -692,11 +692,25 @@
   padding-inline: max(4px, calc((100% - 752px) / 2));
 }
 
-/* A finished game is a page: next to the rail of a wide screen, as every other page. */
+/* A finished game is a page: next to the rail of a wide screen, as every other page, on the
+   same column (1120 px, centred beside the rail), its text 720 px wide at the column's left
+   edge (evaluation 7: centred, it started at another x than every other page). */
 @media (min-width: 1000px) {
   .screen.ended {
     left: 256px;
     z-index: auto;
+  }
+
+  .ended .top {
+    padding-inline: calc(max(0px, (100% - 1152px) / 2) + 8px);
+  }
+
+  .ended .details {
+    padding: 0 16px 24px calc(max(0px, (100% - 1152px) / 2) + 16px);
+  }
+
+  .ended .details > * {
+    max-width: 720px;
   }
 }
 

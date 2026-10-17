@@ -435,6 +435,8 @@
       "cup": "from 3 teams"
     },
     "leaveShort": "Remove",
+    "left": "{n, plural, other {Left (#)}}",
+    "leftTag": "left",
     "editPeople": "Remove someone",
     "editDone": "Done"
   },
@@ -526,6 +528,8 @@
     "colGames": "games",
     "colWon": "won",
     "help": "How to read the ranking",
+    "legendForm": "Last games:",
+    "legendTitles": "icons: league titles, +N: more (see ?)",
     "moreTitles": "{n, plural, one {and # more title} other {and # more titles}}",
     "helpTitle": "How to read the ranking",
     "helpElo": "Everyone starts at 1500. After a game the winners gain what the losers lose; beating stronger players gives more, and a team counts as the average of its players. For the first {n} games the rating is not settled yet and looks faded.",
@@ -581,7 +585,7 @@
   "switcher": {
     "title": "Leagues",
     "open": "{name}: league menu",
-    "manage": "All leagues",
+    "manage": "Find a league",
     "invite": "Invite: share the league's link",
     "change": "Switch league"
   },

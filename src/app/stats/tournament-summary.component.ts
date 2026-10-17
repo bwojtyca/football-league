@@ -67,7 +67,7 @@ import { tournamentSummary } from './stats';
             @if (s.biggestWin; as record) {
               <div>
                 <dt>{{ 'leagueStats.biggestWin' | transloco }}</dt>
-                <dd>{{ score(record.game) }}</dd>
+                <dd class="fl-led">{{ score(record.game) }}</dd>
                 <dd class="about">
                   <a [routerLink]="['/game', record.game.id]">{{ sides(record.game) }}</a>
                 </dd>

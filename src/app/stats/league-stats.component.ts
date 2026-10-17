@@ -23,6 +23,8 @@ import { TitlesListComponent } from './titles-list.component';
 
 /** A league record: what it is, its value, and the game or player holding it. */
 interface RecordRow {
+  /** A score ("8:0"): in LED digits, as every score. */
+  score?: boolean;
   key: string;
   value: string;
   game?: Game;
@@ -176,6 +178,7 @@ export class LeagueStatsComponent {
       rows.push({
         key: 'leagueStats.biggestWin',
         value: this.score(biggestWin.game),
+        score: true,
         game: biggestWin.game,
       });
     }
@@ -183,6 +186,7 @@ export class LeagueStatsComponent {
       rows.push({
         key: 'leagueStats.mostGoals',
         value: this.score(mostGoals.game),
+        score: true,
         game: mostGoals.game,
       });
     }
@@ -191,6 +195,7 @@ export class LeagueStatsComponent {
       rows.push({
         key: 'leagueStats.comeback',
         value: score ? `${score.red}:${score.blue}` : '',
+        score: true,
         game: comeback.game,
       });
     }
@@ -207,7 +212,6 @@ export class LeagueStatsComponent {
     return rows;
   });
 
-  /** Rated players, best first: the one chosen (or the leader) stands out in the chart. */
   /** The rated players by Elo, with names short enough for a row of chips. */
   protected readonly rated = computed(() => {
     const ids = [...(this._gameService.ratings(this.leagueId())?.current ?? [])]

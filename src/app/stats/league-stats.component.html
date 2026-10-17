@@ -2,17 +2,32 @@
   @if (!s.games) {
     <p class="empty">{{ 'leagueStats.none' | transloco }}</p>
   } @else {
-    <!-- Jumps to the main parts of a long page (P15). -->
+    <!-- Jumps to every part of a long page, in its order (P15; evaluation 7: four of eight). -->
     <nav class="jump" [attr.aria-label]="'leagueStats.jump' | transloco">
       <button (click)="jump('stats-numbers')">{{ 'leagueStats.numbers' | transloco }}</button>
-      @if (week()) {
+      @if (titles().length) {
+        <button (click)="jump('stats-titles')">{{ 'titles.title' | transloco }}</button>
+      }
+      @if (months().length > 1) {
+        <button (click)="jump('stats-months')">{{ 'leagueStats.months' | transloco }}</button>
+      }
+      @if ((week()?.hours?.length ?? 0) >= 3) {
         <button (click)="jump('stats-when')">{{ 'leagueStats.when' | transloco }}</button>
+      }
+      <button (click)="jump('stats-table')">{{ 'leagueStats.table' | transloco }}</button>
+      @if (lines().known) {
+        <button (click)="jump('stats-lines')">{{ 'lines.title' | transloco }}</button>
       }
       @if (records().length) {
         <button (click)="jump('stats-records')">{{ 'leagueStats.records' | transloco }}</button>
       }
       @if (ratingChart()) {
         <button (click)="jump('stats-elo')">{{ 'leagueStats.elo' | transloco }}</button>
+      }
+      @if (s.log.games) {
+        <button (click)="jump('stats-goal-times')">
+          {{ 'leagueStats.goalTimes' | transloco }}
+        </button>
       }
     </nav>
     <div class="fl-stats">
@@ -54,17 +69,33 @@
             <small>{{ 'leagueStats.players' | transloco }}</small>
           </div>
         </div>
+        @if (week(); as week) {
+          @if (week.hours.length < 3) {
+            <p class="hint when-hint">
+              {{
+                'leagueStats.busiest'
+                  | transloco
+                    : {
+                        day: week.busiest.day,
+                        from: week.busiest.hour,
+                        to: week.busiest.hour + 1,
+                        n: week.busiest.games,
+                      }
+              }}
+            </p>
+          }
+        }
       </section>
 
       @if (titles().length) {
-        <section>
+        <section id="stats-titles">
           <h2>{{ 'titles.title' | transloco }}</h2>
           <fl-titles-list [titles]="titles()" [playerLink]="playerLink" />
         </section>
       }
 
       @if (months().length > 1) {
-        <section>
+        <section id="stats-months">
           <h2>{{ 'leagueStats.months' | transloco }}</h2>
           <div class="fl-chart">
             <canvas
@@ -91,67 +122,71 @@
         </section>
       }
 
+      <!-- With one or two hours there is no pattern to draw: the sentence goes under the numbers
+           (evaluation 7: a section with one sentence). -->
       @if (week(); as week) {
-        <section id="stats-when">
-          <h2>{{ 'leagueStats.when' | transloco }}</h2>
-          <p class="hint">
-            {{
-              'leagueStats.busiest'
-                | transloco
-                  : {
-                      day: week.busiest.day,
-                      from: week.busiest.hour,
-                      to: week.busiest.hour + 1,
-                      n: week.busiest.games,
-                    }
-            }}
-          </p>
-          <!-- A grid only when there is a pattern to see: with one or two hours the sentence above
+        @if (week.hours.length >= 3) {
+          <section id="stats-when">
+            <h2>{{ 'leagueStats.when' | transloco }}</h2>
+            <p class="hint">
+              {{
+                'leagueStats.busiest'
+                  | transloco
+                    : {
+                        day: week.busiest.day,
+                        from: week.busiest.hour,
+                        to: week.busiest.hour + 1,
+                        n: week.busiest.games,
+                      }
+              }}
+            </p>
+            <!-- A grid only when there is a pattern to see: with one or two hours the sentence above
                says it all (evaluation 5: a one-column map headed "1"). -->
-          @if (week.hours.length >= 3) {
-            <table class="heat">
-              <thead>
-                <tr>
-                  <th scope="col">
-                    <span class="sr-only">{{ 'leagueStats.day' | transloco }}</span>
-                  </th>
-                  @for (hour of week.hours; track hour) {
-                    <th scope="col">{{ hour }}</th>
-                  }
-                </tr>
-              </thead>
-              <tbody>
-                @for (day of week.days; track day.name) {
+            @if (week.hours.length >= 3) {
+              <table class="heat">
+                <thead>
                   <tr>
-                    <th scope="row">{{ day.name }}</th>
-                    @for (cell of day.cells; track cell.hour) {
-                      <td
-                        [style.--share]="cell.share"
-                        [class.empty]="!cell.games"
-                        [attr.title]="day.name + ' ' + cell.hour + ':00 · ' + cell.games"
-                      >
-                        <span class="sr-only">{{ cell.games }}</span>
-                      </td>
+                    <th scope="col">
+                      <span class="sr-only">{{ 'leagueStats.day' | transloco }}</span>
+                    </th>
+                    @for (hour of week.hours; track hour) {
+                      <th scope="col">{{ hour }}</th>
                     }
                   </tr>
+                </thead>
+                <tbody>
+                  @for (day of week.days; track day.name) {
+                    <tr>
+                      <th scope="row">{{ day.name }}</th>
+                      @for (cell of day.cells; track cell.hour) {
+                        <td
+                          [style.--share]="cell.share"
+                          [class.empty]="!cell.games"
+                          [attr.title]="day.name + ' ' + cell.hour + ':00 · ' + cell.games"
+                        >
+                          <span class="sr-only">{{ cell.games }}</span>
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              <!-- The scale: from no games to the busiest hour (evaluation 4: no numbers on it). -->
+              <p class="scale" aria-hidden="true">
+                <span>0</span>
+                <i class="empty"></i>
+                @for (share of [0.25, 0.5, 0.75, 1]; track share) {
+                  <i [style.--share]="share"></i>
                 }
-              </tbody>
-            </table>
-            <!-- The scale: from no games to the busiest hour (evaluation 4: no numbers on it). -->
-            <p class="scale" aria-hidden="true">
-              <span>0</span>
-              <i class="empty"></i>
-              @for (share of [0.25, 0.5, 0.75, 1]; track share) {
-                <i [style.--share]="share"></i>
-              }
-              <span>{{ 'count.games' | transloco: { n: week.busiest.games } }}</span>
-            </p>
-            <p class="hint">{{ 'leagueStats.whenHint' | transloco }}</p>
-          }
-        </section>
+                <span>{{ 'count.games' | transloco: { n: week.busiest.games } }}</span>
+              </p>
+              <p class="hint">{{ 'leagueStats.whenHint' | transloco }}</p>
+            }
+          </section>
+        }
       }
 
-      <section>
+      <section id="stats-table">
         <h2>{{ 'leagueStats.table' | transloco }}</h2>
         <div class="fl-split">
           <div class="labels">
@@ -191,7 +226,7 @@
       </section>
 
       @if (lines().known) {
-        <section>
+        <section id="stats-lines">
           <h2>{{ 'lines.title' | transloco }}</h2>
           <fl-lines [stats]="lines()" />
         </section>
@@ -204,7 +239,7 @@
             @for (row of records(); track row.key) {
               <div>
                 <dt>{{ row.key | transloco }}</dt>
-                <dd>{{ row.value }}</dd>
+                <dd [class.fl-led]="row.score">{{ row.value }}</dd>
                 <dd class="about">
                   @if (row.game; as game) {
                     <a [routerLink]="['/game', game.id]">{{ sides(game) }}</a>
@@ -250,7 +285,7 @@
       }
 
       @if (s.log.games) {
-        <section>
+        <section id="stats-goal-times">
           <h2>{{ 'leagueStats.goalTimes' | transloco }}</h2>
           <p class="hint">{{ 'leagueStats.fromLog' | transloco: { n: s.log.games } }}</p>
           <div class="fl-tiles">

@@ -81,7 +81,11 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
 
   await expect(page).toHaveURL(TOURNAMENT_URL);
   await expect(card.locator('.vs')).toHaveText('2 : 0');
-  await expect(card).toContainText(t('tournament.seriesWinner', { name: `${a} & ${b}` }));
+  // The tournament page names its players by first name (unique among them).
+  const first = (name: string) => name.split(' ')[0];
+  await expect(card).toContainText(
+    t('tournament.seriesWinner', { name: `${first(a)} & ${first(b)}` }),
+  );
   // A decided series ends by itself, with a summary of its games.
   await expect(page.locator('.note')).toContainText(t('tournament.ended'));
   await expect(page.locator('fl-tournament-summary')).toContainText(t('tournamentStats.scorer'));
