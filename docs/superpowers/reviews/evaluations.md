@@ -115,3 +115,17 @@ Round 5 runs on the Tour of 1f4d76c (run 38838805463); report in `eval-5.md`.
   3+ hours; fold chevrons on their line; 16 px dialog edges; short "Zamień" at 360; no "vs".
 
 Round 6 runs on the Tour of 4e9a5ca (run 38865369501); report in `eval-6.md`.
+
+## After round 6: fixed (17 Oct 2026, on the branch at d011c1d)
+
+- Blocker and majors: the league menu header (counts under the name, room for the close disc);
+  phone rankings with short names, form dots under the name and one title (+N on a labelled
+  pill), duet names wrapping whole; the compact game header up to 440 px; the new game summary
+  in the footer above "Start"; the wide profile's statistics in two columns and games two a row.
+- Minors: settings in the league menu and the desktop rail (the app menu keeps app things);
+  swap buttons with a team-coloured swap icon; the bottom panel inert while paused; clock, hint
+  and last move grow on bigger screens; the live clock in LED at 18 px; numbers kept with units;
+  profile titles wrap whole; field outlines 3.5:1; the players list labels Elo; tables on the
+  page edges; potato since-lines wrap; new play in the app rail only on a game's page.
+- Left for later: the desktop games grid leaves a hole after an odd day; record scores in
+  Archivo rather than LED.
