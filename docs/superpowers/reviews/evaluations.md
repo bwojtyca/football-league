@@ -153,3 +153,15 @@ overall would be 5.5.
   for two players; "Znajdź ligę".
 
 Round 8 runs on the Tour of f02b7af (run 39023105447); report in `eval-8.md`.
+
+## After round 8: fixed (17 Oct 2026, on the branch at 896df59)
+
+- Majors: ranking rows simplified (short name at every size, one title, wins–losses; on a wide
+  ranking the columns named once in a header row, form dots only there; no "+N", no legend
+  line); avatar initials from the full name everywhere.
+- Minors: a paused game says so in the bar and its goal-detail setting waits; on/chosen/focused
+  controls in ink, the leader's place in ink, yellow only for main actions (the tournaments
+  tab's "Nowy turniej" is its main action); league invite and settings in the page menu too;
+  "Ligi"; "poza turniejem"; 15 px rail names; LED record scores a size up; the finished game's
+  header over its text; potato heads on the page edge.
+- Tooling: check-i18n reports duplicate keys (found game.detailLevel written twice).
