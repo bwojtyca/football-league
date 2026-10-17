@@ -28,10 +28,6 @@ mat-dialog-content {
   padding-top: 8px;
 }
 
-mat-dialog-content > .summary {
-  margin-top: auto;
-}
-
 .lineups-hint {
   margin: -8px 0 0;
   color: var(--fl-ink-2);
@@ -238,7 +234,16 @@ mat-dialog-content > .summary {
 }
 
 mat-dialog-actions {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
   padding: 10px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+
+/* In the footer: compact, the chance on one line with its bar. */
+mat-dialog-actions .summary {
+  gap: 4px;
+  padding: 8px 12px;
 }
 
 .start {

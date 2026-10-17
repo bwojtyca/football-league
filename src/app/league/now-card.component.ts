@@ -239,9 +239,9 @@ import { LeagueService } from './league.service';
       background: var(--fl-red);
       color: #fff;
     }
-    /* Small: Archivo's digits (LED reads badly under about 18 px). */
+    /* LED digits, as every clock, at a size they read at (18 px). */
     .clock {
-      font: 800 0.875rem/1 var(--fl-display);
+      font: 900 1.15rem/1 var(--fl-led);
       font-variant-numeric: tabular-nums;
       color: var(--fl-ink);
     }

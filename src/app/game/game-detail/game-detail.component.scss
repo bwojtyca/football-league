@@ -88,7 +88,7 @@
   display: none;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 440px) {
   .screen:not(.landscape) .detail .long,
   .screen:not(.landscape) .swaps .long {
     display: none;
@@ -105,7 +105,7 @@
   display: none;
 }
 
-@media (max-width: 400px) and (orientation: portrait) {
+@media (max-width: 440px) and (orientation: portrait) {
   .screen:not(.landscape) .top .rotate {
     display: none;
   }
@@ -277,18 +277,22 @@
   min-width: 40px;
 }
 
-.swap-dot i {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+.swap-dot .mat-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
 }
 
-.swap-dot--red i {
-  background: var(--fl-red-board);
+.swap-dot--red .mat-icon {
+  color: var(--fl-red-board);
 }
 
-.swap-dot--blue i {
-  background: var(--fl-blue-board);
+.swap-dot--blue .mat-icon {
+  color: var(--fl-blue-board);
+}
+
+.bar.paused {
+  opacity: 0.4;
 }
 
 .swap-dot:disabled {
@@ -693,6 +697,23 @@
   .screen.ended {
     left: 256px;
     z-index: auto;
+  }
+}
+
+/* A tablet or a computer: the clock, the hint and the last move grow with the screen
+   (evaluation 6: a 16 px clock beside an 800 px table). */
+@media (min-width: 700px) and (min-height: 600px) {
+  .clock {
+    font-size: clamp(1.25rem, 2.2vw, 2rem);
+  }
+
+  .bar .how,
+  .bar .text small {
+    font-size: 1rem;
+  }
+
+  .bar .event {
+    font-size: 1.1rem;
   }
 }
 

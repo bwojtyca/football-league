@@ -526,6 +526,7 @@
     "colGames": "mecze",
     "colWon": "wygranych",
     "help": "Jak czytać ranking",
+    "moreTitles": "{n, plural, one {i # inny tytuł} few {i # inne tytuły} other {i # innych tytułów}}",
     "helpTitle": "Jak czytać ranking",
     "helpElo": "Każdy zaczyna od 1500. Po meczu zwycięzcy zyskują tyle, ile przegrani tracą; wygrana z silniejszymi daje więcej, a drużyna liczy się jak średnia swoich graczy. Przez pierwsze {n} meczów Elo jest jeszcze niepewne i wygląda na przezroczyste.",
     "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
@@ -791,8 +792,8 @@
     "played": "{time} gry"
   },
   "appMenu": {
-    "title": "Menu",
-    "open": "Menu: ustawienia ligi, język, kim jesteś, ranking ogólny",
+    "title": "Aplikacja",
+    "open": "Aplikacja: język, kim jesteś, ranking ogólny",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska."
@@ -872,8 +873,8 @@
     "find": "Znajdź swoją ligę"
   },
   "duration": {
-    "hm": "{h} h {m} min",
-    "ms": "{m} min {s} s",
-    "s": "{s} s"
+    "hm": "{h} h {m} min",
+    "ms": "{m} min {s} s",
+    "s": "{s} s"
   }
 }

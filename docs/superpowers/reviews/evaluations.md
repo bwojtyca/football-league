@@ -10,6 +10,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 3     | 15 Oct 2026 | 38698154807 (master c55c523) | 7.25      | 7.25        | 4.25        | 7.0         | 5.5        | 6.75      | 4.25    | 6.3  |
 | 4     | 16 Oct 2026 | 38802418867 (master 8977cc2) | 7.5       | 5.75        | 6.5         | 5.75        | 6.75       | 6.75      | 5.75    | 6.5  |
 | 5     | 16 Oct 2026 | 38838805463 (master 1f4d76c) | 7.3       | 5.5         | 6.3         | 5.0         | 6.3        | 6.8       | 5.0     | 6.2  |
+| 6     | 17 Oct 2026 | 38865369501 (master 4e9a5ca) | 8.5       | 7.0         | 6.0         | 6.75        | 5.5        | 5.5       | 5.5     | 6.55 |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -112,3 +113,5 @@ Round 5 runs on the Tour of 1f4d76c (run 38838805463); report in `eval-5.md`.
   edge; tiles as number, label, qualifier; sentence-case headers; compare in teal and orange,
   goals with a dash; one resume while paused; a bigger score on big screens; heat map only with
   3+ hours; fold chevrons on their line; 16 px dialog edges; short "Zamień" at 360; no "vs".
+
+Round 6 runs on the Tour of 4e9a5ca (run 38865369501); report in `eval-6.md`.

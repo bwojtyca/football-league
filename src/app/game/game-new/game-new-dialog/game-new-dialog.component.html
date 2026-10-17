@@ -143,34 +143,37 @@
         </div>
         <p class="hint">{{ 'newGame.inputHint.' + inputMode() | transloco }}</p>
       </details>
-
-      <section class="summary" aria-live="polite">
-        <div class="summary-head">
-          <b>{{ kind().key | transloco: { name: kind().name } }}</b>
-          <fl-mode-label [mode]="mode()" />
-        </div>
-        @let red = redChance();
-        @if (red !== null) {
-          <div class="chance">
-            <b class="r">{{ red }}%</b>
-            <span>{{ 'newGame.chance' | transloco }}</span>
-            <b class="b">{{ 100 - red }}%</b>
-          </div>
-          <div class="chance-bar" aria-hidden="true">
-            <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
-          </div>
-        }
-        @if (showMissing()) {
-          <p class="missing-note">{{ 'newGame.missing' | transloco }}</p>
-        }
-      </section>
     }
   } @else {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   }
 </mat-dialog-content>
 
+<!-- What is about to start, always in sight above its button (evaluation 6: at the end of the
+     scrolled content it was cut by the button). -->
 <mat-dialog-actions>
+  @if ((players()?.length ?? 0) >= 2) {
+    <section class="summary" aria-live="polite">
+      <div class="summary-head">
+        <b>{{ kind().key | transloco: { name: kind().name } }}</b>
+        <fl-mode-label [mode]="mode()" />
+      </div>
+      @let red = redChance();
+      @if (red !== null) {
+        <div class="chance">
+          <b class="r">{{ red }}%</b>
+          <span>{{ 'newGame.chance' | transloco }}</span>
+          <b class="b">{{ 100 - red }}%</b>
+        </div>
+        <div class="chance-bar" aria-hidden="true">
+          <i class="r" [style.flex]="red"></i><i class="b" [style.flex]="100 - red"></i>
+        </div>
+      }
+      @if (showMissing()) {
+        <p class="missing-note">{{ 'newGame.missing' | transloco }}</p>
+      }
+    </section>
+  }
   <button
     matButton="filled"
     class="fl-cta start"

@@ -68,7 +68,7 @@ import { LeagueService } from './league.service';
                   </small>
                 </span>
                 @if (row.rating !== null) {
-                  <span class="rating">{{ row.rating }}</span>
+                  <span class="rating">{{ row.rating }}<small>Elo</small></span>
                 }
               </a>
             </li>
@@ -140,8 +140,15 @@ import { LeagueService } from './league.service';
       color: var(--fl-ink-2);
     }
     .rating {
+      display: grid;
+      justify-items: end;
+      gap: 2px;
       font: 800 1.15rem/1 var(--fl-display);
       font-variant-numeric: tabular-nums;
+    }
+    .rating small {
+      color: var(--fl-ink-2);
+      font: 600 0.75rem/1 var(--fl-display);
     }
   `,
 })

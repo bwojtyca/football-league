@@ -9,8 +9,8 @@ import { openLeagueSwitcher } from '../league/league-switcher.component';
 import { openAppMenu } from './app-menu-sheet.component';
 
 /**
- * Page header: a back link or the league's menu (its name), the title, the page's actions and
- * one menu (on a league's pages it starts with the league's settings).
+ * Page header: a back link or the league's menu (its name: invite, settings, another league),
+ * the title, the page's actions and the app's menu.
  */
 @Component({
   selector: 'fl-top-bar',
@@ -112,7 +112,7 @@ export class TopBarComponent {
   protected readonly long = computed(() => this.title().length > 22);
 
   protected appMenu(): void {
-    openAppMenu(this._sheet, this.switcher());
+    openAppMenu(this._sheet);
   }
 
   protected switchLeague(): void {

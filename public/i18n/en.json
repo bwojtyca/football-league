@@ -526,6 +526,7 @@
     "colGames": "games",
     "colWon": "won",
     "help": "How to read the ranking",
+    "moreTitles": "{n, plural, one {and # more title} other {and # more titles}}",
     "helpTitle": "How to read the ranking",
     "helpElo": "Everyone starts at 1500. After a game the winners gain what the losers lose; beating stronger players gives more, and a team counts as the average of its players. For the first {n} games the rating is not settled yet and looks faded.",
     "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
@@ -791,8 +792,8 @@
     "played": "{time} of play"
   },
   "appMenu": {
-    "title": "Menu",
-    "open": "Menu: league settings, language, who you are, overall ranking",
+    "title": "App",
+    "open": "App: language, who you are, overall ranking",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar."
@@ -872,8 +873,8 @@
     "find": "Find your league"
   },
   "duration": {
-    "hm": "{h} h {m} min",
-    "ms": "{m} min {s} s",
-    "s": "{s} s"
+    "hm": "{h} h {m} min",
+    "ms": "{m} min {s} s",
+    "s": "{s} s"
   }
 }

@@ -186,7 +186,12 @@
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">
       <span class="line">
-        <b>{{ player.name }}</b>
+        <!-- A phone shows the short name (first name, an initial when shared) so it fits whole
+             (evaluation 6: "Krzyszt…"). -->
+        <b [attr.title]="player.name"
+          ><span class="full">{{ player.name }}</span
+          ><span class="short">{{ shortName(player.id, player.name) }}</span></b
+        >
         @if (player.id === me.id()) {
           <span class="you">{{ 'me.you' | transloco }}</span>
         }
@@ -208,12 +213,23 @@
             ><fl-title-icon [name]="title.icon"
           /></span>
         }
-        <!-- Titles that do not fit, counted: two shown, or one on a narrow ranking. -->
+        <!-- Titles that do not fit, counted on a pill that says so (evaluation 6: a bare "+3"
+             read like the Elo change). -->
         @if (held.length > 2) {
-          <span class="more-titles wide">+{{ held.length - 2 }}</span>
+          <span
+            class="more-titles wide"
+            [matTooltip]="'ranking.moreTitles' | transloco: { n: held.length - 2 }"
+            [attr.aria-label]="'ranking.moreTitles' | transloco: { n: held.length - 2 }"
+            >+{{ held.length - 2 }}</span
+          >
         }
         @if (held.length > 1) {
-          <span class="more-titles narrow">+{{ held.length - 1 }}</span>
+          <span
+            class="more-titles narrow"
+            [matTooltip]="'ranking.moreTitles' | transloco: { n: held.length - 1 }"
+            [attr.aria-label]="'ranking.moreTitles' | transloco: { n: held.length - 1 }"
+            >+{{ held.length - 1 }}</span
+          >
         }
       </span>
       @if (player.games === 0) {
@@ -222,8 +238,9 @@
         @let main = mainPosition().get(player.id);
         <small
           >{{ player.wins }}–{{ player.loses
-          }}{{ main ? ' · ' + ('newGame.mostly.' + main | transloco) : '' }}</small
-        >
+          }}{{ main ? ' · ' + ('newGame.mostly.' + main | transloco) : '' }}
+          <fl-form class="inline-form" [results]="player.form"
+        /></small>
       }
     </span>
     @if (player.games > 0) {
@@ -269,9 +286,11 @@
     <fl-avatar [playerId]="duet.players[1]" [name]="duet.names[1]" [size]="28" />
   </span>
   <span class="who">
+    <!-- Two whole names: the second goes to a line of its own when they do not fit
+         (evaluation 6: "Krzys… & Małgo…"). -->
     <b class="pair"
-      ><span>{{ duet.names[0] }}</span
-      ><i aria-hidden="true">&</i><span>{{ duet.names[1] }}</span></b
+      ><span>{{ duet.names[0] }} <i aria-hidden="true">&</i></span
+      ><span>{{ duet.names[1] }}</span></b
     >
     <small>{{ duet.wins }}–{{ duet.games - duet.wins }}</small>
   </span>

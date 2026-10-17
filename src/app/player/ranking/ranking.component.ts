@@ -178,6 +178,11 @@ export class RankingComponent {
   private readonly _short = computed(() =>
     shortNames(new Map(this.players().map((player) => [player.id, player.name]))),
   );
+  /** The short form of a name, for a phone's ranking. */
+  protected shortName(id: string, name: string): string {
+    return this._short().get(id) ?? name;
+  }
+
   protected readonly duets = computed(() =>
     duets(this.games(), this.duetGames()).map((duet) => ({
       ...duet,

@@ -45,6 +45,12 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
           <mat-icon aria-hidden="true">share</mat-icon>
           <span class="name">{{ 'switcher.invite' | transloco }}</span>
         </button>
+        <!-- Everything about the league in its own menu (evaluation 6: settings sat in the
+             app menu, invite and switching here). -->
+        <a class="action" [routerLink]="['/l', league.id, 'settings']" (click)="close()">
+          <mat-icon aria-hidden="true">settings</mat-icon>
+          <span class="name">{{ 'settings.title' | transloco }}</span>
+        </a>
       </div>
     }
     @if (others().length) {
@@ -88,11 +94,12 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
     h2 {
       margin: 16px 0 6px;
     }
+    /* Room on the right for the close disc (evaluation 6: the counts ran under it). */
     .head {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 4px 0 12px;
+      padding: 4px 56px 12px 0;
     }
     .crest {
       flex: none;
@@ -176,11 +183,13 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
       border-radius: 12px;
       font-size: 0.8rem;
     }
+    /* Only the list's rows: the header's counts stay under its name (evaluation 6: a global
+       rule put them beside it, "Biuro 20267 graczy"). */
     .item .name,
-    small {
+    .item small {
       grid-column: 2;
     }
-    small {
+    .item small {
       color: var(--fl-ink-2);
     }
     .item mat-icon {

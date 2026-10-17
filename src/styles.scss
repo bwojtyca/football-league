@@ -159,7 +159,8 @@ html {
   --mat-bottom-sheet-container-background-color: var(--fl-sheet);
   --mat-bottom-sheet-container-text-color: var(--fl-ink);
   --mat-form-field-outlined-container-shape: 12px;
-  --mat-form-field-outlined-outline-color: var(--fl-line-2);
+  /* 3.5:1 on the cards: a field's edge is a control's boundary (WCAG 1.4.11; evaluation 6). */
+  --mat-form-field-outlined-outline-color: #6a706c;
   --mat-form-field-outlined-hover-outline-color: var(--fl-ink-2);
   --mat-form-field-outlined-focus-outline-color: var(--fl-ball);
   --mat-form-field-outlined-focus-label-text-color: var(--fl-ball);
@@ -784,7 +785,8 @@ details.fl-fold[open] > summary::after {
   }
 
   /* The games of a day in two columns, read left to right; days follow down the page. */
-  fl-league-games fl-game-list .games {
+  fl-league-games fl-game-list .games,
+  .fl-wide-page fl-game-list .games {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: 32px;
@@ -792,12 +794,15 @@ details.fl-fold[open] > summary::after {
 
   /* Statistics in two columns of whole sections (from 1400 px before: one stretched column
      at 1280). */
-  .fl-wide-page .fl-stats {
+  .fl-wide-page .fl-stats,
+  .fl-wide-page fl-games-stats {
+    display: block;
     columns: 2;
     column-gap: 32px;
   }
 
-  .fl-wide-page .fl-stats > section {
+  .fl-wide-page .fl-stats > section,
+  .fl-wide-page fl-games-stats > section {
     break-inside: avoid;
   }
 }

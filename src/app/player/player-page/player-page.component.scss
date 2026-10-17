@@ -286,14 +286,13 @@ h2 {
 }
 
 /* Titles held now, on the scoreboard. */
-/* One line, scrolled sideways when there are many (each title has its own page in the help). */
+/* Whole titles, wrapping to a second line when needed (evaluation 6: a faded line cut them
+   mid-word). */
 .titles {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-top: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  mask-image: linear-gradient(to left, transparent, #000 24px);
 }
 
 .title {

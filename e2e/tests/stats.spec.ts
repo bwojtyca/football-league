@@ -82,7 +82,7 @@ test('statistics: the league, two players compared, a profile and a game against
   const elo = page.getByRole('radio', { name: 'Elo' });
   await elo.click();
   await expect(elo).toHaveAttribute('aria-checked', 'true');
-  await page.locator('fl-ranking').getByText(a).click();
+  await page.locator('fl-ranking a.row', { hasText: a }).click();
   await expect(page.locator('main .hero')).toBeVisible();
   await expect(page.getByRole('heading', { name: t('achievements.mishaps') })).toBeVisible();
   await expect(page.locator('.achievements li.earned').first()).toBeVisible();

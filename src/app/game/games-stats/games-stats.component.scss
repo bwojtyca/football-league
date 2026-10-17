@@ -74,6 +74,17 @@ tr:last-child td {
   border-bottom: 0;
 }
 
+/* The first column on the page's left edge, the last on its right (evaluation 6: x = 20). */
+th:first-child,
+td:first-child {
+  padding-left: 0;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 0;
+}
+
 th:first-child {
   text-align: left;
   font-weight: 500;

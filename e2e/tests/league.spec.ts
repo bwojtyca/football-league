@@ -36,9 +36,7 @@ test('a new league: players, the bottom navigation, language and the league swit
   await page.getByRole('radio', { name: 'English' }).click();
   await page.keyboard.press('Escape');
   await expect(nav.getByRole('link', { name: 'Games' })).toBeVisible();
-  await page
-    .getByRole('button', { name: 'Menu: league settings, language, who you are, overall ranking' })
-    .click();
+  await page.getByRole('button', { name: 'App: language, who you are, overall ranking' }).click();
   await page.getByRole('radio', { name: 'Polski' }).click();
   await page.keyboard.press('Escape');
   await expect(nav.getByRole('link', { name: t('nav.games') })).toBeVisible();
@@ -72,9 +70,7 @@ test('the language can be switched on the leagues page', async ({ page }) => {
   await page.getByRole('radio', { name: 'English' }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: 'Leagues', exact: true })).toBeVisible();
-  await page
-    .getByRole('button', { name: 'Menu: league settings, language, who you are, overall ranking' })
-    .click();
+  await page.getByRole('button', { name: 'App: language, who you are, overall ranking' }).click();
   await page.getByRole('radio', { name: 'Polski' }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('heading', { name: t('leagues.title'), exact: true })).toBeVisible();
@@ -127,10 +123,10 @@ test('restoring a league with its games leaves a game deleted on its own deleted
   await expect(games).toHaveCount(1);
 
   // ...then the league with its games, and back again.
-  // The league's settings open from the page's menu.
-  await page.getByRole('button', { name: t('appMenu.open') }).click();
+  // The league's settings open from the league's menu (its name).
+  await page.locator('fl-top-bar button.switch').click();
   await page
-    .locator('fl-app-menu')
+    .locator('fl-league-switcher')
     .getByRole('link', { name: t('settings.title') })
     .click();
   await expect(page).toHaveURL(/\/settings$/);

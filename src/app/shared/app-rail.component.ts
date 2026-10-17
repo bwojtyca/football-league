@@ -100,9 +100,10 @@ export class AppRailComponent {
     return league ? { id: league.id, name: league.name } : null;
   });
 
-  /** Where "New play" starts: the page's league, else the one last opened, if open to play. */
+  /** Where "New play" starts: the league of the game on the page (evaluation 6: offered on
+   * pages without a league, it was unclear where it would go). */
   protected readonly playLeague = computed(() => {
-    const id = this.current()?.id ?? this._leagueService.lastLeague;
+    const id = this.current()?.id;
     const league = id ? this._leagueService.league(id) : null;
     return league && !league.archived && !league.deleted && league.players.length >= 2
       ? league.id

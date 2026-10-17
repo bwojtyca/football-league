@@ -29,11 +29,19 @@
   color: var(--fl-ink-2);
 }
 
+/* Titles not shown, on a small pill: not to be read as a score change. */
 .more-titles {
   flex: none;
+  padding: 0 5px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--fl-line);
   color: var(--fl-ink-2);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font: 700 0.75rem/1.4 var(--fl-display);
+}
+
+.line b .short,
+.who small .inline-form {
+  display: none;
 }
 
 .ranking {
@@ -265,14 +273,35 @@
   display: none;
 }
 
+/* A potato's line says since when: it may take two lines (evaluation 6: cut at 360 px). */
+.row.potato .who small {
+  white-space: normal;
+}
+
 .who small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* A phone: one title and a count of the rest, so a long name keeps its room. */
-@container ranking (max-width: 420px) {
+/* A phone: the short name, one title and a count of the rest, the form dots under the name
+   (evaluation 6: on one line with them, names were cut to a few letters). */
+@container ranking (max-width: 440px) {
+  .line b .full,
+  .row > fl-form {
+    display: none;
+  }
+
+  .line b .short {
+    display: inline;
+  }
+
+  .who small .inline-form {
+    display: inline-flex;
+    margin-left: 6px;
+    vertical-align: -3px;
+  }
+
   .line .title ~ .title,
   .more-titles.wide {
     display: none;
@@ -285,7 +314,7 @@
 
 /* A narrow ranking (a small phone): no form dots either. */
 @container ranking (max-width: 350px) {
-  .row fl-form {
+  .who small .inline-form {
     display: none;
   }
 
@@ -322,7 +351,7 @@
     color: var(--fl-ink-2);
   }
 
-  .row fl-form {
+  .row > fl-form {
     margin: 0 10px 0 14px;
   }
 }
@@ -345,14 +374,15 @@
 /* A pair: each name cut on its own, so a long first name never hides the partner. */
 .who b.pair {
   display: flex;
-  gap: 0.3em;
+  flex-wrap: wrap;
+  column-gap: 0.3em;
   min-width: 0;
+  white-space: normal;
 }
 
 .pair span {
-  flex: 0 1 auto;
   min-width: 0;
-  max-width: calc(50% - 0.6em);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

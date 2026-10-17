@@ -245,7 +245,13 @@
       />
     } @else if (!game.end && game.events) {
       @let last = lastEvent();
-      <footer class="bar" role="status">
+      <!-- Paused: the overlay leads; the panel waits, dimmed (evaluation 6: it stayed live). -->
+      <footer
+        class="bar"
+        role="status"
+        [class.paused]="!!game.paused"
+        [attr.inert]="game.paused ? '' : null"
+      >
         @if (last && !ownArmed()) {
           <!-- How to record a goal, in words, for the whole game (evaluation 5: it was a 12 px
                fragment after the first goal). -->
@@ -292,7 +298,8 @@
                   ('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)
                 "
               >
-                <i></i>
+                <!-- A swap in the team's colour (evaluation 6: a bare dot said nothing). -->
+                <mat-icon aria-hidden="true">swap_vert</mat-icon>
               </button>
             }
           </div>

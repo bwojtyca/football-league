@@ -1,9 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import {
-  MAT_BOTTOM_SHEET_DATA,
-  MatBottomSheet,
-  MatBottomSheetRef,
-} from '@angular/material/bottom-sheet';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -16,9 +12,9 @@ import { LanguageSwitchComponent } from './language-switch.component';
 import { MeService } from './me.service';
 import { SheetCloseComponent } from './sheet-close.component';
 
-/** The one menu of a page; on a league's pages it starts with the league's settings. */
-export function openAppMenu(sheet: MatBottomSheet, leagueId: string | null = null) {
-  return sheet.open(AppMenuSheetComponent, { data: { leagueId } });
+/** The app's menu (a league's own things are in the league's menu, under its name). */
+export function openAppMenu(sheet: MatBottomSheet) {
+  return sheet.open(AppMenuSheetComponent);
 }
 
 /**
@@ -30,17 +26,6 @@ export function openAppMenu(sheet: MatBottomSheet, leagueId: string | null = nul
   imports: [SheetCloseComponent, MatIconModule, RouterLink, LanguageSwitchComponent, TranslocoPipe],
   template: `
     <h2>{{ 'appMenu.title' | transloco }}</h2>
-    <!-- The league's settings first on its pages (evaluation 5: a gear and a menu side by side
-         left people guessing which held what). -->
-    @if (leagueName(); as name) {
-      <a class="row" [routerLink]="['/l', data.leagueId, 'settings']" (click)="close()">
-        <mat-icon aria-hidden="true">settings</mat-icon>
-        <span class="label">
-          <b>{{ 'settings.title' | transloco }}</b>
-          <small>{{ name }}</small>
-        </span>
-      </a>
-    }
     <div class="row">
       <mat-icon aria-hidden="true">language</mat-icon>
       <span class="label">{{ 'more.language' | transloco }}</span>
@@ -135,16 +120,8 @@ export class AppMenuSheetComponent {
   private readonly _me = inject(MeService);
   private readonly _players = inject(PlayerService);
 
-  protected readonly data = inject<{ leagueId: string | null } | null>(MAT_BOTTOM_SHEET_DATA) ?? {
-    leagueId: null,
-  };
-  private readonly _leagues = inject(LeagueService);
   /** The league last opened on this device: whose players to choose from. */
-  protected readonly league = this._leagues.lastLeague;
-  /** The league whose page opened the menu, for its settings. */
-  protected readonly leagueName = computed(() =>
-    this.data.leagueId ? (this._leagues.league(this.data.leagueId)?.name ?? null) : null,
-  );
+  protected readonly league = inject(LeagueService).lastLeague;
   protected readonly meName = computed(() => {
     const id = this._me.id();
     return id ? this._players.getPlayerName(id) : null;
