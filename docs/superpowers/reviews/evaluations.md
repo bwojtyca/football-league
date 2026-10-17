@@ -135,3 +135,18 @@ Round 7 runs on the Tour of d011c1d (run 39005288451); report in `eval-7.md`. It
 compare page's shared games in a two-column grid inside a half-width column) came from round
 6's fix: grids follow the viewport, not their container. Without it and the tap targets the
 overall would be 5.5.
+
+## After round 7: fixed (17 Oct 2026, on the branch at f02b7af)
+
+- Blocker: game lists put two games a row by their own width (container query `games`), so
+  the comparison's shared games (a half-width column) stay one a row. Lesson: a component
+  inside another layout sizes by its container, never by the viewport.
+- Majors: 44 px targets (ranking view switch, comparison names as row-high links, tournament
+  summary links); the tournament page names players by first name (initial when shared) and
+  breaks only words that cannot fit.
+- Minors: players who left a tournament listed and tagged; a one-line ranking legend before
+  the list, "+N" on a 3.5:1 pill; ranking columns from 560 px; your row in the potato view;
+  record scores in LED; jumps to every stats section; one or two hours of play said under the
+  numbers; the finished game on the page column with settings in its rail; a compact
+  who-are-you card at 360 px; a ring on the black swatch; no yellow avatar ring; teal and amber
+  for two players; "Znajdź ligę".
