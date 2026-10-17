@@ -27,6 +27,7 @@
           <button
             class="detail"
             [matMenuTriggerFor]="detailMenu"
+            [disabled]="!!game.paused"
             [attr.aria-label]="
               'game.detail' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
             "
@@ -252,7 +253,12 @@
         [class.paused]="!!game.paused"
         [attr.inert]="game.paused ? '' : null"
       >
-        @if (last && !ownArmed()) {
+        @if (game.paused) {
+          <!-- Paused: no goals to record now (evaluation 8: the hint still said to tap a rod). -->
+          <p class="how">
+            <mat-icon aria-hidden="true">pause</mat-icon>{{ 'game.pausedBar' | transloco }}
+          </p>
+        } @else if (last && !ownArmed()) {
           <!-- How to record a goal, in words, for the whole game (evaluation 5: it was a 12 px
                fragment after the first goal). -->
           <p class="how">

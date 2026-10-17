@@ -32,9 +32,10 @@ import { LeagueService } from './league.service';
     <fl-top-bar [title]="current?.name ?? ''" [switcher]="leagueId()" />
     <main class="page">
       @if (current && !current.archived) {
+        <!-- This tab's main action, the ball; the bar's "+" goes quiet here (evaluation 8). -->
         <button
-          matButton="outlined"
-          class="new-tournament"
+          matButton="filled"
+          class="new-tournament fl-cta"
           (click)="newTournament()"
           [disabled]="current.players.length < 2"
         >

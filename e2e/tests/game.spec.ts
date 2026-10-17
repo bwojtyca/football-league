@@ -212,7 +212,8 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
     .locator('fl-leave-dialog')
     .getByRole('button', { name: t('game.leaveRunning') })
     .click();
-  await page.locator('fl-ranking a.row', { hasText: b }).click();
+  // Rankings name players by first name (unique in this league).
+  await page.locator('fl-ranking a.row', { hasText: b.split(' ')[0] }).click();
   await page.getByRole('tab', { name: t('player.tabs.stats') }).click();
   await expect(page.getByRole('heading', { name: t('lines.title') })).toBeVisible();
   await expect(page.locator('fl-lines')).toContainText(t('lines.known', { n: 1, total: 1 }));

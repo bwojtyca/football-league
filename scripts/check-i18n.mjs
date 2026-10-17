@@ -32,6 +32,42 @@ const literal =
 const prefix = /'([a-zA-Z][\w]*(?:\.[\w]+)*)\.'\s*\+/g;
 
 const problems = [];
+
+// A key written twice in one object: JSON.parse keeps the last one silently.
+function duplicateKeys(text) {
+  const found = [];
+  const stack = [];
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === '{') {
+      stack.push(new Set());
+    } else if (char === '}') {
+      stack.pop();
+    } else if (char === '"') {
+      let end = i + 1;
+      while (text[end] !== '"') {
+        end += text[end] === '\\' ? 2 : 1;
+      }
+      const isKey = /^\s*:/.test(text.slice(end + 1, end + 20));
+      const key = text.slice(i + 1, end);
+      if (isKey && stack.length) {
+        if (stack.at(-1).has(key)) {
+          found.push(key);
+        }
+        stack.at(-1).add(key);
+      }
+      i = end;
+    }
+  }
+  return found;
+}
+
+for (const lang of ['pl', 'en']) {
+  for (const key of duplicateKeys(readFileSync(`public/i18n/${lang}.json`, 'utf8'))) {
+    problems.push(`public/i18n/${lang}.json: "${key}" written twice in one object`);
+  }
+}
+
 for (const file of files('src/app')) {
   const source = readFileSync(file, 'utf8');
   for (const match of source.matchAll(literal)) {

@@ -172,10 +172,9 @@ ol.people li.empty::before {
   color: var(--fl-ink-2);
 }
 
-/* The leaders: their place lights up like the ball. */
+/* The leaders: a heavier place (yellow is the main action's alone). */
 .table tr.first td:first-child {
-  color: var(--fl-ball);
-  font: 800 1.05rem/1 var(--fl-display);
+  font: 900 1.05rem/1 var(--fl-display);
 }
 
 .fixtures {

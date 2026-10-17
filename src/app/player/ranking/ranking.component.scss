@@ -30,21 +30,6 @@
   color: var(--fl-ink-2);
 }
 
-/* Titles not shown, on a small pill: not to be read as a score change. */
-.more-titles {
-  flex: none;
-  padding: 0 5px;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px #6a706c;
-  color: var(--fl-ink-2);
-  font: 700 0.75rem/1.4 var(--fl-display);
-}
-
-.line b .short,
-.who small .inline-form {
-  display: none;
-}
-
 .ranking {
   list-style: none;
   margin: 0;
@@ -79,9 +64,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The leader holds the ball. */
+/* The leader: a heavier place, in ink (yellow is the main action's alone). */
 .first .pos {
-  color: var(--fl-ball);
+  font-weight: 900;
 }
 
 .who {
@@ -270,10 +255,6 @@
   cursor: help;
 }
 
-.more-titles.narrow {
-  display: none;
-}
-
 /* A potato's line says since when: it may take two lines (evaluation 6: cut at 360 px). */
 .row.potato .who small {
   white-space: normal;
@@ -285,40 +266,8 @@
   white-space: nowrap;
 }
 
-/* A phone: the short name, one title and a count of the rest, the form dots under the name
-   (evaluation 6: on one line with them, names were cut to a few letters). */
-@container ranking (max-width: 440px) {
-  .line b .full,
-  .row > fl-form {
-    display: none;
-  }
-
-  .line b .short {
-    display: inline;
-  }
-
-  .who small .inline-form {
-    display: inline-flex;
-    margin-left: 6px;
-    vertical-align: -3px;
-  }
-
-  .line .title ~ .title,
-  .more-titles.wide {
-    display: none;
-  }
-
-  .more-titles.narrow {
-    display: inline;
-  }
-}
-
-/* A narrow ranking (a small phone): no form dots either. */
+/* A narrow ranking (a small phone): tighter view buttons. */
 @container ranking (max-width: 350px) {
-  .who small .inline-form {
-    display: none;
-  }
-
   .views button {
     padding: 0 9px;
     font-size: 0.875rem;
@@ -331,7 +280,10 @@
 }
 
 /* Columns only a wide ranking has room for. */
-.col {
+/* The columns and the form dots of a wide ranking, named once in a header row. */
+.col,
+.head-row,
+.row > fl-form {
   display: none;
 }
 
@@ -339,7 +291,38 @@
   .col {
     display: grid;
     justify-items: end;
-    min-width: 64px;
+    width: 64px;
+  }
+
+  .row > fl-form {
+    display: inline-flex;
+  }
+
+  .head-row {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    padding: 4px 4px 6px;
+    border-bottom: 1px solid var(--fl-line);
+    color: var(--fl-ink-2);
+    font: 700 0.75rem/1.2 var(--fl-display);
+  }
+
+  /* Over the names: past the place (30), the avatar (36) and their gaps. */
+  .head-who {
+    flex: 1;
+    padding-left: 86px;
+  }
+
+  .head-form {
+    width: 52px;
+    margin: 0 10px 0 14px;
+    text-align: center;
+  }
+
+  .head-rating {
+    min-width: 52px;
+    text-align: right;
   }
 
   .col b {
@@ -412,42 +395,8 @@
 .potato-head {
   display: flex;
   justify-content: space-between;
-  margin: 12px 4px 0;
+  margin: 12px 4px 0 0;
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--fl-ink-2);
-}
-
-/* One line before the list: what the dots and the icons are. */
-.legend {
-  margin: 4px 0 6px;
-  color: var(--fl-ink-2);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.legend .dots {
-  display: inline-flex;
-  margin: 0 3px 0 6px;
-}
-
-.legend .dots i {
-  display: inline-block;
-  box-sizing: border-box;
-  width: 8px;
-  height: 8px;
-  border: 1.5px solid var(--fl-ink-2);
-  border-radius: 50%;
-}
-
-.legend .dots i.w {
-  border-color: var(--fl-ink);
-  background: var(--fl-ink);
-}
-
-/* No dots on a narrow ranking: no word on them either. */
-@container ranking (max-width: 350px) {
-  .legend-dots {
-    display: none;
-  }
 }

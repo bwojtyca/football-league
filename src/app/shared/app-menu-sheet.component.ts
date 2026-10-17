@@ -1,10 +1,16 @@
 import { Component, computed, inject } from '@angular/core';
-import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import {
+  MAT_BOTTOM_SHEET_DATA,
+  MatBottomSheet,
+  MatBottomSheetRef,
+} from '@angular/material/bottom-sheet';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { LeagueService } from '../league/league.service';
+import { inviteToLeague } from '../league/league-switcher.component';
 import { openWhoSheet } from '../league/who-sheet.component';
 import { PlayerService } from '../player/player.service';
 import { InstallService } from './install.service';
@@ -12,9 +18,9 @@ import { LanguageSwitchComponent } from './language-switch.component';
 import { MeService } from './me.service';
 import { SheetCloseComponent } from './sheet-close.component';
 
-/** The app's menu (a league's own things are in the league's menu, under its name). */
-export function openAppMenu(sheet: MatBottomSheet) {
-  return sheet.open(AppMenuSheetComponent);
+/** The page's menu: inside a league, the league's invite and settings first, then the app's. */
+export function openAppMenu(sheet: MatBottomSheet, leagueId: string | null = null) {
+  return sheet.open(AppMenuSheetComponent, { data: { leagueId } });
 }
 
 /**
@@ -26,6 +32,20 @@ export function openAppMenu(sheet: MatBottomSheet) {
   imports: [SheetCloseComponent, MatIconModule, RouterLink, LanguageSwitchComponent, TranslocoPipe],
   template: `
     <h2>{{ 'appMenu.title' | transloco }}</h2>
+    <!-- Inside a league, its invite and settings here too (evaluation 8: on a phone they were
+         only behind the league's name). -->
+    @if (leagueOfPage(); as league) {
+      <h3 class="fl-kicker">{{ league.name }}</h3>
+      <button class="row" (click)="invite(league)">
+        <mat-icon aria-hidden="true">share</mat-icon>
+        <span class="label">{{ 'switcher.invite' | transloco }}</span>
+      </button>
+      <a class="row" [routerLink]="['/l', league.id, 'settings']" (click)="close()">
+        <mat-icon aria-hidden="true">settings</mat-icon>
+        <span class="label">{{ 'settings.title' | transloco }}</span>
+      </a>
+      <h3 class="fl-kicker">{{ 'appMenu.app' | transloco }}</h3>
+    }
     <div class="row">
       <mat-icon aria-hidden="true">language</mat-icon>
       <span class="label">{{ 'more.language' | transloco }}</span>
@@ -77,6 +97,9 @@ export function openAppMenu(sheet: MatBottomSheet) {
       margin: 0 0 6px;
       font: var(--fl-sheet-title);
     }
+    h3 {
+      margin: 12px 0 2px;
+    }
     .row {
       display: flex;
       align-items: center;
@@ -120,8 +143,26 @@ export class AppMenuSheetComponent {
   private readonly _me = inject(MeService);
   private readonly _players = inject(PlayerService);
 
+  private readonly _leagues = inject(LeagueService);
+  private readonly _snackBar = inject(MatSnackBar);
+  private readonly _transloco = inject(TranslocoService);
+  private readonly _data = inject<{ leagueId: string | null } | null>(MAT_BOTTOM_SHEET_DATA, {
+    optional: true,
+  });
   /** The league last opened on this device: whose players to choose from. */
-  protected readonly league = inject(LeagueService).lastLeague;
+  protected readonly league = this._leagues.lastLeague;
+  /** The league whose page opened the menu. */
+  protected readonly leagueOfPage = computed(() => {
+    const id = this._data?.leagueId;
+    const league = id ? this._leagues.league(id) : null;
+    return league ? { id: league.id, name: league.name } : null;
+  });
+
+  protected invite(league: { id: string; name: string }): void {
+    void inviteToLeague(league, () =>
+      this._snackBar.open(this._transloco.translate('hub.copied'), undefined, { duration: 2500 }),
+    );
+  }
   protected readonly meName = computed(() => {
     const id = this._me.id();
     return id ? this._players.getPlayerName(id) : null;

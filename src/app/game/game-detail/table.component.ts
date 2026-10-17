@@ -347,9 +347,9 @@ const percent = (value: number, of: number) => `${(value / of) * 100}%`;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    /* Upright, the rails run along the sides: the names read along them, at 13 px. */
+    /* Upright, the rails run along the sides: the names read along them, at 15 px. */
     .vertical .plate {
-      font-size: 0.8125rem;
+      font-size: 0.9375rem;
     }
     .plate b {
       font: 900 1.3em/1 var(--fl-led);

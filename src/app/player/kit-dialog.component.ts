@@ -219,7 +219,7 @@ export function openKitDialog(dialog: MatDialog, data: KitDialogData) {
     /* The chosen one: a ring like a selected chip, without an outline on the others. */
     .patterns button[aria-checked='true'],
     .colors button[aria-checked='true'] {
-      box-shadow: inset 0 0 0 2.5px var(--fl-ball);
+      box-shadow: inset 0 0 0 2.5px var(--fl-ink);
     }
     .hint {
       margin: 14px 0 0;

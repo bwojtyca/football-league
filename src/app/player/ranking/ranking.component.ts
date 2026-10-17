@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
-import { Game, POSITIONS, Position, TEAM_COLORS } from '../../game/game';
+import { Game } from '../../game/game';
 import { FormDotsComponent } from '../../shared/form-dots.component';
 import { MeService } from '../../shared/me.service';
 import { TitleIconComponent } from '../../shared/title-icon.component';
@@ -120,31 +120,6 @@ export class RankingComponent {
       .filter((p) => p.games < this._threshold())
       .sort((a, b) => b.games - a.games),
   );
-
-  /** The position each player mostly plays in 2 vs 2 games, when one clearly prevails. */
-  protected readonly mainPosition = computed(() => {
-    const counts = new Map<string, Record<Position, number>>();
-    for (const game of this.games()) {
-      for (const color of TEAM_COLORS) {
-        const team = game.teams[color];
-        if (!game.end || team.defence.player === team.offence.player) {
-          continue;
-        }
-        for (const position of POSITIONS) {
-          const count = counts.get(team[position].player) ?? { defence: 0, offence: 0 };
-          count[position]++;
-          counts.set(team[position].player, count);
-        }
-      }
-    }
-    const main = new Map<string, Position>();
-    for (const [id, { defence, offence }] of counts) {
-      if (defence !== offence) {
-        main.set(id, defence > offence ? 'defence' : 'offence');
-      }
-    }
-    return main;
-  });
 
   protected readonly potatoPoints = POTATO_POINTS;
   protected readonly potatoDayGames = POTATO_DAY_GAMES;

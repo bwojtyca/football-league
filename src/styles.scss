@@ -162,8 +162,10 @@ html {
   /* 3.5:1 on the cards: a field's edge is a control's boundary (WCAG 1.4.11; evaluation 6). */
   --mat-form-field-outlined-outline-color: #6a706c;
   --mat-form-field-outlined-hover-outline-color: var(--fl-ink-2);
-  --mat-form-field-outlined-focus-outline-color: var(--fl-ball);
-  --mat-form-field-outlined-focus-label-text-color: var(--fl-ball);
+  /* Controls that are on, chosen or focused in ink: the ball's yellow is the main action's
+     alone (evaluation 8). */
+  --mat-form-field-outlined-focus-outline-color: var(--fl-ink);
+  --mat-form-field-outlined-focus-label-text-color: var(--fl-ink);
   --mat-form-field-filled-container-color: var(--fl-card-2);
   --mat-autocomplete-background-color: var(--fl-dialog);
   --mat-menu-container-shape: 14px;
@@ -176,27 +178,27 @@ html {
   --mat-button-toggle-shape: 20px;
   --mat-button-toggle-selected-state-background-color: var(--fl-ink);
   --mat-button-toggle-selected-state-text-color: #000000;
-  --mat-progress-spinner-active-indicator-color: var(--fl-ball);
-  --mat-slide-toggle-selected-track-color: var(--fl-ball);
-  --mat-slide-toggle-selected-hover-track-color: var(--fl-ball);
-  --mat-slide-toggle-selected-focus-track-color: var(--fl-ball);
-  --mat-slide-toggle-selected-pressed-track-color: var(--fl-ball);
+  --mat-progress-spinner-active-indicator-color: var(--fl-ink);
+  --mat-slide-toggle-selected-track-color: var(--fl-ink);
+  --mat-slide-toggle-selected-hover-track-color: var(--fl-ink);
+  --mat-slide-toggle-selected-focus-track-color: var(--fl-ink);
+  --mat-slide-toggle-selected-pressed-track-color: var(--fl-ink);
   --mat-slide-toggle-selected-handle-color: var(--fl-on-ball);
   --mat-slide-toggle-selected-hover-handle-color: var(--fl-on-ball);
   --mat-slide-toggle-selected-focus-handle-color: var(--fl-on-ball);
   --mat-slide-toggle-selected-pressed-handle-color: var(--fl-on-ball);
-  --mat-slide-toggle-selected-icon-color: var(--fl-ball);
+  --mat-slide-toggle-selected-icon-color: var(--fl-ink);
   /* An off switch keeps a visible outline (the default was 2:1 on the cards). */
   --mat-slide-toggle-unselected-track-outline-color: var(--fl-ink-2);
-  --mat-checkbox-selected-icon-color: var(--fl-ball);
-  --mat-checkbox-selected-hover-icon-color: var(--fl-ball);
-  --mat-checkbox-selected-focus-icon-color: var(--fl-ball);
-  --mat-checkbox-selected-pressed-icon-color: var(--fl-ball);
+  --mat-checkbox-selected-icon-color: var(--fl-ink);
+  --mat-checkbox-selected-hover-icon-color: var(--fl-ink);
+  --mat-checkbox-selected-focus-icon-color: var(--fl-ink);
+  --mat-checkbox-selected-pressed-icon-color: var(--fl-ink);
   --mat-checkbox-selected-checkmark-color: var(--fl-on-ball);
-  --mat-radio-selected-icon-color: var(--fl-ball);
-  --mat-radio-selected-hover-icon-color: var(--fl-ball);
-  --mat-radio-selected-focus-icon-color: var(--fl-ball);
-  --mat-radio-selected-pressed-icon-color: var(--fl-ball);
+  --mat-radio-selected-icon-color: var(--fl-ink);
+  --mat-radio-selected-hover-icon-color: var(--fl-ink);
+  --mat-radio-selected-focus-icon-color: var(--fl-ink);
+  --mat-radio-selected-pressed-icon-color: var(--fl-ink);
   --mat-tooltip-container-color: var(--fl-ink);
   --mat-tooltip-supporting-text-color: #000000;
 }
@@ -562,6 +564,9 @@ fl-games-stats tbody th a {
 .fl-records dd.fl-led {
   font-family: var(--fl-led);
   font-weight: 900;
+  /* Dot digits look lighter than Archivo: a size up to hold their own (evaluation 8). */
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .fl-records .about {

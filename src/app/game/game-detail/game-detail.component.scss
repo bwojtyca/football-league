@@ -62,6 +62,11 @@
   white-space: nowrap;
 }
 
+.detail:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .top .detail .chevron {
   width: 18px;
   height: 18px;
@@ -701,8 +706,10 @@
     z-index: auto;
   }
 
+  /* The header over the 720 px text, so its actions end where the text ends (evaluation 8). */
   .ended .top {
-    padding-inline: calc(max(0px, (100% - 1152px) / 2) + 8px);
+    padding-left: calc(max(0px, (100% - 1152px) / 2) + 8px);
+    padding-right: max(8px, calc(100% - max(0px, (100% - 1152px) / 2) - 744px));
   }
 
   .ended .details {

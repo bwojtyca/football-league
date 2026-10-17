@@ -270,11 +270,11 @@ export class LeagueLayoutComponent {
 
   /**
    * The "+" is the yellow ball unless the page has its own main action: a tournament's page
-   * (its next game) or a league without games yet ("Play your first game").
+   * (its next game), the tournaments tab (a new tournament) or a league without games yet.
    */
   protected readonly quietPlay = computed(
     () =>
-      this._url().split('?')[0].split('/')[3] === 't' ||
+      ['t', 'tournaments'].includes(this._url().split('?')[0].split('/')[3] ?? '') ||
       (this._url().split('?')[0].split('/').length <= 3 &&
         this._gameService.leagueGames(this.leagueId())?.length === 0),
   );

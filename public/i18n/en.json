@@ -254,11 +254,6 @@
     "leaveStay": "Stay",
     "rotate": "Turn the table layout",
     "detail": "Goal detail: {level}",
-    "detailLevel": {
-      "position": "position",
-      "rod": "rod",
-      "man": "figure"
-    },
     "ownPick": "Tap who scored it",
     "leaveLater": "Leave, finish later",
     "last": "Last",
@@ -269,6 +264,7 @@
     "fullscreenOn": "Full screen",
     "fullscreenOff": "Leave full screen",
     "howTo": "How to record a goal",
+    "pausedBar": "Paused: resume the game to record goals.",
     "firstStep": {
       "position": "Tap a rod of the player who scored.",
       "rod": "Tap the rod the goal came from.",
@@ -435,8 +431,8 @@
       "cup": "from 3 teams"
     },
     "leaveShort": "Remove",
-    "left": "{n, plural, other {Left (#)}}",
-    "leftTag": "left",
+    "left": "{n, plural, other {Out of the tournament (#)}}",
+    "leftTag": "out",
     "editPeople": "Remove someone",
     "editDone": "Done"
   },
@@ -525,12 +521,11 @@
     "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
     "allLeagues": "All leagues",
     "overallProfile": "all leagues ›",
-    "colGames": "games",
-    "colWon": "won",
+    "colGames": "Games",
+    "colWon": "% won",
+    "colElo": "Elo",
+    "colForm": "Last 5",
     "help": "How to read the ranking",
-    "legendForm": "Last games:",
-    "legendTitles": "icons: league titles, +N: more (see ?)",
-    "moreTitles": "{n, plural, one {and # more title} other {and # more titles}}",
     "helpTitle": "How to read the ranking",
     "helpElo": "Everyone starts at 1500. After a game the winners gain what the losers lose; beating stronger players gives more, and a team counts as the average of its players. For the first {n} games the rating is not settled yet and looks faded.",
     "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
@@ -585,7 +580,7 @@
   "switcher": {
     "title": "Leagues",
     "open": "{name}: league menu",
-    "manage": "Find a league",
+    "manage": "Leagues",
     "invite": "Invite: share the league's link",
     "change": "Switch league"
   },
@@ -796,8 +791,9 @@
     "played": "{time} of play"
   },
   "appMenu": {
-    "title": "App",
-    "open": "App: language, who you are, overall ranking",
+    "title": "Menu",
+    "open": "Menu: league, language, who you are, overall ranking",
+    "app": "App",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",
     "installIos": "In Safari: Share › Add to Home Screen. Then full screen without the bar."

@@ -118,7 +118,7 @@ export function openPlayerPicker(sheet: MatBottomSheet, data: PickerData) {
     }
     .search:focus {
       outline: none;
-      box-shadow: inset 0 0 0 2px var(--fl-ball);
+      box-shadow: inset 0 0 0 2px var(--fl-ink);
     }
     ul {
       display: grid;

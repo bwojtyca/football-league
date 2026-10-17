@@ -12,6 +12,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 5     | 16 Oct 2026 | 38838805463 (master 1f4d76c) | 7.3       | 5.5         | 6.3         | 5.0         | 6.3        | 6.8       | 5.0     | 6.2  |
 | 6     | 17 Oct 2026 | 38865369501 (master 4e9a5ca) | 8.5       | 7.0         | 6.0         | 6.75        | 5.5        | 5.5       | 5.5     | 6.55 |
 | 7     | 17 Oct 2026 | 39005288451 (master d011c1d) | 8.3       | 5.5         | 6.0         | 7.0         | 4.0        | 6.8       | 4.0     | 6.25 |
+| 8     | 17 Oct 2026 | 39023105447 (master f02b7af) | 7.25      | 6.5         | 7.0         | 7.0         | 7.75       | 6.5       | 6.5     | 7.0  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -150,3 +151,5 @@ overall would be 5.5.
   numbers; the finished game on the page column with settings in its rail; a compact
   who-are-you card at 360 px; a ring on the black swatch; no yellow avatar ring; teal and amber
   for two players; "Znajdź ligę".
+
+Round 8 runs on the Tour of f02b7af (run 39023105447); report in `eval-8.md`.

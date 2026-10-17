@@ -77,8 +77,11 @@ export class AvatarComponent {
   /** The player's kit, when they have chosen one. */
   protected readonly kit = computed(() => kitOf(this._players.player(this.playerId())?.kit));
 
+  /** Initials from the player's full name, whatever short form a list passes (evaluation 8:
+   * "ŻS" in the ranking, "ŻA" on the game screen). */
   protected readonly initials = computed(() => {
-    const words = this.name().trim().split(/\s+/).filter(Boolean);
+    const full = this._players.player(this.playerId())?.name || this.name();
+    const words = full.trim().split(/\s+/).filter(Boolean);
     if (words.length > 1) {
       return words[0][0] + words[words.length - 1][0];
     }

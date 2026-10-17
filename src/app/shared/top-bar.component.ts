@@ -112,7 +112,7 @@ export class TopBarComponent {
   protected readonly long = computed(() => this.title().length > 22);
 
   protected appMenu(): void {
-    openAppMenu(this._sheet);
+    openAppMenu(this._sheet, this.switcher());
   }
 
   protected switchLeague(): void {

@@ -145,18 +145,18 @@
   <p class="hint">{{ 'league.duetsHint' | transloco: { n: duetGames() } }}</p>
 } @else {
   @if (ranked().length) {
-    <!-- What a row's signs mean, in one line before the list (evaluation 7: dots and "+N"
-         unexplained; evaluation 5: a legend after the list came too late). -->
-    <p class="legend">
-      <span class="legend-dots">
-        {{ 'ranking.legendForm' | transloco }}
-        <span class="dots" aria-hidden="true"><i class="w"></i></span>{{ 'result.win' | transloco }}
-        <span class="dots" aria-hidden="true"><i></i></span>{{ 'result.loss' | transloco }} ·
-      </span>
-      {{ 'ranking.legendTitles' | transloco }}
-    </p>
-  }
-  @if (ranked().length) {
+    <!-- A wide ranking names its columns once (evaluation 8: "16 mecze" under every number). -->
+    <div class="head-row" aria-hidden="true">
+      <span class="head-who">{{ 'tournament.player' | transloco }}</span>
+      <span class="col">{{ 'ranking.colGames' | transloco }}</span>
+      <span class="col">{{
+        (sortBy() === 'elo' ? 'ranking.colWon' : 'ranking.colElo') | transloco
+      }}</span>
+      <span class="head-form">{{ 'ranking.colForm' | transloco }}</span>
+      <span class="head-rating">{{
+        (sortBy() === 'elo' ? 'ranking.colElo' : 'ranking.colWon') | transloco
+      }}</span>
+    </div>
     <ol class="ranking">
       @for (player of shown(); track player.id; let i = $index) {
         <li>
@@ -203,17 +203,14 @@
     <fl-avatar [playerId]="player.id" [name]="player.name" [size]="36" />
     <span class="who">
       <span class="line">
-        <!-- A phone shows the short name (first name, an initial when shared) so it fits whole
-             (evaluation 6: "Krzyszt…"). -->
-        <b [attr.title]="player.name"
-          ><span class="full">{{ player.name }}</span
-          ><span class="short">{{ shortName(player.id, player.name) }}</span></b
-        >
+        <!-- The short name (first name, an initial when shared) at every size, the full one on
+             the profile (evaluations 6 and 8: cut names). -->
+        <b [attr.title]="player.name">{{ shortName(player.id, player.name) }}</b>
         @if (player.id === me.id()) {
           <span class="you">{{ 'me.you' | transloco }}</span>
         }
         @let held = titles().get(player.id) ?? [];
-        @for (title of held.slice(0, 2); track title.id) {
+        @for (title of held.slice(0, 1); track title.id) {
           @let label =
             ('titles.' + title.id + '.name' | transloco) +
             ': ' +
@@ -230,49 +227,23 @@
             ><fl-title-icon [name]="title.icon"
           /></span>
         }
-        <!-- Titles that do not fit, counted on a pill that says so (evaluation 6: a bare "+3"
-             read like the Elo change). -->
-        @if (held.length > 2) {
-          <span
-            class="more-titles wide"
-            [matTooltip]="'ranking.moreTitles' | transloco: { n: held.length - 2 }"
-            [attr.aria-label]="'ranking.moreTitles' | transloco: { n: held.length - 2 }"
-            >+{{ held.length - 2 }}</span
-          >
-        }
-        @if (held.length > 1) {
-          <span
-            class="more-titles narrow"
-            [matTooltip]="'ranking.moreTitles' | transloco: { n: held.length - 1 }"
-            [attr.aria-label]="'ranking.moreTitles' | transloco: { n: held.length - 1 }"
-            >+{{ held.length - 1 }}</span
-          >
-        }
       </span>
       @if (player.games === 0) {
         <small>{{ 'league.unrated' | transloco }}</small>
       } @else {
-        @let main = mainPosition().get(player.id);
-        <small
-          >{{ player.wins }}–{{ player.loses
-          }}{{ main ? ' · ' + ('newGame.mostly.' + main | transloco) : '' }}
-          <fl-form class="inline-form" [results]="player.form"
-        /></small>
+        <small>{{ player.wins }}–{{ player.loses }}</small>
       }
     </span>
     @if (player.games > 0) {
       <!-- A wide ranking (the desktop's left column, P80): games and the other measure too. -->
       <span class="col">
         <b>{{ player.games }}</b>
-        <small>{{ 'ranking.colGames' | transloco }}</small>
       </span>
       <span class="col">
         @if (sortBy() === 'elo') {
           <b>{{ player.winRatio | number: '1.0-0' }}%</b>
-          <small>{{ 'ranking.colWon' | transloco }}</small>
         } @else {
           <b>{{ player.rating }}</b>
-          <small>Elo</small>
         }
       </span>
       <fl-form [results]="player.form" />

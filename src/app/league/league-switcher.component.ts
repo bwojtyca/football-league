@@ -23,6 +23,20 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
  * inviting by its link, and the leagues of this device to switch to (its settings are behind
  * the gear).
  */
+/** Invites by a league's link: the phone's share sheet, or the clipboard (then `copied`). */
+export async function inviteToLeague(
+  league: { id: string; name: string },
+  copied: () => void,
+): Promise<void> {
+  const url = `${location.origin}${location.pathname}#/l/${league.id}`;
+  if (navigator.share) {
+    await navigator.share({ title: league.name, url }).catch(() => undefined);
+    return;
+  }
+  await navigator.clipboard?.writeText(url).catch(() => undefined);
+  copied();
+}
+
 @Component({
   selector: 'fl-league-switcher',
   imports: [SheetCloseComponent, MatIconModule, RouterLink, TranslocoPipe],
@@ -241,16 +255,11 @@ export class LeagueSwitcherComponent {
   /** Invites by the league's link: the phone's share sheet, or the clipboard. */
   protected async share(): Promise<void> {
     const league = this.league();
-    if (!league) {
-      return;
+    if (league) {
+      await inviteToLeague(league, () =>
+        this._snackBar.open(this._transloco.translate('hub.copied'), undefined, { duration: 2500 }),
+      );
     }
-    const url = `${location.origin}${location.pathname}#/l/${league.id}`;
-    if (navigator.share) {
-      await navigator.share({ title: league.name, url }).catch(() => undefined);
-      return;
-    }
-    await navigator.clipboard?.writeText(url).catch(() => undefined);
-    this._snackBar.open(this._transloco.translate('hub.copied'), undefined, { duration: 2500 });
   }
 
   /**

@@ -105,7 +105,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
     }
     .option[aria-checked='true'] {
       background: var(--fl-card-2);
-      box-shadow: inset 0 0 0 2px var(--fl-ball);
+      box-shadow: inset 0 0 0 2px var(--fl-ink);
     }
     .text {
       flex: 1;
@@ -127,7 +127,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
       box-shadow: inset 0 0 0 2px var(--fl-line-2);
     }
     .option[aria-checked='true'] .dot {
-      box-shadow: inset 0 0 0 7px var(--fl-ball);
+      box-shadow: inset 0 0 0 7px var(--fl-ink);
     }
     .add {
       background: none;

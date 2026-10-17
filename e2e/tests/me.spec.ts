@@ -30,7 +30,7 @@ test('"this is me" on the device: the question, the choice, the "You" card and t
     .click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
   await expect(card).toContainText(t('me.place', { n: 1 }));
-  await expect(page.locator('fl-ranking .row.me')).toContainText(a);
+  await expect(page.locator('fl-ranking .row.me')).toContainText(a.split(' ')[0]);
   await shot(page, 'me-league');
 
   // The card opens the profile, which knows it is yours; the app menu says who plays here.

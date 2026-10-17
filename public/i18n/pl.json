@@ -254,11 +254,6 @@
     "leaveStay": "Zostań",
     "rotate": "Obróć układ stołu",
     "detail": "Szczegóły goli: {level}",
-    "detailLevel": {
-      "position": "pozycja",
-      "rod": "linia",
-      "man": "zawodnik"
-    },
     "ownPick": "Wskaż, kto strzelił",
     "leaveLater": "Wyjdź, dokończę później",
     "last": "Ostatnio",
@@ -269,6 +264,7 @@
     "fullscreenOn": "Pełny ekran",
     "fullscreenOff": "Zamknij pełny ekran",
     "howTo": "Jak zapisać gola",
+    "pausedBar": "Mecz wstrzymany: wznów go, żeby zapisywać gole.",
     "firstStep": {
       "position": "Dotknij drążka gracza, który strzelił.",
       "rod": "Dotknij drążka, z którego padł gol.",
@@ -435,8 +431,8 @@
       "cup": "od 3 drużyn"
     },
     "leaveShort": "Wypisz",
-    "left": "{n, plural, one {Wypisany (#)} other {Wypisani (#)}}",
-    "leftTag": "wypisany",
+    "left": "{n, plural, other {Poza turniejem (#)}}",
+    "leftTag": "poza turniejem",
     "editPeople": "Wypisz kogoś",
     "editDone": "Gotowe"
   },
@@ -525,12 +521,11 @@
     "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
     "allLeagues": "Wszystkie ligi",
     "overallProfile": "ze wszystkich lig ›",
-    "colGames": "mecze",
-    "colWon": "wygranych",
+    "colGames": "Mecze",
+    "colWon": "% wygranych",
+    "colElo": "Elo",
+    "colForm": "Ostatnie 5",
     "help": "Jak czytać ranking",
-    "legendForm": "Ostatnie mecze:",
-    "legendTitles": "ikony: tytuły ligi, +N: kolejne (więcej pod ?)",
-    "moreTitles": "{n, plural, one {i # inny tytuł} few {i # inne tytuły} other {i # innych tytułów}}",
     "helpTitle": "Jak czytać ranking",
     "helpElo": "Każdy zaczyna od 1500. Po meczu zwycięzcy zyskują tyle, ile przegrani tracą; wygrana z silniejszymi daje więcej, a drużyna liczy się jak średnia swoich graczy. Przez pierwsze {n} meczów Elo jest jeszcze niepewne i wygląda na przezroczyste.",
     "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
@@ -585,7 +580,7 @@
   "switcher": {
     "title": "Ligi",
     "open": "{name}: menu ligi",
-    "manage": "Znajdź ligę",
+    "manage": "Ligi",
     "invite": "Zaproś: udostępnij link do ligi",
     "change": "Zmień ligę"
   },
@@ -796,8 +791,9 @@
     "played": "{time} gry"
   },
   "appMenu": {
-    "title": "Aplikacja",
-    "open": "Aplikacja: język, kim jesteś, ranking ogólny",
+    "title": "Menu",
+    "open": "Menu: liga, język, kim jesteś, ranking ogólny",
+    "app": "Aplikacja",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",
     "installIos": "W Safari: Udostępnij › Do ekranu początkowego. Potem pełny ekran bez paska."
