@@ -224,6 +224,10 @@ import { TournamentService } from '../tournament/tournament.service';
         box-sizing: border-box;
         scroll-snap-align: start;
       }
+      /* The whole card is the link: without the chevron, two short names fit a line. */
+      .strip.many .go {
+        display: none;
+      }
       .strip.many small {
         overflow: hidden;
         text-overflow: ellipsis;

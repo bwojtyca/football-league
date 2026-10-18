@@ -158,7 +158,7 @@
    days and hid the order); the details move to the row's right end instead of under it. */
 @container games (min-width: 760px) {
   .game {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) minmax(200px, 0.9fr);
+    grid-template-columns: minmax(0, 200px) auto minmax(0, 200px) minmax(200px, 1fr);
     padding: 10px 8px;
   }
 
