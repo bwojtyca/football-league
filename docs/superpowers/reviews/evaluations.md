@@ -170,3 +170,26 @@ Round 8 runs on the Tour of f02b7af (run 39023105447); report in `eval-8.md`.
 
 Round 9 runs on the Tour of 896df59 (run 39042759003); report in `eval-9.md`. No blockers, no
 majors: the score is a stack of minors (names, navigation).
+
+## After round 9: fixed (18 Oct 2026, on the branch at 5935760)
+
+- One short name per player everywhere (`PlayerService.shortName()`: the first name, "First L."
+  when two in one of their leagues share it), in lists, tables, boards, charts and tournament
+  summaries; the full name stays in the profile header, the players list and tooltips.
+- Score separators at `--fl-ink-2` (they were 2.4:1); tournament summary names link to profiles.
+
+Round 10 runs on the Tour of 41c1986 (run 39102162418), before round 9's fixes; report in
+`eval-10.md`. (Rounds 9 and 10 were run by two sessions on the same day.)
+
+## After round 10: fixed (18 Oct 2026, on the branch at ab31c7a)
+
+- Majors: a wide game list keeps one game a row in date order, its details at the row's right
+  end (two a row left holes after odd days); on a phone, "Now in the league" is one row of cards
+  to swipe (the next one peeking in) and the You card drops its third line, so the ranking
+  starts on the first screen.
+- Minors: one-letter Polish words (a, i, o, u, w, z) joined to the next word by a no-break space
+  in `pl.json`; close discs on the 16 px gutter of sheets, the close glyph on a dialog's 24 px
+  content edge.
+
+Round 11 runs on the Tour of ab31c7a.
+
