@@ -174,3 +174,8 @@ async function next(page: Page): Promise<void> {
 export async function chooseFormat(page: Page, format: string): Promise<void> {
   await page.locator(`fl-tournament-new-dialog button.format[data-format="${format}"]`).click();
 }
+
+/** A player's short name in a test league: the first name (unique among its players). */
+export function first(name: string): string {
+  return name.split(' ')[0];
+}

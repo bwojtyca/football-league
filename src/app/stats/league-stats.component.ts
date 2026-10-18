@@ -11,7 +11,6 @@ import { Game } from '../game/game';
 import { GameService } from '../game/game.service';
 import { timelineOf } from '../game/timeline';
 import { PlayerService } from '../player/player.service';
-import { shortNames } from '../player/short-names';
 import { cssColor, withAlpha } from '../shared/css-color';
 import { durationText, hoursAndMinutes, scoreOf, sidesOf } from './format';
 import { LeagueService } from '../league/league.service';
@@ -217,8 +216,7 @@ export class LeagueStatsComponent {
     const ids = [...(this._gameService.ratings(this.leagueId())?.current ?? [])]
       .sort((a, b) => b[1] - a[1])
       .map(([id]) => id);
-    const short = shortNames(new Map(ids.map((id) => [id, this._playerService.getPlayerName(id)])));
-    return ids.map((id) => ({ id, name: short.get(id)! }));
+    return ids.map((id) => ({ id, name: this._playerService.shortName(id) }));
   });
   protected readonly chosen = signal<string | null>(null);
   protected readonly focus = computed(() => {
@@ -247,7 +245,7 @@ export class LeagueStatsComponent {
     return {
       labels: finished(games).map((game) => day.format(new Date(game.end ?? game.start))),
       datasets: lines.map(([player, data]) => ({
-        label: this._playerService.getPlayerName(player),
+        label: this._playerService.shortName(player),
         data,
         borderColor: player === focus ? ink : muted,
         backgroundColor: player === focus ? ink : muted,
@@ -295,6 +293,6 @@ export class LeagueStatsComponent {
   }
 
   protected name(playerId: string): string {
-    return this._playerService.getPlayerName(playerId);
+    return this._playerService.shortName(playerId);
   }
 }

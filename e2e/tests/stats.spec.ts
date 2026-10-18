@@ -1,6 +1,17 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, goal, players, shot, startGame, t, tag, win } from './helpers';
+import {
+  addPlayers,
+  createLeague,
+  first,
+  goal,
+  players,
+  shot,
+  startGame,
+  t,
+  tag,
+  win,
+} from './helpers';
 
 test('statistics: the league, two players compared, a profile and a game against the league', async ({
   page,
@@ -46,7 +57,7 @@ test('statistics: the league, two players compared, a profile and a game against
   await expect(stats.locator('fl-titles-list dt').first()).toContainText(t('titles.leader.name'));
   await shot(page, 'stats-league');
   // The chart's chips show short names (the first name, unique in this league).
-  const short = d.split(' ')[0];
+  const short = first(d);
   await stats.getByRole('option', { name: short }).click();
   await expect(stats.locator('mat-chip-option', { hasText: short })).toHaveClass(
     /mat-mdc-chip-selected/,
@@ -83,7 +94,7 @@ test('statistics: the league, two players compared, a profile and a game against
   await elo.click();
   await expect(elo).toHaveAttribute('aria-checked', 'true');
   // Rankings name players by first name (unique in this league).
-  await page.locator('fl-ranking a.row', { hasText: a.split(' ')[0] }).click();
+  await page.locator('fl-ranking a.row', { hasText: first(a) }).click();
   await expect(page.locator('main .hero')).toBeVisible();
   await expect(page.getByRole('heading', { name: t('achievements.mishaps') })).toBeVisible();
   await expect(page.locator('.achievements li.earned').first()).toBeVisible();

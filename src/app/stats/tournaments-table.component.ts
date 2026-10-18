@@ -125,7 +125,7 @@ export class TournamentsTableComponent {
           const winners = await tournamentWinners(row.tournament, row.all);
           const names = winners
             .map((players) =>
-              players.map((id) => this._playerService.getPlayerName(id)).join(' & '),
+              players.map((id) => this._playerService.shortName(id)).join(' & '),
             )
             .join(', ');
           return [row.id, names] as const;

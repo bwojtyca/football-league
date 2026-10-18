@@ -1,6 +1,17 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, goal, players, score, shot, startGame, t, tag } from './helpers';
+import {
+  addPlayers,
+  createLeague,
+  first,
+  goal,
+  players,
+  score,
+  shot,
+  startGame,
+  t,
+  tag,
+} from './helpers';
 
 test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a rematch', async ({
   page,
@@ -16,7 +27,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await goal(page, a);
   await expect(score(page)).toHaveText('1:0');
   await expect(bar).toContainText(
-    t('game.event.goal', { name: a, from: t('position.fromDefence') }),
+    t('game.event.goal', { name: first(a), from: t('position.fromDefence') }),
   );
   await bar.getByRole('button', { name: t('game.undo'), exact: true }).click();
   await expect(score(page)).toHaveText('0:0');
@@ -27,7 +38,7 @@ test('a game: goals, undo, a swap, an own goal, pause, leaving, the finish and a
   await expect(bar).toContainText(t('game.event.swap', { team: t('team.red') }));
   await goal(page, a);
   await expect(bar).toContainText(
-    t('game.event.goal', { name: a, from: t('position.fromOffence') }),
+    t('game.event.goal', { name: first(a), from: t('position.fromOffence') }),
   );
   // An own goal: "Own goal…", then a rod of the one who scored it.
   await page.getByRole('button', { name: t('game.ownArm') }).click();
@@ -171,7 +182,9 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   // Bartek scores with a forward.
   await button(`${t('game.goalAria', { name: b })} · ${t('rods.attack')}`).click();
   await expect(score(page)).toHaveText('1:0');
-  await expect(bar).toContainText(t('game.event.goalRod', { name: b, rod: t('rods.with.attack') }));
+  await expect(bar).toContainText(
+    t('game.event.goalRod', { name: first(b), rod: t('rods.with.attack') }),
+  );
   await shot(page, 'game-detail-rod');
 
   // By figure: Celina scores with her goalkeeper; Ala's own goal with defender 2, undone.
@@ -179,14 +192,14 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
   await button(`${t('game.goalAria', { name: c })} · ${t('rods.goalie')} 1`).click();
   await expect(score(page)).toHaveText('1:1');
   await expect(bar).toContainText(
-    t('game.event.goalMan', { name: c, rod: t('rods.with.goalie'), n: 1 }),
+    t('game.event.goalMan', { name: first(c), rod: t('rods.with.goalie'), n: 1 }),
   );
   await bar.getByRole('button', { name: t('game.ownArm') }).click();
   await shot(page, 'game-detail-man');
   await button(`${t('game.ownGoalAria', { name: a })} · ${t('rods.defence')} 2`).click();
   await expect(score(page)).toHaveText('1:2');
   await expect(bar).toContainText(
-    t('game.event.ownMan', { name: a, rod: t('rods.with.defence'), n: 2 }),
+    t('game.event.ownMan', { name: first(a), rod: t('rods.with.defence'), n: 2 }),
   );
   await bar.getByRole('button', { name: t('game.undo'), exact: true }).click();
   await expect(score(page)).toHaveText('1:1');
@@ -213,7 +226,7 @@ test('goals told by rod and by figure, an own goal, a mixed log and the choice k
     .getByRole('button', { name: t('game.leaveRunning') })
     .click();
   // Rankings name players by first name (unique in this league).
-  await page.locator('fl-ranking a.row', { hasText: b.split(' ')[0] }).click();
+  await page.locator('fl-ranking a.row', { hasText: first(b) }).click();
   await page.getByRole('tab', { name: t('player.tabs.stats') }).click();
   await expect(page.getByRole('heading', { name: t('lines.title') })).toBeVisible();
   await expect(page.locator('fl-lines')).toContainText(t('lines.known', { n: 1, total: 1 }));

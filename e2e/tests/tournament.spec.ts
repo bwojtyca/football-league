@@ -97,7 +97,7 @@ test('a series from "+": best of 3 with colours swapped, then its winner', async
     .locator('nav.tabs')
     .getByRole('link', { name: t('nav.tournaments') })
     .click();
-  await expect(page.locator('.tournament .winners')).toContainText(`${a} & ${b}`);
+  await expect(page.locator('.tournament .winners')).toContainText(`${first(a)} & ${first(b)}`);
   await shot(page, 'league-tournaments');
 });
 

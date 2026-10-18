@@ -22,7 +22,6 @@ import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../
 import { duets } from '../records';
 import { DUET_GAMES, openRankingHelp } from './ranking-help-sheet.component';
 import { Title, TITLE_GAMES } from '../../stats/titles';
-import { shortNames } from '../short-names';
 
 /** Fewest games together for a pair to be ranked. */
 
@@ -130,7 +129,7 @@ export class RankingComponent {
    */
   protected readonly potatoes = computed(() =>
     potatoRanking(this.games())
-      .map((row) => ({ ...row, name: this._playerService.getPlayerName(row.player) }))
+      .map((row) => ({ ...row, name: this._playerService.shortName(row.player) }))
       .sort((a, b) => Number(b.isPotato) - Number(a.isPotato)),
   );
   /** The potatoes of now, then everyone else, each group by days as the potato. */
@@ -144,25 +143,21 @@ export class RankingComponent {
   protected readonly potatoToday = computed(() =>
     potatoState(this.games()).today.map((row) => ({
       ...row,
-      name: this._playerService.getPlayerName(row.player),
+      name: this._playerService.shortName(row.player),
     })),
   );
 
   protected readonly duetGames = computed(() => Math.max(DUET_GAMES, this.minGames()));
-  /** Short names among the ranking's players, for pairs (two names on one line). */
-  private readonly _short = computed(() =>
-    shortNames(new Map(this.players().map((player) => [player.id, player.name]))),
-  );
   /** The short form of a name, for a phone's ranking. */
   protected shortName(id: string, name: string): string {
-    return this._short().get(id) ?? name;
+    return this._playerService.shortName(id) || name;
   }
 
   protected readonly duets = computed(() =>
     duets(this.games(), this.duetGames()).map((duet) => ({
       ...duet,
       names: duet.players.map(
-        (id) => this._short().get(id) ?? this._playerService.getPlayerName(id),
+        (id) => this._playerService.shortName(id),
       ),
     })),
   );

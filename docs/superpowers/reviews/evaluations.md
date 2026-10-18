@@ -13,6 +13,8 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 6     | 17 Oct 2026 | 38865369501 (master 4e9a5ca) | 8.5       | 7.0         | 6.0         | 6.75        | 5.5        | 5.5       | 5.5     | 6.55 |
 | 7     | 17 Oct 2026 | 39005288451 (master d011c1d) | 8.3       | 5.5         | 6.0         | 7.0         | 4.0        | 6.8       | 4.0     | 6.25 |
 | 8     | 17 Oct 2026 | 39023105447 (master f02b7af) | 7.25      | 6.5         | 7.0         | 7.0         | 7.75       | 6.5       | 6.5     | 7.0  |
+| 9     | 18 Oct 2026 | 39042759003 (master 896df59) | 8.5       | 7.0         | 7.5         | 7.8         | 7.8        | 8.3       | 7.0     | 7.8  |
+| 10    | 18 Oct 2026 | 39102162418 (master 41c1986) | 7.8       | 7.8         | 7.5         | 7.5         | 7.3        | 7.5       | 7.3     | 7.6  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -165,3 +167,6 @@ Round 8 runs on the Tour of f02b7af (run 39023105447); report in `eval-8.md`.
   "Ligi"; "poza turniejem"; 15 px rail names; LED record scores a size up; the finished game's
   header over its text; potato heads on the page edge.
 - Tooling: check-i18n reports duplicate keys (found game.detailLevel written twice).
+
+Round 9 runs on the Tour of 896df59 (run 39042759003); report in `eval-9.md`. No blockers, no
+majors: the score is a stack of minors (names, navigation).

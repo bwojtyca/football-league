@@ -38,7 +38,6 @@ import { Notifier } from '../../notifier';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { compareNames } from '../../player/player';
 import { PlayerService } from '../../player/player.service';
-import { shortNames } from '../../player/short-names';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { TournamentSummaryComponent } from '../../stats/tournament-summary.component';
 import { loadBracketsViewer } from '../brackets-viewer';
@@ -335,18 +334,8 @@ export class TournamentPageComponent {
     });
   }
 
-  /** First names (an initial when two share one) among the tournament's players: the page is
-   * full of lineups and tables (evaluation 7: full names broke mid-word at 360 px). */
-  private readonly _short = computed(() => {
-    const ids = new Set([
-      ...(this.tournament()?.entries ?? []).map((entry) => entry.player),
-      ...(this.games() ?? []).flatMap((game) => game.players),
-    ]);
-    return shortNames(new Map([...ids].map((id) => [id, this._playerService.getPlayerName(id)])));
-  });
-
   protected name(playerId: string): string {
-    return this._short().get(playerId) ?? this._playerService.getPlayerName(playerId);
+    return this._playerService.shortName(playerId);
   }
 
   protected lineupName(lineup: Lineup): string {

@@ -230,7 +230,7 @@ export class GameDetailComponent implements LeaveGuarded {
     const winner = this.decided() ?? game?.win;
     return game && winner
       ? lineupPlayers(lineupOf(game.teams[winner]))
-          .map((player) => this.playerService.getPlayerName(player))
+          .map((player) => this.playerService.shortName(player))
           .join(' & ')
       : '';
   });
@@ -255,7 +255,7 @@ export class GameDetailComponent implements LeaveGuarded {
     return [winner, loser].flatMap((color) =>
       teamPlayers(game.teams[color]).map((id) => ({
         id,
-        name: this.playerService.getPlayerName(id),
+        name: this.playerService.shortName(id),
         change: Math.round(color === winner ? gain : -gain),
       })),
     );
@@ -450,7 +450,7 @@ export class GameDetailComponent implements LeaveGuarded {
       return translate('game.event.swap', { team: translate(this.teamNames[event.team]) });
     }
     return translate(this.eventKey(event), {
-      name: this.playerService.getPlayerName(event.player),
+      name: this.playerService.shortName(event.player),
       from: translate(
         event.position === 'defence' ? 'position.fromDefence' : 'position.fromOffence',
       ),

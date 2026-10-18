@@ -194,7 +194,7 @@ export class LeagueTournamentsComponent {
           const winners = await tournamentWinners(tournament, games);
           const names = winners
             .map((players) =>
-              players.map((id) => this._playerService.getPlayerName(id)).join(' & '),
+              players.map((id) => this._playerService.shortName(id)).join(' & '),
             )
             .join(', ');
           return [tournament.id, names] as const;

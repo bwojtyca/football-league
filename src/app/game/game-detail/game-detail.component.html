@@ -162,7 +162,7 @@
                 <span class="player">
                   <fl-avatar [playerId]="id" [name]="playerService.getPlayerName(id)" [size]="32" />
                   <span class="who">
-                    <b>{{ playerService.getPlayerName(id) }}</b>
+                    <b>{{ playerService.shortName(id) }}</b>
                     @if (delta !== null) {
                       <fl-change [value]="delta" />
                     }

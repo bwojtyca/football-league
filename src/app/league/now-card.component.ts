@@ -28,8 +28,6 @@ import { TitleIconComponent } from '../shared/title-icon.component';
 import { potatoState } from '../player/potato';
 import { PlayerService } from '../player/player.service';
 import { TournamentService } from '../tournament/tournament.service';
-import { shortNames } from '../player/short-names';
-import { LeagueService } from './league.service';
 
 /**
  * The top of a league's page (canvas round 4): what is going on now, one tap away (games being
@@ -286,7 +284,7 @@ import { LeagueService } from './league.service';
     .score .sep {
       margin: 0 3px;
       font: 800 1.2rem/1 var(--fl-display);
-      color: var(--fl-line-2);
+      color: var(--fl-ink-2);
     }
     .buttons {
       grid-column: 1 / -1;
@@ -487,7 +485,6 @@ import { LeagueService } from './league.service';
 export class NowCardComponent {
   private readonly _gameService = inject(GameService);
   private readonly _playerService = inject(PlayerService);
-  private readonly _leagueService = inject(LeagueService);
   private readonly _tournamentService = inject(TournamentService);
   private readonly _dialog = inject(MatDialog);
 
@@ -543,18 +540,9 @@ export class NowCardComponent {
     openNewGameDialog(this._dialog, { leagueId: this.leagueId(), previousGame: game });
   }
 
-  /** Short names among the league's players (the rows are tight). */
-  private readonly _short = computed(() => {
-    const ids = this._leagueService.league(this.leagueId())?.players ?? [];
-    return shortNames(new Map(ids.map((id) => [id, this._playerService.getPlayerName(id)])));
-  });
-
   private _row(game: Game) {
-    const short = this._short();
     const lineup = (color: TeamColor) =>
-      teamPlayers(game.teams[color]).map(
-        (id) => short.get(id) ?? this._playerService.getPlayerName(id),
-      );
+      teamPlayers(game.teams[color]).map((id) => this._playerService.shortName(id));
     return {
       id: game.id,
       game,

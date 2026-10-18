@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, players, shot, startGame, t, tag, win } from './helpers';
+import { addPlayers, createLeague, first, players, shot, startGame, t, tag, win } from './helpers';
 
 test('"this is me" on the device: the question, the choice, the "You" card and the marked row', async ({
   page,
@@ -30,7 +30,7 @@ test('"this is me" on the device: the question, the choice, the "You" card and t
     .click();
   await expect(page).toHaveURL(/#\/l\/[^/]+$/);
   await expect(card).toContainText(t('me.place', { n: 1 }));
-  await expect(page.locator('fl-ranking .row.me')).toContainText(a.split(' ')[0]);
+  await expect(page.locator('fl-ranking .row.me')).toContainText(first(a));
   await shot(page, 'me-league');
 
   // The card opens the profile, which knows it is yours; the app menu says who plays here.

@@ -7,7 +7,6 @@ import { MarqueeDirective } from '../../shared/marquee.directive';
 import { AvatarComponent } from '../../player/avatar/avatar.component';
 import { PlayerService } from '../../player/player.service';
 import { FIGURES, Game, GoalDetail, Position, Rod, TeamColor, teamScore } from '../game';
-import { shortNames } from '../../player/short-names';
 
 /** A goal told on the table: whose rod it was and, told that precisely, the rod and figure. */
 export interface TableGoal {
@@ -600,11 +599,6 @@ export class TableComponent {
     }));
   });
 
-  /** Short names among the game's players: the boards and plates are tight. */
-  private readonly _short = computed(() =>
-    shortNames(new Map(this.game().players.map((id) => [id, this._players.getPlayerName(id)]))),
-  );
-
   protected readonly plates = computed(() => {
     const game = this.game();
     return PLATES.map(({ color, position, x }) => {
@@ -612,7 +606,7 @@ export class TableComponent {
       return {
         key: `${color}-${position}`,
         color,
-        name: this._short().get(slot.player) ?? this._players.getPlayerName(slot.player),
+        name: this._players.shortName(slot.player),
         goals: slot.goals,
         left: percent(x, WIDTH),
         top: percent(color === 'red' ? 37 : 353, HEIGHT),
@@ -633,9 +627,7 @@ export class TableComponent {
         players: positions.map((position) => ({
           position,
           id: team[position].player,
-          name:
-            this._short().get(team[position].player) ??
-            this._players.getPlayerName(team[position].player),
+          name: this._players.shortName(team[position].player),
           goals: team[position].goals,
         })),
       };

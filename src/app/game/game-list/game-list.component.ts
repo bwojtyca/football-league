@@ -5,7 +5,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { TranslocoDatePipe } from '@jsverse/transloco-locale';
 
 import { PlayerService } from '../../player/player.service';
-import { shortNames } from '../../player/short-names';
 import { TournamentService } from '../../tournament/tournament.service';
 import { RatingChangeComponent } from '../../shared/rating-change.component';
 import { SkeletonComponent } from '../../shared/skeleton.component';
@@ -137,16 +136,9 @@ export class GameListComponent {
     return Math.round(value);
   }
 
-  /** First names (with an initial when two share one) among the listed games' players, so a
-   * row shows whole names (evaluation 5: full names were cut mid-surname). */
-  private readonly _short = computed(() => {
-    const ids = new Set(this._games().flatMap((game) => game.players));
-    return shortNames(new Map([...ids].map((id) => [id, this._playerService.getPlayerName(id)])));
-  });
-
   private _names(team: Team, playerId: string | null) {
     return teamPlayers(team).map((id) => ({
-      name: this._short().get(id) ?? this._playerService.getPlayerName(id),
+      name: this._playerService.shortName(id),
       full: this._playerService.getPlayerName(id),
       current: id === playerId,
     }));

@@ -1,9 +1,11 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { TranslocoDecimalPipe } from '@jsverse/transloco-locale';
 
 import { Game } from '../game/game';
+import { leagueOf } from '../league/league';
 import { PlayerService } from '../player/player.service';
 import { durationText, hoursAndMinutes, scoreOf, sidesOf } from './format';
 import { tournamentSummary } from './stats';
@@ -11,7 +13,7 @@ import { tournamentSummary } from './stats';
 /** A tournament in numbers: its best players and its records. */
 @Component({
   selector: 'fl-tournament-summary',
-  imports: [RouterLink, TranslocoDecimalPipe, TranslocoPipe],
+  imports: [NgTemplateOutlet, RouterLink, TranslocoDecimalPipe, TranslocoPipe],
   template: `
     @if (summary(); as s) {
       <div class="fl-stats">
@@ -36,14 +38,18 @@ import { tournamentSummary } from './stats';
               <div>
                 <dt>{{ 'tournamentStats.scorer' | transloco }}</dt>
                 <dd>{{ best.goals }}</dd>
-                <dd class="about">{{ names(best.players) }}</dd>
+                <dd class="about">
+                  <ng-container *ngTemplateOutlet="people; context: { $implicit: best.players }" />
+                </dd>
               </div>
             }
             @if (s.mostWins; as best) {
               <div>
                 <dt>{{ 'tournamentStats.mostWins' | transloco }}</dt>
                 <dd>{{ best.wins }}</dd>
-                <dd class="about">{{ names(best.players) }}</dd>
+                <dd class="about">
+                  <ng-container *ngTemplateOutlet="people; context: { $implicit: best.players }" />
+                </dd>
               </div>
             }
             @if (s.defence; as best) {
@@ -51,7 +57,8 @@ import { tournamentSummary } from './stats';
                 <dt>{{ 'tournamentStats.defence' | transloco }}</dt>
                 <dd>{{ best.conceded | translocoDecimal: { maximumFractionDigits: 1 } }}</dd>
                 <dd class="about">
-                  {{ names(best.players) }} · {{ 'tournamentStats.conceded' | transloco }}
+                  <ng-container *ngTemplateOutlet="people; context: { $implicit: best.players }" />
+                  · {{ 'tournamentStats.conceded' | transloco }}
                 </dd>
               </div>
             }
@@ -77,6 +84,14 @@ import { tournamentSummary } from './stats';
         </section>
       </div>
     }
+
+    <!-- Names are links to profiles, as in the league's statistics (evaluation 9). -->
+    <ng-template #people let-players>
+      @for (player of players; track player; let last = $last) {
+        <a [routerLink]="['/l', leagueId(), 'player', player]">{{ name(player) }}</a
+        >{{ last ? '' : ', ' }}
+      }
+    </ng-template>
   `,
 })
 export class TournamentSummaryComponent {
@@ -91,9 +106,12 @@ export class TournamentSummaryComponent {
     return summary.games ? summary : null;
   });
 
-  protected names(players: string[]): string {
-    return players.map((id) => this._playerService.getPlayerName(id)).join(', ');
+  protected name(playerId: string): string {
+    return this._playerService.shortName(playerId);
   }
+
+  /** The league of the tournament's games, for the profile links. */
+  protected readonly leagueId = computed(() => leagueOf(this.games()[0] ?? {}));
 
   protected time(seconds: number): string {
     return durationText((key, params) => this._transloco.translate(key, params), seconds);
@@ -103,6 +121,6 @@ export class TournamentSummaryComponent {
   protected readonly score = scoreOf;
 
   protected sides(game: Game): string {
-    return sidesOf(game, (id) => this._playerService.getPlayerName(id));
+    return sidesOf(game, (id) => this._playerService.shortName(id));
   }
 }
