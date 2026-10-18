@@ -794,7 +794,7 @@
   },
   "appMenu": {
     "title": "Menu",
-    "open": "Menu: league, language, who you are, overall ranking",
+    "open": "Menu: language, who you are, overall ranking",
     "app": "App",
     "install": "Install on the phone",
     "installHint": "Full screen without the browser bar, an icon on the home screen.",

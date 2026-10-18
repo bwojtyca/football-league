@@ -98,6 +98,12 @@ import { openAppMenu } from './app-menu-sheet.component';
     .app-menu {
       flex: none;
     }
+    /* A wide screen has the menu's things in its rail (owner, 18 Oct 2026). */
+    @media (min-width: 1000px) {
+      .app-menu {
+        display: none;
+      }
+    }
   `,
 })
 export class TopBarComponent {
@@ -112,7 +118,7 @@ export class TopBarComponent {
   protected readonly long = computed(() => this.title().length > 22);
 
   protected appMenu(): void {
-    openAppMenu(this._sheet, this.switcher());
+    openAppMenu(this._sheet);
   }
 
   protected switchLeague(): void {

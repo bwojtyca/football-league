@@ -11,6 +11,7 @@ import { GameService } from '../game/game.service';
 import { crestOf, leagueOf } from '../league/league';
 import { LeagueService } from '../league/league.service';
 import { openNewPlaySheet } from '../league/new-play-sheet.component';
+import { RailAppComponent } from './rail-app.component';
 
 /**
  * The rail of a wide screen on the pages outside a league (the leagues, the overall ranking and
@@ -20,7 +21,14 @@ import { openNewPlaySheet } from '../league/new-play-sheet.component';
  */
 @Component({
   selector: 'fl-app-rail',
-  imports: [MatButtonModule, MatIconModule, RouterLink, RouterLinkActive, TranslocoPipe],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    RailAppComponent,
+    RouterLink,
+    RouterLinkActive,
+    TranslocoPipe,
+  ],
   template: `
     <nav class="fl-rail" [attr.aria-label]="'nav.label' | transloco">
       <a routerLink="/leagues" class="brand"
@@ -66,6 +74,7 @@ import { openNewPlaySheet } from '../league/new-play-sheet.component';
           <mat-icon>add</mat-icon>{{ 'nav.new' | transloco }}
         </button>
       }
+      <fl-rail-app [leagueId]="playLeague()" />
     </nav>
   `,
 })

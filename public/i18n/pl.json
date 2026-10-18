@@ -794,7 +794,7 @@
   },
   "appMenu": {
     "title": "Menu",
-    "open": "Menu: liga, język, kim jesteś, ranking ogólny",
+    "open": "Menu: język, kim jesteś, ranking ogólny",
     "app": "Aplikacja",
     "install": "Zainstaluj na telefonie",
     "installHint": "Pełny ekran bez paska przeglądarki, ikona na ekranie głównym.",

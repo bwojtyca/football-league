@@ -17,6 +17,7 @@ import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 import { PagePlayService } from '../shared/page-play.service';
+import { RailAppComponent } from '../shared/rail-app.component';
 
 type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
 
@@ -28,6 +29,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
   selector: 'fl-league-layout',
   imports: [
     NgTemplateOutlet,
+    RailAppComponent,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -93,12 +95,14 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         </a>
         <button
           matButton="filled"
-          class="new-play fl-cta"
+          class="new-play"
+          [class.fl-cta]="!onTournament()"
           (click)="newPlay()"
           [disabled]="current.archived"
         >
           <mat-icon>add</mat-icon>{{ 'nav.new' | transloco }}
         </button>
+        <fl-rail-app [leagueId]="current.id" />
       </nav>
       <nav class="tabs" [attr.aria-label]="'nav.label' | transloco">
         @for (tab of tabs.slice(0, 2); track tab.section) {
@@ -106,6 +110,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         }
         <button
           class="play"
+          [class.quiet]="onTournament()"
           (click)="newPlay()"
           [disabled]="current.archived"
           [attr.aria-label]="'nav.new' | transloco"
@@ -200,6 +205,12 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       height: 32px;
       font-size: 32px;
     }
+    /* A tournament's page has its own yellow next game (owner, 18 Oct 2026): the "+" steps back
+       there, and only there. */
+    .play.quiet {
+      background: var(--fl-card-2);
+      color: var(--fl-ink);
+    }
     .play:disabled {
       background: var(--fl-card-2);
       color: var(--fl-ink-2);
@@ -267,6 +278,9 @@ export class LeagueLayoutComponent {
     { initialValue: this._router.url },
   );
 
+  protected readonly onTournament = computed(
+    () => this._url().split('?')[0].split('/')[3] === 't',
+  );
   protected readonly onSettings = computed(
     () => this._url().split('?')[0].split('/')[3] === 'settings',
   );

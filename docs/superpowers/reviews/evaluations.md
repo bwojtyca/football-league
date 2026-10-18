@@ -275,3 +275,14 @@ owner.
 - A wide game list cuts a long tournament name inside its row.
 - Form dots explain themselves on hover; "Profil ze wszystkich lig ›".
 
+## The owner's rulings (18 Oct 2026)
+
+Three points the evaluators kept reversing, settled by the owner:
+1. A tournament's page: its next game is the yellow ball, the bottom bar's "+" is quiet there
+   (only there; the "+" still starts the tournament's next game).
+2. A league's invite, settings and switching live only under its name; the page menu (☰) holds
+   the app's things (language, who you are, overall ranking) and is gone on a wide screen,
+   where the rail ends with who you are and the language (`shared/rail-app.component.ts`).
+3. From round 17, each round has two independent evaluators; the score is their average, and
+   what both name is fixed first.
+
