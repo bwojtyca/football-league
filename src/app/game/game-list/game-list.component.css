@@ -173,9 +173,14 @@
    days and hid the order); the details follow the teams on the row instead of going under it. */
 @container games (min-width: 760px) {
   /* At most a readable row wide (evaluation 12: a phone row stretched to 1120 px). */
-  .day,
-  .more {
+  .day {
     max-width: 760px;
+  }
+
+  /* Under the middle of the list, not of the page (evaluation 17). */
+  .more {
+    margin-left: 380px;
+    transform: translateX(-50%);
   }
 
   .game {

@@ -228,6 +228,12 @@ import { TournamentService } from '../tournament/tournament.service';
       .strip.many .go {
         display: none;
       }
+      /* A narrow phone: names a size down, so a pair fits whole (evaluation 17: "Małgor…"). */
+      @media (max-width: 400px) {
+        .strip.many .names {
+          font-size: 0.875rem;
+        }
+      }
       .strip.many small {
         overflow: hidden;
         text-overflow: ellipsis;

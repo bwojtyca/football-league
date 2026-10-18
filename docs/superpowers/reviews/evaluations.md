@@ -21,6 +21,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 14    | 18 Oct 2026 | 39141874782 (master 252649a) | 8.25      | 7.25        | 7.75        | 8.25        | 8.0        | 8.5       | 7.25    | 8.0  |
 | 15    | 18 Oct 2026 | 39143311810 (master fd1317c) | 7.75      | 8.0         | 8.0         | 7.5         | 7.75       | 8.5       | 7.5     | 7.9  |
 | 16    | 18 Oct 2026 | 39144699728 (master 20c61cb) | 7.5       | 7.25        | 8.75        | 6.75        | 7.25       | 7.75      | 6.75    | 7.5  |
+| 17    | 18 Oct 2026 | 39164611708 (master ba1c8b5) | 8.5       | 7.6         | 7.75        | 8.25        | 8.25       | 8.25      | 7.6     | 8.1  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -285,4 +286,19 @@ Three points the evaluators kept reversing, settled by the owner:
    where the rail ends with who you are and the language (`shared/rail-app.component.ts`).
 3. From round 17, each round has two independent evaluators; the score is their average, and
    what both name is fixed first.
+
+Round 17 runs on the Tour of ba1c8b5 (run 39164611708) with two evaluators (`eval-17a.md`:
+overall 7.25, mean 8.04; `eval-17b.md`: 7.75, 8.2); the table holds their average. Neither found
+a blocker or a major.
+
+## After round 17: fixed (18 Oct 2026), what both evaluators named
+
+- Form dots read without a legend: a win is a green dot, a loss a red ring (the W/P tags'
+  colours), with the legend as a tooltip.
+- Every sheet's rows share one left edge (a 40 px icon slot), the league sheet and the menu.
+- An empty league's first game is the yellow ball and the "+" steps back there, as on a
+  tournament's page.
+- The goal-detail setting is named as one: "Zapis: strzelec / linia / zawodnik".
+- The rail's "Grasz jako" keeps its icon and a short name; live card names a size down on a
+  narrow phone; swap buttons at most 96 px wide; "Pokaż więcej" under the middle of a wide list.
 

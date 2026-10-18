@@ -257,6 +257,7 @@
 
 .swap-dot {
   flex: 1;
+  max-width: 96px; /* a tablet stretched them to 300 px (evaluation 17) */
   display: grid;
   place-items: center;
   height: 40px;

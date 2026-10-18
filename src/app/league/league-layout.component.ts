@@ -18,6 +18,7 @@ import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 import { PagePlayService } from '../shared/page-play.service';
 import { RailAppComponent } from '../shared/rail-app.component';
+import { GameService } from '../game/game.service';
 
 type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
 
@@ -96,7 +97,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         <button
           matButton="filled"
           class="new-play"
-          [class.fl-cta]="!onTournament()"
+          [class.fl-cta]="!quietPlay()"
           (click)="newPlay()"
           [disabled]="current.archived"
         >
@@ -110,7 +111,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         }
         <button
           class="play"
-          [class.quiet]="onTournament()"
+          [class.quiet]="quietPlay()"
           (click)="newPlay()"
           [disabled]="current.archived"
           [attr.aria-label]="'nav.new' | transloco"
@@ -205,8 +206,8 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       height: 32px;
       font-size: 32px;
     }
-    /* A tournament's page has its own yellow next game (owner, 18 Oct 2026): the "+" steps back
-       there, and only there. */
+    /* A page with its own yellow action (a tournament's next game, owner 18 Oct 2026; an empty
+       league's first game): the "+" steps back there, and only there. */
     .play.quiet {
       background: var(--fl-card-2);
       color: var(--fl-ink);
@@ -278,9 +279,13 @@ export class LeagueLayoutComponent {
     { initialValue: this._router.url },
   );
 
-  protected readonly onTournament = computed(
-    () => this._url().split('?')[0].split('/')[3] === 't',
-  );
+  protected readonly quietPlay = computed(() => {
+    const parts = this._url().split('?')[0].split('/');
+    return (
+      parts[3] === 't' ||
+      (parts.length <= 3 && this._gameService.leagueGames(this.leagueId())?.length === 0)
+    );
+  });
   protected readonly onSettings = computed(
     () => this._url().split('?')[0].split('/')[3] === 'settings',
   );
@@ -314,6 +319,7 @@ export class LeagueLayoutComponent {
 
   /** A game, a series or a tournament; a league without players gets its players first. */
   private readonly _pagePlay = inject(PagePlayService);
+  private readonly _gameService = inject(GameService);
 
   protected newPlay(): void {
     const league = this.league();

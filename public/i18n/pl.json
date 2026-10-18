@@ -38,7 +38,7 @@
   },
   "form": {
     "label": "Ostatnie mecze:",
-    "legend": "● wygrana, ○ porażka, od najstarszego"
+    "legend": "zielona: wygrana, czerwone kółko: porażka, od najstarszego"
   },
   "count": {
     "games": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
@@ -254,7 +254,7 @@
     "leaveRunning": "Wyjdź, mecz trwa dalej",
     "leaveStay": "Zostań",
     "rotate": "Obróć układ stołu",
-    "detail": "Szczegóły goli: {level}",
+    "detail": "Zmień sposób zapisu goli ({level})",
     "ownPick": "Wskaż, kto strzelił",
     "leaveLater": "Wyjdź, dokończę później",
     "last": "Ostatnio",
@@ -272,9 +272,9 @@
       "man": "Dotknij figurki, która strzeliła."
     },
     "detailLevel": {
-      "position": "Kto strzelił",
-      "rod": "Którą linią",
-      "man": "Którym zawodnikiem"
+      "position": "Zapis: strzelec",
+      "rod": "Zapis: linia",
+      "man": "Zapis: zawodnik"
     },
     "swapShort": "Zamień"
   },
@@ -531,7 +531,7 @@
     "helpWinRate": "Udział wygranych we wszystkich meczach gracza; przy równym procencie wyżej jest ten, kto zagrał więcej.",
     "helpDuets": "Pary, które zagrały razem co najmniej {n} mecze, według procentu wygranych.",
     "helpFormTitle": "Kropki przy graczu",
-    "helpForm": "Ostatnie pięć meczów, od najstarszego: jasna kropka to wygrana, ciemna to porażka."
+    "helpForm": "Ostatnie pięć meczów, od najstarszego: zielona kropka to wygrana, czerwone kółko to porażka."
   },
   "potato": {
     "title": "Ziemniak",

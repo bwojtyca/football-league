@@ -146,10 +146,13 @@ export async function inviteToLeague(
       display: grid;
       border-bottom: 1px solid var(--fl-line);
     }
+    /* The icon in the same 40 px slot as the leagues' crests below: one left edge for the text
+       (evaluation 17). */
     .action {
-      display: flex;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
       align-items: center;
-      gap: 14px;
+      column-gap: 12px;
       box-sizing: border-box;
       width: 100%;
       min-height: 56px;
@@ -166,7 +169,7 @@ export async function inviteToLeague(
       border-top: 1px solid var(--fl-line);
     }
     .action mat-icon {
-      flex: none;
+      justify-self: center;
       color: var(--fl-ink-2);
     }
     .action .name {
@@ -229,6 +232,7 @@ export async function inviteToLeague(
     .link mat-icon {
       grid-column: 1;
       grid-row: 1;
+      justify-self: center;
       color: var(--fl-ink-2);
     }
     .link .name {

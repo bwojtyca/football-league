@@ -73,7 +73,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
   styles: `
     :host {
       display: block;
-      padding: 4px 4px 12px;
+      padding: 4px 0 12px;
     }
     h2 {
       margin: 0 0 6px;
@@ -82,13 +82,17 @@ export function openAppMenu(sheet: MatBottomSheet) {
     h3 {
       margin: 12px 0 2px;
     }
+    /* Rows as in the league's sheet: the icon in a 40 px slot, one left edge for every sheet's
+       text (evaluation 17). */
     .row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 14px;
+      column-gap: 12px;
+      box-sizing: border-box;
       width: 100%;
       min-height: 56px;
-      padding: 4px 0;
+      padding: 4px;
       border: 0;
       background: none;
       color: var(--fl-ink);
@@ -101,7 +105,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
       border-top: 1px solid var(--fl-line);
     }
     .row .mat-icon {
-      flex: none;
+      justify-self: center;
       color: var(--fl-ink-2);
     }
     .row .mat-icon.ball {

@@ -4,7 +4,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { Result } from '../player/player';
 
-/** Last results as LED dots: lit for a win, dark for a loss; spelled out for screen readers. */
+/** Last results as dots: green for a win, a red ring for a loss; spelled out for screen readers. */
 @Component({
   selector: 'fl-form',
   imports: [TranslocoPipe],
@@ -22,24 +22,25 @@ import { Result } from '../player/player';
     }
   `,
   styles: `
-    /* Lit dots for wins, dark ones for losses, oldest first. */
+    /* Oldest first. */
     :host {
       display: inline-flex;
       gap: 3px;
       align-items: center;
       height: 16px;
     }
-    /* A loss is a ring (8:1 on black), a win a filled dot. */
+    /* A win a filled green dot, a loss a red ring: the colours of the W/P tags in game lists,
+       so the dots read without a legend (evaluation 17). */
     i {
       box-sizing: border-box;
       width: 8px;
       height: 8px;
-      border: 1.5px solid var(--fl-ink-2);
+      border: 1.5px solid var(--fl-loss);
       border-radius: 50%;
     }
     i.w {
-      border-color: var(--fl-ink);
-      background: var(--fl-ink);
+      border-color: var(--fl-win);
+      background: var(--fl-win);
     }
   `,
 })

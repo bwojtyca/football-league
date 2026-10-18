@@ -51,6 +51,15 @@ import { MeService } from './me.service';
       font: 600 0.9375rem/1.25 var(--fl-display);
       cursor: pointer;
     }
+    .who mat-icon {
+      flex: none;
+    }
+    .who span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .who:hover {
       background: var(--fl-card);
     }
@@ -66,7 +75,7 @@ export class RailAppComponent {
 
   protected readonly meName = computed(() => {
     const id = this._me.id();
-    return id ? this._players.getPlayerName(id) : null;
+    return id ? this._players.shortName(id) : null;
   });
 
   protected who(leagueId: string): void {

@@ -38,7 +38,7 @@
   },
   "form": {
     "label": "Last games:",
-    "legend": "● win, ○ loss, oldest first"
+    "legend": "green: win, red ring: loss, oldest first"
   },
   "count": {
     "games": "{n, plural, one {# game} other {# games}}",
@@ -254,7 +254,7 @@
     "leaveRunning": "Leave, the game goes on",
     "leaveStay": "Stay",
     "rotate": "Turn the table layout",
-    "detail": "Goal detail: {level}",
+    "detail": "Change how goals are recorded ({level})",
     "ownPick": "Tap who scored it",
     "leaveLater": "Leave, finish later",
     "last": "Last",
@@ -272,9 +272,9 @@
       "man": "Tap the figure that scored."
     },
     "detailLevel": {
-      "position": "Who scored",
-      "rod": "Which rod",
-      "man": "Which figure"
+      "position": "Record: scorer",
+      "rod": "Record: rod",
+      "man": "Record: figure"
     },
     "swapShort": "Swap"
   },
@@ -531,7 +531,7 @@
     "helpWinRate": "The share of a player's games won; on the same percentage, whoever played more is higher.",
     "helpDuets": "Pairs who played at least {n} games together, by the share of games won.",
     "helpFormTitle": "The dots next to a player",
-    "helpForm": "The last five games, oldest first: a lit dot is a win, a dark one a loss."
+    "helpForm": "The last five games, oldest first: a green dot is a win, a red ring a loss."
   },
   "potato": {
     "title": "Potato",

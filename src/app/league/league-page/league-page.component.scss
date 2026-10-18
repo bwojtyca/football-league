@@ -67,10 +67,6 @@ fl-ranking {
 .wide {
   width: 100%;
   --mat-button-filled-container-height: 52px;
-  --mat-button-tonal-container-height: 52px;
-  /* A tonal button on the card's own grey vanished (evaluation 15): it sits on the page black. */
-  --mat-button-tonal-container-color: var(--fl-paper);
-  --mat-button-tonal-label-text-color: var(--fl-ink);
 }
 
 /* A wide screen, next to the rail: two columns, the side one stays in view while scrolling. */
