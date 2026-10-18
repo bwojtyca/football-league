@@ -37,7 +37,8 @@
     "loss": "lost"
   },
   "form": {
-    "label": "Last games:"
+    "label": "Last games:",
+    "legend": "● win, ○ loss, oldest first"
   },
   "count": {
     "games": "{n, plural, one {# game} other {# games}}",
@@ -519,7 +520,7 @@
     "global": "Overall ranking",
     "globalHint": "All leagues together: Elo, win %, pairs and the potato from every game.",
     "allLeagues": "All leagues",
-    "overallProfile": "all leagues ›",
+    "overallProfile": "Profile across all leagues ›",
     "colGames": "Games",
     "colWon": "% won",
     "colElo": "Elo",
@@ -657,7 +658,8 @@
     "games": "games",
     "won": "won",
     "goals": "goals",
-    "shared": "Games together and against"
+    "shared": "Games together and against",
+    "wonGames": "Games won"
   },
   "tournamentStats": {
     "title": "Summary",
@@ -787,7 +789,8 @@
   },
   "gameDetails": {
     "when": "{date}, at {time}",
-    "played": "{time} of play"
+    "played": "{time} of play",
+    "won": "won"
   },
   "appMenu": {
     "title": "Menu",

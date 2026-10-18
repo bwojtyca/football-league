@@ -37,7 +37,8 @@
     "loss": "porażka"
   },
   "form": {
-    "label": "Ostatnie mecze:"
+    "label": "Ostatnie mecze:",
+    "legend": "● wygrana, ○ porażka, od najstarszego"
   },
   "count": {
     "games": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}}",
@@ -519,7 +520,7 @@
     "global": "Ranking ogólny",
     "globalHint": "Wszystkie ligi razem: Elo, procent wygranych, duety i ziemniak ze wszystkich meczów.",
     "allLeagues": "Wszystkie ligi",
-    "overallProfile": "ze wszystkich lig ›",
+    "overallProfile": "Profil ze wszystkich lig ›",
     "colGames": "Mecze",
     "colWon": "% wygranych",
     "colElo": "Elo",
@@ -657,7 +658,8 @@
     "games": "mecze",
     "won": "wygranych",
     "goals": "gole",
-    "shared": "Wspólne mecze"
+    "shared": "Wspólne mecze",
+    "wonGames": "Wygrane mecze"
   },
   "tournamentStats": {
     "title": "Podsumowanie",
@@ -787,7 +789,8 @@
   },
   "gameDetails": {
     "when": "{date}, o {time}",
-    "played": "{time} gry"
+    "played": "{time} gry",
+    "won": "wygrana"
   },
   "appMenu": {
     "title": "Menu",

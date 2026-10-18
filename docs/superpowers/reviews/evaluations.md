@@ -20,6 +20,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 13    | 18 Oct 2026 | 39126966567 (master 60a9f35) | 8.5       | 6.75        | 7.0         | 8.3         | 8.0        | 7.5       | 6.75    | 7.7  |
 | 14    | 18 Oct 2026 | 39141874782 (master 252649a) | 8.25      | 7.25        | 7.75        | 8.25        | 8.0        | 8.5       | 7.25    | 8.0  |
 | 15    | 18 Oct 2026 | 39143311810 (master fd1317c) | 7.75      | 8.0         | 8.0         | 7.5         | 7.75       | 8.5       | 7.5     | 7.9  |
+| 16    | 18 Oct 2026 | 39144699728 (master 20c61cb) | 7.5       | 7.25        | 8.75        | 6.75        | 7.25       | 7.75      | 6.75    | 7.5  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -260,4 +261,17 @@ tournament while the page's own action had turned grey.
 - The empty league's first step is a visible button (tonal on the card's grey had vanished).
 - An open tournament's buttons at the left edge, as other pages' actions.
 - A tournament's name under a game on one line, cut, with the full name as a tooltip.
+
+Round 16 runs on the Tour of 20c61cb (run 39144699728); report in `eval-16.md`. Both its
+majors contradict earlier rounds (the tournament page's yellow action vs a "+" of one colour,
+round 14; league actions in one sheet vs settings in the page menu, round 11): left to the
+owner.
+
+## After round 16: fixed (18 Oct 2026)
+
+- The finished game says each side's colour and who won ("Czerwoni · wygrana").
+- The comparison's head-to-head LED pair is labelled "Wygrane mecze" (it read as goals).
+- The finished game is two columns from 1200 px (1280 px left a band empty).
+- A wide game list cuts a long tournament name inside its row.
+- Form dots explain themselves on hover; "Profil ze wszystkich lig ›".
 

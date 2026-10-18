@@ -598,6 +598,33 @@
   text-align: right;
 }
 
+.team-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 0.75rem/1.2 var(--fl-display);
+  color: rgb(255 255 255 / 0.85);
+}
+
+.side.won .team-tag {
+  color: #fff;
+}
+
+.team-tag .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px rgb(255 255 255 / 0.6);
+}
+
+.team-tag .dot--red {
+  background: var(--fl-red);
+}
+
+.team-tag .dot--blue {
+  background: var(--fl-blue);
+}
+
 .player {
   display: flex;
   align-items: center;
@@ -708,7 +735,7 @@
 
 /* A wide screen: the result beside how it went, filling the page column as other pages do
    (evaluation 12: one 720 px column left half the screen empty). */
-@media (min-width: 1400px) {
+@media (min-width: 1200px) {
   .ended .top {
     padding-right: calc(max(0px, (100% - 1152px) / 2) + 8px);
   }

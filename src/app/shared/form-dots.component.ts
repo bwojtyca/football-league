@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { Component, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 
 import { Result } from '../player/player';
 
@@ -7,6 +8,8 @@ import { Result } from '../player/player';
 @Component({
   selector: 'fl-form',
   imports: [TranslocoPipe],
+  // What the dots mean, on hover (evaluations 13–16: no legend).
+  host: { '[attr.title]': 'legend()' },
   template: `
     <span class="sr-only">
       {{ 'form.label' | transloco }}
@@ -42,4 +45,5 @@ import { Result } from '../player/player';
 })
 export class FormDotsComponent {
   public readonly results = input.required<Result[]>();
+  protected readonly legend = toSignal(inject(TranslocoService).selectTranslate('form.legend'));
 }

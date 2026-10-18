@@ -186,8 +186,9 @@
   /* Right after the teams, not at the far end (evaluation 11: a 600 px gap on a wide screen). */
   .meta {
     grid-column: auto;
-    justify-self: start;
+    justify-self: stretch; /* its column's width, so a long name is cut inside the row */
     justify-content: flex-start;
+    overflow: hidden;
     margin: 0 0 0 20px;
   }
 }

@@ -83,6 +83,8 @@
       <section>
         <h2>{{ 'compare.against' | transloco }}</h2>
         @if (h.against.games) {
+          <!-- Games won, not goals (evaluation 16: the LED pair read as a score). -->
+          <p class="hint centre">{{ 'compare.wonGames' | transloco }}</p>
           <p class="score">
             <b>{{ h.against.wins[0] }}</b> : <b>{{ h.against.wins[1] }}</b>
           </p>
