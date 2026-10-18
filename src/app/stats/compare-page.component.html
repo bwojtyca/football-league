@@ -48,11 +48,13 @@
         <h2>{{ 'compare.chance' | transloco }}</h2>
         <div class="fl-split">
           <div class="labels">
+            <!-- Each percentage stays at its player's end of the bar; a long name gives way
+                 (evaluation 11: wrapped names put 38% beside the other player). -->
             <span
-              >{{ p.a.name }} <b>{{ chance() }}%</b></span
+              ><span class="n">{{ p.a.name }}</span> <b>{{ chance() }}%</b></span
             >
             <span
-              ><b>{{ 100 - chance()! }}%</b> {{ p.b.name }}</span
+              ><b>{{ 100 - chance()! }}%</b> <span class="n">{{ p.b.name }}</span></span
             >
           </div>
           <div class="bar" aria-hidden="true">

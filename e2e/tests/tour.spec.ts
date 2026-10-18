@@ -143,15 +143,16 @@ for (const size of SIZES) {
       await shot('21-new-league', false);
       await page.keyboard.press('Escape');
       await expect(page.locator('fl-league-new-dialog')).toBeHidden();
+
+      // From the league page: the league switcher, "What are we playing?", a game, a tournament.
+      await page.goto(league);
+      await expect(page.locator('fl-ranking .row').first()).toBeVisible();
+      // The page's menu where it has the most: a league's invite and settings, then the app's.
       await page.getByRole('button', { name: t('appMenu.open') }).click();
       await expect(page.locator('fl-app-menu')).toBeVisible();
       await shot('22-app-menu', false);
       await page.keyboard.press('Escape');
       await expect(page.locator('fl-app-menu')).toBeHidden();
-
-      // From the league page: the league switcher, "What are we playing?", a game, a tournament.
-      await page.goto(league);
-      await expect(page.locator('fl-ranking .row').first()).toBeVisible();
       await page.getByRole('button', { name: t('switcher.open', { name: 'Biuro 2026' }) }).click();
       await expect(page.locator('fl-league-switcher')).toBeVisible();
       await shot('23-league-switcher', false);

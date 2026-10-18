@@ -155,6 +155,9 @@ html {
   --mat-dialog-subhead-weight: 800;
   --mat-dialog-subhead-color: var(--fl-ink);
   --mat-dialog-supporting-text-color: var(--fl-ink-2);
+  /* Dialogs read like pages: no extra letter spacing (evaluation 11). */
+  --mat-dialog-supporting-text-tracking: normal;
+  --mat-dialog-subhead-tracking: normal;
   --mat-bottom-sheet-container-shape: 22px;
   --mat-bottom-sheet-container-background-color: var(--fl-sheet);
   --mat-bottom-sheet-container-text-color: var(--fl-ink);
@@ -518,6 +521,30 @@ fl-games-stats tbody th a {
   justify-content: space-between;
   gap: 8px;
   font-size: 0.9rem;
+}
+
+/* A label with a name in its own element: the number never wraps away from its side. */
+.fl-split .labels > span:has(> .n) {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3em;
+  min-width: 0;
+}
+
+.fl-split .labels > span:has(> .n):last-child {
+  justify-content: flex-end;
+}
+
+.fl-split .labels .n {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fl-split .labels b {
+  flex: none;
+  white-space: nowrap;
 }
 
 .fl-split .bar {

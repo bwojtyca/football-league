@@ -115,6 +115,7 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     :host {
       display: block;
       padding-bottom: 8px;
+      container: timeline / inline-size;
     }
     h2 {
       margin: 4px 0 8px;
@@ -174,6 +175,18 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
     }
     .b {
       color: var(--fl-blue-text);
+    }
+    /* A wide log: the score right after the time, not across the page (evaluation 11). */
+    @container timeline (min-width: 600px) {
+      .goals li {
+        grid-template-columns: 48px 64px 1fr;
+      }
+      .goals .score {
+        grid-area: 1 / 2;
+      }
+      .goals .who {
+        grid-area: 1 / 3;
+      }
     }
   `,
 })

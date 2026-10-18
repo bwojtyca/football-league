@@ -155,17 +155,18 @@
 }
 
 /* A wide list keeps one game a row, in order (evaluation 10: two a row left holes after odd
-   days and hid the order); the details move to the row's right end instead of under it. */
+   days and hid the order); the details follow the teams on the row instead of going under it. */
 @container games (min-width: 760px) {
   .game {
     grid-template-columns: minmax(0, 200px) auto minmax(0, 200px) minmax(200px, 1fr);
     padding: 10px 8px;
   }
 
+  /* Right after the teams, not at the far end (evaluation 11: a 600 px gap on a wide screen). */
   .meta {
     grid-column: auto;
-    justify-self: end;
-    justify-content: flex-end;
-    margin-top: 0;
+    justify-self: start;
+    justify-content: flex-start;
+    margin: 0 0 0 20px;
   }
 }
