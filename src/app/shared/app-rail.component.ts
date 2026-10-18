@@ -35,7 +35,7 @@ import { openNewPlaySheet } from '../league/new-play-sheet.component';
             [class.current]="league.id === current()?.id"
           >
             <span class="crest" aria-hidden="true">{{ league.crest }}</span>
-            <span class="league-name">{{ league.name }}</span>
+            <span class="league-name" [attr.title]="league.name">{{ league.name }}</span>
           </a>
         }
       }
@@ -51,7 +51,7 @@ import { openNewPlaySheet } from '../league/new-play-sheet.component';
         <mat-icon aria-hidden="true">leaderboard</mat-icon>{{ 'ranking.global' | transloco }}
       </a>
       @if (current(); as league) {
-        <h2 class="fl-kicker">{{ league.name }}</h2>
+        <h2 class="fl-kicker" [attr.title]="league.name">{{ league.name }}</h2>
         @for (tab of tabs; track tab.label) {
           <a [routerLink]="['/l', league.id].concat(tab.path)" class="tab">
             <mat-icon aria-hidden="true">{{ tab.icon }}</mat-icon>

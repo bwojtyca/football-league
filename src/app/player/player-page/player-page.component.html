@@ -11,7 +11,7 @@
       <div class="head">
         <fl-avatar [playerId]="p.id" [name]="p.name" [size]="56" />
         <div class="who">
-          <!-- The league on one line (the name is the page's title, two lines when long). -->
+          <!-- The league, whole, then the link to the overall profile. -->
           <div class="league">
             @if (overall()) {
               {{ 'ranking.allLeagues' | transloco }}

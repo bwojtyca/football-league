@@ -67,7 +67,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
             [attr.aria-current]="league.id === current.id ? 'page' : null"
           >
             <span class="crest" aria-hidden="true">{{ league.crest }}</span>
-            <span class="league-name">{{ league.name }}</span>
+            <span class="league-name" [attr.title]="league.name">{{ league.name }}</span>
           </a>
         }
         <a routerLink="/leagues" class="league">

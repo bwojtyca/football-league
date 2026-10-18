@@ -67,17 +67,17 @@
 /* The league's name, cut on one line, and the link to the overall profile after it. */
 .league {
   display: flex;
-  gap: 0.4em;
+  flex-wrap: wrap;
+  gap: 0 0.4em;
   min-width: 0;
   font-weight: 600;
   color: var(--fl-ink-2);
 }
 
+/* The whole name, wrapping; the link moves under it (evaluation 12: "Międzynar…"). */
 .league-name {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .league-name::after {

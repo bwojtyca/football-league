@@ -276,7 +276,7 @@ export class GameTimelineComponent {
   });
 
   protected name(playerId: string): string {
-    return this._playerService.getPlayerName(playerId);
+    return this._playerService.shortName(playerId);
   }
 
   protected time(at: number): string {

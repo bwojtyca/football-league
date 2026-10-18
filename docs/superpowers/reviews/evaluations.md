@@ -16,6 +16,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 9     | 18 Oct 2026 | 39042759003 (master 896df59) | 8.5       | 7.0         | 7.5         | 7.8         | 7.8        | 8.3       | 7.0     | 7.8  |
 | 10    | 18 Oct 2026 | 39102162418 (master 41c1986) | 7.8       | 7.8         | 7.5         | 7.5         | 7.3        | 7.5       | 7.3     | 7.6  |
 | 11    | 18 Oct 2026 | 39122074475 (master acd9da0) | 8.5       | 7.3         | 7.8         | 7.5         | 8.0        | 6.5       | 6.5     | 7.6  |
+| 12    | 18 Oct 2026 | 39125505997 (master 6be73c9) | 8.3       | 6.75        | 8.0         | 8.0         | 7.75       | 7.25      | 6.75    | 7.7  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 

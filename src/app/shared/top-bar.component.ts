@@ -28,11 +28,11 @@ import { openAppMenu } from './app-menu-sheet.component';
           (click)="switchLeague()"
           [attr.aria-label]="'switcher.open' | transloco: { name: title() }"
         >
-          <h1 [class.long]="long()">{{ title() }}</h1>
+          <h1 [class.long]="long()" [attr.title]="title()">{{ title() }}</h1>
           <mat-icon aria-hidden="true">expand_more</mat-icon>
         </button>
       } @else {
-        <h1 class="title" [class.long]="long()">{{ title() }}</h1>
+        <h1 class="title" [class.long]="long()" [attr.title]="title()">{{ title() }}</h1>
       }
       <ng-content />
       <!-- The app menu on top-level pages; a page with a back arrow keeps one menu, its own. -->

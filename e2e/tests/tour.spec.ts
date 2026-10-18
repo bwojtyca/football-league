@@ -471,6 +471,11 @@ function match(
 /** Takes a screenshot (the whole page unless `fullPage` is false) and checks for sideways scroll. */
 function shooter(page: Page, size: string) {
   return async (name: string, fullPage = true): Promise<void> => {
+    // No hover left over from the last click (evaluations 11, 12 read it as a highlight).
+    const viewport = page.viewportSize();
+    if (viewport) {
+      await page.mouse.move(viewport.width - 2, 2);
+    }
     // Charts and fonts settle.
     await page.waitForTimeout(500);
     await page.screenshot({

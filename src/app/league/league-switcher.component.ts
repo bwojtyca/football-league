@@ -130,11 +130,11 @@ export async function inviteToLeague(
       display: grid;
       min-width: 0;
     }
+    /* The whole name here, the one place it has room (evaluation 12: its end tells leagues
+       apart, and it was cut everywhere). */
     .about b {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
       font: var(--fl-sheet-title);
     }
     .about small {

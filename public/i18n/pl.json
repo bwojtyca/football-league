@@ -284,7 +284,7 @@
     "to": "Do {target}",
     "winBy2": "przewaga 2",
     "winBy2Max": "przewaga 2, max {max}",
-    "minutes": "{n} min",
+    "minutes": "{n} min",
     "winBy2Label": "Przewaga 2 goli",
     "winBy2Hint": "Od {tie}:{tie} gra toczy się, aż ktoś prowadzi dwoma golami, choćby 90:88.",
     "timedLabel": "Na czas",
@@ -450,7 +450,7 @@
     "comeback": "Powrót z {n} goli straty",
     "streak": "{n, plural, one {# wygrana} few {# wygrane} many {# wygranych} other {# wygranej}} z rzędu",
     "milestone": "{n}. mecz",
-    "times": "{n} razy",
+    "times": "{n} razy",
     "locked": "jeszcze nie",
     "firstWin": "Pierwsza wygrana",
     "giantKiller": "Dawid i Goliat",
@@ -788,7 +788,7 @@
   },
   "gameDetails": {
     "when": "{date}, o {time}",
-    "played": "{time} gry"
+    "played": "{time} gry"
   },
   "appMenu": {
     "title": "Menu",

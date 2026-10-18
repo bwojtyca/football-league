@@ -721,6 +721,31 @@
   }
 }
 
+/* A wide screen: the result beside how it went, filling the page column as other pages do
+   (evaluation 12: one 720 px column left half the screen empty). */
+@media (min-width: 1400px) {
+  .ended .top {
+    padding-right: calc(max(0px, (100% - 1152px) / 2) + 8px);
+  }
+
+  .ended .details {
+    display: grid;
+    grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+    align-items: start;
+    gap: 32px;
+    padding-right: calc(max(0px, (100% - 1152px) / 2) + 16px);
+  }
+
+  .ended .details > * {
+    max-width: none;
+  }
+
+  .ended .details .result {
+    position: sticky;
+    top: 0;
+  }
+}
+
 /* A tablet or a computer: the clock, the hint and the last move grow with the screen
    (evaluation 6: a 16 px clock beside an 800 px table). */
 @media (min-width: 700px) and (min-height: 600px) {
