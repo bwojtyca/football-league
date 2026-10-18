@@ -34,8 +34,8 @@ import { LeagueService } from './league.service';
       @if (current && !current.archived) {
         <!-- This tab's main action, the ball; the bar's "+" goes quiet here (evaluation 8). -->
         <button
-          matButton="filled"
-          class="new-tournament fl-cta"
+          matButton="tonal"
+          class="new-tournament"
           (click)="newTournament()"
           [disabled]="current.players.length < 2"
         >

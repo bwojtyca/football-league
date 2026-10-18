@@ -18,6 +18,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 11    | 18 Oct 2026 | 39122074475 (master acd9da0) | 8.5       | 7.3         | 7.8         | 7.5         | 8.0        | 6.5       | 6.5     | 7.6  |
 | 12    | 18 Oct 2026 | 39125505997 (master 6be73c9) | 8.3       | 6.75        | 8.0         | 8.0         | 7.75       | 7.25      | 6.75    | 7.7  |
 | 13    | 18 Oct 2026 | 39126966567 (master 60a9f35) | 8.5       | 6.75        | 7.0         | 8.3         | 8.0        | 7.5       | 6.75    | 7.7  |
+| 14    | 18 Oct 2026 | 39141874782 (master 252649a) | 8.25      | 7.25        | 7.75        | 8.25        | 8.0        | 8.5       | 7.25    | 8.0  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -231,4 +232,17 @@ without a blocker or a major: the overall is a sum of minors (consistency, reada
   "wygrane – porażki", never break.
 - Live card names flow without holes; profile titles are labels, not pills; the comparison
   uses short names in its sentences too.
+
+Round 14 runs on the Tour of 252649a (run 39141874782); report in `eval-14.md`. Mean 8.0, the
+first time; no blocker or major.
+
+## After round 14: fixed (18 Oct 2026)
+
+- The "+" is the yellow ball on every league page; a page's own action (a tournament's next
+  game, a new tournament, a league's first game) is tonal, so the rule "one yellow" holds
+  without the "+" changing colour from tab to tab.
+- Goal-detail levels in sentence case ("Kto strzelił"), as in the new game dialog.
+- "Own goal…" as wide as its label, lighter than "Undo".
+- The tournament's tightest defence says "2,0 na mecz" and then who.
+- The games tab's filters and statistics link as wide as its list.
 

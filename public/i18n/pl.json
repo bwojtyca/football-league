@@ -271,9 +271,9 @@
       "man": "Dotknij figurki, która strzeliła."
     },
     "detailLevel": {
-      "position": "kto strzelił",
-      "rod": "którą linią",
-      "man": "którym zawodnikiem"
+      "position": "Kto strzelił",
+      "rod": "Którą linią",
+      "man": "Którym zawodnikiem"
     },
     "swapShort": "Zamień"
   },
@@ -665,7 +665,7 @@
     "scorer": "Najlepszy strzelec",
     "mostWins": "Najwięcej wygranych",
     "defence": "Najszczelniejsza obrona",
-    "conceded": "straconych goli na mecz w obronie",
+    "conceded": "najmniej straconych w obronie",
     "compare": "Porównanie turniejów",
     "tournament": "Turniej",
     "winner": "Zwycięzca"

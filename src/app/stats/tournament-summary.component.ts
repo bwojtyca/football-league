@@ -55,7 +55,19 @@ import { tournamentSummary } from './stats';
             @if (s.defence; as best) {
               <div>
                 <dt>{{ 'tournamentStats.defence' | transloco }}</dt>
-                <dd>{{ best.conceded | translocoDecimal: { maximumFractionDigits: 1 } }}</dd>
+                <!-- The number with its unit, as the "Wall" title (evaluation 14: "2" alone). -->
+                <dd>
+                  {{
+                    'stats.perGame'
+                      | transloco
+                        : {
+                            value:
+                              (best.conceded
+                              | translocoDecimal
+                                : { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+                          }
+                  }}
+                </dd>
                 <dd class="about">
                   <ng-container *ngTemplateOutlet="people; context: { $implicit: best.players }" />
                   · {{ 'tournamentStats.conceded' | transloco }}

@@ -214,15 +214,21 @@
   gap: 10px;
 }
 
+/* "Own goal…" as wide as its label: lighter than "Undo" (evaluation 14: it was the biggest). */
 .tools .own-arm {
-  flex: 1;
+  flex: none;
 }
 
 .tools .swaps {
-  flex: 1.2;
+  flex: 1;
 }
+
+.screen:not(.landscape) .tools .swaps {
+  justify-content: flex-end;
+}
+
 .own-arm {
-  --mat-button-outlined-container-height: 44px;
+  --mat-button-outlined-container-height: 40px;
 }
 
 .own-arm.armed {

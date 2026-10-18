@@ -271,9 +271,9 @@
       "man": "Tap the figure that scored."
     },
     "detailLevel": {
-      "position": "who scored",
-      "rod": "which rod",
-      "man": "which figure"
+      "position": "Who scored",
+      "rod": "Which rod",
+      "man": "Which figure"
     },
     "swapShort": "Swap"
   },
@@ -665,7 +665,7 @@
     "scorer": "Top scorer",
     "mostWins": "Most wins",
     "defence": "Tightest defence",
-    "conceded": "goals conceded per game in defence",
+    "conceded": "fewest conceded in defence",
     "compare": "Tournaments compared",
     "tournament": "Tournament",
     "winner": "Winner"

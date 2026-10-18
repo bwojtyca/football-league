@@ -37,11 +37,11 @@
             </div>
           }
           @if (canPlay()) {
-            <button matButton="filled" class="fl-cta wide" (click)="play()">
+            <button matButton="tonal" class="wide" (click)="play()">
               {{ 'league.firstGameStart' | transloco }}
             </button>
           } @else {
-            <button matButton="filled" class="fl-cta wide" (click)="addPlayer()">
+            <button matButton="tonal" class="wide" (click)="addPlayer()">
               <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
             </button>
           }
