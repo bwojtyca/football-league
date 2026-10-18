@@ -93,7 +93,7 @@
             }}
           </p>
           <p class="form-row">
-            <span>{{ 'compare.latest' | transloco: { name: p.a.name } }}</span>
+            <span>{{ 'compare.latest' | transloco: { name: short(p.a.id) } }}</span>
             <fl-form [results]="form()" />
           </p>
         } @else {
@@ -131,8 +131,8 @@
         <section>
           <h2>{{ 'leagueStats.elo' | transloco }}</h2>
           <p class="legend">
-            <span><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</span>
-            <span><i class="swatch b" aria-hidden="true"></i>{{ p.b.name }}</span>
+            <span><i class="swatch a" aria-hidden="true"></i>{{ short(p.a.id) }}</span>
+            <span><i class="swatch b" aria-hidden="true"></i>{{ short(p.b.id) }}</span>
           </p>
           <div class="fl-chart">
             <canvas

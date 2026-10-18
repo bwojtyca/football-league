@@ -17,6 +17,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 10    | 18 Oct 2026 | 39102162418 (master 41c1986) | 7.8       | 7.8         | 7.5         | 7.5         | 7.3        | 7.5       | 7.3     | 7.6  |
 | 11    | 18 Oct 2026 | 39122074475 (master acd9da0) | 8.5       | 7.3         | 7.8         | 7.5         | 8.0        | 6.5       | 6.5     | 7.6  |
 | 12    | 18 Oct 2026 | 39125505997 (master 6be73c9) | 8.3       | 6.75        | 8.0         | 8.0         | 7.75       | 7.25      | 6.75    | 7.7  |
+| 13    | 18 Oct 2026 | 39126966567 (master 60a9f35) | 8.5       | 6.75        | 7.0         | 8.3         | 8.0        | 7.5       | 6.75    | 7.7  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -217,4 +218,17 @@ Round 12 runs on the Tour of 6be73c9 (run 39125505997); report in `eval-12.md`.
 - Minors: the goal log uses short names like the rest; units stay with their numbers
   ("54 s gry", "5 razy", "7 min 15 s"); the Tour moves the mouse away before each shot, so a
   leftover hover no longer reads as a highlight.
+
+Round 13 runs on the Tour of 60a9f35 (run 39126966567); report in `eval-13.md`. First round
+without a blocker or a major: the overall is a sum of minors (consistency, readability).
+
+## After round 13: fixed (18 Oct 2026)
+
+- One label per control on every screen: the goal-detail pill names its level ("kto
+  strzelił"), the swap row says "Zamień" and each swap button names its team in a tooltip.
+- The league switcher's invite and settings are rows like the page menu's (they were cards).
+- One duration format: "Na tle ligi" in words, like the game's own length; durations, and
+  "wygrane – porażki", never break.
+- Live card names flow without holes; profile titles are labels, not pills; the comparison
+  uses short names in its sentences too.
 

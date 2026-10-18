@@ -449,7 +449,7 @@ import { TournamentService } from '../tournament/tournament.service';
        more (evaluation 10: a half-line cap cut "Krzysztof & Żaneta" with room to spare). */
     .names span {
       flex: 0 1 auto;
-      min-width: 2.5em;
+      min-width: 0; /* a floor here left a hole after "Ala" (evaluation 13) */
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

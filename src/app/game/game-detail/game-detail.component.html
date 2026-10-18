@@ -33,10 +33,8 @@
             "
           >
             <mat-icon aria-hidden="true">{{ detailIcons[detail()] }}</mat-icon>
-            <span class="long">{{
-              'game.detailPill' | transloco: { level: ('game.detailLevel.' + detail() | transloco) }
-            }}</span>
-            <span class="short">{{ 'game.detailLevel.' + detail() | transloco }}</span>
+            <!-- The same short label on every screen (evaluation 13); the menu says what it sets. -->
+            <span>{{ 'game.detailLevel.' + detail() | transloco }}</span>
             <mat-icon class="chevron" aria-hidden="true">expand_more</mat-icon>
           </button>
           <mat-menu #detailMenu="matMenu">
@@ -293,8 +291,7 @@
             {{ (ownArmed() ? 'game.ownCancel' : 'game.ownArm') | transloco }}
           </button>
           <div class="swaps">
-            <span class="long">{{ 'game.swap' | transloco }}</span>
-            <span class="short">{{ 'game.swapShort' | transloco }}</span>
+            <span>{{ 'game.swapShort' | transloco }}</span>
             @for (color of colors; track color) {
               <button
                 class="swap-dot swap-dot--{{ color }}"
@@ -303,6 +300,7 @@
                 [attr.aria-label]="
                   ('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)
                 "
+                [attr.title]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
               >
                 <!-- A swap in the team's colour (evaluation 6: a bare dot said nothing). -->
                 <mat-icon aria-hidden="true">swap_vert</mat-icon>

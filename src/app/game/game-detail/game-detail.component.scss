@@ -84,27 +84,6 @@
   text-align: center;
 }
 
-/*
- * A narrow phone (evaluation 3: the pause button covered the clock at 360 px): the goal-detail
- * pill keeps its icon, the swap row drops its label, nothing leaves the screen.
- */
-.detail .short,
-.swaps .short {
-  display: none;
-}
-
-@media (max-width: 440px) {
-  .screen:not(.landscape) .detail .long,
-  .screen:not(.landscape) .swaps .long {
-    display: none;
-  }
-
-  .screen:not(.landscape) .detail .short,
-  .screen:not(.landscape) .swaps .short {
-    display: inline;
-  }
-}
-
 /* Narrow: the turn moves to the menu (the header keeps room for the clock). */
 .rotate-item {
   display: none;

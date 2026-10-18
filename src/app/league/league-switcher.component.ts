@@ -140,29 +140,34 @@ export async function inviteToLeague(
     .about small {
       color: var(--fl-ink-2);
     }
+    /* Rows as in the page menu, which holds the same actions (evaluation 13: cards here, rows
+       there). */
     .actions {
       display: grid;
-      gap: 6px;
+      border-bottom: 1px solid var(--fl-line);
     }
     .action {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       box-sizing: border-box;
       width: 100%;
       min-height: 56px;
-      padding: 6px 14px;
+      padding: 4px 4px;
       border: 0;
-      border-radius: 14px;
-      background: var(--fl-card-2);
+      background: none;
       color: var(--fl-ink);
       text-align: left;
       text-decoration: none;
       font: inherit;
       cursor: pointer;
     }
+    .action + .action {
+      border-top: 1px solid var(--fl-line);
+    }
     .action mat-icon {
-      color: var(--fl-ink);
+      flex: none;
+      color: var(--fl-ink-2);
     }
     .action .name {
       display: grid;

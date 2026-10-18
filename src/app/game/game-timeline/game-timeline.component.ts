@@ -4,12 +4,13 @@ import {
   MatBottomSheet,
   MatBottomSheetModule,
 } from '@angular/material/bottom-sheet';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 import { leagueOf } from '../../league/league';
 import { PlayerService } from '../../player/player.service';
+import { durationText } from '../../stats/format';
 import { gameFacts } from '../../stats/stats';
 import { cssColor, withAlpha } from '../../shared/css-color';
 import { formatDuration, Game, TEAM_COLORS } from '../game';
@@ -206,6 +207,11 @@ export class GameTimelineComponent {
   } as const;
   protected readonly timeline = computed(() => timelineOf(this._game()));
 
+  private readonly _transloco = inject(TranslocoService);
+  private _words(seconds: number): string {
+    return durationText((key, params) => this._transloco.translate(key, params), seconds);
+  }
+
   /** Where the game stands among its league's games, e.g. "the 2nd longest". */
   protected readonly facts = computed(() =>
     gameFacts(this._game(), this._gameService.leagueGames(leagueOf(this._game())) ?? []).map(
@@ -214,8 +220,9 @@ export class GameTimelineComponent {
           ? {
               key: fact.key,
               params: {
-                time: formatDuration(Number(fact.params['time'])),
-                average: formatDuration(Number(fact.params['average'])),
+                // In words, as the game's own length above (evaluation 13: "07:15" here).
+                time: this._words(Number(fact.params['time'])),
+                average: this._words(Number(fact.params['average'])),
               },
             }
           : fact,
