@@ -1,4 +1,4 @@
-/* The list is its own container: two games a row only when the list itself is wide, wherever it
+/* The list is its own container: the wide row only when the list itself is wide, wherever it
    sits (evaluation 7: a viewport rule squeezed it inside a half-width column). */
 :host {
   display: block;
@@ -9,15 +9,6 @@
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-/* The games of a day two a row, read left to right; days follow down the page. */
-@container games (min-width: 760px) {
-  .games {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: 32px;
-  }
 }
 
 .game {
@@ -161,4 +152,20 @@
 .more {
   margin: 8px auto 0;
   display: flex;
+}
+
+/* A wide list keeps one game a row, in order (evaluation 10: two a row left holes after odd
+   days and hid the order); the details move to the row's right end instead of under it. */
+@container games (min-width: 760px) {
+  .game {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) minmax(200px, 0.9fr);
+    padding: 10px 8px;
+  }
+
+  .meta {
+    grid-column: auto;
+    justify-self: end;
+    justify-content: flex-end;
+    margin-top: 0;
+  }
 }

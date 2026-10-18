@@ -51,6 +51,7 @@ import { TournamentService } from '../tournament/tournament.service';
     @let s = state();
     @if (s.live.length || s.paused.length || s.tournaments.length) {
       <h2 class="fl-kicker">{{ 'now.title' | transloco }}</h2>
+      <div class="strip" [class.many]="s.live.length + s.paused.length + s.tournaments.length > 1">
       <!--
         A game being played (on the LED board) or paused: the two teams on lines of their own,
         each name cut fairly, the score, and a chevron (the whole row leads to the game).
@@ -103,6 +104,7 @@ import { TournamentService } from '../tournament/tournament.service';
           >
         </a>
       }
+      </div>
     } @else if (s.last; as last) {
       <h2 class="fl-kicker">{{ 'now.quiet' | transloco }}</h2>
       <section class="last">
@@ -200,6 +202,33 @@ import { TournamentService } from '../tournament/tournament.service';
     }
     h2 {
       margin: 2px 0 0;
+    }
+    .strip {
+      display: grid;
+      gap: 8px;
+    }
+    /* A phone: what is on now in one row of cards to swipe, the next one peeking in, so the
+       ranking starts on the first screen (evaluation 10: three cards pushed it below). */
+    @media (max-width: 599px) {
+      .strip.many {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 16px;
+        margin: 0 -16px;
+        padding: 0 16px;
+        scrollbar-width: none;
+      }
+      .strip.many > .row {
+        flex: 0 0 84%;
+        box-sizing: border-box;
+        scroll-snap-align: start;
+      }
+      .strip.many small {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .live,
     .last {

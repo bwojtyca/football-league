@@ -131,6 +131,13 @@ import { openWhoSheet } from './who-sheet.component';
     }
     /* A small phone: the question on one line, so the ranking starts higher (evaluation 7). */
     @media (max-width: 400px) {
+      .you {
+        padding: 8px 12px;
+      }
+      /* The place and Elo say it; the profile is the chevron (evaluation 10). */
+      .you .text > small:last-child {
+        display: none;
+      }
       .ask {
         padding: 8px 12px;
       }
