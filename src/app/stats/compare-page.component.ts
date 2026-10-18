@@ -106,6 +106,11 @@ export class ComparePageComponent {
       : null;
   });
 
+  /** The name the rest of the app uses for a player where room is tight. */
+  protected short(playerId: string): string {
+    return this._playerService.shortName(playerId);
+  }
+
   /** Other players to compare the first one with. */
   protected readonly others = computed(() => {
     const leagueId = this.leagueId();

@@ -13,7 +13,7 @@
       <div class="side">
         <a class="who" [routerLink]="playerLink(p.a.id)">
           <fl-avatar [playerId]="p.a.id" [name]="p.a.name" [size]="48" />
-          <b><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</b>
+          <b><i class="swatch a" aria-hidden="true"></i>{{ short(p.a.id) }}</b>
           <small>{{ p.a.rating ?? '–' }} Elo · {{ p.a.wins }}–{{ p.a.loses }}</small>
         </a>
         @if (others().length) {
@@ -40,7 +40,7 @@
       <div class="side">
         <a class="who" [routerLink]="playerLink(p.b.id)">
           <fl-avatar [playerId]="p.b.id" [name]="p.b.name" [size]="48" />
-          <b><i class="swatch b" aria-hidden="true"></i>{{ p.b.name }}</b>
+          <b><i class="swatch b" aria-hidden="true"></i>{{ short(p.b.id) }}</b>
           <small>{{ p.b.rating ?? '–' }} Elo · {{ p.b.wins }}–{{ p.b.loses }}</small>
         </a>
         @if (others().length) {
@@ -66,10 +66,10 @@
             <!-- Each percentage stays at its player's end of the bar; a long name gives way
                  (evaluation 11: wrapped names put 38% beside the other player). -->
             <span
-              ><span class="n">{{ p.a.name }}</span> <b>{{ chance() }}%</b></span
+              ><span class="n">{{ short(p.a.id) }}</span> <b>{{ chance() }}%</b></span
             >
             <span
-              ><b>{{ 100 - chance()! }}%</b> <span class="n">{{ p.b.name }}</span></span
+              ><b>{{ 100 - chance()! }}%</b> <span class="n">{{ short(p.b.id) }}</span></span
             >
           </div>
           <div class="bar" aria-hidden="true">
