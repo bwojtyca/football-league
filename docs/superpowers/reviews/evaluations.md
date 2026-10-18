@@ -207,3 +207,14 @@ names, wide rows from the page edge); report in `eval-11.md`.
   players and short names in the comparison's header; dates never break ("13 paź 2026",
   "od 15 paź").
 
+Round 12 runs on the Tour of 6be73c9 (run 39125505997); report in `eval-12.md`.
+
+## After round 12: fixed (18 Oct 2026)
+
+- Majors: from 1400 px the finished game is two columns (the result, sticky, beside how it
+  went); a wide game list is at most 760 px, a row's width; the league switcher shows the whole
+  league name, the profile wraps it, and every clipped league name has it as a tooltip.
+- Minors: the goal log uses short names like the rest; units stay with their numbers
+  ("54 s gry", "5 razy", "7 min 15 s"); the Tour moves the mouse away before each shot, so a
+  leftover hover no longer reads as a highlight.
+
