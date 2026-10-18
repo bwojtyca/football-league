@@ -445,16 +445,14 @@ import { TournamentService } from '../tournament/tournament.service';
     .team.b .pts {
       color: var(--fl-blue-board);
     }
+    /* Whole names when both fit; else each gives way by its length, so the longer one is cut
+       more (evaluation 10: a half-line cap cut "Krzysztof & Żaneta" with room to spare). */
     .names span {
       flex: 0 1 auto;
-      min-width: 0;
-      max-width: calc(50% - 0.6em);
+      min-width: 2.5em;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .names span:only-of-type {
-      max-width: 100%;
     }
     .go {
       flex: none;
