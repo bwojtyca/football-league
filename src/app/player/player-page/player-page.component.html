@@ -211,7 +211,7 @@
                 {{ 'achievements.times' | transloco: { n: badge.count } }} ·
               }
               @if (badge.date; as date) {
-                {{ date | translocoDate: { dateStyle: 'medium' } }}
+                {{ date | translocoDate: { dateStyle: 'medium' } | nbsp }}
               }
             } @else {
               {{ 'achievements.how.' + badge.id | transloco: badge.params }}

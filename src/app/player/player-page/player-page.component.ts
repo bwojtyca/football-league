@@ -46,6 +46,7 @@ import { openKitDialog } from '../kit-dialog.component';
 import { compareNames, rankPlayers } from '../player';
 import { PlayerService } from '../player.service';
 import { START_RATING } from '../rating';
+import { NbspPipe } from '../../shared/nbsp.pipe';
 
 /** How each achievement looks: its icon, its name (`key`) and the numbers in it. */
 const BADGES: Record<AchievementId, { icon: string; key: string; params: object }> = {
@@ -83,6 +84,7 @@ const BADGES: Record<AchievementId, { icon: string; key: string; params: object 
 @Component({
   selector: 'fl-player-page',
   imports: [
+    NbspPipe,
     NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,

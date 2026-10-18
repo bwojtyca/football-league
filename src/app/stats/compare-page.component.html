@@ -9,11 +9,26 @@
   } @else {
     @let h = h2h()!;
     <section class="duel">
-      <a class="side" [routerLink]="playerLink(p.a.id)">
-        <fl-avatar [playerId]="p.a.id" [name]="p.a.name" [size]="48" />
-        <b><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</b>
-        <small>{{ p.a.rating ?? '–' }} Elo · {{ p.a.wins }}–{{ p.a.loses }}</small>
-      </a>
+      <!-- Both players alike, each with "Change" (evaluation 11: only the right one had it). -->
+      <div class="side">
+        <a class="who" [routerLink]="playerLink(p.a.id)">
+          <fl-avatar [playerId]="p.a.id" [name]="p.a.name" [size]="48" />
+          <b><i class="swatch a" aria-hidden="true"></i>{{ p.a.name }}</b>
+          <small>{{ p.a.rating ?? '–' }} Elo · {{ p.a.wins }}–{{ p.a.loses }}</small>
+        </a>
+        @if (others().length) {
+          <button matButton class="change" [matMenuTriggerFor]="pickA">
+            {{ 'compare.change' | transloco }}
+          </button>
+          <mat-menu #pickA="matMenu">
+            @for (other of others(); track other.id) {
+              <a mat-menu-item [routerLink]="compareLink(leagueId(), other.id, b())">{{
+                other.name
+              }}</a>
+            }
+          </mat-menu>
+        }
+      </div>
       <a
         matIconButton
         class="swap"

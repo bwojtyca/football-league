@@ -537,7 +537,7 @@
     "title": "Ziemniak",
     "points": "pkt",
     "days": "{n, plural, one {dzień} other {dni}}",
-    "since": "ziemniak od {date}",
+    "since": "ziemniak od {date}",
     "today": "Dziś",
     "todayHint": "Kto zbierze najwięcej punktów do końca dnia, zostanie ziemniakiem.",
     "rules": "Zasady",
@@ -774,7 +774,7 @@
     "tournament": "Turniejowe",
     "noneToday": "Dziś jeszcze nikt nie grał.",
     "noneTournament": "Nie ma jeszcze meczów turniejowych.",
-    "since": "od {time}"
+    "since": "od {time}"
   },
   "leagueNew": {
     "who": "Kto gra?",

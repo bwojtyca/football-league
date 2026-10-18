@@ -22,6 +22,7 @@ import { POTATO_DAY_GAMES, POTATO_POINTS, potatoRanking, potatoState } from '../
 import { duets } from '../records';
 import { DUET_GAMES, openRankingHelp } from './ranking-help-sheet.component';
 import { Title, TITLE_GAMES } from '../../stats/titles';
+import { NbspPipe } from '../../shared/nbsp.pipe';
 
 /** Fewest games together for a pair to be ranked. */
 
@@ -32,6 +33,7 @@ import { Title, TITLE_GAMES } from '../../stats/titles';
 @Component({
   selector: 'fl-ranking',
   imports: [
+    NbspPipe,
     DecimalPipe,
     NgTemplateOutlet,
     MatButtonModule,
