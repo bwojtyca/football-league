@@ -19,8 +19,8 @@ import { TranslocoPipe } from '@jsverse/transloco';
   styles: `
     :host {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 10px;
+      right: 16px; /* on the sheet's 16 px gutter (evaluation 10) */
     }
     button {
       background: var(--fl-card-2);

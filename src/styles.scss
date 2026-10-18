@@ -624,7 +624,7 @@ details.fl-fold[open] > summary::after {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 8px 0 24px;
+  padding: 8px 16px 0 24px; /* the close glyph on the content's 24 px edge (evaluation 10) */
 }
 
 .fl-dialog-head:has(> .back) {
@@ -834,7 +834,7 @@ details.fl-fold[open] > summary::after {
 }
 
 .mat-bottom-sheet-container > * > :first-child {
-  padding-right: 48px;
+  padding-right: 56px;
 }
 
 /* A wide screen: sheets open as a panel in the middle, not docked far from what opened them. */
