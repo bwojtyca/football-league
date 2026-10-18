@@ -291,7 +291,7 @@
   .col {
     display: grid;
     justify-items: end;
-    width: 64px;
+    width: 76px;
   }
 
   .row > fl-form {
@@ -306,6 +306,7 @@
     border-bottom: 1px solid var(--fl-line);
     color: var(--fl-ink-2);
     font: 700 0.75rem/1.2 var(--fl-display);
+    white-space: nowrap;
   }
 
   /* Over the names: past the place (30), the avatar (36) and their gaps. */
