@@ -512,6 +512,7 @@ fl-games-stats tbody th a {
 
 .fl-split {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* a long name shrinks instead of widening the page */
   gap: 4px;
   margin-bottom: 12px;
 }
