@@ -96,6 +96,21 @@
   gap: 0 8px;
 }
 
+/* A tournament's name on one line, cut when long (evaluation 15: it wrapped, left-aligned under a
+   centred line, and pushed the Elo change to a line of its own). */
+.meta {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.meta .tournament {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .day h3 {
   margin: 16px 0 2px;
   text-transform: none;

@@ -261,6 +261,7 @@ button.vs {
 }
 
 .actions.start {
+  justify-content: flex-start; /* at the left edge, as "Nowy turniej" and "Dodaj gracza" */
   margin: 0 0 16px;
 }
 

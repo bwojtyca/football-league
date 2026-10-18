@@ -16,6 +16,7 @@ import { openAddPlayerDialog } from './add-player-dialog.component';
 import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
+import { PagePlayService } from '../shared/page-play.service';
 
 type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
 
@@ -298,12 +299,17 @@ export class LeagueLayoutComponent {
   }
 
   /** A game, a series or a tournament; a league without players gets its players first. */
+  private readonly _pagePlay = inject(PagePlayService);
+
   protected newPlay(): void {
     const league = this.league();
     if (!league || league.archived) {
       return;
     }
-    if (league.players.length < 2) {
+    const page = this._pagePlay.action();
+    if (page) {
+      page();
+    } else if (league.players.length < 2) {
       openAddPlayerDialog(this._dialog, { leagueId: league.id });
     } else {
       openNewPlaySheet(this._sheet, league.id);

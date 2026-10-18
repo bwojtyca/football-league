@@ -19,6 +19,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 12    | 18 Oct 2026 | 39125505997 (master 6be73c9) | 8.3       | 6.75        | 8.0         | 8.0         | 7.75       | 7.25      | 6.75    | 7.7  |
 | 13    | 18 Oct 2026 | 39126966567 (master 60a9f35) | 8.5       | 6.75        | 7.0         | 8.3         | 8.0        | 7.5       | 6.75    | 7.7  |
 | 14    | 18 Oct 2026 | 39141874782 (master 252649a) | 8.25      | 7.25        | 7.75        | 8.25        | 8.0        | 8.5       | 7.25    | 8.0  |
+| 15    | 18 Oct 2026 | 39143311810 (master fd1317c) | 7.75      | 8.0         | 8.0         | 7.5         | 7.75       | 8.5       | 7.5     | 7.9  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -245,4 +246,18 @@ first time; no blocker or major.
 - "Own goal…" as wide as its label, lighter than "Undo".
 - The tournament's tightest defence says "2,0 na mecz" and then who.
 - The games tab's filters and statistics link as wide as its list.
+
+Round 15 runs on the Tour of fd1317c (run 39143311810); report in `eval-15.md`. Its major came
+from round 14's fix: the "+" was yellow everywhere, but on a tournament page it ignored the
+tournament while the page's own action had turned grey.
+
+## After round 15: fixed (18 Oct 2026)
+
+- The "+" does the page's play (`shared/page-play.service.ts`): on a tournament page it starts
+  the tournament's next game (king of the table, the draw, a series' next game, a new game of an
+  open tournament); elsewhere it opens "What are we playing?". One colour, one place, and the
+  yellow ball does what the page is about.
+- The empty league's first step is a visible button (tonal on the card's grey had vanished).
+- An open tournament's buttons at the left edge, as other pages' actions.
+- A tournament's name under a game on one line, cut, with the full name as a tooltip.
 

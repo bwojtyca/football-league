@@ -56,6 +56,7 @@ import {
 import { TournamentService } from '../tournament.service';
 import { openTournamentDeleteDialog } from './tournament-delete-dialog.component';
 import { openTournamentEditDialog } from './tournament-edit-dialog.component';
+import { PagePlayService } from '../../shared/page-play.service';
 
 @Component({
   selector: 'fl-tournament-page',
@@ -269,7 +270,30 @@ export class TournamentPageComponent {
   /** Tournament this page is already ending, so it is ended only once. */
   private _settling?: string;
 
+  private readonly _pagePlay = inject(PagePlayService);
+
+  /** The "+" on this page: the tournament's next game, when the page has one to start. */
+  private readonly _play = computed<(() => void) | null>(() => {
+    const tournament = this.tournament();
+    if (!tournament || tournament.end || tournament.deleted || this.running()) {
+      return null;
+    }
+    const next =
+      tournament.format === 'king'
+        ? this.king()?.next
+        : tournament.format === 'dyp'
+          ? this.draw()
+          : tournament.format === 'series'
+            ? this.series()?.next
+            : undefined;
+    if (next) {
+      return () => this.start(next.red, next.blue);
+    }
+    return tournament.format === 'open' ? () => this.newOpenGame() : null;
+  });
+
   constructor() {
+    effect((onCleanup) => onCleanup(this._pagePlay.register(this._play())));
     effect(() => {
       const tournament = this.tournament();
       const end = this._decidedAt();
