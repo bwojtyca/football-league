@@ -192,5 +192,17 @@ Round 10 runs on the Tour of 41c1986 (run 39102162418), before round 9's fixes; 
   in `pl.json`; close discs on the 16 px gutter of sheets, the close glyph on a dialog's 24 px
   content edge.
 
-Round 11 runs on the Tour of ab31c7a.
+Round 11 runs on the Tour of acd9da0 (run 39122074475, with two follow-ups: the now strip's
+names, wide rows from the page edge); report in `eval-11.md`.
+
+## After round 11: fixed (18 Oct 2026)
+
+- Blocker: the comparison's win chance keeps each percentage by its player (the name gives way,
+  short names as elsewhere); split bars no longer widen the page with a long name.
+- Majors: the Tour shot the page menu on the leagues page, where it has no league; it now shoots
+  it on a league page, where it holds the league's invite and settings. Wide game lists and goal
+  logs put the details next to the score instead of across the page.
+- Minors: dialog text without Material's extra letter spacing; "Change" under both compared
+  players and short names in the comparison's header; dates never break ("13 paź 2026",
+  "od 15 paź").
 
