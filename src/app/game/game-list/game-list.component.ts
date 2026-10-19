@@ -65,7 +65,9 @@ export class GameListComponent {
   });
 
   /** The games are not loaded yet: placeholder rows, not "no games". */
-  protected readonly loading = computed(() => this._gameService.games() === undefined);
+  protected readonly loading = computed(
+    () => this._gameService.leagueGames(this.leagueId()) === undefined,
+  );
 
   protected readonly more = computed(() => this._games().length > this._pages() * this.pageSize());
 

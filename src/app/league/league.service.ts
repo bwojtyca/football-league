@@ -6,23 +6,10 @@ import { Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
+import { deviceLeagues, rememberLeague } from './device-leagues';
 import { League, currentLeagueId } from './league';
 
 const LAST_LEAGUE_KEY = 'fl.league';
-const RECENT_KEY = 'fl.recentLeagues';
-/** How many leagues opened on this device the leagues page lists. */
-const RECENT_COUNT = 8;
-
-function readRecent(): string[] {
-  try {
-    const ids = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
-    return Array.isArray(ids)
-      ? [...new Set(ids.filter((id) => typeof id === 'string').map(currentLeagueId))]
-      : [];
-  } catch {
-    return [];
-  }
-}
 
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
@@ -115,20 +102,10 @@ export class LeagueService {
   }
 
   /** Leagues opened on this device, last first: "mine" until there are accounts. */
-  public readonly recent = signal(readRecent());
+  public readonly recent = deviceLeagues.asReadonly();
 
   private _remember(id: string): void {
-    // Called from effects: read without tracking, and leave the list alone when it is the same.
-    const recent = untracked(() => this.recent());
-    if (recent[0] === id) {
-      return;
-    }
-    const ids = [id, ...recent.filter((other) => other !== id)].slice(0, RECENT_COUNT);
-    this.recent.set(ids);
-    try {
-      localStorage.setItem(RECENT_KEY, JSON.stringify(ids));
-    } catch {
-      // Not remembered: private mode or storage blocked.
-    }
+    // Called from effects: read without tracking.
+    untracked(() => rememberLeague(id));
   }
 }

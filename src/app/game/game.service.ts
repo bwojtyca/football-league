@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Injector, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   arrayRemove,
@@ -8,17 +8,22 @@ import {
   deleteField,
   doc,
   getDocFromServer,
+  getDocs,
   increment,
+  query,
+  Query,
   runTransaction,
   setDoc,
   updateDoc,
   waitForPendingWrites,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 import { collectionData, docData } from 'rxfire/firestore';
 import { map, Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
+import { deviceLeagues } from '../league/device-leagues';
 import { ALL_LEAGUES, leagueOf } from '../league/league';
 import { computeRatings, Ratings } from '../player/rating';
 import {
@@ -37,6 +42,11 @@ import {
   teamPlayers,
 } from './game';
 
+/** Newest first, by start. */
+function newestFirst(a: Pick<Game, 'start'>, b: Pick<Game, 'start'>): number {
+  return a.start < b.start ? 1 : a.start > b.start ? -1 : 0;
+}
+
 /** Milliseconds of play so far (pauses left out), as logged with each event. */
 function elapsed(game: Pick<Game, 'start' | 'paused' | 'pausedFor'>): number {
   return playTime(game, Date.now());
@@ -47,48 +57,60 @@ export class GameService {
   private readonly _db = inject(FIRESTORE);
   private readonly _games = collection(this._db, 'games');
 
-  private readonly _stored = toSignal(
-    collectionData(this._games, { idField: 'id' }) as Observable<Game[]>,
-  );
+  private readonly _injector = inject(Injector);
 
   /**
-   * Every game that is not deleted, kept live for the whole session. Rankings, histories and
-   * stats are all derived from this one listener; after the first load only changed games
-   * arrive.
+   * Each league's games once a page asks for them: one live listener per league, kept for the
+   * session (per-league data, 19 Oct 2026: a phone no longer downloads every league). After the
+   * first load only changed games arrive, and the IndexedDB cache serves later visits.
    */
-  public readonly games = computed(() => this._stored()?.filter((game) => !game.deleted));
+  private readonly _leagues = new Map<
+    string,
+    { games: Signal<Game[] | undefined>; ratings: Signal<Ratings | undefined> }
+  >();
 
-  /** Each league's games, newest first; `ALL_LEAGUES` has every game. */
-  private readonly _byLeague = computed(() => {
-    const byLeague = new Map<string, Game[]>();
-    const games = [...(this.games() ?? [])].sort((a, b) =>
-      a.start < b.start ? 1 : a.start > b.start ? -1 : 0,
-    );
-    for (const game of games) {
-      const league = leagueOf(game);
-      const list = byLeague.get(league);
-      if (list) {
-        list.push(game);
-      } else {
-        byLeague.set(league, [game]);
-      }
+  private _league(leagueId: string) {
+    let league = this._leagues.get(leagueId);
+    if (!league) {
+      // Created on first use, which can be inside a computed: the listener itself is not.
+      const stored = untracked(() =>
+        toSignal(
+          collectionData(query(this._games, where('league', '==', leagueId)), {
+            idField: 'id',
+          }) as Observable<Game[]>,
+          { injector: this._injector },
+        ),
+      );
+      const games = computed(() =>
+        stored()
+          ?.filter((game) => !game.deleted)
+          .sort(newestFirst),
+      );
+      league = {
+        games,
+        ratings: computed(() => {
+          const list = games();
+          return list && computeRatings(list);
+        }),
+      };
+      this._leagues.set(leagueId, league);
     }
-    byLeague.set(ALL_LEAGUES, games);
-    return byLeague;
+    return league;
+  }
+
+  /** "Your leagues" (`ALL_LEAGUES`): those opened on this device, until there are accounts. */
+  private readonly _all = computed(() => {
+    const lists = deviceLeagues().map((id) => this._league(id).games());
+    return lists.some((list) => !list) ? undefined : lists.flat().sort(newestFirst);
+  });
+  private readonly _allRatings = computed(() => {
+    const games = this._all();
+    return games && computeRatings(games);
   });
 
-  /** Elo ratings of every league. */
-  private readonly _ratings = computed(() => {
-    const ratings = new Map<string, Ratings>();
-    for (const [league, games] of this._byLeague()) {
-      ratings.set(league, computeRatings(games));
-    }
-    return ratings;
-  });
-
-  /** A league's games, newest first, or `undefined` while games are loading. */
+  /** A league's games, newest first, or `undefined` while they load. */
   public leagueGames(leagueId: string): Game[] | undefined {
-    return this.games() && (this._byLeague().get(leagueId) ?? []);
+    return leagueId === ALL_LEAGUES ? this._all() : this._league(leagueId).games();
   }
 
   /** A player's games in a league, newest first, or `undefined` while games are loading. */
@@ -114,7 +136,7 @@ export class GameService {
   }
 
   public ratings(leagueId: string): Ratings | undefined {
-    return this.games() && (this._ratings().get(leagueId) ?? computeRatings([]));
+    return leagueId === ALL_LEAGUES ? this._allRatings() : this._league(leagueId).ratings();
   }
 
   public getGame(gameId: string): Observable<Game | null> {
@@ -267,14 +289,18 @@ export class GameService {
 
   /** Hides a league's games with it, or brings back the games hidden with it. */
   public setLeagueGamesDeleted(leagueId: string, deleted: boolean): Promise<void> {
-    return this._setDeletedWith(`league:${leagueId}`, (g) => leagueOf(g) === leagueId, deleted);
+    return this._setDeletedWith(
+      `league:${leagueId}`,
+      query(this._games, where('league', '==', leagueId)),
+      deleted,
+    );
   }
 
   /** Hides a tournament's games with it, or brings back the games hidden with it. */
   public setTournamentGamesDeleted(tournamentId: string, deleted: boolean): Promise<void> {
     return this._setDeletedWith(
       `tournament:${tournamentId}`,
-      (game) => game.tournament === tournamentId,
+      query(this._games, where('tournament', '==', tournamentId)),
       deleted,
     );
   }
@@ -286,10 +312,12 @@ export class GameService {
    */
   private async _setDeletedWith(
     key: string,
-    belongs: (game: Game) => boolean,
+    games$: Query,
     deleted: boolean,
   ): Promise<void> {
-    const games = (this._stored() ?? []).filter(belongs);
+    const games = (await getDocs(games$)).docs.map(
+      (one) => ({ ...one.data(), id: one.id }) as Game,
+    );
     const marked = games.filter((game) => game.deleted && game.deletedWith === key);
     const changed = deleted
       ? games.filter((game) => !game.deleted)

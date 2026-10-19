@@ -1,11 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { filter, map } from 'rxjs';
+import { filter, map, of, switchMap } from 'rxjs';
 
 import { GameService } from '../game/game.service';
 import { crestOf, leagueOf } from '../league/league';
@@ -101,10 +101,17 @@ export class AppRailComponent {
     { initialValue: this._router.url },
   );
 
+  /** The game whose page is open, if any (read by id: its league may not be loaded). */
+  private readonly _game = toSignal(
+    toObservable(computed(() => /^\/game\/([^/?]+)/.exec(this._url())?.[1] ?? null)).pipe(
+      switchMap((gameId) => (gameId ? this._gameService.getGame(gameId) : of(null))),
+    ),
+    { initialValue: null },
+  );
+
   /** The league of the game whose page is open, if any. */
   protected readonly current = computed(() => {
-    const gameId = /^\/game\/([^/?]+)/.exec(this._url())?.[1];
-    const game = gameId && this._gameService.games()?.find((one) => one.id === gameId);
+    const game = this._game();
     const id = game ? leagueOf(game) : null;
     const league = id ? this._leagueService.league(id) : null;
     return league ? { id: league.id, name: league.name } : null;
