@@ -171,9 +171,8 @@
 
 /* A wide list keeps one game a row, in order (evaluation 10: two a row left holes after odd
    days and hid the order); the details follow the teams on the row instead of going under it.
-   From 960 px whole days go in two columns instead, each with the compact rows (evaluation 20:
-   a 760 px list left a third of a wide page empty). */
-@container games (min-width: 760px) and (max-width: 959px) {
+   Days in two columns read out of order (evaluation 21), so a wide list stays one column. */
+@container games (min-width: 760px) {
   /* At most a readable row wide (evaluation 12: a phone row stretched to 1120 px). */
   .day {
     max-width: 760px;
@@ -197,16 +196,5 @@
     justify-content: flex-start;
     overflow: hidden;
     margin: 0 0 0 20px;
-  }
-}
-
-@container games (min-width: 960px) {
-  .days {
-    columns: 2;
-    column-gap: 32px;
-  }
-
-  .day {
-    break-inside: avoid;
   }
 }

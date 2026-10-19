@@ -25,6 +25,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 18    | 19 Oct 2026 | 39166262313 (master 2ee59f4) | 8.0       | 7.4         | 7.5         | 8.6         | 7.0        | 8.0       | 7.0     | 7.75 |
 | 19    | 19 Oct 2026 | 39186423441 (master 7c8e5d8) | 8.5       | 7.0         | 6.4         | 8.25        | 8.6        | 7.6       | 6.4     | 7.7  |
 | 20    | 19 Oct 2026 | 39187654646 (master d31cc3b) | 8.6       | 7.75        | 8.0         | 8.4         | 8.25       | 8.6       | 7.75    | 8.3  |
+| 21    | 19 Oct 2026 | 39212106261 (master 2d769da) | 8.25      | 7.0         | 7.5         | 7.75        | 7.5        | 8.1       | 7.0     | 7.7  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -342,4 +343,18 @@ overall 8.0, mean 8.54, the first evaluator to put every dimension at 8; `eval-2
 - The swaps say what they do: "Zamień pozycje" over two buttons named by team.
 - "Największy powrót: z 7:12 na 15:13" in words; the win streak with its unit.
 - The goal log as wide as the chart above it.
+
+Round 21 runs on the Tour of 2d769da (run 39212106261) with two evaluators (`eval-21a.md`:
+overall 6.75, mean 7.4; `eval-21b.md`: 7.25, 8.0). Some findings undo round 20's (days in two
+columns read out of order; the now strip's peek is "only an icon" where it was "cut mid-word").
+
+## After round 21: fixed (19 Oct 2026), what both evaluators named
+
+- Every score in the records in LED digits, the comeback too.
+- League settings are no longer in the desktop rail (the owner's ruling: league things under
+  its name at every size).
+- In the game's side panel the swaps span the panel as "Cofnij" and "Samobój…" do.
+- A wide game list is one column again (760 px); the profile's overview is two columns from
+  1200 px.
+- Left as is: the now strip on phones (rounds 10, 20 and 21 want three different things).
 

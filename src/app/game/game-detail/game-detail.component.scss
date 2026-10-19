@@ -529,6 +529,11 @@
   flex: none;
 }
 
+/* In the side panel the swaps span it, as "Undo" and "Own goal…" above (evaluation 21). */
+.landscape .tools .swaps {
+  max-width: none;
+}
+
 .landscape .bar .event {
   display: -webkit-box;
   -webkit-box-orient: vertical;

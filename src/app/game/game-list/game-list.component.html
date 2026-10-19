@@ -1,7 +1,6 @@
 @if (loading()) {
   <fl-skeleton [rows]="5" />
 }
-<!-- Whole days in two columns on a wide list, read down then across (evaluation 20). -->
 <div class="days">
   @for (day of days(); track day.key) {
     <section class="day">

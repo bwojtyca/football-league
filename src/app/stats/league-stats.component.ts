@@ -201,6 +201,7 @@ export class LeagueStatsComponent {
               to: end,
             })
           : '',
+        score: true, // LED digits as every score in the records (evaluation 21)
         game: comeback.game,
       });
     }

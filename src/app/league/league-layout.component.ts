@@ -84,16 +84,7 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         @for (tab of tabs; track tab.section) {
           <ng-container *ngTemplateOutlet="link; context: { $implicit: tab }" />
         }
-        <!-- The league's settings in sight on a computer (evaluation 6: only in a menu). -->
-        <a
-          [routerLink]="['/l', leagueId(), 'settings']"
-          class="tab"
-          [class.active]="onSettings()"
-          [attr.aria-current]="onSettings() ? 'page' : null"
-        >
-          <mat-icon aria-hidden="true">settings</mat-icon>
-          <span>{{ 'settings.title' | transloco }}</span>
-        </a>
+        <!-- The league's settings live under its name, at every size (owner, 18 Oct 2026). -->
         <button
           matButton="filled"
           class="new-play"
@@ -286,10 +277,6 @@ export class LeagueLayoutComponent {
       (parts.length <= 3 && this._gameService.leagueGames(this.leagueId())?.length === 0)
     );
   });
-  protected readonly onSettings = computed(
-    () => this._url().split('?')[0].split('/')[3] === 'settings',
-  );
-
   /** The section the page belongs to: statistics to the games, profiles to the players; the
    * settings (reached from the gear) to none. */
   protected readonly section = computed<Section>(() => {

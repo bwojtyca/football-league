@@ -322,8 +322,9 @@ h2 {
   margin-top: 8px;
 }
 
-/* A wide screen: the rating and records on the left, the badges on the right. */
-@media (min-width: 1400px) {
+/* A computer: the rating and records on the left, the badges on the right (evaluation 21: at
+   1280 px one stretched column; 1200 px leaves about 470 px a column beside the rail). */
+@media (min-width: 1200px) {
   .overview {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
