@@ -55,36 +55,54 @@
           </mat-menu>
         }
       }
-      <!-- The series or the rules above the clock. -->
-      <div class="status">
-        @let rules = mode();
-        @if (series() || rules) {
+      @if (game.end) {
+        <!-- A finished game is a page with a title, as the others (evaluation 19). -->
+        <h1 class="page-title">
+          {{ 'gameDetails.title' | transloco }}
           <small>
+            {{ leagueName() }}
             @if (series(); as series) {
+              ·
               @if (series.winner; as seriesWinner) {
                 {{ 'series.won' | transloco: { team: (teamNames[seriesWinner] | transloco) } }}
               } @else {
                 {{ 'series.game' | transloco: { n: series.number, bestOf: series.bestOf } }}
               }
-              <b class="series-score"
-                ><span class="r">{{ series.red }}</span
-                >:<span class="b">{{ series.blue }}</span></b
-              >
-            }
-            @if (series() && rules) {
-              ·
-            }
-            @if (rules) {
-              <fl-mode-label [mode]="rules" />
             }
           </small>
-        }
-        @if (clock().golden) {
-          <b class="clock golden">{{ 'game.goldenGoal' | transloco }}</b>
-        } @else {
-          <b class="clock">{{ clock().time }}</b>
-        }
-      </div>
+        </h1>
+      } @else {
+        <!-- The series or the rules above the clock. -->
+        <div class="status">
+          @let rules = mode();
+          @if (series() || rules) {
+            <small>
+              @if (series(); as series) {
+                @if (series.winner; as seriesWinner) {
+                  {{ 'series.won' | transloco: { team: (teamNames[seriesWinner] | transloco) } }}
+                } @else {
+                  {{ 'series.game' | transloco: { n: series.number, bestOf: series.bestOf } }}
+                }
+                <b class="series-score"
+                  ><span class="r">{{ series.red }}</span
+                  >:<span class="b">{{ series.blue }}</span></b
+                >
+              }
+              @if (series() && rules) {
+                ·
+              }
+              @if (rules) {
+                <fl-mode-label [mode]="rules" />
+              }
+            </small>
+          }
+          @if (clock().golden) {
+            <b class="clock golden">{{ 'game.goldenGoal' | transloco }}</b>
+          } @else {
+            <b class="clock">{{ clock().time }}</b>
+          }
+        </div>
+      }
       @if (!game.end) {
         @if (game.paused) {
           <!-- Paused: the overlay's "Resume" is the one way back (evaluation 5: two of them);

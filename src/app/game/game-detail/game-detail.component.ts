@@ -146,6 +146,11 @@ export class GameDetailComponent implements LeaveGuarded {
     return game?.tournament ? ['/l', leagueId, 't', game.tournament] : ['/l', leagueId];
   });
 
+  protected readonly leagueName = computed(() => {
+    const leagueId = this.leagueId();
+    return leagueId ? (this._leagueService.league(leagueId)?.name ?? null) : null;
+  });
+
   protected readonly canRematch = computed(() => {
     const leagueId = this.leagueId();
     const league = leagueId ? this._leagueService.league(leagueId) : null;

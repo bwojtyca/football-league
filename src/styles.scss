@@ -218,6 +218,12 @@ body {
   font: var(--mat-sys-body-large);
 }
 
+/* A plain button reads in the app's type, not the browser's (evaluation 19: the tournament
+   format cards were in Arial). Material's buttons set their own font. */
+button {
+  font: inherit;
+}
+
 a {
   color: inherit;
   text-underline-offset: 3px;

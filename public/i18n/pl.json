@@ -790,7 +790,8 @@
   "gameDetails": {
     "when": "{date}, o {time}",
     "played": "{time} gry",
-    "won": "wygrana"
+    "won": "wygrana",
+    "title": "Mecz"
   },
   "appMenu": {
     "title": "Menu",

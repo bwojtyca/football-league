@@ -23,6 +23,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 16    | 18 Oct 2026 | 39144699728 (master 20c61cb) | 7.5       | 7.25        | 8.75        | 6.75        | 7.25       | 7.75      | 6.75    | 7.5  |
 | 17    | 18 Oct 2026 | 39164611708 (master ba1c8b5) | 8.5       | 7.6         | 7.75        | 8.25        | 8.25       | 8.25      | 7.6     | 8.1  |
 | 18    | 19 Oct 2026 | 39166262313 (master 2ee59f4) | 8.0       | 7.4         | 7.5         | 8.6         | 7.0        | 8.0       | 7.0     | 7.75 |
+| 19    | 19 Oct 2026 | 39186423441 (master 7c8e5d8) | 8.5       | 7.0         | 6.4         | 8.25        | 8.6        | 7.6       | 6.4     | 7.7  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -314,4 +315,17 @@ was too long for a 360 px game header.
 - Under 400 px the goal-detail pill is its icon (its name in its label and menu).
 - One goal-log layout at every size, at most 560 px wide; potato cards apart; short name links
   with 40 px wide targets; whole minutes without "0 s".
+
+Round 19 runs on the Tour of 7c8e5d8 (run 39186423441) with two evaluators (`eval-19a.md`:
+overall 6.5, mean 7.75; `eval-19b.md`: 6.3, 7.7). Both found one blocker the awkward league's
+24 hours bring out: the "Kiedy gramy" heat map drew the day labels under its first column.
+
+## After round 19: fixed (19 Oct 2026)
+
+- Blocker: the heat map's day column has its width on the first row too (a fixed table takes
+  its widths from there); on a phone every third hour is named.
+- Buttons inherit the app's font (the tournament format cards were in Arial).
+- The finished game has a title: "Mecz", its league and its series in a smaller line (the frozen
+  clock is gone; the result card says how long it was).
+- "Dodaj gracza" above the players list, as "Nowy turniej"; full names in that list wrap.
 

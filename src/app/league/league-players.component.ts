@@ -42,6 +42,12 @@ import { LeagueService } from './league.service';
       } @else if (!rows()) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
+        <!-- Above the list, as "Nowy turniej" on the tournaments tab (evaluation 19). -->
+        @if (!current?.archived) {
+          <button matButton="tonal" class="add" (click)="addPlayer()">
+            <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
+          </button>
+        }
         <!-- A list kicker, as the other tabs' lists have (evaluation 5: only this tab had a page
              heading). -->
         <h2 class="fl-kicker list-title">
@@ -74,11 +80,6 @@ import { LeagueService } from './league.service';
             </li>
           }
         </ul>
-        @if (!current?.archived) {
-          <button matButton="outlined" class="add" (click)="addPlayer()">
-            <mat-icon>person_add</mat-icon>{{ 'league.addPlayer' | transloco }}
-          </button>
-        }
       }
     </main>
   `,
@@ -128,12 +129,14 @@ import { LeagueService } from './league.service';
       display: grid;
       min-width: 0;
     }
+    /* The one list with full names: they wrap rather than lose the surname (evaluation 19). */
     .who b {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
       font: 700 1.05rem/1.3 var(--fl-display);
+    }
+    .add {
+      margin: 4px 0 12px;
     }
     .who small {
       font-size: 0.875rem;

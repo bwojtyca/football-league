@@ -20,9 +20,19 @@
   text-align: center;
 }
 
+/* The day column's width on the first row too: a fixed table takes its widths from there
+   (evaluation 19: the days were drawn under the first hour). */
+.heat thead th:first-child,
 .heat tbody th {
   width: 3.4em;
   text-align: left;
+}
+
+/* A phone: every third hour named, so the numbers do not run together (evaluation 19). */
+@media (max-width: 599px) {
+  .heat thead th.minor {
+    color: transparent;
+  }
 }
 
 .heat td {
