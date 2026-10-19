@@ -15,7 +15,6 @@ import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { crestOf } from '../league';
 import { openLeagueNewDialog } from '../league-new-dialog.component';
-import { League } from '../league';
 import { LeagueService } from '../league.service';
 
 /** At most this many leagues match a search. */
@@ -25,7 +24,8 @@ const SUGGESTED = 5;
 
 /**
  * The leagues (canvas P01 and round 4, before accounts): the ones opened on this device, a
- * search over all of them, a new one, the overall ranking and the deleted ones.
+ * search over all of them, a new one and the overall ranking (deleted ones are not listed:
+ * owner, 19 Oct 2026; a deleted league's page still offers to restore it).
  */
 @Component({
   selector: 'fl-leagues',
@@ -111,14 +111,6 @@ export class LeaguesComponent {
     this.query().trim() ? 'found' : this._leagueService.recent().length ? 'recent' : 'active',
   );
 
-  /** Deleted leagues, to be found and restored. */
-  protected readonly deleted = computed(() =>
-    this._leagueService.deletedLeagues().map((league: League) => ({
-      ...league,
-      crest: crestOf(league.name),
-    })),
-  );
-  protected readonly showDeleted = signal(false);
 
   protected newLeague(): void {
     openLeagueNewDialog(this._dialog);
