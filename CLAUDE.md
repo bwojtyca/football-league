@@ -51,15 +51,17 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 - `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
   new games, tournaments or players), `minGames?` (fewest games to be ranked), `deleted?`
-  (hidden, restorable), `gamesDeleted?` (its games were deleted with it and come back with it). The 2017 league is still the document `leagues/legacy` ("Najdroższa
-  Liga Świata"); see the migration note below.
+  (hidden, restorable), `gamesDeleted?` (its games were deleted with it and come back with it).
+  The 2017 league "Najdroższa Liga Świata" is `leagues/TPaiV5gUYtE68s5MFQsD` since 19 Oct 2026;
+  `leagues/legacy` is its old copy, deleted softly (`currentLeagueId()` sends old links and
+  devices there).
 - `players/{id}`: `name`, `kit?` = `{ pattern, c1, c2, num? }` (pattern `plain | stripes |
   hoops | halves | sash | quarters`, colours by name from the palette in `player/kit.ts`,
   number 1–99; the only field that may change). Documents from 2017 also hold `wins`, `loses`
   and `id`; these are legacy and unused.
-- `games/{id}`: `league?`, `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
-  `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. A game without `league`
-  belongs to the league `legacy` (`leagueOf()` in `league/league.ts`). Games started since
+- `games/{id}`: `league` (every game has one since the 2017 migration, 19 Oct 2026),
+  `players` (ids), `start`, `end?`, `win?` (`'red' | 'blue'`),
+  `teams.{red|blue}.{defence|offence}` = `{ player, goals, ownGoals }`. Games started since
   stage 2 also have:
   - `mode` = `{ target, winBy?, max?, minutes? }` (no mode = to 8). The picker combines a
     target (5/8/10), win by 2 without a cap and a time limit (3/5/7/10 min); `max` only
@@ -214,8 +216,8 @@ Decisions by the owner:
 - UI in Polish and English from the start (switchable at runtime), designed for phones first.
 - Leagues ("Liga" / "League") group play by place or crowd, e.g. "Biuro X 2026" or a weekend
   trip. Many leagues can run at once, each with its own ranking and stats; players are global
-  and can join several leagues. The 2017 games form the read-only league "Najdroższa Liga Świata" (id `legacy`): games
-  without a `league` field belong to it, so old documents are never rewritten.
+  and can join several leagues. The 2017 games form the league "Najdroższa Liga Świata" (at first
+  the id `legacy` for games without a `league` field; since 19 Oct 2026 a regular league).
 - For now every league is visible to everyone (simplest). Later: Google sign-in with a guest
   mode that joins leagues by link.
 - Inside a league people can play any game mode; tournaments (round robin, group stage with
@@ -239,27 +241,15 @@ achievements on the profile. Next: the owner's feedback below.
 Owner feedback, to do at the end (after the planned stages):
 - (Done, then superseded: the redesign "the table and its score sheet". The owner chose the
   "Nocą" look instead; see the look in the code map.)
-- The 2017 league: the owner prefers a regular league with a generated id and a one-off
-  migration that sets `league` on all 2017 games, so the code needs no special case for games
-  without a league (drop `LEGACY_LEAGUE_ID` / `leagueOf()` fallbacks afterwards). The owner
-  agreed (3 Oct 2026) on condition of a backup first, and of closing it (dropping the
-  fallbacks) only once the app shows the same after the move as before. Ready (merged to
-  `master` on 4 Oct 2026, not run yet):
-  - `scripts/backup.mjs` (public REST, raw documents; taken 3 Oct 2026 06:25 UTC into
-    `../football-league-backups/`: 5 leagues, 7 players, 442 games, 8 tournaments).
-  - `scripts/migrate-2017.mjs`: new league `TPaiV5gUYtE68s5MFQsD` (copy of `leagues/legacy`:
-    name, created, players, archived), `league` added to the 421 games without one, `legacy`
-    deleted softly; one atomic commit of 423 writes, `--rollback` reverses it. It writes with
-    the owner's token (`gcloud auth print-access-token`), so no rule is loosened (the agent's
-    permission check refuses temporary rules and production writes). Tested on the emulator
-    (`e2e/tests/migration-2017.spec.ts`); a dry run on production matches (421 games).
-  - `.github/workflows/snapshot.yml` + `e2e/snapshot/`: what the live app shows of the 2017
-    league (leagues entry, every ranking view, each profile in the league and overall, games,
-    overall ranking) as text; run it (`gh workflow run snapshot.yml`) before and after the move and
-    compare the JSON files (they must be equal). Take "before" with the app version that will
-    be live during the move.
-  - Steps: owner runs `--apply` → rerun the snapshot → compare → if equal, close: drop the
-    fallbacks, the migration scenario and the snapshot workflow; else `--rollback`.
+- (Done, 19 Oct 2026) The 2017 league moved to a regular league with a generated id: backup
+  (`scripts/backup.mjs`, 19 Oct 17:14 UTC in `../football-league-backups/`), then the owner ran
+  `scripts/migrate-2017.mjs --apply` in Google Cloud Shell (17:24 UTC): new league
+  `TPaiV5gUYtE68s5MFQsD` (copy of `legacy`), `league` set on the 421 games without one, `legacy`
+  deleted softly. Checked against the backup: only those 421 games gained `league`, nothing
+  else changed. The fallbacks for games without a league are gone; `currentLeagueId()` maps
+  `legacy` to the new id. (The snapshot comparison failed to run, its scenario predated the
+  redesign; the data check replaced it.) The script stays for the record; `--rollback` would now
+  also need the fallbacks back.
 - (Done: league settings page with rename, lock new games, ranking threshold, delete/restore;
   anyone may use it until sign-in brings a moderator. The owner can unlock "Najdroższa Liga
   Świata" there.)
@@ -372,10 +362,9 @@ Owner feedback, round G (4 October 2026):
   by simulation (see above). The redesign is done in another window.
 - (Done) Everything deployed on 4 Oct 2026, the migration tools merged to `master`; only
   `master` is left on GitHub.
-- The 2017 migration: the owner asked whether the agent can run it itself. It needs owner
-  credentials (none on the LXC): either the owner runs the script with a gcloud token, or
-  gives the rules-deploy service account the "Cloud Datastore User" role, after which a
-  workflow can run it (on the owner's explicit go).
+- Production writes beyond the rules (migrations, real deletion) need owner credentials, none
+  on the LXC: the owner runs such a script in Google Cloud Shell
+  (console.cloud.google.com → `>_`) with `--token "$(gcloud auth print-access-token)"`.
 - (Done) Merged branches deleted; `claude/next` is the working branch.
 - (Done, e2e, rules) Restoring a league or tournament with its games brings back only the
   games deleted with it (`deletedWith`); older deletions restore everything as before.
@@ -437,8 +426,6 @@ session can pick up where the last one stopped:
 - (Done) Tournament dialog: "Everyone" picks all players not yet picked (after those picked).
 - (Done) The Playwright scenarios live in `e2e/` and run in CI on every branch (see "Working on
   it"). Round F and the statistics were deployed on 3 Oct 2026 (rules first, then the app).
-- The 2017 migration (see above) is ready; the owner postponed it (3 Oct 2026: "the database
-  doesn't bother us for now").
 - The redesign (owner, 5 Oct 2026): first the UI ("Nocą", live 5 Oct, plan in
   `docs/superpowers/plans/2026-10-05-ui-noca.md`), then the UX (navigation and screens from the
   canvas's "Flow aplikacji" page), then new features (kits, sign-in) on the new UI and UX. The

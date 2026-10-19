@@ -19,11 +19,17 @@ export interface League {
 /** Stands for every league at once: the overall ranking and player profiles. */
 export const ALL_LEAGUES = '*';
 
-/** The games from 2017 have no `league` field; they belong to the league with this id. */
-export const LEGACY_LEAGUE_ID = 'legacy';
-
+/** The league of a game (every game has one since the 2017 games were moved, 19 Oct 2026). */
 export function leagueOf(game: Pick<Game, 'league'>): string {
-  return game.league ?? LEGACY_LEAGUE_ID;
+  return game.league ?? '';
+}
+
+/**
+ * The 2017 league moved from the id `legacy` to a generated one (19 Oct 2026): old links and
+ * devices that remember `legacy` open the league where its games are now.
+ */
+export function currentLeagueId(id: string): string {
+  return id === 'legacy' ? 'TPaiV5gUYtE68s5MFQsD' : id;
 }
 
 /** Two initials of a league's name, as its crest until leagues get one (three overflowed). */

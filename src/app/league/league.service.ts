@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
-import { League } from './league';
+import { League, currentLeagueId } from './league';
 
 const LAST_LEAGUE_KEY = 'fl.league';
 const RECENT_KEY = 'fl.recentLeagues';
@@ -16,7 +16,9 @@ const RECENT_COUNT = 8;
 function readRecent(): string[] {
   try {
     const ids = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]');
-    return Array.isArray(ids) ? ids.filter((id) => typeof id === 'string') : [];
+    return Array.isArray(ids)
+      ? [...new Set(ids.filter((id) => typeof id === 'string').map(currentLeagueId))]
+      : [];
   } catch {
     return [];
   }
@@ -94,7 +96,8 @@ export class LeagueService {
   /** The league opened last on this device, to come back to it on the next visit. */
   public get lastLeague(): string | null {
     try {
-      return localStorage.getItem(LAST_LEAGUE_KEY);
+      const id = localStorage.getItem(LAST_LEAGUE_KEY);
+      return id && currentLeagueId(id);
     } catch {
       return null;
     }

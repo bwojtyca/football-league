@@ -13,7 +13,7 @@ import { filter, map } from 'rxjs';
 import { Notifier } from '../notifier';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
-import { crestOf } from './league';
+import { crestOf, currentLeagueId } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 import { PagePlayService } from '../shared/page-play.service';
@@ -293,6 +293,16 @@ export class LeagueLayoutComponent {
   });
 
   constructor() {
+    // An old link to the 2017 league opens it at its new id.
+    effect(() => {
+      const id = this.leagueId();
+      if (id && currentLeagueId(id) !== id) {
+        void this._router.navigateByUrl(
+          this._router.url.replace(`/l/${id}`, `/l/${currentLeagueId(id)}`),
+          { replaceUrl: true },
+        );
+      }
+    });
     effect(() => {
       const league = this.league();
       if (league && !league.deleted) {
