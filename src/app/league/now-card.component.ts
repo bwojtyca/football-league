@@ -219,8 +219,10 @@ import { TournamentService } from '../tournament/tournament.service';
         padding: 0 16px;
         scrollbar-width: none;
       }
+      /* The next card peeks by its tile only (12 px padding + 40 px), never mid-word
+         (evaluation 20). */
       .strip.many > .row {
-        flex: 0 0 84%;
+        flex: 0 0 calc(100% - 52px);
         box-sizing: border-box;
         scroll-snap-align: start;
       }

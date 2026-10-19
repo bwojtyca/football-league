@@ -248,7 +248,7 @@
 }
 
 .screen:not(.landscape) .tools .swaps {
-  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .own-arm {
@@ -266,24 +266,27 @@
 }
 
 .swaps {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  gap: 6px;
+  gap: 2px 6px;
+  max-width: 260px; /* a tablet stretched them to 300 px each (evaluation 17) */
 }
 
-.swaps span {
-  flex: none;
-  max-width: 64px;
+.swaps .caption {
+  grid-column: 1 / -1;
   font-size: 0.75rem;
-  line-height: 1.1;
+  line-height: 1.2;
+  text-align: center;
   color: var(--fl-ink-2);
 }
 
 .swap-dot {
-  flex: 1;
-  max-width: 96px; /* a tablet stretched them to 300 px (evaluation 17) */
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
   height: 40px;
   border: 0;
   border-radius: 20px;
@@ -298,11 +301,21 @@
   font-size: 22px;
 }
 
-.swap-dot--red .mat-icon {
+.swap-dot .team {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 0.75rem/1 var(--fl-display);
+}
+
+.swap-dot--red .mat-icon,
+.swap-dot--red .team {
   color: var(--fl-red-board);
 }
 
-.swap-dot--blue .mat-icon {
+.swap-dot--blue .mat-icon,
+.swap-dot--blue .team {
   color: var(--fl-blue-board);
 }
 
@@ -546,7 +559,8 @@
   }
 
   .landscape .bar small,
-  .landscape .swaps span {
+  .landscape .swaps .caption,
+  .landscape .swap-dot .team {
     font-size: 0.875rem;
   }
 

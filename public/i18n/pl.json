@@ -275,8 +275,7 @@
       "position": "Zapis: strzelec",
       "rod": "Zapis: linia",
       "man": "Zapis: zawodnik"
-    },
-    "swapShort": "Zamień"
+    }
   },
   "modes": {
     "title": "Tryb",
@@ -622,7 +621,7 @@
     "shortest": "Najkrótszy mecz",
     "biggestWin": "Najwyższa wygrana",
     "mostGoals": "Najwięcej goli w meczu",
-    "comeback": "Największy powrót (od stanu)",
+    "comeback": "Największy powrót",
     "fastestGoal": "Najszybszy gol",
     "streak": "Najdłuższa seria wygranych",
     "elo": "Elo w czasie",
@@ -634,7 +633,8 @@
     "goalGap": "średnio między golami",
     "jump": "Przejdź do",
     "title": "Statystyki ligi",
-    "teaser": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} · rekordy, kiedy gramy, Elo w czasie"
+    "teaser": "{n, plural, one {# mecz} few {# mecze} many {# meczów} other {# meczu}} · rekordy, kiedy gramy, Elo w czasie",
+    "comebackValue": "z {from} na {to}"
   },
   "thirds": {
     "title": "Gole w częściach meczu",

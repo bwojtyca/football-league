@@ -317,7 +317,8 @@
             {{ (ownArmed() ? 'game.ownCancel' : 'game.ownArm') | transloco }}
           </button>
           <div class="swaps">
-            <span>{{ 'game.swapShort' | transloco }}</span>
+            <!-- What is swapped and for whom, in words (evaluations 10-20: bare arrows). -->
+            <span class="caption">{{ 'game.swap' | transloco }}</span>
             @for (color of colors; track color) {
               <button
                 class="swap-dot swap-dot--{{ color }}"
@@ -328,8 +329,8 @@
                 "
                 [attr.title]="('game.swap' | transloco) + ': ' + (teamNames[color] | transloco)"
               >
-                <!-- A swap in the team's colour (evaluation 6: a bare dot said nothing). -->
                 <mat-icon aria-hidden="true">swap_vert</mat-icon>
+                <span class="team" aria-hidden="true">{{ teamNames[color] | transloco }}</span>
               </button>
             }
           </div>

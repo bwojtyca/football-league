@@ -190,11 +190,17 @@ export class LeagueStatsComponent {
       });
     }
     if (comeback) {
+      // From which score to which, in words (evaluations 18-20: "7:12" in LED read as a result).
       const score = timelineOf(comeback.game)?.comeback?.score;
+      const end = this.score(comeback.game);
       rows.push({
         key: 'leagueStats.comeback',
-        value: score ? `${score.red}:${score.blue}` : '',
-        score: true,
+        value: score
+          ? this._transloco.translate('leagueStats.comebackValue', {
+              from: `${score.red}:${score.blue}`,
+              to: end,
+            })
+          : '',
         game: comeback.game,
       });
     }
@@ -206,7 +212,11 @@ export class LeagueStatsComponent {
       });
     }
     if (streak) {
-      rows.push({ key: 'leagueStats.streak', value: String(streak.wins), player: streak.player });
+      rows.push({
+        key: 'leagueStats.streak',
+        value: this._transloco.translate('count.games', { n: streak.wins }),
+        player: streak.player,
+      });
     }
     return rows;
   });

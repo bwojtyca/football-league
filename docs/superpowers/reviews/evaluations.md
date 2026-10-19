@@ -24,6 +24,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 17    | 18 Oct 2026 | 39164611708 (master ba1c8b5) | 8.5       | 7.6         | 7.75        | 8.25        | 8.25       | 8.25      | 7.6     | 8.1  |
 | 18    | 19 Oct 2026 | 39166262313 (master 2ee59f4) | 8.0       | 7.4         | 7.5         | 8.6         | 7.0        | 8.0       | 7.0     | 7.75 |
 | 19    | 19 Oct 2026 | 39186423441 (master 7c8e5d8) | 8.5       | 7.0         | 6.4         | 8.25        | 8.6        | 7.6       | 6.4     | 7.7  |
+| 20    | 19 Oct 2026 | 39187654646 (master d31cc3b) | 8.6       | 7.75        | 8.0         | 8.4         | 8.25       | 8.6       | 7.75    | 8.3  |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -328,4 +329,17 @@ overall 6.5, mean 7.75; `eval-19b.md`: 6.3, 7.7). Both found one blocker the awk
 - The finished game has a title: "Mecz", its league and its series in a smaller line (the frozen
   clock is gone; the result card says how long it was).
 - "Dodaj gracza" above the players list, as "Nowy turniej"; full names in that list wrap.
+
+Round 20 runs on the Tour of d31cc3b (run 39187654646) with two evaluators (`eval-20a.md`:
+overall 8.0, mean 8.54, the first evaluator to put every dimension at 8; `eval-20b.md`: 7.25,
+8.0). No blocker or major; only Consistency (7.75) is under 8 on average.
+
+## After round 20: fixed (19 Oct 2026), what both evaluators named
+
+- A wide game list puts whole days in two columns from 960 px, read down then across (the
+  760 px list left a third of the page empty); between 760 and 959 px one column of wide rows.
+- "Teraz w lidze" on a phone: the next card peeks by its tile only, never mid-word.
+- The swaps say what they do: "Zamień pozycje" over two buttons named by team.
+- "Największy powrót: z 7:12 na 15:13" in words; the win streak with its unit.
+- The goal log as wide as the chart above it.
 

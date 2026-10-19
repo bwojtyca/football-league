@@ -275,8 +275,7 @@
       "position": "Record: scorer",
       "rod": "Record: rod",
       "man": "Record: figure"
-    },
-    "swapShort": "Swap"
+    }
   },
   "modes": {
     "title": "Mode",
@@ -622,7 +621,7 @@
     "shortest": "Shortest game",
     "biggestWin": "Biggest win",
     "mostGoals": "Most goals in a game",
-    "comeback": "Biggest comeback (from)",
+    "comeback": "Biggest comeback",
     "fastestGoal": "Fastest goal",
     "streak": "Longest winning streak",
     "elo": "Elo over time",
@@ -634,7 +633,8 @@
     "goalGap": "average between goals",
     "jump": "Jump to",
     "title": "League statistics",
-    "teaser": "{n, plural, one {# game} other {# games}} · records, when we play, Elo over time"
+    "teaser": "{n, plural, one {# game} other {# games}} · records, when we play, Elo over time",
+    "comebackValue": "from {from} to {to}"
   },
   "thirds": {
     "title": "Goals by part of the game",

@@ -136,10 +136,9 @@ export function openGameTimeline(sheet: MatBottomSheet, game: Game) {
       font: 700 0.875rem/1.2 var(--fl-display);
       color: var(--mat-sys-on-surface-variant);
     }
-    /* One row layout at every size, at most a readable width (evaluation 18: the score moved
-       beside the time on a wide screen only). */
+    /* One row layout at every size, as wide as the chart above it (evaluation 18: the score moved
+       beside the time on a wide screen only; 20: a capped list ended short of the chart). */
     .goals {
-      max-width: 560px;
       list-style: none;
       margin: 0;
       padding: 0;
