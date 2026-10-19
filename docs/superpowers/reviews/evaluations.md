@@ -358,3 +358,9 @@ columns read out of order; the now strip's peek is "only an icon" where it was "
   1200 px.
 - Left as is: the now strip on phones (rounds 10, 20 and 21 want three different things).
 
+## Closed (19 Oct 2026)
+
+The owner closed the loop after round 21: the averages had settled around 8 (7.7–8.3) with no
+blocker or major since round 20, and the evaluators were reversing each other's minors. Round
+21's fixes are on `master` (b21d757).
+

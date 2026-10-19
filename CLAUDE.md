@@ -456,3 +456,10 @@ session can pick up where the last one stopped:
   6. a new tournament starts with its format (cards with what each needs; a series goes to the
   new game) (live 5 Oct; the running and finished pages P52–P54 were close already); 7. the
   desktop layout.
+  Then (14–19 Oct) 21 rounds of independent design evaluation (`docs/superpowers/reviews/`:
+  `rubric.md`, `evaluations.md`, `eval-*.md`; the Tour workflow `tour.yml` shoots every screen at
+  five sizes): mean 5.1 → about 8, no blockers or majors left; closed by the owner on 19 Oct.
+  The owner's rulings: a page with its own main action (a tournament's next game, an empty
+  league's first game) has it as the yellow ball and the "+" is grey there only; a league's
+  invite, settings and switching live only in the sheet under its name, the ☰ menu holds app
+  things and is absent on a wide screen (the rail ends with who you are and the language).
