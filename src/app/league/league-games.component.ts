@@ -56,10 +56,9 @@ type Filter = 'all' | 'mine' | 'today' | 'tournament';
     </main>
   `,
   styles: `
-    /* As wide as the list's rows (760 px on a wide screen), so the statistics end where the
-       games end (evaluation 14). */
+    /* As wide as the list, so the statistics end where the games end (evaluation 14); a wide
+       list spans the column in two columns of days (evaluation 20). */
     .head {
-      max-width: 760px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;

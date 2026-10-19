@@ -108,6 +108,20 @@
   }
 }
 
+/* A narrow phone: a smaller swap icon, so "Czerwoni" and "Niebiescy" fit whole. */
+@media (max-width: 400px) {
+  .screen:not(.landscape) .swap-dot {
+    gap: 2px;
+    padding: 0 6px;
+  }
+
+  .screen:not(.landscape) .swap-dot .mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
+}
+
 /* Narrow: the turn moves to the menu (the header keeps room for the clock). */
 .rotate-item {
   display: none;
