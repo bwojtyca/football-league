@@ -100,8 +100,10 @@ export class GameService {
 
   /** "Your leagues" (`ALL_LEAGUES`): those opened on this device, until there are accounts. */
   private readonly _all = computed(() => {
+    // Every league's listener first, so they load side by side.
     const lists = deviceLeagues().map((id) => this._league(id).games());
-    return lists.some((list) => !list) ? undefined : lists.flat().sort(newestFirst);
+    const loaded = lists.filter((list): list is Game[] => !!list);
+    return loaded.length < lists.length ? undefined : loaded.flat().sort(newestFirst);
   });
   private readonly _allRatings = computed(() => {
     const games = this._all();
