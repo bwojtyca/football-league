@@ -207,6 +207,9 @@ every increment (what is done, what comes next).
 
 ## Plan (October 2026)
 
+Handover of 19 Oct 2026 (state, next steps, the sign-in plan, ideas left): 
+`docs/superpowers/plans/2026-10-19-handover.md` — read it first.
+
 Analysis of the 2017 games, other foosball formats and the first mockups:
 https://claude.ai/artifact/RcFTGpWyd4qfBXqF4SSATt (read it with the Artifact tool).
 
