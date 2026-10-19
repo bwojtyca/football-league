@@ -34,7 +34,7 @@
           >
             <mat-icon aria-hidden="true">{{ detailIcons[detail()] }}</mat-icon>
             <!-- The same short label on every screen (evaluation 13); the menu says what it sets. -->
-            <span>{{ 'game.detailLevel.' + detail() | transloco }}</span>
+            <span class="level">{{ 'game.detailLevel.' + detail() | transloco }}</span>
             <mat-icon class="chevron" aria-hidden="true">expand_more</mat-icon>
           </button>
           <mat-menu #detailMenu="matMenu">

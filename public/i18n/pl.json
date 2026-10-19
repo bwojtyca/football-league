@@ -877,6 +877,7 @@
   "duration": {
     "hm": "{h} h {m} min",
     "ms": "{m} min {s} s",
-    "s": "{s} s"
+    "s": "{s} s",
+    "m": "{m} min"
   }
 }

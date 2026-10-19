@@ -165,6 +165,11 @@
   color: light-dark(#4a3410, #f3dfb5);
 }
 
+/* Potatoes in a row are cards apart, not one block (evaluation 18: they touched). */
+.ranking li:has(> .row.potato) + li:has(> .row.potato) {
+  margin-top: 6px;
+}
+
 .row.potato .pos {
   color: inherit;
 }

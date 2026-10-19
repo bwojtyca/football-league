@@ -438,7 +438,8 @@ a {
 fl-titles-list a,
 fl-league-stats .fl-records a,
 fl-tournament-summary a {
-  padding-block: 12px;
+  padding: 12px 14px;
+  margin-inline: -14px; /* a short name ("Xi") gets a 40 px wide target (evaluation 18) */
 }
 
 /* A name opening a comparison from a table row: the row's height is its tap area (44 px). */
@@ -715,6 +716,12 @@ details.fl-fold[open] > summary::after {
     overflow-y: auto;
     background: var(--fl-card);
     box-shadow: inset -1px 0 0 var(--fl-line);
+  }
+
+  /* Nothing in the rail shrinks: a short screen scrolls it instead (evaluation 18: at 1280x800
+     with two leagues the labels were cut and "Nowa rozgrywka" squeezed to 26 px). */
+  .fl-rail > * {
+    flex-shrink: 0;
   }
 
   .fl-rail .brand {

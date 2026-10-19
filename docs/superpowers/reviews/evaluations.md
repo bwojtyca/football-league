@@ -22,6 +22,7 @@ reviews or plans), its report saved as `eval-<n>.md`. Overall = the weakest dime
 | 15    | 18 Oct 2026 | 39143311810 (master fd1317c) | 7.75      | 8.0         | 8.0         | 7.5         | 7.75       | 8.5       | 7.5     | 7.9  |
 | 16    | 18 Oct 2026 | 39144699728 (master 20c61cb) | 7.5       | 7.25        | 8.75        | 6.75        | 7.25       | 7.75      | 6.75    | 7.5  |
 | 17    | 18 Oct 2026 | 39164611708 (master ba1c8b5) | 8.5       | 7.6         | 7.75        | 8.25        | 8.25       | 8.25      | 7.6     | 8.1  |
+| 18    | 19 Oct 2026 | 39166262313 (master 2ee59f4) | 8.0       | 7.4         | 7.5         | 8.6         | 7.0        | 8.0       | 7.0     | 7.75 |
 
 ## Round 1: what to fix (from `eval-1.md`)
 
@@ -301,4 +302,16 @@ a blocker or a major.
 - The goal-detail setting is named as one: "Zapis: strzelec / linia / zawodnik".
 - The rail's "Grasz jako" keeps its icon and a short name; live card names a size down on a
   narrow phone; swap buttons at most 96 px wide; "Pokaż więcej" under the middle of a wide list.
+
+Round 18 runs on the Tour of 2ee59f4 (run 39166262313) with two evaluators (`eval-18a.md`:
+overall 6.5, mean 7.4; `eval-18b.md`: 7.5, 8.1). Both majors were regressions of round 17:
+the rail's new foot (who you are, language) overflowed a 1280x800 rail, and "Zapis: strzelec"
+was too long for a 360 px game header.
+
+## After round 18: fixed (19 Oct 2026)
+
+- Nothing in the rail shrinks; a short screen scrolls the rail.
+- Under 400 px the goal-detail pill is its icon (its name in its label and menu).
+- One goal-log layout at every size, at most 560 px wide; potato cards apart; short name links
+  with 40 px wide targets; whole minutes without "0 s".
 

@@ -84,6 +84,14 @@
   text-align: center;
 }
 
+/* A narrow phone: the goal-detail pill is its icon and chevron, the setting's name is in its
+   label and menu (evaluation 18: "Zapis: strzelec" pushed the menu off a 360 px screen). */
+@media (max-width: 400px) {
+  .screen:not(.landscape) .detail .level {
+    display: none;
+  }
+}
+
 /* Narrow: the turn moves to the menu (the header keeps room for the clock). */
 .rotate-item {
   display: none;

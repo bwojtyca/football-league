@@ -51,7 +51,11 @@ export function spokenDuration(seconds: number): { key: string; params: Record<s
   if (h) {
     return { key: 'duration.hm', params: { h, m } };
   }
-  return m ? { key: 'duration.ms', params: { m, s } } : { key: 'duration.s', params: { s } };
+  if (m) {
+    // Whole minutes without "0 s" (evaluation 18: "4 min 0 s").
+    return s ? { key: 'duration.ms', params: { m, s } } : { key: 'duration.m', params: { m } };
+  }
+  return { key: 'duration.s', params: { s } };
 }
 
 /** A duration in words, translated ("7 min 15 s"). */
