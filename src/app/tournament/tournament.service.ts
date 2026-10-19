@@ -1,49 +1,92 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, Injector, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { arrayUnion, collection, doc, runTransaction, setDoc, updateDoc } from 'firebase/firestore';
-import { collectionData } from 'rxfire/firestore';
-import { Observable } from 'rxjs';
+import {
+  arrayUnion,
+  collection,
+  doc,
+  query,
+  runTransaction,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { collectionData, docData } from 'rxfire/firestore';
+import { map, Observable } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
+import { deviceLeagues } from '../league/device-leagues';
 import { ALL_LEAGUES } from '../league/league';
 import { Entry, Tournament } from './tournament';
+
+/** Running tournaments first, then newest first. */
+function runningNewestFirst(a: Tournament, b: Tournament): number {
+  return (
+    Number(!!a.end) - Number(!!b.end) ||
+    (a.created < b.created ? 1 : a.created > b.created ? -1 : 0)
+  );
+}
 
 @Injectable({ providedIn: 'root' })
 export class TournamentService {
   private readonly _db = inject(FIRESTORE);
   private readonly _gameService = inject(GameService);
   private readonly _tournaments = collection(this._db, 'tournaments');
-  private readonly _all = toSignal(
-    collectionData(this._tournaments, { idField: 'id' }) as Observable<Tournament[]>,
-  );
+  private readonly _injector = inject(Injector);
 
-  /** Tournaments by league, deleted ones left out: running ones first, newest first. */
-  private readonly _byLeague = computed(() => {
-    const byLeague = new Map<string, Tournament[]>();
-    const sorted = (this._all() ?? [])
-      .filter((tournament) => !tournament.deleted)
-      .sort(
-        (a, b) =>
-          Number(!!a.end) - Number(!!b.end) ||
-          (a.created < b.created ? 1 : a.created > b.created ? -1 : 0),
+  /** Each league's tournaments once asked for: one listener per league, kept for the session. */
+  private readonly _leagues = new Map<string, Signal<Tournament[] | undefined>>();
+  /** Single tournaments asked for by id (a tournament's page, a game's tournament name). */
+  private readonly _byId = new Map<string, Signal<Tournament | null | undefined>>();
+
+  private _league(leagueId: string): Signal<Tournament[] | undefined> {
+    let league = this._leagues.get(leagueId);
+    if (!league) {
+      // Created on first use, which can be inside a computed: the listener itself is not.
+      const stored = untracked(() =>
+        toSignal(
+          collectionData(query(this._tournaments, where('league', '==', leagueId)), {
+            idField: 'id',
+          }) as Observable<Tournament[]>,
+          { injector: this._injector },
+        ),
       );
-    for (const tournament of sorted) {
-      byLeague.set(tournament.league, [...(byLeague.get(tournament.league) ?? []), tournament]);
+      league = computed(() => stored()?.filter((one) => !one.deleted).sort(runningNewestFirst));
+      this._leagues.set(leagueId, league);
     }
-    byLeague.set(ALL_LEAGUES, sorted);
-    return byLeague;
+    return league;
+  }
+
+  /** "Your leagues" (`ALL_LEAGUES`): those opened on this device, until there are accounts. */
+  private readonly _all = computed(() => {
+    const lists = deviceLeagues().map((id) => this._league(id)());
+    const loaded = lists.filter((list): list is Tournament[] => !!list);
+    return loaded.length < lists.length ? undefined : loaded.flat().sort(runningNewestFirst);
   });
 
-  /** `undefined` while loading; `ALL_LEAGUES` has every league's. */
+  /** Running ones first, newest first; `undefined` while loading. */
   public leagueTournaments(leagueId: string): Tournament[] | undefined {
-    return this._all() && (this._byLeague().get(leagueId) ?? []);
+    return leagueId === ALL_LEAGUES ? this._all() : this._league(leagueId)();
   }
 
   /** Deleted ones included; `undefined` while loading, `null` when there is no such tournament. */
   public tournament(id: string): Tournament | null | undefined {
-    const all = this._all();
-    return all && (all.find((tournament) => tournament.id === id) ?? null);
+    let one = this._byId.get(id);
+    if (!one) {
+      // `undefined` while it loads, `null` when there is no such document.
+      one = untracked(() =>
+        toSignal(
+          (
+            docData(doc(this._tournaments, id), { idField: 'id' }) as Observable<
+              Tournament | undefined
+            >
+          ).pipe(map((tournament) => tournament ?? null)),
+          { injector: this._injector },
+        ),
+      );
+      this._byId.set(id, one);
+    }
+    return one();
   }
 
   public create(tournament: Omit<Tournament, 'id' | 'created'>): {
