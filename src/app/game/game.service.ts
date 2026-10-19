@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Injector, Signal, untracked } from '@angular/core';
+import { computed, inject, Injectable, Injector, Signal, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   arrayRemove,
@@ -94,9 +94,19 @@ export class GameService {
         }),
       };
       this._leagues.set(leagueId, league);
+      // Noted after this read: it may be inside a computed, which must not write signals.
+      queueMicrotask(() => this._opened.update((ids) => [...ids, leagueId]));
     }
     return league;
   }
+
+  /** Leagues whose games were asked for, in order. */
+  private readonly _opened = signal<string[]>([]);
+
+  /** Some league asked for is still loading its games (the progress bar on top). */
+  public readonly loading = computed(() =>
+    this._opened().some((id) => this._leagues.get(id)?.games() === undefined),
+  );
 
   /** "Your leagues" (`ALL_LEAGUES`): those opened on this device, until there are accounts. */
   private readonly _all = computed(() => {

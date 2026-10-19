@@ -70,7 +70,7 @@ export class AppComponent {
   protected readonly busy = computed(
     () =>
       this._navigating() ||
-      this._games.games() === undefined ||
+      this._games.loading() ||
       this._leagues.leagues() === undefined ||
       this._players.players() === undefined,
   );
