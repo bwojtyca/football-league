@@ -40,7 +40,7 @@ jobs:
         working-directory: e2e
       - name: Tour of every screen
         run: >-
-          npx -y firebase-tools@15 emulators:exec --only firestore
+          npx -y firebase-tools@15 emulators:exec --only firestore,auth
           --project demo-football-league "cd e2e && npx playwright test tour"
         env:
           CI: true

@@ -11,6 +11,7 @@ import { InstallService } from './install.service';
 import { LanguageSwitchComponent } from './language-switch.component';
 import { MeService } from './me.service';
 import { SheetCloseComponent } from './sheet-close.component';
+import { AccountComponent } from './account.component';
 
 /** The app's menu (a phone's or tablet's; a wide screen has these in its rail). */
 export function openAppMenu(sheet: MatBottomSheet) {
@@ -23,7 +24,14 @@ export function openAppMenu(sheet: MatBottomSheet) {
  */
 @Component({
   selector: 'fl-app-menu',
-  imports: [SheetCloseComponent, MatIconModule, RouterLink, LanguageSwitchComponent, TranslocoPipe],
+  imports: [
+    AccountComponent,
+    SheetCloseComponent,
+    MatIconModule,
+    RouterLink,
+    LanguageSwitchComponent,
+    TranslocoPipe,
+  ],
   template: `
     <h2>{{ 'appMenu.title' | transloco }}</h2>
     <!-- The app's things only; a league's invite and settings are under its name (owner,
@@ -33,6 +41,7 @@ export function openAppMenu(sheet: MatBottomSheet) {
       <span class="label">{{ 'more.language' | transloco }}</span>
       <fl-language-switch />
     </div>
+    <fl-account />
     @if (league; as leagueId) {
       <button class="row" (click)="who(leagueId)">
         <mat-icon aria-hidden="true">person_pin</mat-icon>

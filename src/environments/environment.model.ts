@@ -4,4 +4,6 @@ export interface Environment {
   firebase: FirebaseOptions;
   /** When set, Firestore talks to a local emulator instead of the real project. */
   firestoreEmulator?: { host: string; port: number };
+  /** With the Firestore emulator: the Auth emulator's URL. */
+  authEmulator?: string;
 }

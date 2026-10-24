@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { APIRequestContext, expect, test } from '@playwright/test';
 
 import { tag } from './helpers';
 import { create, DOCUMENTS, fields, update, Value } from './rest';
@@ -130,4 +130,54 @@ test('players: only their kit may change, and only to a kit the app can draw', a
   ).toBe(403);
   expect(await update(request, path, kit({ pattern: 'plain', c1: 'red' }))).toBe(403);
   expect(await update(request, path, { kit: 'red' })).toBe(403);
+});
+
+/** An ID token from the Auth emulator: anonymous, or a Google account. */
+async function token(
+  request: APIRequestContext,
+  google?: string,
+): Promise<{ uid: string; idToken: string }> {
+  const base = 'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1';
+  const response = google
+    ? await request.post(`${base}/accounts:signInWithIdp?key=demo-api-key`, {
+        data: {
+          requestUri: 'http://localhost',
+          returnSecureToken: true,
+          postBody: `providerId=google.com&id_token=${encodeURIComponent(
+            JSON.stringify({ sub: google, email: `${google}@example.com` }),
+          )}`,
+        },
+      })
+    : await request.post(`${base}/accounts:signUp?key=demo-api-key`, {
+        data: { returnSecureToken: true },
+      });
+  expect(response.ok()).toBe(true);
+  const body = await response.json();
+  return { uid: body.localId, idToken: body.idToken };
+}
+
+test('accounts: a Google account keeps its own player only', async ({ request }) => {
+  const player = `rules-player-${tag()}`;
+  expect(await create(request, `players/${player}`, { name: 'Konto' })).toBe(200);
+  const updated = new Date().toISOString();
+
+  // No account, or an anonymous one: nothing is kept.
+  expect(await create(request, `users/nobody-${tag()}`, { player, updated })).toBe(403);
+  const anonymous = await token(request);
+  const asAnonymous = { Authorization: `Bearer ${anonymous.idToken}` };
+  expect(await create(request, `users/${anonymous.uid}`, { player, updated }, asAnonymous)).toBe(
+    403,
+  );
+
+  // A Google account: its own document, an existing player, nothing else.
+  const google = await token(request, `g-${tag()}`);
+  const asGoogle = { Authorization: `Bearer ${google.idToken}` };
+  expect(await create(request, `users/${google.uid}`, { player, updated }, asGoogle)).toBe(200);
+  expect(await update(request, `users/${google.uid}`, { player: 'no-such-player' }, asGoogle)).toBe(
+    403,
+  );
+  expect(await create(request, `users/someone-${tag()}`, { player, updated }, asGoogle)).toBe(403);
+  expect(
+    await create(request, `users/${google.uid}x`, { player, updated, extra: 1 }, asGoogle),
+  ).toBe(403);
 });

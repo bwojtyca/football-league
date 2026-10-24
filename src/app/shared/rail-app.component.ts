@@ -7,6 +7,7 @@ import { openWhoSheet } from '../league/who-sheet.component';
 import { PlayerService } from '../player/player.service';
 import { LanguageSwitchComponent } from './language-switch.component';
 import { MeService } from './me.service';
+import { AccountComponent } from './account.component';
 
 /**
  * The app's things at the foot of a wide screen's rail: who uses this device and the language
@@ -14,7 +15,7 @@ import { MeService } from './me.service';
  */
 @Component({
   selector: 'fl-rail-app',
-  imports: [MatIconModule, LanguageSwitchComponent, TranslocoPipe],
+  imports: [AccountComponent, MatIconModule, LanguageSwitchComponent, TranslocoPipe],
   template: `
     @if (leagueId(); as leagueId) {
       <button class="who" (click)="who(leagueId)">
@@ -28,6 +29,7 @@ import { MeService } from './me.service';
         </span>
       </button>
     }
+    <fl-account />
     <fl-language-switch />
   `,
   styles: `

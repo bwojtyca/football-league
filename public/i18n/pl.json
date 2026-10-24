@@ -566,7 +566,8 @@
     "bracket": "Nie udało się narysować drabinki. Sprawdź połączenie i odśwież stronę.",
     "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie.",
     "pause": "Nie udało się zatrzymać ani wznowić meczu. Sprawdź połączenie i spróbuj ponownie.",
-    "kit": "Nie udało się zapisać koszulki"
+    "kit": "Nie udało się zapisać koszulki",
+    "signIn": "Nie udało się zalogować. Spróbuj ponownie."
   },
   "nav": {
     "label": "Nawigacja ligi",
@@ -880,5 +881,11 @@
     "ms": "{m} min {s} s",
     "s": "{s} s",
     "m": "{m} min"
+  },
+  "auth": {
+    "signIn": "Zaloguj przez Google",
+    "signInHint": "Twój gracz na każdym urządzeniu",
+    "google": "Konto Google",
+    "signOut": "Wyloguj"
   }
 }

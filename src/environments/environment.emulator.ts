@@ -8,4 +8,5 @@ export const environment: Environment = {
     projectId: 'demo-football-league',
   },
   firestoreEmulator: { host: '127.0.0.1', port: 8080 },
+  authEmulator: 'http://127.0.0.1:9099',
 };

@@ -10,7 +10,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:emulator": "ng serve --configuration emulator",
-    "emulator": "npx -y firebase-tools@15 emulators:start --only firestore --project demo-football-league",
+    "emulator": "npx -y firebase-tools@15 emulators:start --only firestore,auth --project demo-football-league",
     "build": "ng build",
     "build:pages": "ng build --base-href /football-league/",
     "watch": "ng build --watch --configuration development",

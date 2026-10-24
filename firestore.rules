@@ -1,7 +1,7 @@
 rules_version = '2';
 
-// The app has no sign-in, so anyone may play. These rules only allow the writes the
-// app itself makes: creating, renaming, locking and deleting (softly) leagues and adding
+// Anyone may play: no account is needed yet (a Google account only keeps who you are). These
+// rules only allow the writes the app itself makes: creating, renaming, locking and deleting (softly) leagues and adding
 // players to them, adding players, creating tournaments, joining, leaving, editing, ending
 // and deleting (softly) them, starting and pausing games, scoring one goal at a time,
 // swapping positions, undoing the last event of a game, closing a game once it is won,
@@ -40,6 +40,21 @@ service cloud.firestore {
     // The first `n` items (a range of an empty list is an error).
     function prefix(items, n) {
       return n == 0 ? [] : items[0:n];
+    }
+
+    // A Google account keeps which player it is (sign-in step 3a): only its owner reads or
+    // writes it, an anonymous account keeps nothing, and the player must exist.
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
+        && request.resource.data.keys().hasOnly(['player', 'updated'])
+        && request.resource.data.updated is string
+        && (!('player' in request.resource.data)
+          || (request.resource.data.player is string
+            && exists(/databases/$(database)/documents/players/$(request.resource.data.player))));
     }
 
     match /players/{playerId} {

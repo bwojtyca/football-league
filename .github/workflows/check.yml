@@ -45,7 +45,7 @@ jobs:
         working-directory: e2e
       - name: End-to-end scenarios
         run: >-
-          npx -y firebase-tools@15 emulators:exec --only firestore
+          npx -y firebase-tools@15 emulators:exec --only firestore,auth
           --project demo-football-league "cd e2e && npx playwright test"
         env:
           CI: true
