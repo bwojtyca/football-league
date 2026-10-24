@@ -27,10 +27,16 @@ export class MeService {
   /** The player id of whoever uses this device, or `null` before they choose. */
   public readonly id = computed(() => this._account() ?? this._device());
 
-  /** Whether this device's user may act as `playerId` (dress them): unclaimed, or theirs. */
-  public canEdit(playerId: string): boolean {
+  /** The player is claimed by another account: nobody else may say they are them. */
+  public taken(playerId: string): boolean {
     const owner = this._players.player(playerId)?.uid;
-    return !owner || owner === this._auth.uid();
+    return !!owner && owner !== this._auth.uid();
+  }
+
+  /** The player is claimed by this Google account: theirs to dress. */
+  public owns(playerId: string): boolean {
+    const owner = this._players.player(playerId)?.uid;
+    return !!owner && owner === this._auth.uid();
   }
 
   constructor() {
@@ -40,7 +46,7 @@ export class MeService {
       }
       const account = this._auth.player();
       const device = this._device();
-      if (account === null && device && this.canEdit(device)) {
+      if (account === null && device && !this.taken(device)) {
         // A first sign-in keeps the choice made on this device before.
         untracked(() => this._auth.setPlayer(device)).catch(() => undefined);
       } else if (account && this._players.player(account) && !this._players.player(account)?.uid) {

@@ -2,7 +2,7 @@ import { APIRequestContext, expect, Page, test } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { t, tag } from './helpers';
+import { signInAs, t, tag } from './helpers';
 import { create, OWNER, Value } from './rest';
 
 /**
@@ -110,6 +110,8 @@ for (const size of SIZES) {
       await page.getByRole('tab', { name: t('player.tabs.games') }).click();
       await shot('13-profile-games');
       await page.getByRole('tab', { name: t('player.tabs.overview') }).click();
+      // The kit is the player's own: sign in and say "this is me" first.
+      await signInAs(page);
       await page
         .locator('section.hero')
         .getByRole('button', { name: t('kit.title') })

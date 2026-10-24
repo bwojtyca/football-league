@@ -12,7 +12,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { GameService } from '../game/game.service';
 import { AvatarComponent } from '../player/avatar/avatar.component';
 import { PlayerService } from '../player/player.service';
-import { AuthService } from '../shared/auth.service';
 import { MeService } from '../shared/me.service';
 import { openAddPlayerDialog } from './add-player-dialog.component';
 import { LeagueService } from './league.service';
@@ -43,7 +42,7 @@ export function openWhoSheet(sheet: MatBottomSheet, data: WhoSheetData) {
           class="option"
           role="radio"
           [attr.aria-checked]="picked() === row.id"
-          [disabled]="row.taken && auth.signedIn()"
+          [disabled]="row.taken"
           (click)="picked.set(row.id)"
         >
           <fl-avatar [playerId]="row.id" [name]="row.name" [size]="40" />
@@ -163,7 +162,6 @@ export class WhoSheetComponent {
   private readonly _games = inject(GameService);
   private readonly _players = inject(PlayerService);
   protected readonly me = inject(MeService);
-  protected readonly auth = inject(AuthService);
 
   /** The league's players, those with the most games first. */
   protected readonly players = computed(() => {
@@ -173,8 +171,8 @@ export class WhoSheetComponent {
       .map((id) => ({
         id,
         name: this._players.getPlayerName(id),
-        // Claimed by another Google account: not theirs to take when signed in.
-        taken: !this.me.canEdit(id),
+        // Claimed by another Google account: nobody else may say they are them.
+        taken: this.me.taken(id),
         games: games.filter((game) => game.end && game.players.includes(id)).length,
       }))
       .sort((a, b) => b.games - a.games || a.name.localeCompare(b.name));

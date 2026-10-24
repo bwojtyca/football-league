@@ -103,33 +103,39 @@ test('games deleted with a league or tournament remember it', async ({ request }
 test('players: only their kit may change, and only to a kit the app can draw', async ({
   request,
 }) => {
-  const path = `players/kit-${tag()}`;
+  const id = `kit-${tag()}`;
+  const path = `players/${id}`;
   const kit = (data: Record<string, Value>): Record<string, Value> => ({ kit: data });
   expect(await create(request, path, { name: 'Koszulka' })).toBe(200);
+  // Only the player themself dresses: nobody before a Google account claims them.
+  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue' }))).toBe(403);
+  const owner = await token(request, `kit-${tag()}`);
+  expect(await claim(request, owner, id)).toBe(200);
+  const as = { Authorization: `Bearer ${owner.idToken}` };
 
   expect(
-    await update(request, path, kit({ pattern: 'stripes', c1: 'white', c2: 'black', num: 10 })),
+    await update(request, path, kit({ pattern: 'stripes', c1: 'white', c2: 'black', num: 10 }), as),
   ).toBe(200);
-  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue' }))).toBe(200);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue' }), as)).toBe(200);
   // Never: another name or counter, a colour outside the palette, an unknown pattern, a number
   // out of 1–99, a field the app does not know, a kit missing a colour, a kit that is no map.
-  expect(await update(request, path, { name: 'Ktoś inny' })).toBe(403);
-  expect(await update(request, path, { wins: 5 })).toBe(403);
-  expect(await update(request, path, kit({ pattern: 'plain', c1: '#ff00ff', c2: 'blue' }))).toBe(
+  expect(await update(request, path, { name: 'Ktoś inny' }, as)).toBe(403);
+  expect(await update(request, path, { wins: 5 }, as)).toBe(403);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: '#ff00ff', c2: 'blue' }), as)).toBe(
     403,
   );
-  expect(await update(request, path, kit({ pattern: 'dots', c1: 'red', c2: 'blue' }))).toBe(403);
+  expect(await update(request, path, kit({ pattern: 'dots', c1: 'red', c2: 'blue' }), as)).toBe(403);
   expect(
-    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 100 })),
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 100 }), as),
   ).toBe(403);
   expect(
-    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 0 })),
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', num: 0 }), as),
   ).toBe(403);
   expect(
-    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', logo: 'x' })),
+    await update(request, path, kit({ pattern: 'plain', c1: 'red', c2: 'blue', logo: 'x' }), as),
   ).toBe(403);
-  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red' }))).toBe(403);
-  expect(await update(request, path, { kit: 'red' })).toBe(403);
+  expect(await update(request, path, kit({ pattern: 'plain', c1: 'red' }), as)).toBe(403);
+  expect(await update(request, path, { kit: 'red' }, as)).toBe(403);
 });
 
 /** An ID token from the Auth emulator: anonymous, or a Google account. */
@@ -189,7 +195,7 @@ async function claim(
   return response.status();
 }
 
-test('accounts: a Google account claims one free player, whose kit is then its own', async ({
+test('accounts: a Google account claims one free player, and only it dresses them', async ({
   request,
 }) => {
   const ala = `rules-ala-${tag()}`;
@@ -215,12 +221,12 @@ test('accounts: a Google account claims one free player, whose kit is then its o
   expect(await claim(request, second, ala)).toBe(403);
   expect(await create(request, `users/${first.uid}x`, { updated }, asSecond)).toBe(403);
 
-  // Ala's kit is now her owner's; Ola's anyone's.
+  // Ala's kit is now her owner's alone; unclaimed Ola's is nobody's to change.
   const kit = { pattern: 'plain', c1: 'red', c2: 'white' };
   expect(await update(request, `players/${ala}`, { kit })).toBe(403);
   expect(await update(request, `players/${ala}`, { kit }, asSecond)).toBe(403);
   expect(await update(request, `players/${ala}`, { kit }, asFirst)).toBe(200);
-  expect(await update(request, `players/${ola}`, { kit })).toBe(200);
+  expect(await update(request, `players/${ola}`, { kit }, asFirst)).toBe(403);
 
   // Moving to Ola lets Ala go in the same write; then the second account may take Ala.
   expect(await claim(request, first, ola, ala)).toBe(200);

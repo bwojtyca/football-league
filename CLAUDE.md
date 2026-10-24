@@ -58,7 +58,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 - `users/{uid}`: `player?`, `updated` — the player a Google account is (sign-in step 3a, Oct
   2026); only its owner reads or writes it, anonymous accounts keep nothing. Every visitor is
   signed in anonymously (`shared/auth.service.ts`); "Zaloguj przez Google" (☰ menu, rail)
-  links that account by a popup. The rules do not require an account yet (step 3b).
+  links that account by a popup. A Google account claims its player (`players/{id}.uid`,
+  written with `users/{uid}` in one batch): nobody else may say they are that player, and only
+  the owner changes the player's kit (unclaimed players' kits cannot change). The rules do not
+  require an account for anything else yet (step 3b).
 - `players/{id}`: `name`, `kit?` = `{ pattern, c1, c2, num? }` (pattern `plain | stripes |
   hoops | halves | sash | quarters`, colours by name from the palette in `player/kit.ts`,
   number 1–99; the only field that may change). Documents from 2017 also hold `wins`, `loses`

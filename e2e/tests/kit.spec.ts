@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { addPlayers, createLeague, players, shot, startGame, t, tag } from './helpers';
+import { addPlayers, createLeague, players, shot, signInAs, startGame, t, tag } from './helpers';
 
 test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   const id = tag();
@@ -17,6 +17,12 @@ test('a kit: chosen on the profile, worn by the avatar', async ({ page }) => {
   const avatar = page.locator('section.hero fl-avatar');
   await expect(avatar).toHaveText(/\w/);
   await expect(avatar).not.toHaveClass(/with-kit/);
+
+  // Only the player themself chooses a kit: signed in with Google, having said "this is me".
+  await expect(
+    page.locator('section.hero').getByRole('button', { name: t('kit.title') }),
+  ).toHaveCount(0);
+  await signInAs(page);
 
   await page
     .locator('section.hero')

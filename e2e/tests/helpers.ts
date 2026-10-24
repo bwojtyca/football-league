@@ -179,3 +179,32 @@ export async function chooseFormat(page: Page, format: string): Promise<void> {
 export function first(name: string): string {
   return name.split(' ')[0];
 }
+
+/**
+ * On a player's profile: signs in with Google through the Auth emulator's popup (a new made-up
+ * account), from the page menu on a phone or the rail on a wide screen, then claims the player
+ * ("To ja"), so the account may dress them.
+ */
+export async function signInAs(page: Page): Promise<void> {
+  const menu = page.getByRole('button', { name: t('appMenu.open') });
+  if (await menu.isVisible()) {
+    await menu.click();
+  }
+  const popupOpened = page.waitForEvent('popup');
+  await page
+    .getByRole('button', { name: new RegExp(t('auth.signIn')) })
+    .first()
+    .click();
+  const popup = await popupOpened;
+  await popup.getByText('Add new account').click();
+  await popup.getByText('Auto-generate user information').click();
+  await popup.getByText('Sign in with Google.com').click();
+  await popup.waitForEvent('close');
+  await expect(page.getByRole('button', { name: t('auth.signOut') }).first()).toBeAttached();
+  if (await page.locator('fl-app-menu').isVisible()) {
+    await page.keyboard.press('Escape');
+    await expect(page.locator('fl-app-menu')).toBeHidden();
+  }
+  await page.locator('section.hero').getByRole('button', { name: t('me.itsMe') }).click();
+  await expect(page.locator('section.hero .you-tag')).toBeVisible();
+}

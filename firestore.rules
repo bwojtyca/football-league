@@ -5,9 +5,9 @@ rules_version = '2';
 // players to them, adding players, creating tournaments, joining, leaving, editing, ending
 // and deleting (softly) them, starting and pausing games, scoring one goal at a time,
 // swapping positions, undoing the last event of a game, closing a game once it is won,
-// removing unfinished games and marking any game as deleted, and dressing players in a kit.
+// removing unfinished games and marking any game as deleted, and dressing your own player in a kit.
 // Nobody can rename or erase players, remove anyone from a league or rewrite results. A
-// Google account may claim one unclaimed player; a claimed player's kit is its owner's.
+// Google account may claim one unclaimed player, and only it dresses that player.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -73,11 +73,11 @@ service cloud.firestore {
         && request.resource.data.get('wins', 0) == 0
         && request.resource.data.get('loses', 0) == 0;
 
-      // The kit of a claimed player is its owner's to change; anyone still dresses the others.
+      // A kit is chosen by the player themself: only the Google account that claimed them.
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['kit'])
         && validKit(request.resource.data.kit)
-        && (!('uid' in resource.data)
-          || (request.auth != null && resource.data.uid == request.auth.uid));
+        && request.auth != null
+        && resource.data.get('uid', '') == request.auth.uid;
 
       // A Google account claims a player nobody has claimed, or lets its own go, in the same
       // write as its `users` document says so: one account, one player.
