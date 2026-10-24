@@ -49,6 +49,10 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 ## Data (Firestore project `football-league-b6e95`)
 
+- Leagues are private (Oct 2026): `leagues/{id}.members` (uids, its creator first) read the league,
+  its games and tournaments and play in it; others join with a link `#/l/<id>?invite=<code>`
+  ("Zaproś" makes `leagues/{id}/invites/{code}`). A league without `members` is from before and
+  stays open until its owner takes it. Players' names stay public (shared by leagues).
 - `leagues/{id}`: `owner?` (the Google account that created or took it, Oct 2026: its settings,
   deleting, restoring and erasing for good are the owner's; anyone's while there is none),
   `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
@@ -98,7 +102,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Queues, draws, fixtures and tables are computed from the tournament's games
   (`tournament/tournament.ts`), so devices never have to agree on shared state.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
-- The database is publicly readable; every write needs an account (anonymous included, the app
+- Leagues, games and tournaments are read by a league's members only (players and users as
+  above); every write needs an account (anonymous included, the app
   signs every visitor in); `firestore.rules` allows only the writes the app makes
   (create leagues, rename or archive them and add players; create players and dress them in a
   kit; create games; one

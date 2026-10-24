@@ -133,10 +133,9 @@ export class AppRailComponent {
 
   /** The leagues opened on this device (and the current one), each with its crest. */
   protected readonly leagues = computed(() => {
-    const all = this._leagueService.leagues() ?? [];
     const current = this.current()?.id;
     return [...new Set([...(current ? [current] : []), ...this._leagueService.recent()])]
-      .map((id) => all.find((league) => league.id === id))
+      .map((id) => this._leagueService.league(id))
       .filter((league): league is NonNullable<typeof league> => !!league && !league.deleted)
       .map((league) => ({ id: league.id, name: league.name, crest: crestOf(league.name) }));
   });

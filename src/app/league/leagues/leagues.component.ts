@@ -96,7 +96,7 @@ export class LeaguesComponent {
     }
     const recent = this._leagueService
       .recent()
-      .map((id) => all.find((league) => league.id === id))
+      .map((id) => this._leagueService.league(id))
       .filter((league): league is NonNullable<typeof league> => !!league);
     return recent.length
       ? recent

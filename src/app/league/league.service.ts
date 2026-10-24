@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal, untracked } from '@angular/core';
+import { computed, inject, Injectable, Injector, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   arrayUnion,
@@ -13,8 +13,9 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { collectionData } from 'rxfire/firestore';
-import { Observable } from 'rxjs';
+import { user as userChanges } from 'rxfire/auth';
+import { collectionData, docData } from 'rxfire/firestore';
+import { catchError, distinctUntilChanged, map, Observable, of, switchMap } from 'rxjs';
 
 import { AUTH, FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
@@ -29,9 +30,28 @@ export class LeagueService {
   private readonly _auth = inject(AUTH);
   private readonly _leagues = collection(this._db, 'leagues');
   private readonly _gameService = inject(GameService);
+  private readonly _injector = inject(Injector);
+
+  /**
+   * The leagues of the signed-in account (anonymous ones too): private leagues, Oct 2026. A
+   * new account has none until it creates or joins one.
+   */
   private readonly _stored = toSignal(
-    collectionData(this._leagues, { idField: 'id' }) as Observable<League[]>,
+    userChanges(this._auth).pipe(
+      map((user) => user?.uid ?? null),
+      distinctUntilChanged(),
+      switchMap((uid) =>
+        uid
+          ? (collectionData(query(this._leagues, where('members', 'array-contains', uid)), {
+              idField: 'id',
+            }) as Observable<League[]>).pipe(catchError(() => of([] as League[])))
+          : of(undefined),
+      ),
+    ),
   );
+
+  /** Leagues opened by id that are not the account's (an old open one, or just joined). */
+  private readonly _byId = new Map<string, Signal<League | null | undefined>>();
 
   /** Every league that is not deleted, active ones first, newest first; `undefined` while loading. */
   public readonly leagues = computed(() =>
@@ -53,8 +73,41 @@ export class LeagueService {
 
   /** A league, deleted ones included; `undefined` while loading, `null` when there is none. */
   public league(id: string): League | null | undefined {
-    const leagues = this._stored();
-    return leagues && (leagues.find((league) => league.id === id) ?? null);
+    const mine = this._stored()?.find((league) => league.id === id);
+    if (mine) {
+      return mine;
+    }
+    let one = this._byId.get(id);
+    if (!one) {
+      // Created on first use, which can be inside a computed: the listener itself is not.
+      // `null` when there is no such league, or it is private to others.
+      one = untracked(() =>
+        toSignal(
+          (docData(doc(this._leagues, id), { idField: 'id' }) as Observable<League | undefined>).pipe(
+            map((league) => league ?? null),
+            catchError(() => of(null)),
+          ),
+          { injector: this._injector },
+        ),
+      );
+      this._byId.set(id, one);
+    }
+    return one();
+  }
+
+  /** Makes an invitation code to the league (any member may), for a link. */
+  public async invite(leagueId: string): Promise<string> {
+    const ref = doc(collection(this._leagues, leagueId, 'invites'));
+    await setDoc(ref, { created: new Date().toISOString(), by: this._auth.currentUser?.uid ?? '' });
+    return ref.id;
+  }
+
+  /** Joins a league with an invitation code from a link. */
+  public join(leagueId: string, code: string): Promise<void> {
+    const uid = this._auth.currentUser?.uid;
+    return uid
+      ? updateDoc(doc(this._leagues, leagueId), { members: arrayUnion(uid), invite: code })
+      : Promise.reject(new Error('not signed in'));
   }
 
   /** Renames, locks or unlocks, sets the ranking threshold, deletes or restores a league. */
@@ -74,6 +127,7 @@ export class LeagueService {
         name,
         created: new Date().toISOString(),
         players: [],
+        members: [this._auth.currentUser?.uid ?? ''],
         ...(this._googleUid() && { owner: this._googleUid() }),
       }),
     };
@@ -92,7 +146,9 @@ export class LeagueService {
   /** The signed-in Google account becomes the owner of a league that has none. */
   public claim(leagueId: string): Promise<void> {
     const uid = this._googleUid();
-    return uid ? updateDoc(doc(this._leagues, leagueId), { owner: uid }) : Promise.resolve();
+    return uid
+      ? updateDoc(doc(this._leagues, leagueId), { owner: uid, members: arrayUnion(uid) })
+      : Promise.resolve();
   }
 
   /** Erases a league for good with its games and tournaments (its owner only). */

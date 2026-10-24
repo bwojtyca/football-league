@@ -567,7 +567,8 @@
     "league": "Nie udało się zapisać zmian w lidze. Sprawdź połączenie i spróbuj ponownie.",
     "pause": "Nie udało się zatrzymać ani wznowić meczu. Sprawdź połączenie i spróbuj ponownie.",
     "kit": "Nie udało się zapisać koszulki",
-    "signIn": "Nie udało się zalogować. Spróbuj ponownie."
+    "signIn": "Nie udało się zalogować. Spróbuj ponownie.",
+    "join": "Nie udało się dołączyć do ligi. Poproś o nowy link z zaproszeniem."
   },
   "nav": {
     "label": "Nawigacja ligi",

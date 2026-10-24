@@ -16,6 +16,8 @@ export interface League {
   gamesDeleted?: boolean;
   /** The Google account that owns the league: its settings are theirs (Oct 2026). */
   owner?: string;
+  /** Accounts (uids) the league is private to; none on leagues from before (open). */
+  members?: string[];
 }
 
 /** Stands for every league at once: the overall ranking and player profiles. */

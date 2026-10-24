@@ -11,7 +11,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { collectionData, docData } from 'rxfire/firestore';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
@@ -45,9 +45,11 @@ export class TournamentService {
       // Created on first use, which can be inside a computed: the listener itself is not.
       const stored = untracked(() =>
         toSignal(
-          collectionData(query(this._tournaments, where('league', '==', leagueId)), {
+          // A league private to others reads as empty, not as loading for ever.
+          (collectionData(query(this._tournaments, where('league', '==', leagueId)), {
             idField: 'id',
-          }) as Observable<Tournament[]>,
+          }) as Observable<Tournament[]>
+          ).pipe(catchError(() => of([] as Tournament[]))),
           { injector: this._injector },
         ),
       );
@@ -80,7 +82,10 @@ export class TournamentService {
             docData(doc(this._tournaments, id), { idField: 'id' }) as Observable<
               Tournament | undefined
             >
-          ).pipe(map((tournament) => tournament ?? null)),
+          ).pipe(
+            map((tournament) => tournament ?? null),
+            catchError(() => of(null)),
+          ),
           { injector: this._injector },
         ),
       );
@@ -119,8 +124,9 @@ export class TournamentService {
       deleted: true,
       gamesDeleted: withGames,
     });
-    if (withGames) {
-      await this._gameService.setTournamentGamesDeleted(tournamentId, true);
+    const league = this.tournament(tournamentId)?.league;
+    if (withGames && league) {
+      await this._gameService.setTournamentGamesDeleted(league, tournamentId, true);
     }
   }
 
@@ -131,8 +137,9 @@ export class TournamentService {
       deleted: false,
       gamesDeleted: false,
     });
-    if (withGames) {
-      await this._gameService.setTournamentGamesDeleted(tournamentId, false);
+    const league = this.tournament(tournamentId)?.league;
+    if (withGames && league) {
+      await this._gameService.setTournamentGamesDeleted(league, tournamentId, false);
     }
   }
 

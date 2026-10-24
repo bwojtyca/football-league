@@ -13,6 +13,7 @@ import { GameService } from '../game/game.service';
 import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { SheetCloseComponent } from '../shared/sheet-close.component';
+import { Notifier } from '../notifier';
 
 export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string | null) {
   return sheet.open(LeagueSwitcherComponent, { data: currentLeague });
@@ -26,9 +27,11 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
 /** Invites by a league's link: the phone's share sheet, or the clipboard (then `copied`). */
 export async function inviteToLeague(
   league: { id: string; name: string },
+  code: string,
   copied: () => void,
 ): Promise<void> {
-  const url = `${location.origin}${location.pathname}#/l/${league.id}`;
+  // A private league opens only with an invitation code (`LeagueService.invite`).
+  const url = `${location.origin}${location.pathname}#/l/${league.id}?invite=${code}`;
   if (navigator.share) {
     await navigator.share({ title: league.name, url }).catch(() => undefined);
     return;
@@ -260,14 +263,22 @@ export class LeagueSwitcherComponent {
   protected readonly league = computed(() => this.leagues().find((l) => l.id === this.current));
   protected readonly crest = computed(() => crestOf(this.league()?.name ?? ''));
   protected readonly crestFor = crestOf;
+  private readonly _notifier = inject(Notifier);
 
   /** Invites by the league's link: the phone's share sheet, or the clipboard. */
   protected async share(): Promise<void> {
     const league = this.league();
     if (league) {
-      await inviteToLeague(league, () =>
-        this._snackBar.open(this._transloco.translate('hub.copied'), undefined, { duration: 2500 }),
-      );
+      try {
+        const code = await this._leagueService.invite(league.id);
+        await inviteToLeague(league, code, () =>
+          this._snackBar.open(this._transloco.translate('hub.copied'), undefined, {
+            duration: 2500,
+          }),
+        );
+      } catch (error) {
+        this._notifier.error('error.league', error);
+      }
     }
   }
 
@@ -276,13 +287,12 @@ export class LeagueSwitcherComponent {
    * never all of them: the rest is one search away on the leagues page).
    */
   protected readonly leagues = computed(() => {
-    const all = this._leagueService.leagues() ?? [];
     const ids = [
       ...new Set([...(this.current ? [this.current] : []), ...this._leagueService.recent()]),
     ];
     return (
       ids
-        .map((id) => all.find((league) => league.id === id))
+        .map((id) => this._leagueService.league(id))
         .filter((league): league is NonNullable<typeof league> => !!league)
         // Finished games, as the statistics count them.
         .map((league) => ({

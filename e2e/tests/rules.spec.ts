@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
 
 import { tag } from './helpers';
-import { create, DOCUMENTS, fields, update, Value, visitor } from './rest';
+import { create, DOCUMENTS, fields, OWNER, update, Value, visitor } from './rest';
 
 // Writes the app never makes, straight to the emulator without credentials, so
 // `firestore.rules` decides them like for any visitor.
@@ -234,43 +234,107 @@ test('accounts: a Google account claims one free player, and only it dresses the
   expect(await claim(request, second, ala)).toBe(200);
 });
 
-test('league owners: settings and erasing belong to the owner, players to anyone', async ({
-  request,
-}) => {
+test('league owners: settings and erasing belong to the owner', async ({ request }) => {
   const owner = await token(request, `own-${tag()}`);
   const other = await token(request, `oth-${tag()}`);
   const asOwner = { Authorization: `Bearer ${owner.idToken}` };
   const asOther = { Authorization: `Bearer ${other.idToken}` };
-  const league = (owned?: string) => ({
+  const league = (members: string[], owned?: string) => ({
     name: 'Liga',
     created: new Date().toISOString(),
     players: [],
+    members,
     ...(owned && { owner: owned }),
   });
 
   // Nobody makes someone else the owner; a Google account owns what it creates.
-  expect(await create(request, `leagues/x-${tag()}`, league(owner.uid), asOther)).toBe(403);
+  expect(
+    await create(request, `leagues/x-${tag()}`, league([other.uid], owner.uid), asOther),
+  ).toBe(403);
   const owned = `leagues/own-${tag()}`;
-  expect(await create(request, owned, league(owner.uid), asOwner)).toBe(200);
+  expect(await create(request, owned, league([owner.uid], owner.uid), asOwner)).toBe(200);
 
-  // The owner changes the settings; others only add players.
+  // The owner changes the settings; others are not even members.
   expect(await update(request, owned, { name: 'Inna' }, asOther)).toBe(403);
   expect(await update(request, owned, { deleted: true }, asOther)).toBe(403);
   expect(await update(request, owned, { name: 'Inna' }, asOwner)).toBe(200);
-  expect(await update(request, owned, { players: ['p1'] }, asOther)).toBe(200);
   expect(await update(request, owned, { owner: other.uid }, asOther)).toBe(403);
 
-  // A league without an owner: anyone's settings, until a Google account takes it.
+  // A league from before (no members, no owner): open, until a Google account takes it.
   const free = `leagues/free-${tag()}`;
-  expect(await create(request, free, league())).toBe(200);
+  expect(
+    await create(request, free, { name: 'Stara', created: '2017-10-23', players: [] }, OWNER),
+  ).toBe(200);
   expect(await update(request, free, { name: 'Wolna' })).toBe(200);
   expect(await update(request, free, { owner: other.uid }, asOwner)).toBe(403);
-  expect(await update(request, free, { owner: other.uid }, asOther)).toBe(200);
+  expect(
+    await update(request, free, { owner: other.uid, members: [other.uid] }, asOther),
+  ).toBe(200);
   expect(await update(request, free, { name: 'Moja' })).toBe(403);
 
-  // Erasing for good: the owner alone, and never a league without one.
+  // Erasing for good: the owner alone.
   expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOther })).status()).toBe(403);
   expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOwner })).status()).toBe(200);
+});
+
+test('private leagues: members read and play; others join with an invitation', async ({
+  request,
+}) => {
+  const owner = await token(request, `pown-${tag()}`);
+  const guest = await token(request);
+  const asOwner = { Authorization: `Bearer ${owner.idToken}` };
+  const asGuest = { Authorization: `Bearer ${guest.idToken}` };
+  const id = `priv-${tag()}`;
+  expect(
+    await create(
+      request,
+      `leagues/${id}`,
+      { name: 'Prywatna', created: new Date().toISOString(), players: [], members: [owner.uid] },
+      asOwner,
+    ),
+  ).toBe(200);
+
+  // Others neither read it nor play in it.
+  const get = (headers: Record<string, string>) =>
+    request.get(`${DOCUMENTS}/leagues/${id}`, { headers });
+  expect((await get(asOwner)).status()).toBe(200);
+  expect((await get(asGuest)).status()).toBe(403);
+  expect(await update(request, `leagues/${id}`, { players: ['p1'] }, asGuest)).toBe(403);
+  expect(await update(request, `leagues/${id}`, { members: [owner.uid, guest.uid] }, asGuest)).toBe(
+    403,
+  );
+
+  // A member makes an invitation; with its code a guest joins (only themself).
+  const code = `code-${tag()}`;
+  expect(
+    await create(
+      request,
+      `leagues/${id}/invites/${code}`,
+      { created: new Date().toISOString(), by: guest.uid },
+      asGuest,
+    ),
+  ).toBe(403);
+  expect(
+    await create(
+      request,
+      `leagues/${id}/invites/${code}`,
+      { created: new Date().toISOString(), by: owner.uid },
+      asOwner,
+    ),
+  ).toBe(200);
+  expect(
+    await update(
+      request,
+      `leagues/${id}`,
+      { members: [owner.uid, guest.uid], invite: 'wrong' },
+      asGuest,
+    ),
+  ).toBe(403);
+  expect(
+    await update(request, `leagues/${id}`, { members: [owner.uid, guest.uid], invite: code }, asGuest),
+  ).toBe(200);
+  expect((await get(asGuest)).status()).toBe(200);
+  expect(await update(request, `leagues/${id}`, { players: ['p1'] }, asGuest)).toBe(200);
 });
 
 test('without an account nothing is written', async ({ request }) => {

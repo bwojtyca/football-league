@@ -20,7 +20,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { collectionData, docData } from 'rxfire/firestore';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 import { FIRESTORE } from '../firebase';
 import { deviceLeagues } from '../league/device-leagues';
@@ -75,9 +75,11 @@ export class GameService {
       // Created on first use, which can be inside a computed: the listener itself is not.
       const stored = untracked(() =>
         toSignal(
-          collectionData(query(this._games, where('league', '==', leagueId)), {
+          // A league private to others reads as empty, not as loading for ever.
+          (collectionData(query(this._games, where('league', '==', leagueId)), {
             idField: 'id',
-          }) as Observable<Game[]>,
+          }) as Observable<Game[]>
+          ).pipe(catchError(() => of([] as Game[]))),
           { injector: this._injector },
         ),
       );
@@ -154,7 +156,11 @@ export class GameService {
   public getGame(gameId: string): Observable<Game | null> {
     return (
       docData(doc(this._games, gameId), { idField: 'id' }) as Observable<Game | undefined>
-    ).pipe(map((game) => game ?? null));
+    ).pipe(
+      map((game) => game ?? null),
+      // A game of a league private to others: as if there were none.
+      catchError(() => of(null)),
+    );
   }
 
   /**
@@ -309,10 +315,19 @@ export class GameService {
   }
 
   /** Hides a tournament's games with it, or brings back the games hidden with it. */
-  public setTournamentGamesDeleted(tournamentId: string, deleted: boolean): Promise<void> {
+  public setTournamentGamesDeleted(
+    leagueId: string,
+    tournamentId: string,
+    deleted: boolean,
+  ): Promise<void> {
+    // The league in the query too: the rules read a league's games only (private leagues).
     return this._setDeletedWith(
       `tournament:${tournamentId}`,
-      query(this._games, where('tournament', '==', tournamentId)),
+      query(
+        this._games,
+        where('league', '==', leagueId),
+        where('tournament', '==', tournamentId),
+      ),
       deleted,
     );
   }

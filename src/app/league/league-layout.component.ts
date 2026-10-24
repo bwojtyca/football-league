@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MatButtonModule } from '@angular/material/button';
@@ -259,10 +259,9 @@ export class LeagueLayoutComponent {
 
   /** The leagues in the rail of a wide screen, each with its crest. */
   protected readonly railLeagues = computed(() => {
-    const all = this._leagueService.leagues() ?? [];
     const ids = [...new Set([this.leagueId(), ...this._leagueService.recent()])];
     return ids
-      .map((id) => all.find((league) => league.id === id))
+      .map((id) => this._leagueService.league(id))
       .filter((league): league is NonNullable<typeof league> => !!league)
       .map((league) => ({ id: league.id, name: league.name, crest: crestOf(league.name) }));
   });
@@ -300,7 +299,34 @@ export class LeagueLayoutComponent {
             : 'ranking';
   });
 
+  /** An invitation code from the link (`?invite=`), joined once the account is there. */
+  private readonly _invite = toSignal(
+    inject(ActivatedRoute).queryParamMap.pipe(map((params) => params.get('invite'))),
+    { initialValue: null },
+  );
+  private _joined?: string;
+
   constructor() {
+    // A link with an invitation: join the private league, then drop the code from the address.
+    effect(() => {
+      const code = this._invite();
+      const id = this.leagueId();
+      if (!code || !id || !this.auth.uid() || this._joined === code) {
+        return;
+      }
+      this._joined = code;
+      const league = untracked(() => this._leagueService.league(id));
+      const done = () =>
+        this._router.navigate([], { queryParams: { invite: null }, replaceUrl: true });
+      if (league?.members?.includes(this.auth.uid()!)) {
+        void done();
+        return;
+      }
+      this._leagueService
+        .join(id, code)
+        .then(done)
+        .catch((error) => this._notifier.error('error.join', error));
+    });
     // An old link to the 2017 league opens it at its new id.
     effect(() => {
       const id = this.leagueId();
