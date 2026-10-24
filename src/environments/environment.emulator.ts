@@ -5,6 +5,8 @@ import type { Environment } from './environment.model';
 export const environment: Environment = {
   firebase: {
     apiKey: 'demo-api-key',
+    // Sign-in popups need an auth domain, even when the Auth emulator answers them.
+    authDomain: 'demo-football-league.firebaseapp.com',
     projectId: 'demo-football-league',
   },
   firestoreEmulator: { host: '127.0.0.1', port: 8080 },
