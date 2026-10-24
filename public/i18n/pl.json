@@ -888,5 +888,15 @@
     "signInHint": "Twój gracz na każdym urządzeniu",
     "google": "Konto Google",
     "signOut": "Wyloguj"
+  },
+  "owner": {
+    "title": "Właściciel",
+    "you": "Jesteś właścicielem tej ligi: jej ustawienia zmieniasz tylko ty.",
+    "other": "Liga ma właściciela: tylko on zmienia jej ustawienia, usuwa ją i przywraca.",
+    "none": "Liga nie ma właściciela, więc jej ustawienia może zmienić każdy.",
+    "claim": "Zostań właścicielem",
+    "signIn": "Zaloguj się przez Google, żeby zostać właścicielem.",
+    "erase": "Usuń na zawsze",
+    "eraseConfirm": "Usunąć ligę na zawsze, razem z jej meczami i turniejami? Tego nie da się cofnąć."
   }
 }

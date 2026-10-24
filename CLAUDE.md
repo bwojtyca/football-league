@@ -49,7 +49,9 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
 
 ## Data (Firestore project `football-league-b6e95`)
 
-- `leagues/{id}`: `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
+- `leagues/{id}`: `owner?` (the Google account that created or took it, Oct 2026: its settings,
+  deleting, restoring and erasing for good are the owner's; anyone's while there is none),
+  `name`, `created`, `players` (ids, only ever added), `archived?` (locked: no
   new games, tournaments or players), `minGames?` (fewest games to be ranked), `deleted?`
   (hidden, restorable), `gamesDeleted?` (its games were deleted with it and come back with it).
   The 2017 league "Najdroższa Liga Świata" is `leagues/TPaiV5gUYtE68s5MFQsD` since 19 Oct 2026;

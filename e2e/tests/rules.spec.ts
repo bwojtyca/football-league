@@ -232,3 +232,42 @@ test('accounts: a Google account claims one free player, and only it dresses the
   expect(await claim(request, first, ola, ala)).toBe(200);
   expect(await claim(request, second, ala)).toBe(200);
 });
+
+test('league owners: settings are the owner's, players anyone's, erasing the owner's alone', async ({
+  request,
+}) => {
+  const owner = await token(request, `own-${tag()}`);
+  const other = await token(request, `oth-${tag()}`);
+  const asOwner = { Authorization: `Bearer ${owner.idToken}` };
+  const asOther = { Authorization: `Bearer ${other.idToken}` };
+  const league = (owned?: string) => ({
+    name: 'Liga',
+    created: new Date().toISOString(),
+    players: [],
+    ...(owned && { owner: owned }),
+  });
+
+  // Nobody makes someone else the owner; a Google account owns what it creates.
+  expect(await create(request, `leagues/x-${tag()}`, league(owner.uid), asOther)).toBe(403);
+  const owned = `leagues/own-${tag()}`;
+  expect(await create(request, owned, league(owner.uid), asOwner)).toBe(200);
+
+  // The owner changes the settings; others only add players.
+  expect(await update(request, owned, { name: 'Inna' }, asOther)).toBe(403);
+  expect(await update(request, owned, { deleted: true }, asOther)).toBe(403);
+  expect(await update(request, owned, { name: 'Inna' }, asOwner)).toBe(200);
+  expect(await update(request, owned, { players: ['p1'] }, asOther)).toBe(200);
+  expect(await update(request, owned, { owner: other.uid }, asOther)).toBe(403);
+
+  // A league without an owner: anyone's settings, until a Google account takes it.
+  const free = `leagues/free-${tag()}`;
+  expect(await create(request, free, league())).toBe(200);
+  expect(await update(request, free, { name: 'Wolna' })).toBe(200);
+  expect(await update(request, free, { owner: other.uid }, asOwner)).toBe(403);
+  expect(await update(request, free, { owner: other.uid }, asOther)).toBe(200);
+  expect(await update(request, free, { name: 'Moja' })).toBe(403);
+
+  // Erasing for good: the owner alone, and never a league without one.
+  expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOther })).status()).toBe(403);
+  expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOwner })).status()).toBe(200);
+});

@@ -16,6 +16,7 @@ import { map } from 'rxjs';
 
 import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
+import { AuthService } from '../../shared/auth.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
 import { League } from '../league';
 import { openLeagueDeleteDialog } from '../league-delete-dialog.component';
@@ -26,7 +27,8 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
 
 /**
  * The league's settings (canvas P18): its name, the ranking threshold, locking new games, and
- * archiving or deleting it. Without sign-in anyone may change them; a moderator comes with it.
+ * archiving or deleting it. They are the owner's (a Google account), or anyone's while the
+ * league has none; a signed-in user may become the owner of a league without one.
  */
 @Component({
   selector: 'fl-league-settings',
@@ -51,76 +53,94 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       } @else if (!current) {
         <div class="loader"><mat-spinner [diameter]="40" /></div>
       } @else {
-        <h2 class="fl-kicker">{{ 'settings.general' | transloco }}</h2>
+        <h2 class="fl-kicker">{{ 'owner.title' | transloco }}</h2>
         <section class="card">
-          <mat-form-field appearance="outline" class="full">
-            <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
-            <input
-              matInput
-              [ngModel]="name()"
-              (ngModelChange)="name.set($event)"
-              (blur)="saveName()"
-              (keydown.enter)="saveName()"
-              maxlength="60"
-              autocomplete="off"
-            />
-            <!-- Saved on leaving the field or Enter; a visible save while it differs. -->
-            @if (name().trim() && name().trim() !== current.name) {
-              <button
-                matIconButton
-                matSuffix
-                (click)="saveName()"
-                [attr.aria-label]="'common.save' | transloco"
-              >
-                <mat-icon>check</mat-icon>
-              </button>
+          @if (current.owner && current.owner === auth.uid()) {
+            <p>{{ 'owner.you' | transloco }}</p>
+          } @else if (current.owner) {
+            <p>{{ 'owner.other' | transloco }}</p>
+          } @else {
+            <p>{{ 'owner.none' | transloco }}</p>
+            @if (auth.signedIn()) {
+              <button matButton="tonal" (click)="claim()">{{ 'owner.claim' | transloco }}</button>
+            } @else {
+              <p class="hint">{{ 'owner.signIn' | transloco }}</p>
             }
-            <mat-hint>{{ 'settings.nameHint' | transloco }}</mat-hint>
-          </mat-form-field>
+          }
         </section>
-
-        <h2 class="fl-kicker">{{ 'settings.rankingGroup' | transloco }}</h2>
-        <section class="card">
-          <h3>{{ 'settings.minGames' | transloco }}</h3>
-          <p class="hint">{{ 'settings.minGamesHint' | transloco }}</p>
-          <mat-form-field appearance="outline">
-            <mat-select
-              [value]="current.minGames ?? 0"
-              (selectionChange)="save({ minGames: $event.value })"
-              [attr.aria-label]="'settings.minGames' | transloco"
-            >
-              @for (option of minGames; track option) {
-                <mat-option [value]="option">{{
-                  option
-                    ? ('count.games' | transloco: { n: option })
-                    : ('settings.everyone' | transloco)
-                }}</mat-option>
+        <!-- The rest is the owner's, or anyone's while the league has none. -->
+        @if (!current.owner || current.owner === auth.uid()) {
+          <h2 class="fl-kicker">{{ 'settings.general' | transloco }}</h2>
+          <section class="card">
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>{{ 'leagues.name' | transloco }}</mat-label>
+              <input
+                matInput
+                [ngModel]="name()"
+                (ngModelChange)="name.set($event)"
+                (blur)="saveName()"
+                (keydown.enter)="saveName()"
+                maxlength="60"
+                autocomplete="off"
+              />
+              <!-- Saved on leaving the field or Enter; a visible save while it differs. -->
+              @if (name().trim() && name().trim() !== current.name) {
+                <button
+                  matIconButton
+                  matSuffix
+                  (click)="saveName()"
+                  [attr.aria-label]="'common.save' | transloco"
+                >
+                  <mat-icon>check</mat-icon>
+                </button>
               }
-            </mat-select>
-          </mat-form-field>
-        </section>
+              <mat-hint>{{ 'settings.nameHint' | transloco }}</mat-hint>
+            </mat-form-field>
+          </section>
 
-        <h2 class="fl-kicker">{{ 'settings.changes' | transloco }}</h2>
-        <section class="card rows">
-          <div class="row">
-            <div>
-              <h3>{{ 'settings.lock' | transloco }}</h3>
-              <p class="hint">{{ 'settings.lockHint' | transloco }}</p>
+          <h2 class="fl-kicker">{{ 'settings.rankingGroup' | transloco }}</h2>
+          <section class="card">
+            <h3>{{ 'settings.minGames' | transloco }}</h3>
+            <p class="hint">{{ 'settings.minGamesHint' | transloco }}</p>
+            <mat-form-field appearance="outline">
+              <mat-select
+                [value]="current.minGames ?? 0"
+                (selectionChange)="save({ minGames: $event.value })"
+                [attr.aria-label]="'settings.minGames' | transloco"
+              >
+                @for (option of minGames; track option) {
+                  <mat-option [value]="option">{{
+                    option
+                      ? ('count.games' | transloco: { n: option })
+                      : ('settings.everyone' | transloco)
+                  }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </section>
+
+          <h2 class="fl-kicker">{{ 'settings.changes' | transloco }}</h2>
+          <section class="card rows">
+            <div class="row">
+              <div>
+                <h3>{{ 'settings.lock' | transloco }}</h3>
+                <p class="hint">{{ 'settings.lockHint' | transloco }}</p>
+              </div>
+              <mat-slide-toggle
+                [checked]="!!current.archived"
+                (change)="save({ archived: $event.checked })"
+                [attr.aria-label]="'settings.lock' | transloco"
+              />
             </div>
-            <mat-slide-toggle
-              [checked]="!!current.archived"
-              (change)="save({ archived: $event.checked })"
-              [attr.aria-label]="'settings.lock' | transloco"
-            />
-          </div>
-          <button class="row danger" (click)="archiveOrDelete()">
-            <div>
-              <h3>{{ 'settings.archiveOrDelete' | transloco }}</h3>
-              <p class="hint">{{ 'settings.archiveOrDeleteHint' | transloco }}</p>
-            </div>
-            <mat-icon aria-hidden="true">chevron_right</mat-icon>
-          </button>
-        </section>
+            <button class="row danger" (click)="archiveOrDelete()">
+              <div>
+                <h3>{{ 'settings.archiveOrDelete' | transloco }}</h3>
+                <p class="hint">{{ 'settings.archiveOrDeleteHint' | transloco }}</p>
+              </div>
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+          </section>
+        }
       }
     </main>
   `,
@@ -190,6 +210,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
 })
 export class LeagueSettingsComponent {
   private readonly _leagueService = inject(LeagueService);
+  protected readonly auth = inject(AuthService);
   private readonly _gameService = inject(GameService);
   private readonly _notifier = inject(Notifier);
   private readonly _snackBar = inject(MatSnackBar);
@@ -212,6 +233,12 @@ export class LeagueSettingsComponent {
         this.name.set(league.name);
       }
     });
+  }
+
+  protected claim(): void {
+    this._leagueService
+      .claim(this.leagueId())
+      .catch((error) => this._notifier.error('error.league', error));
   }
 
   protected saveName(): void {

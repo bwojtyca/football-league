@@ -46,6 +46,23 @@ service cloud.firestore {
     // A Google account keeps which player it is (sign-in step 3a): only its owner reads or
     // writes it, an anonymous account keeps nothing, and the player must be claimed by it in
     // the same write (`players/{id}.uid`).
+    // The request comes from this Google account (not an anonymous one).
+    function isGoogle(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    // A league's settings: its owner's, or anyone's while it has none.
+    function managesLeague(league) {
+      return !('owner' in league) || isGoogle(league.owner);
+    }
+
+    // The owner of the league `id` (games and tournaments erased with it).
+    function ownsLeague(id) {
+      return isGoogle(get(/databases/$(database)/documents/leagues/$(id)).data.get('owner', ''));
+    }
+
     match /users/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;
 
@@ -97,19 +114,22 @@ service cloud.firestore {
     match /leagues/{leagueId} {
       allow read: if true;
 
-      // The league with id "legacy" holds the 2017 games, which have no `league` field.
-      allow create: if request.resource.data.keys().hasOnly(['name', 'created', 'players', 'archived'])
+      // A Google account that creates a league is its owner (`owner`, Oct 2026).
+      allow create: if request.resource.data.keys().hasOnly(['name', 'created', 'players', 'archived', 'owner'])
         && leagueName(request.resource.data.name)
         && request.resource.data.created is string
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
-        && request.resource.data.get('archived', false) is bool;
+        && request.resource.data.get('archived', false) is bool
+        && (!('owner' in request.resource.data) || isGoogle(request.resource.data.owner));
 
       // A league can be renamed, locked for new games (`archived`), given a minimum number of
       // games to appear in its ranking, deleted and restored (`deleted`, nothing is erased) and
       // gain players; nobody is removed from it. `gamesDeleted` remembers that its games were
-      // deleted with it, to restore them together.
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted', 'gamesDeleted'])
+      // deleted with it, to restore them together. Anyone adds players (to play); the settings
+      // are the owner's, or anyone's while the league has none; a Google account may become the
+      // owner of a league without one.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted', 'gamesDeleted', 'owner'])
         && leagueName(request.resource.data.name)
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
@@ -120,7 +140,14 @@ service cloud.firestore {
         && (!('minGames' in request.resource.data)
           || (request.resource.data.minGames is int
             && request.resource.data.minGames >= 0
-            && request.resource.data.minGames <= 100));
+            && request.resource.data.minGames <= 100))
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['name', 'archived', 'minGames', 'deleted', 'gamesDeleted'])
+          || managesLeague(resource.data))
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['owner'])
+          || (!('owner' in resource.data) && isGoogle(request.resource.data.owner)));
+
+      // Erased for good (with its games and tournaments, first) only by its owner.
+      allow delete: if 'owner' in resource.data && isGoogle(resource.data.owner);
 
       function leagueName(name) {
         return name is string && name.size() > 0 && name.size() <= 60;
@@ -129,6 +156,9 @@ service cloud.firestore {
 
     match /tournaments/{tournamentId} {
       allow read: if true;
+
+      // Erased for good only with its league, by the league's owner.
+      allow delete: if ownsLeague(resource.data.league);
 
       allow create: if request.resource.data.keys().hasOnly(['league', 'name', 'format', 'created', 'mode', 'teamSize', 'entries', 'teams', 'groups', 'bestOf'])
         && request.resource.data.league is string
@@ -213,7 +243,7 @@ service cloud.firestore {
       // Only games that are still being played can be removed. Any game can be marked as
       // deleted (hidden from rankings and stats) and restored; nothing else changes with it
       // but `deletedWith`, the league or tournament it was deleted together with.
-      allow delete: if !('win' in resource.data);
+      allow delete: if !('win' in resource.data) || ownsLeague(resource.data.league);
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deleted', 'deletedWith'])
         && request.resource.data.deleted is bool
         && (!('deletedWith' in request.resource.data)

@@ -1,10 +1,22 @@
 import { computed, inject, Injectable, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  arrayUnion,
+  collection,
+  deleteDoc,
+  doc,
+  Firestore,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+  writeBatch,
+} from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { Observable } from 'rxjs';
 
-import { FIRESTORE } from '../firebase';
+import { AUTH, FIRESTORE } from '../firebase';
 import { GameService } from '../game/game.service';
 import { deviceLeagues, rememberLeague } from './device-leagues';
 import { League, currentLeagueId } from './league';
@@ -13,7 +25,9 @@ const LAST_LEAGUE_KEY = 'fl.league';
 
 @Injectable({ providedIn: 'root' })
 export class LeagueService {
-  private readonly _leagues = collection(inject(FIRESTORE), 'leagues');
+  private readonly _db: Firestore = inject(FIRESTORE);
+  private readonly _auth = inject(AUTH);
+  private readonly _leagues = collection(this._db, 'leagues');
   private readonly _gameService = inject(GameService);
   private readonly _stored = toSignal(
     collectionData(this._leagues, { idField: 'id' }) as Observable<League[]>,
@@ -55,12 +69,45 @@ export class LeagueService {
     const ref = doc(this._leagues);
     return {
       id: ref.id,
-      saved: setDoc(ref, { name, created: new Date().toISOString(), players: [] }),
+      // Signed in with Google, its creator owns it (its settings are theirs).
+      saved: setDoc(ref, {
+        name,
+        created: new Date().toISOString(),
+        players: [],
+        ...(this._googleUid() && { owner: this._googleUid() }),
+      }),
     };
   }
 
   public addPlayer(leagueId: string, playerId: string): Promise<void> {
     return updateDoc(doc(this._leagues, leagueId), { players: arrayUnion(playerId) });
+  }
+
+  /** The signed-in Google account's uid, or `null` (anonymous or nobody). */
+  private _googleUid(): string | null {
+    const user = this._auth.currentUser;
+    return user && !user.isAnonymous ? user.uid : null;
+  }
+
+  /** The signed-in Google account becomes the owner of a league that has none. */
+  public claim(leagueId: string): Promise<void> {
+    const uid = this._googleUid();
+    return uid ? updateDoc(doc(this._leagues, leagueId), { owner: uid }) : Promise.resolve();
+  }
+
+  /** Erases a league for good with its games and tournaments (its owner only). */
+  public async erase(leagueId: string): Promise<void> {
+    for (const name of ['games', 'tournaments']) {
+      const all = query(collection(this._db, name), where('league', '==', leagueId));
+      const docs = (await getDocs(all)).docs;
+      // A batch takes at most 500 writes.
+      for (let i = 0; i < docs.length; i += 500) {
+        const batch = writeBatch(this._db);
+        docs.slice(i, i + 500).forEach((one) => batch.delete(one.ref));
+        await batch.commit();
+      }
+    }
+    await deleteDoc(doc(this._leagues, leagueId));
   }
 
   /** Deletes a league (it can be restored), with its games if asked. */

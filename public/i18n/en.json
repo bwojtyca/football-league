@@ -888,5 +888,15 @@
     "signInHint": "Your player on every device",
     "google": "Google account",
     "signOut": "Sign out"
+  },
+  "owner": {
+    "title": "Owner",
+    "you": "You own this league: only you change its settings.",
+    "other": "This league has an owner: only they change its settings, delete and restore it.",
+    "none": "This league has no owner, so anyone may change its settings.",
+    "claim": "Become the owner",
+    "signIn": "Sign in with Google to become the owner.",
+    "erase": "Delete for good",
+    "eraseConfirm": "Delete the league for good, with its games and tournaments? This cannot be undone."
   }
 }

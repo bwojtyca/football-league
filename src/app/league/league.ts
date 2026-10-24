@@ -14,6 +14,8 @@ export interface League {
   deleted?: boolean;
   /** The league was deleted with its games: restoring it brings them back too. */
   gamesDeleted?: boolean;
+  /** The Google account that owns the league: its settings are theirs (Oct 2026). */
+  owner?: string;
 }
 
 /** Stands for every league at once: the overall ranking and player profiles. */

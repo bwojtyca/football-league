@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { filter, map } from 'rxjs';
 
 import { Notifier } from '../notifier';
@@ -19,6 +19,7 @@ import { openNewPlaySheet } from './new-play-sheet.component';
 import { PagePlayService } from '../shared/page-play.service';
 import { RailAppComponent } from '../shared/rail-app.component';
 import { GameService } from '../game/game.service';
+import { AuthService } from '../shared/auth.service';
 
 type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
 
@@ -52,7 +53,14 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
       <fl-top-bar [title]="current.name" [switcher]="current.id" />
       <main class="page">
         <p class="note">{{ 'league.deletedNote' | transloco }}</p>
-        <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
+        <!-- Restoring is the owner's, or anyone's while the league has none; erasing for good
+             is the owner's alone. -->
+        @if (!current.owner || current.owner === auth.uid()) {
+          <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
+        }
+        @if (current.owner && current.owner === auth.uid()) {
+          <button matButton class="erase" (click)="erase()">{{ 'owner.erase' | transloco }}</button>
+        }
       </main>
     } @else {
       <div class="content"><router-outlet /></div>
@@ -316,6 +324,8 @@ export class LeagueLayoutComponent {
 
   /** A game, a series or a tournament; a league without players gets its players first. */
   private readonly _pagePlay = inject(PagePlayService);
+  protected readonly auth = inject(AuthService);
+  private readonly _transloco = inject(TranslocoService);
   private readonly _gameService = inject(GameService);
 
   protected newPlay(): void {
@@ -331,6 +341,16 @@ export class LeagueLayoutComponent {
     } else {
       openNewPlaySheet(this._sheet, league.id);
     }
+  }
+
+  protected erase(): void {
+    if (!confirm(this._transloco.translate('owner.eraseConfirm'))) {
+      return;
+    }
+    this._leagueService
+      .erase(this.leagueId())
+      .then(() => this._router.navigateByUrl('/leagues'))
+      .catch((error) => this._notifier.error('error.league', error));
   }
 
   protected restore(): void {
