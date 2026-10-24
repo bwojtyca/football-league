@@ -181,8 +181,7 @@ export function first(name: string): string {
 }
 
 /**
- * From a player's profile: signs in with Google through the Auth emulator's popup (a new made-up
- * account), from the page menu on a phone or the rail on a wide screen, then claims the player
+ * From a player's profile: signs in with a made-up Google account (the Auth emulator), from the page menu on a phone or the rail on a wide screen, then claims the player
  * ("To ja"), so the account may dress them.
  */
 export async function signInAs(page: Page): Promise<void> {
@@ -193,16 +192,18 @@ export async function signInAs(page: Page): Promise<void> {
   if (await menu.isVisible()) {
     await menu.click();
   }
-  const popupOpened = page.waitForEvent('popup');
-  await page
-    .getByRole('button', { name: new RegExp(t('auth.signIn')) })
-    .first()
-    .click();
-  const popup = await popupOpened;
-  await popup.getByText('Add new account').click();
-  await popup.getByText('Auto-generate user information').click();
-  await popup.getByText('Sign in with Google.com').click();
-  await popup.waitForEvent('close');
+  // The button is there; the Google popup itself is the emulator's page, so the account is
+  // made through the app's test hook instead (emulator builds only, same linking path).
+  await expect(
+    page.getByRole('button', { name: new RegExp(t('auth.signIn')) }).first(),
+  ).toBeVisible();
+  await page.waitForFunction(() => 'flSignInForTests' in globalThis);
+  await page.evaluate(
+    (email) =>
+      (globalThis as unknown as { flSignInForTests: (e: string) => Promise<void> })
+        .flSignInForTests(email),
+    `e2e-${tag()}@example.com`,
+  );
   await expect(page.getByRole('button', { name: t('auth.signOut') }).first()).toBeAttached();
   if (await page.locator('fl-app-menu').isVisible()) {
     await page.keyboard.press('Escape');

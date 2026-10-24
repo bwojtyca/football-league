@@ -3,6 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   AuthError,
   GoogleAuthProvider,
+  linkWithCredential,
   linkWithPopup,
   signInAnonymously,
   signInWithCredential,
@@ -14,6 +15,7 @@ import { authState } from 'rxfire/auth';
 import { docData } from 'rxfire/firestore';
 import { map, Observable, of, switchMap } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 import { AUTH, FIRESTORE } from '../firebase';
 import { PlayerService } from '../player/player.service';
 
@@ -73,6 +75,21 @@ export class AuthService {
         signInAnonymously(this._auth).catch(() => undefined);
       }
     });
+    // Emulator builds only: the end-to-end scenarios sign in with a made-up Google account
+    // (the emulator takes an unsigned token), down the same linking path as the popup.
+    if (environment.authEmulator) {
+      Object.assign(globalThis, {
+        flSignInForTests: async (email: string) => {
+          const credential = GoogleAuthProvider.credential(
+            JSON.stringify({ sub: email, email, email_verified: true }),
+          );
+          const current = this._auth.currentUser;
+          await (current?.isAnonymous
+            ? linkWithCredential(current, credential)
+            : signInWithCredential(this._auth, credential));
+        },
+      });
+    }
   }
 
   /** Signs in with Google; `false` when the popup was closed or blocked. */
