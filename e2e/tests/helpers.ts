@@ -181,11 +181,14 @@ export function first(name: string): string {
 }
 
 /**
- * On a player's profile: signs in with Google through the Auth emulator's popup (a new made-up
+ * From a player's profile: signs in with Google through the Auth emulator's popup (a new made-up
  * account), from the page menu on a phone or the rail on a wide screen, then claims the player
  * ("To ja"), so the account may dress them.
  */
 export async function signInAs(page: Page): Promise<void> {
+  // From the leagues page, which has the menu (a profile has a back arrow instead).
+  const profile = page.url();
+  await page.goto('/#/leagues');
   const menu = page.getByRole('button', { name: t('appMenu.open') });
   if (await menu.isVisible()) {
     await menu.click();
@@ -205,6 +208,7 @@ export async function signInAs(page: Page): Promise<void> {
     await page.keyboard.press('Escape');
     await expect(page.locator('fl-app-menu')).toBeHidden();
   }
+  await page.goto(profile);
   await page.locator('section.hero').getByRole('button', { name: t('me.itsMe') }).click();
   await expect(page.locator('section.hero .you-tag')).toBeVisible();
 }
