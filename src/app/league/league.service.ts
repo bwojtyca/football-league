@@ -13,6 +13,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { user as userChanges } from 'rxfire/auth';
 import { collectionData, docData } from 'rxfire/firestore';
 import { catchError, distinctUntilChanged, map, Observable, of, switchMap } from 'rxjs';
@@ -122,15 +123,30 @@ export class LeagueService {
     const ref = doc(this._leagues);
     return {
       id: ref.id,
-      // Signed in with Google, its creator owns it (its settings are theirs).
-      saved: setDoc(ref, {
-        name,
-        created: new Date().toISOString(),
-        players: [],
-        members: [this._auth.currentUser?.uid ?? ''],
-        ...(this._googleUid() && { owner: this._googleUid() }),
-      }),
+      // Its creator is its first member (private leagues): written once the account is there.
+      saved: this._account().then((uid) =>
+        setDoc(ref, {
+          name,
+          created: new Date().toISOString(),
+          players: [],
+          members: [uid],
+          // Signed in with Google, its creator owns it (its settings are theirs).
+          ...(this._googleUid() && { owner: this._googleUid() }),
+        }),
+      ),
     };
+  }
+
+  /** The account's uid once there is one (`AuthService` signs every visitor in). */
+  private _account(): Promise<string> {
+    return new Promise((resolve) => {
+      const off = onAuthStateChanged(this._auth, (user) => {
+        if (user) {
+          off();
+          resolve(user.uid);
+        }
+      });
+    });
   }
 
   public addPlayer(leagueId: string, playerId: string): Promise<void> {
