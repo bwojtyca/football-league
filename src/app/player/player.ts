@@ -11,6 +11,8 @@ export interface Player {
   name: string;
   /** The shirt chosen on the profile (`kitOf()` reads it safely). */
   kit?: Kit;
+  /** The Google account that claimed this player (sign-in, Oct 2026). */
+  uid?: string;
 }
 
 export type Result = 'W' | 'L';

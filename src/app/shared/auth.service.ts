@@ -9,12 +9,13 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { deleteField, doc, writeBatch } from 'firebase/firestore';
 import { authState } from 'rxfire/auth';
 import { docData } from 'rxfire/firestore';
 import { map, Observable, of, switchMap } from 'rxjs';
 
 import { AUTH, FIRESTORE } from '../firebase';
+import { PlayerService } from '../player/player.service';
 
 /** What a Google account keeps: the player it is (`users/{uid}`). */
 interface Account {
@@ -31,6 +32,7 @@ interface Account {
 export class AuthService {
   private readonly _auth = inject(AUTH);
   private readonly _db = inject(FIRESTORE);
+  private readonly _players = inject(PlayerService);
 
   /** `undefined` until Firebase knows, `null` when nobody is signed in (not even anonymously). */
   public readonly user = toSignal(authState(this._auth), { initialValue: undefined });
@@ -40,6 +42,9 @@ export class AuthService {
     const user = this.user();
     return !!user && !user.isAnonymous;
   });
+
+  /** The account's uid (anonymous or not). */
+  public readonly uid = computed(() => this.user()?.uid ?? null);
 
   /** The account's name to show (the Google name, else the e-mail). */
   public readonly name = computed(() => {
@@ -103,16 +108,28 @@ export class AuthService {
     return signOut(this._auth);
   }
 
-  /** Keeps on the Google account which player it is (nothing for an anonymous one). */
+  /**
+   * Keeps on the Google account which player it is, and claims that player (one account, one
+   * player; the rules check both in the same write). Nothing for an anonymous account.
+   */
   public setPlayer(playerId: string | null): Promise<void> {
     const user = this._auth.currentUser;
     if (!user || user.isAnonymous) {
       return Promise.resolve();
     }
+    const batch = writeBatch(this._db);
     const updated = new Date().toISOString();
-    return setDoc(
+    batch.set(
       doc(this._db, 'users', user.uid),
       playerId ? { player: playerId, updated } : { updated },
     );
+    if (playerId && this._players.player(playerId)?.uid !== user.uid) {
+      batch.update(doc(this._db, 'players', playerId), { uid: user.uid });
+    }
+    const before = this.player();
+    if (before && before !== playerId && this._players.player(before)?.uid === user.uid) {
+      batch.update(doc(this._db, 'players', before), { uid: deleteField() });
+    }
+    return batch.commit();
   }
 }

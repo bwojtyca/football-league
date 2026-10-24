@@ -867,7 +867,8 @@
     "missing": "do rankingu brakuje {n, plural, one {# meczu} few {# meczów} many {# meczów} other {# meczu}}",
     "profile": "Twój profil, statystyki i koszulka",
     "device": "Grasz jako",
-    "deviceNone": "Którym graczem jesteś?"
+    "deviceNone": "Którym graczem jesteś?",
+    "taken": "gracz z kontem"
   },
   "welcome": {
     "title": "Wyniki piłkarzyków w Twojej lidze",

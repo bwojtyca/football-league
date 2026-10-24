@@ -156,28 +156,73 @@ async function token(
   return { uid: body.localId, idToken: body.idToken };
 }
 
-test('accounts: a Google account keeps its own player only', async ({ request }) => {
-  const player = `rules-player-${tag()}`;
-  expect(await create(request, `players/${player}`, { name: 'Konto' })).toBe(200);
+/** One atomic write of an account and its player's claim, as the app does it. */
+async function claim(
+  request: APIRequestContext,
+  auth: { uid: string; idToken: string },
+  player: string,
+  release?: string,
+): Promise<number> {
+  const root = DOCUMENTS.slice(DOCUMENTS.indexOf('projects/'));
+  const writes: object[] = [
+    {
+      update: {
+        name: `${root}/users/${auth.uid}`,
+        fields: fields({ player, updated: new Date().toISOString() }),
+      },
+    },
+    {
+      update: { name: `${root}/players/${player}`, fields: fields({ uid: auth.uid }) },
+      updateMask: { fieldPaths: ['uid'] },
+    },
+  ];
+  if (release) {
+    writes.push({
+      update: { name: `${root}/players/${release}`, fields: {} },
+      updateMask: { fieldPaths: ['uid'] },
+    });
+  }
+  const response = await request.post(`${DOCUMENTS}:commit`, {
+    data: { writes },
+    headers: { Authorization: `Bearer ${auth.idToken}` },
+  });
+  return response.status();
+}
+
+test('accounts: a Google account claims one free player, whose kit is then its own', async ({
+  request,
+}) => {
+  const ala = `rules-ala-${tag()}`;
+  const ola = `rules-ola-${tag()}`;
+  expect(await create(request, `players/${ala}`, { name: 'Ala' })).toBe(200);
+  expect(await create(request, `players/${ola}`, { name: 'Ola' })).toBe(200);
   const updated = new Date().toISOString();
 
-  // No account, or an anonymous one: nothing is kept.
-  expect(await create(request, `users/nobody-${tag()}`, { player, updated })).toBe(403);
+  // No account, or an anonymous one: nothing is kept or claimed.
+  expect(await create(request, `users/nobody-${tag()}`, { updated })).toBe(403);
   const anonymous = await token(request);
-  const asAnonymous = { Authorization: `Bearer ${anonymous.idToken}` };
-  expect(await create(request, `users/${anonymous.uid}`, { player, updated }, asAnonymous)).toBe(
-    403,
-  );
+  expect(await claim(request, anonymous, ala)).toBe(403);
 
-  // A Google account: its own document, an existing player, nothing else.
-  const google = await token(request, `g-${tag()}`);
-  const asGoogle = { Authorization: `Bearer ${google.idToken}` };
-  expect(await create(request, `users/${google.uid}`, { player, updated }, asGoogle)).toBe(200);
-  expect(await update(request, `users/${google.uid}`, { player: 'no-such-player' }, asGoogle)).toBe(
-    403,
-  );
-  expect(await create(request, `users/someone-${tag()}`, { player, updated }, asGoogle)).toBe(403);
-  expect(
-    await create(request, `users/${google.uid}x`, { player, updated, extra: 1 }, asGoogle),
-  ).toBe(403);
+  // A Google account claims Ala; its account must say so in the same write.
+  const first = await token(request, `g1-${tag()}`);
+  const asFirst = { Authorization: `Bearer ${first.idToken}` };
+  expect(await update(request, `players/${ala}`, { uid: first.uid }, asFirst)).toBe(403);
+  expect(await claim(request, first, ala)).toBe(200);
+
+  // Another account cannot take her, nor write someone else's account.
+  const second = await token(request, `g2-${tag()}`);
+  const asSecond = { Authorization: `Bearer ${second.idToken}` };
+  expect(await claim(request, second, ala)).toBe(403);
+  expect(await create(request, `users/${first.uid}x`, { updated }, asSecond)).toBe(403);
+
+  // Ala's kit is now her owner's; Ola's anyone's.
+  const kit = { pattern: 'plain', c1: 'red', c2: 'white' };
+  expect(await update(request, `players/${ala}`, { kit })).toBe(403);
+  expect(await update(request, `players/${ala}`, { kit }, asSecond)).toBe(403);
+  expect(await update(request, `players/${ala}`, { kit }, asFirst)).toBe(200);
+  expect(await update(request, `players/${ola}`, { kit })).toBe(200);
+
+  // Moving to Ola lets Ala go in the same write; then the second account may take Ala.
+  expect(await claim(request, first, ola, ala)).toBe(200);
+  expect(await claim(request, second, ala)).toBe(200);
 });

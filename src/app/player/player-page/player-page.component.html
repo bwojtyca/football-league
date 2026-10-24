@@ -39,14 +39,17 @@
       <div class="pills">
         @if (me.id() === p.id) {
           <span class="you-tag">{{ 'me.you' | transloco }}</span>
-        } @else if (!me.id()) {
+        } @else if (!me.id() && me.canEdit(p.id)) {
           <button class="kit-pill" (click)="me.set(p.id)">
             <mat-icon aria-hidden="true">person_pin</mat-icon>{{ 'me.itsMe' | transloco }}
           </button>
         }
-        <button class="kit-pill" (click)="editKit(p.id)">
-          <mat-icon aria-hidden="true">checkroom</mat-icon>{{ 'kit.title' | transloco }}
-        </button>
+        <!-- A claimed player's kit is their own to change (rules: players/{id}.uid). -->
+        @if (me.canEdit(p.id)) {
+          <button class="kit-pill" (click)="editKit(p.id)">
+            <mat-icon aria-hidden="true">checkroom</mat-icon>{{ 'kit.title' | transloco }}
+          </button>
+        }
       </div>
       @if (p.games > 0) {
         <div class="tiles">

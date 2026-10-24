@@ -867,7 +867,8 @@
     "missing": "{n, plural, one {# more game} other {# more games}} to be ranked",
     "profile": "Your profile, statistics and kit",
     "device": "You play as",
-    "deviceNone": "Which player are you?"
+    "deviceNone": "Which player are you?",
+    "taken": "has an account"
   },
   "welcome": {
     "title": "Foosball scores for your league",
