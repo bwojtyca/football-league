@@ -188,9 +188,9 @@ export async function signInAs(page: Page): Promise<void> {
   // From the leagues page, which has the menu (a profile has a back arrow instead).
   const profile = page.url();
   await page.goto('/#/leagues');
-  const menu = page.getByRole('button', { name: t('appMenu.open') });
-  if (await menu.isVisible()) {
-    await menu.click();
+  // A phone or tablet has the menu; a wide screen has the account at the foot of the rail.
+  if ((page.viewportSize()?.width ?? 0) < 1000) {
+    await page.getByRole('button', { name: t('appMenu.open') }).click();
   }
   // The button is there; the Google popup itself is the emulator's page, so the account is
   // made through the app's test hook instead (emulator builds only, same linking path).

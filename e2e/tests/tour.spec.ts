@@ -110,7 +110,9 @@ for (const size of SIZES) {
       await page.getByRole('tab', { name: t('player.tabs.games') }).click();
       await shot('13-profile-games');
       await page.getByRole('tab', { name: t('player.tabs.overview') }).click();
-      // The kit is the player's own: sign in and say "this is me" first.
+      // The kit is the player's own: sign in and say "this is me" first. The data is shared by
+      // every size and a claimed player is nobody else's, so each size dresses another one.
+      await page.goto(`${league}/player/${data.players[SIZES.indexOf(size) + 2]}`);
       await signInAs(page);
       await page
         .locator('section.hero')
