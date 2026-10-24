@@ -13,7 +13,7 @@ import { KitFigureComponent } from '../../player/kit-figure.component';
 import { GameService } from '../../game/game.service';
 import { PlayerService } from '../../player/player.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
-import { crestOf } from '../league';
+import { crestOf, League } from '../league';
 import { openLeagueNewDialog } from '../league-new-dialog.component';
 import { LeagueService } from '../league.service';
 
@@ -59,19 +59,21 @@ export class LeaguesComponent {
     { pattern: 'stripes', c1: 'white', c2: 'black', num: 10 },
   ];
 
-  /** Every league with its crest, games, last game and a game running in it. */
+  /** The account's leagues, each with its crest, games, last game and a game running in it. */
   private readonly _all = computed(() =>
-    this._leagueService.leagues()?.map((league) => {
-      const games = this._gameService.leagueGames(league.id);
-      return {
-        ...league,
-        crest: crestOf(league.name),
-        games: games?.filter((game) => game.end).length,
-        lastGame: games?.[0]?.start,
-        live: this._live(games?.find((game) => !game.end && !game.paused)),
-      };
-    }),
+    this._leagueService.leagues()?.map((league) => this._withGames(league)),
   );
+
+  private _withGames(league: League) {
+    const games = this._gameService.leagueGames(league.id);
+    return {
+      ...league,
+      crest: crestOf(league.name),
+      games: games?.filter((game) => game.end).length,
+      lastGame: games?.[0]?.start,
+      live: this._live(games?.find((game) => !game.end && !game.paused)),
+    };
+  }
 
   /**
    * The leagues shown: those matching the search, or the ones opened on this device (with
@@ -96,8 +98,10 @@ export class LeaguesComponent {
     }
     const recent = this._leagueService
       .recent()
+      // By id: an open league from before is on this device without being the account's.
       .map((id) => this._leagueService.league(id))
-      .filter((league): league is NonNullable<typeof league> => !!league);
+      .filter((league): league is League => !!league && !league.deleted)
+      .map((league) => this._withGames(league));
     return recent.length
       ? recent
       : [...all]
