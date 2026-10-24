@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
 
 import { tag } from './helpers';
-import { create, DOCUMENTS, fields, update, Value } from './rest';
+import { create, DOCUMENTS, fields, update, Value, visitor } from './rest';
 
 // Writes the app never makes, straight to the emulator without credentials, so
 // `firestore.rules` decides them like for any visitor.
@@ -20,6 +20,7 @@ test('tournaments: what may change while running and after the end', async ({ re
         entries: [],
       }),
     },
+    headers: await visitor(request),
   });
   expect(created.status()).toBe(200);
   const path = `tournaments/${id}`;
@@ -270,4 +271,13 @@ test('league owners: settings and erasing belong to the owner, players to anyone
   // Erasing for good: the owner alone, and never a league without one.
   expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOther })).status()).toBe(403);
   expect((await request.delete(`${DOCUMENTS}/${owned}`, { headers: asOwner })).status()).toBe(200);
+});
+
+test('without an account nothing is written', async ({ request }) => {
+  const id = `no-account-${tag()}`;
+  const created = await request.post(`${DOCUMENTS}/players?documentId=${id}`, {
+    data: { fields: fields({ name: 'Nikt' }) },
+  });
+  expect(created.status()).toBe(403);
+  expect(await create(request, `players/${id}`, { name: 'Ktoś' })).toBe(200);
 });

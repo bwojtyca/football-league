@@ -63,7 +63,7 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   links that account by a popup. A Google account claims its player (`players/{id}.uid`,
   written with `users/{uid}` in one batch): nobody else may say they are that player, and only
   the owner changes the player's kit (unclaimed players' kits cannot change). The rules do not
-  require an account for anything else yet (step 3b).
+  require an account (anonymous included) for every write since 24 Oct 2026 (step 3b).
 - `players/{id}`: `name`, `kit?` = `{ pattern, c1, c2, num? }` (pattern `plain | stripes |
   hoops | halves | sash | quarters`, colours by name from the palette in `player/kit.ts`,
   number 1–99; the only field that may change). Documents from 2017 also hold `wins`, `loses`
@@ -98,7 +98,8 @@ https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer 
   Queues, draws, fixtures and tables are computed from the tournament's games
   (`tournament/tournament.ts`), so devices never have to agree on shared state.
 - Rankings and stats are computed from games, not from player counters (those drifted in 2017).
-- The database is publicly readable; `firestore.rules` allows only the writes the app makes
+- The database is publicly readable; every write needs an account (anonymous included, the app
+  signs every visitor in); `firestore.rules` allows only the writes the app makes
   (create leagues, rename or archive them and add players; create players and dress them in a
   kit; create games; one
   goal per update with its event, a swap of positions or undoing the last event; close a won
