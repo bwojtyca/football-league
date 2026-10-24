@@ -131,7 +131,7 @@ service cloud.firestore {
     }
 
     match /leagues/{leagueId} {
-      allow read: if isMember(resource.data);
+      allow read: if resource == null || isMember(resource.data);
 
       // Its creator is its first member, and its owner when signed in with Google.
       allow create: if signedIn() && (request.resource.data.keys().hasOnly(['name', 'created', 'players', 'archived', 'owner', 'members'])
@@ -196,7 +196,8 @@ service cloud.firestore {
     }
 
     match /tournaments/{tournamentId} {
-      allow read: if memberOf(resource.data.league);
+      // A document not there yet (just made on this device) shows nothing to anyone.
+      allow read: if resource == null || memberOf(resource.data.league);
 
       // Erased for good only with its league, by the league's owner.
       allow delete: if signedIn() && memberOf(resource.data.league) && (ownsLeague(resource.data.league));
@@ -251,7 +252,8 @@ service cloud.firestore {
     }
 
     match /games/{gameId} {
-      allow read: if memberOf(resource.data.league);
+      // A document not there yet (just made on this device) shows nothing to anyone.
+      allow read: if resource == null || memberOf(resource.data.league);
 
       // Games from 2017 have no `league`, `mode`, `events` or `series`; they belong to the
       // legacy league and were played to 8.
