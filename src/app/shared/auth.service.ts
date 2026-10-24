@@ -11,9 +11,9 @@ import {
   signOut,
 } from 'firebase/auth';
 import { deleteField, doc, writeBatch } from 'firebase/firestore';
-import { authState } from 'rxfire/auth';
+import { user as userChanges } from 'rxfire/auth';
 import { docData } from 'rxfire/firestore';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { distinctUntilChanged, map, Observable, of, switchMap } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { AUTH, FIRESTORE } from '../firebase';
@@ -36,8 +36,26 @@ export class AuthService {
   private readonly _db = inject(FIRESTORE);
   private readonly _players = inject(PlayerService);
 
-  /** `undefined` until Firebase knows, `null` when nobody is signed in (not even anonymously). */
-  public readonly user = toSignal(authState(this._auth), { initialValue: undefined });
+  /**
+   * `undefined` until Firebase knows, `null` when nobody is signed in (not even anonymously).
+   * From token changes, not sign-in changes: linking an anonymous account to Google keeps the
+   * same user, so only its token says so; a copy, so the signal sees the change.
+   */
+  public readonly user = toSignal(
+    userChanges(this._auth).pipe(
+      map((current) =>
+        current
+          ? {
+              uid: current.uid,
+              isAnonymous: current.isAnonymous,
+              displayName: current.displayName,
+              email: current.email,
+            }
+          : null,
+      ),
+    ),
+    { initialValue: undefined },
+  );
 
   /** Signed in with Google (not only anonymously). */
   public readonly signedIn = computed(() => {
@@ -57,6 +75,8 @@ export class AuthService {
   /** The player a Google account is: `undefined` while loading or without an account. */
   public readonly player = toSignal(
     toObservable(this.user).pipe(
+      // A token refresh (hourly) is not another account.
+      distinctUntilChanged((a, b) => a?.uid === b?.uid && a?.isAnonymous === b?.isAnonymous),
       switchMap((user) =>
         user && !user.isAnonymous
           ? (docData(doc(this._db, 'users', user.uid)) as Observable<Account | undefined>).pipe(
