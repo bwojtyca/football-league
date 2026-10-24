@@ -233,7 +233,7 @@ test('accounts: a Google account claims one free player, and only it dresses the
   expect(await claim(request, second, ala)).toBe(200);
 });
 
-test('league owners: settings are the owner's, players anyone's, erasing the owner's alone', async ({
+test('league owners: settings and erasing belong to the owner, players to anyone', async ({
   request,
 }) => {
   const owner = await token(request, `own-${tag()}`);
