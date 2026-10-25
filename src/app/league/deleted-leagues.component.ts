@@ -29,6 +29,10 @@ import { LeagueService } from './league.service';
                 {{ 'common.restore' | transloco }}
               </button>
             }
+            @if (!league.owner && auth.signedIn()) {
+              <!-- A league from before has no owner: take it, to erase it for good too. -->
+              <button matButton (click)="claim(league)">{{ 'owner.claim' | transloco }}</button>
+            }
             @if (league.owner && runs(league)) {
               <button matButton class="erase" (click)="erase(league)">
                 {{ 'owner.erase' | transloco }}
@@ -81,13 +85,17 @@ import { LeagueService } from './league.service';
 })
 export class DeletedLeaguesComponent {
   protected readonly leagues = inject(LeagueService);
-  private readonly _auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
   private readonly _notifier = inject(Notifier);
   private readonly _transloco = inject(TranslocoService);
   protected readonly crest = crestOf;
 
   protected runs(league: League): boolean {
-    return manages(league, this._auth.uid());
+    return manages(league, this.auth.uid());
+  }
+
+  protected claim(league: League): void {
+    this.leagues.claim(league.id).catch((error) => this._notifier.error('error.league', error));
   }
 
   protected restore(league: League): void {
