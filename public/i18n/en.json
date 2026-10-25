@@ -890,7 +890,9 @@
     "signIn": "Sign in with Google",
     "signInHint": "Your player on every device",
     "google": "Google account",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "signInShort": "Sign in",
+    "noAccount": "No Google account"
   },
   "owner": {
     "title": "Owner",

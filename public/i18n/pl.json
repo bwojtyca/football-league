@@ -890,7 +890,9 @@
     "signIn": "Zaloguj przez Google",
     "signInHint": "Twój gracz na każdym urządzeniu",
     "google": "Konto Google",
-    "signOut": "Wyloguj"
+    "signOut": "Wyloguj",
+    "signInShort": "Zaloguj",
+    "noAccount": "Bez konta Google"
   },
   "owner": {
     "title": "Właściciel",

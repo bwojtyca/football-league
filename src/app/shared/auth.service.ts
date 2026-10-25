@@ -66,6 +66,12 @@ export class AuthService {
   /** The account's uid (anonymous or not). */
   public readonly uid = computed(() => this.user()?.uid ?? null);
 
+  /** The Google account's e-mail (`null` without one). */
+  public readonly email = computed(() => {
+    const user = this.user();
+    return user && !user.isAnonymous ? (user.email ?? user.displayName ?? '') : null;
+  });
+
   /** The account's name to show (the Google name, else the e-mail). */
   public readonly name = computed(() => {
     const user = this.user();

@@ -65,12 +65,25 @@ export class LeagueService {
       ),
   );
 
-  /** Deleted leagues, newest first. */
-  public readonly deletedLeagues = computed(() =>
-    (this._stored() ?? [])
+  /**
+   * Deleted leagues, newest first: the account's, and those opened on this device (leagues from
+   * before have no members, so they are only known by id).
+   */
+  public readonly deletedLeagues = computed(() => {
+    const byId = new Map<string, League>();
+    for (const league of this._stored() ?? []) {
+      byId.set(league.id, league);
+    }
+    for (const id of deviceLeagues()) {
+      const league = this.league(id);
+      if (league) {
+        byId.set(league.id, league);
+      }
+    }
+    return [...byId.values()]
       .filter((league) => league.deleted)
-      .sort((a, b) => (a.created < b.created ? 1 : a.created > b.created ? -1 : 0)),
-  );
+      .sort((a, b) => (a.created < b.created ? 1 : a.created > b.created ? -1 : 0));
+  });
 
   /** A league, deleted ones included; `undefined` while loading, `null` when there is none. */
   public league(id: string): League | null | undefined {

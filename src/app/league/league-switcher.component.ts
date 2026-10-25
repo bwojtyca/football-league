@@ -267,7 +267,11 @@ export class LeagueSwitcherComponent {
     return (
       ids
         .map((id) => this._leagueService.league(id))
-        .filter((league): league is NonNullable<typeof league> => !!league)
+        // Deleted leagues live on their own page, not among the active ones (owner, 25 Oct 2026).
+        .filter(
+          (league): league is NonNullable<typeof league> =>
+            !!league && (!league.deleted || league.id === this.current),
+        )
         // Finished games, as the statistics count them.
         .map((league) => ({
           ...league,

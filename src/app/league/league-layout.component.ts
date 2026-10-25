@@ -80,6 +80,12 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
           >
             <span class="crest" aria-hidden="true">{{ league.crest }}</span>
             <span class="league-name" [attr.title]="league.name">{{ league.name }}</span>
+            @if (league.archived) {
+              <!-- Archived: no new games, apart from the active leagues at a glance. -->
+              <mat-icon class="archived" [attr.aria-label]="'leagues.archive' | transloco"
+                >lock</mat-icon
+              >
+            }
           </a>
         }
         <a routerLink="/leagues" class="league">
@@ -263,8 +269,17 @@ export class LeagueLayoutComponent {
     const ids = [...new Set([this.leagueId(), ...this._leagueService.recent()])];
     return ids
       .map((id) => this._leagueService.league(id))
-      .filter((league): league is NonNullable<typeof league> => !!league)
-      .map((league) => ({ id: league.id, name: league.name, crest: crestOf(league.name) }));
+      // Deleted leagues live on their own page, not among the active ones (owner, 25 Oct 2026).
+      .filter(
+        (league): league is NonNullable<typeof league> =>
+          !!league && (!league.deleted || league.id === this.leagueId()),
+      )
+      .map((league) => ({
+        id: league.id,
+        name: league.name,
+        crest: crestOf(league.name),
+        archived: !!league.archived,
+      }));
   });
 
   /** `undefined` while loading, `null` when there is no such league. */

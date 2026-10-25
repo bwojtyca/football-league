@@ -38,7 +38,7 @@ test('"this is me" on the device: the question, the choice, the "You" card and t
   await expect(page.locator('section.hero .you-tag')).toHaveText(t('me.you'));
   await page.goBack();
   await page.getByRole('button', { name: t('appMenu.open') }).click();
-  await expect(page.locator('fl-app-menu')).toContainText(`${t('me.device')}: ${a}`);
+  await expect(page.locator('fl-app-menu fl-account')).toContainText(a.split(' ')[0]);
   await page.keyboard.press('Escape');
   await expect(page.locator('fl-app-menu')).toBeHidden();
 

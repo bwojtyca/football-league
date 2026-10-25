@@ -791,6 +791,14 @@ details.fl-fold[open] > summary::after {
     font: 800 0.75rem/1 var(--fl-display);
   }
 
+  .fl-rail .league mat-icon.archived {
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: var(--fl-ink-2);
+  }
+
   .fl-rail .league mat-icon {
     width: 32px;
     text-align: center;
