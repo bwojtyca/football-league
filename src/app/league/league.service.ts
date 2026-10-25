@@ -114,7 +114,9 @@ export class LeagueService {
   /** Renames, locks or unlocks, sets the ranking threshold, deletes or restores a league. */
   public update(
     id: string,
-    changes: Partial<Pick<League, 'name' | 'archived' | 'minGames' | 'deleted' | 'gamesDeleted'>>,
+    changes: Partial<
+      Pick<League, 'name' | 'archived' | 'minGames' | 'deleted' | 'gamesDeleted' | 'admins'>
+    >,
   ): Promise<void> {
     return updateDoc(doc(this._leagues, id), changes);
   }

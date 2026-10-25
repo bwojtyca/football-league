@@ -64,7 +64,9 @@
     "found": "Found",
     "recent": "On this device",
     "active": "Played lately",
-    "noneFound": "No league has that name."
+    "noneFound": "No league has that name.",
+    "archived": "{n, plural, one {Archived league (#)} other {Archived leagues (#)}}",
+    "deletedLink": "{n, plural, one {Deleted league (#)} other {Deleted leagues (#)}}"
   },
   "league": {
     "ranking": "Ranking",
@@ -892,12 +894,27 @@
   },
   "owner": {
     "title": "Owner",
-    "you": "You own this league: only you change its settings.",
-    "other": "This league has an owner: only they change its settings, delete and restore it.",
+    "you": "You own this league.",
+    "other": "This league is run by its owners: only they change its settings, delete and restore it.",
     "none": "This league has no owner, so anyone may change its settings.",
     "claim": "Become the owner",
     "signIn": "Sign in with Google to become the owner.",
     "erase": "Delete for good",
-    "eraseConfirm": "Delete the league for good, with its games and tournaments? This cannot be undone."
+    "eraseConfirm": "Delete the league for good, with its games and tournaments? This cannot be undone.",
+    "coOwner": "You co-own this league: you run it together with its owner.",
+    "coOwners": "Co-owners",
+    "noCoOwners": "A co-owner is a member of the league who signed in with Google and picked their player."
+  },
+  "invite": {
+    "title": "Invite to the league",
+    "hint": "Scan the code with a phone or send the link. Whoever opens it joins the league.",
+    "qr": "QR code with the invitation",
+    "copy": "Copy link",
+    "share": "Share"
+  },
+  "deleted": {
+    "title": "Deleted leagues",
+    "hint": "Leagues deleted from your list. They can be restored with their games or, when they have an owner, deleted for good.",
+    "none": "No deleted leagues."
   }
 }

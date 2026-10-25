@@ -18,9 +18,10 @@ import { GameService } from '../../game/game.service';
 import { Notifier } from '../../notifier';
 import { AuthService } from '../../shared/auth.service';
 import { TopBarComponent } from '../../shared/top-bar.component';
-import { League } from '../league';
+import { League, manages } from '../league';
 import { openLeagueDeleteDialog } from '../league-delete-dialog.component';
 import { LeagueService } from '../league.service';
+import { PlayerService } from '../../player/player.service';
 
 /** Choices for the fewest games a player needs to be ranked. */
 const MIN_GAMES = [0, 3, 5, 10, 20, 50];
@@ -55,8 +56,24 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
       } @else {
         <h2 class="fl-kicker">{{ 'owner.title' | transloco }}</h2>
         <section class="card">
-          @if (current.owner && current.owner === auth.uid()) {
-            <p>{{ 'owner.you' | transloco }}</p>
+          @if (current.owner && manages(current)) {
+            <p>
+              {{ (current.owner === auth.uid() ? 'owner.you' : 'owner.coOwner') | transloco }}
+            </p>
+            <!-- Co-owners run the league too, for when the owner is away. -->
+            <h3>{{ 'owner.coOwners' | transloco }}</h3>
+            @for (person of coOwnerChoices(); track person.uid) {
+              <div class="row">
+                <span>{{ person.name }}</span>
+                <mat-slide-toggle
+                  [checked]="person.admin"
+                  (change)="setCoOwner(person.uid, $event.checked)"
+                  [attr.aria-label]="('owner.coOwners' | transloco) + ': ' + person.name"
+                />
+              </div>
+            } @empty {
+              <p class="hint">{{ 'owner.noCoOwners' | transloco }}</p>
+            }
           } @else if (current.owner) {
             <p>{{ 'owner.other' | transloco }}</p>
           } @else {
@@ -69,7 +86,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
           }
         </section>
         <!-- The rest is the owner's, or anyone's while the league has none. -->
-        @if (!current.owner || current.owner === auth.uid()) {
+        @if (manages(current)) {
           <h2 class="fl-kicker">{{ 'settings.general' | transloco }}</h2>
           <section class="card">
             <mat-form-field appearance="outline" class="full">
@@ -211,6 +228,7 @@ const MIN_GAMES = [0, 3, 5, 10, 20, 50];
 export class LeagueSettingsComponent {
   private readonly _leagueService = inject(LeagueService);
   protected readonly auth = inject(AuthService);
+  private readonly _players = inject(PlayerService);
   private readonly _gameService = inject(GameService);
   private readonly _notifier = inject(Notifier);
   private readonly _snackBar = inject(MatSnackBar);
@@ -233,6 +251,43 @@ export class LeagueSettingsComponent {
         this.name.set(league.name);
       }
     });
+  }
+
+  protected manages(league: League): boolean {
+    return manages(league, this.auth.uid());
+  }
+
+  /** League players with a Google account who are members: who may become a co-owner. */
+  protected readonly coOwnerChoices = computed(() => {
+    const league = this.league();
+    if (!league?.owner) {
+      return [];
+    }
+    return league.players
+      .map((id) => this._players.player(id))
+      .filter((player) => !!player?.uid && player.uid !== league.owner)
+      .filter((player) => !!league.members?.includes(player!.uid!))
+      .map((player) => ({
+        uid: player!.uid!,
+        name: player!.name,
+        admin: !!league.admins?.includes(player!.uid!),
+      }));
+  });
+
+  protected setCoOwner(uid: string, admin: boolean): void {
+    const league = this.league();
+    if (!league) {
+      return;
+    }
+    const admins = new Set(league.admins ?? []);
+    if (admin) {
+      admins.add(uid);
+    } else {
+      admins.delete(uid);
+    }
+    this._leagueService
+      .update(league.id, { admins: [...admins] })
+      .catch((error) => this._notifier.error('error.league', error));
   }
 
   protected claim(): void {

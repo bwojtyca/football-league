@@ -13,7 +13,7 @@ import { filter, map } from 'rxjs';
 import { Notifier } from '../notifier';
 import { TopBarComponent } from '../shared/top-bar.component';
 import { openAddPlayerDialog } from './add-player-dialog.component';
-import { crestOf, currentLeagueId } from './league';
+import { crestOf, currentLeagueId, manages } from './league';
 import { LeagueService } from './league.service';
 import { openNewPlaySheet } from './new-play-sheet.component';
 import { PagePlayService } from '../shared/page-play.service';
@@ -55,12 +55,13 @@ type Section = 'ranking' | 'games' | 'tournaments' | 'players' | 'none';
         <p class="note">{{ 'league.deletedNote' | transloco }}</p>
         <!-- Restoring is the owner's, or anyone's while the league has none; erasing for good
              is the owner's alone. -->
-        @if (!current.owner || current.owner === auth.uid()) {
+        @if (manages(current, auth.uid())) {
           <button matButton="filled" (click)="restore()">{{ 'common.restore' | transloco }}</button>
         }
-        @if (current.owner && current.owner === auth.uid()) {
+        @if (current.owner && manages(current, auth.uid())) {
           <button matButton class="erase" (click)="erase()">{{ 'owner.erase' | transloco }}</button>
         }
+        <p><a routerLink="/leagues/deleted">{{ 'deleted.title' | transloco }}</a></p>
       </main>
     } @else {
       <div class="content"><router-outlet /></div>
@@ -351,6 +352,7 @@ export class LeagueLayoutComponent {
   /** A game, a series or a tournament; a league without players gets its players first. */
   private readonly _pagePlay = inject(PagePlayService);
   protected readonly auth = inject(AuthService);
+  protected readonly manages = manages;
   private readonly _transloco = inject(TranslocoService);
   private readonly _gameService = inject(GameService);
 

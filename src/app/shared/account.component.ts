@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 @Component({
   selector: 'fl-account',
   imports: [MatButtonModule, MatIconModule, TranslocoPipe],
+  host: { '[class.compact]': 'compact()' },
   template: `
     @if (auth.signedIn()) {
       <div class="row">
@@ -70,9 +71,35 @@ import { AuthService } from './auth.service';
       font: 400 0.875rem/1.3 var(--fl-display);
       color: var(--fl-ink-2);
     }
+    /* In the rail of a wide screen: a row like the rail's others (owner, 25 Oct 2026: the
+       two-line menu row looked broken there). */
+    :host(.compact) .row {
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      min-height: 44px;
+      padding: 0 4px 0 12px;
+      border-radius: 12px;
+      color: var(--fl-ink-2);
+      font: 600 0.9375rem/1.25 var(--fl-display);
+    }
+    :host(.compact) button.row:hover {
+      background: var(--fl-card-2);
+    }
+    :host(.compact) .label small {
+      display: none;
+    }
+    :host(.compact) .label b {
+      font-weight: 600;
+    }
+    :host(.compact) .row button {
+      --mat-button-text-container-height: 32px;
+      --mat-button-text-horizontal-padding: 8px;
+      font-size: 0.8125rem;
+    }
   `,
 })
 export class AccountComponent {
+  /** One line, as the rail's rows. */
+  public readonly compact = input(false);
   protected readonly auth = inject(AuthService);
   private readonly _notifier = inject(Notifier);
 

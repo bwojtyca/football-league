@@ -29,7 +29,7 @@ import { AccountComponent } from './account.component';
         </span>
       </button>
     }
-    <fl-account />
+    <fl-account [compact]="true" />
     <fl-language-switch />
   `,
   styles: `

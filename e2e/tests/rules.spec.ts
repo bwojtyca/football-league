@@ -337,6 +337,37 @@ test('private leagues: members read and play; others join with an invitation', a
   expect(await update(request, `leagues/${id}`, { players: ['p1'] }, asGuest)).toBe(200);
 });
 
+test('co-owners: the owner makes members co-owners, who then run the league', async ({
+  request,
+}) => {
+  const owner = await token(request, `cown-${tag()}`);
+  const helper = await token(request, `chlp-${tag()}`);
+  const stranger = await token(request, `cstr-${tag()}`);
+  const as = (account: { idToken: string }) => ({ Authorization: `Bearer ${account.idToken}` });
+  const path = `leagues/co-${tag()}`;
+  const league = {
+    name: 'Wspólna',
+    created: new Date().toISOString(),
+    players: [],
+    members: [owner.uid],
+    owner: owner.uid,
+  };
+  expect(await create(request, path, league, as(owner))).toBe(200);
+  expect(await update(request, path, { admins: [stranger.uid] }, as(owner))).toBe(403);
+
+  // The helper joins, then becomes a co-owner; a member cannot make themself one.
+  const code = `c-${tag()}`;
+  expect(
+    await create(request, `${path}/invites/${code}`, { created: 'now', by: owner.uid }, as(owner)),
+  ).toBe(200);
+  expect(
+    await update(request, path, { members: [owner.uid, helper.uid], invite: code }, as(helper)),
+  ).toBe(200);
+  expect(await update(request, path, { admins: [helper.uid] }, as(helper))).toBe(403);
+  expect(await update(request, path, { admins: [helper.uid] }, as(owner))).toBe(200);
+  expect(await update(request, path, { name: 'Przez współwłaściciela' }, as(helper))).toBe(200);
+});
+
 test('without an account nothing is written', async ({ request }) => {
   const id = `no-account-${tag()}`;
   const created = await request.post(`${DOCUMENTS}/players?documentId=${id}`, {

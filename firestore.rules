@@ -59,9 +59,12 @@ service cloud.firestore {
         && request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
 
-    // A league's settings: its owner's, or anyone's while it has none.
+    // A league's settings: its owners' (the owner and the co-owners in `admins`, Google
+    // accounts), or anyone's while it has none.
     function managesLeague(league) {
-      return !('owner' in league) || isGoogle(league.owner);
+      return !('owner' in league)
+        || isGoogle(league.owner)
+        || (isGoogle(request.auth.uid) && request.auth.uid in league.get('admins', []));
     }
 
     // A league is private to its members (`members`, uids; Oct 2026). One without the list is
@@ -79,7 +82,8 @@ service cloud.firestore {
 
     // The owner of the league `id` (games and tournaments erased with it).
     function ownsLeague(id) {
-      return isGoogle(get(/databases/$(database)/documents/leagues/$(id)).data.get('owner', ''));
+      let league = get(/databases/$(database)/documents/leagues/$(id)).data;
+      return 'owner' in league && managesLeague(league);
     }
 
     match /users/{uid} {
@@ -149,7 +153,7 @@ service cloud.firestore {
       // games were deleted with it, to restore them together. Members add players; the settings
       // are the owner's, or the members' while it has none; a Google account may become the
       // owner of a league without one, and its member.
-      allow update: if signedIn() && isMember(resource.data) && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted', 'gamesDeleted', 'owner', 'members'])
+      allow update: if signedIn() && isMember(resource.data) && (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'players', 'archived', 'minGames', 'deleted', 'gamesDeleted', 'owner', 'members', 'admins'])
         && leagueName(request.resource.data.name)
         && request.resource.data.players is list
         && request.resource.data.players.size() <= 100
@@ -161,8 +165,13 @@ service cloud.firestore {
           || (request.resource.data.minGames is int
             && request.resource.data.minGames >= 0
             && request.resource.data.minGames <= 100))
-        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['name', 'archived', 'minGames', 'deleted', 'gamesDeleted'])
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['name', 'archived', 'minGames', 'deleted', 'gamesDeleted', 'admins'])
           || managesLeague(resource.data))
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['admins'])
+          || ('owner' in resource.data
+            && request.resource.data.admins is list
+            && request.resource.data.admins.size() <= 20
+            && request.resource.data.get('members', []).hasAll(request.resource.data.admins)))
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['owner'])
           || (!('owner' in resource.data) && isGoogle(request.resource.data.owner)))
         && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['members'])
@@ -187,8 +196,8 @@ service cloud.firestore {
           && request.resource.data.by == request.auth.uid;
       }
 
-      // Erased for good (with its games and tournaments, first) only by its owner.
-      allow delete: if signedIn() && ('owner' in resource.data && isGoogle(resource.data.owner));
+      // Erased for good (with its games and tournaments, first) only by its owners.
+      allow delete: if signedIn() && ('owner' in resource.data && managesLeague(resource.data));
 
       function leagueName(name) {
         return name is string && name.size() > 0 && name.size() <= 60;

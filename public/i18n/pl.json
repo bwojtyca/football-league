@@ -64,7 +64,9 @@
     "found": "Znalezione",
     "recent": "Na tym urządzeniu",
     "active": "Ostatnio grane",
-    "noneFound": "Żadna liga nie ma takiej nazwy."
+    "noneFound": "Żadna liga nie ma takiej nazwy.",
+    "archived": "{n, plural, one {Zarchiwizowana liga (#)} other {Zarchiwizowane ligi (#)}}",
+    "deletedLink": "{n, plural, one {Usunięta liga (#)} other {Usunięte ligi (#)}}"
   },
   "league": {
     "ranking": "Ranking",
@@ -892,12 +894,27 @@
   },
   "owner": {
     "title": "Właściciel",
-    "you": "Jesteś właścicielem tej ligi: jej ustawienia zmieniasz tylko ty.",
-    "other": "Liga ma właściciela: tylko on zmienia jej ustawienia, usuwa ją i przywraca.",
+    "you": "Jesteś właścicielem tej ligi.",
+    "other": "Ligą zarządzają jej właściciele: tylko oni zmieniają ustawienia, usuwają ją i przywracają.",
     "none": "Liga nie ma właściciela, więc jej ustawienia może zmienić każdy.",
     "claim": "Zostań właścicielem",
     "signIn": "Zaloguj się przez Google, żeby zostać właścicielem.",
     "erase": "Usuń na zawsze",
-    "eraseConfirm": "Usunąć ligę na zawsze, razem z jej meczami i turniejami? Tego nie da się cofnąć."
+    "eraseConfirm": "Usunąć ligę na zawsze, razem z jej meczami i turniejami? Tego nie da się cofnąć.",
+    "coOwner": "Jesteś współwłaścicielem tej ligi: zarządzasz nią razem z właścicielem.",
+    "coOwners": "Współwłaściciele",
+    "noCoOwners": "Współwłaścicielem może zostać członek ligi, który zalogował się przez Google i wybrał swojego gracza."
+  },
+  "invite": {
+    "title": "Zaproś do ligi",
+    "hint": "Zeskanuj kod telefonem albo wyślij link. Kto go otworzy, dołączy do ligi.",
+    "qr": "Kod QR z zaproszeniem",
+    "copy": "Kopiuj link",
+    "share": "Udostępnij"
+  },
+  "deleted": {
+    "title": "Usunięte ligi",
+    "hint": "Ligi usunięte z twojej listy. Można je przywrócić z meczami albo, jeśli mają właściciela, usunąć na zawsze.",
+    "none": "Nie ma usuniętych lig."
   }
 }

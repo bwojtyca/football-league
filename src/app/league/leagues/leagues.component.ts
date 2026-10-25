@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +31,7 @@ const SUGGESTED = 5;
 @Component({
   selector: 'fl-leagues',
   imports: [
+    NgTemplateOutlet,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
@@ -52,6 +54,14 @@ export class LeaguesComponent {
   protected readonly query = signal('');
 
   /** No league opened on this device yet: the page starts by saying what the app is. */
+  /** Archived leagues in a list: folded apart below the active ones. */
+  protected archivedCount(leagues: { archived?: boolean }[]): number {
+    return leagues.filter((league) => league.archived).length;
+  }
+
+  /** The account's deleted leagues, for the quiet link to their page. */
+  protected readonly deletedCount = computed(() => this._leagueService.deletedLeagues().length);
+
   protected readonly firstVisit = computed(() => !this._leagueService.recent().length);
   /** Two figures for the welcome. */
   protected readonly kits: Kit[] = [

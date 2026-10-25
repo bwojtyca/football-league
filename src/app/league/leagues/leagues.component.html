@@ -44,42 +44,60 @@
         {{ (listKind() === 'found' ? 'leagues.noneFound' : 'leagues.empty') | transloco }}
       </p>
     }
+    <!-- Active leagues; archived ones (no new games) folded apart below. -->
     <ul class="leagues">
       @for (league of leagues; track league.id) {
-        <li>
-          <a [routerLink]="['/l', league.id]" class="league" [class.live]="!!league.live">
-            <span class="crest" aria-hidden="true">{{ league.crest }}</span>
-            <span class="name">
-              {{ league.name }}
-              @if (league.archived) {
-                <em class="tag">{{ 'leagues.archive' | transloco }}</em>
-              }
-            </span>
-            <span class="meta">
-              @if (league.live; as live) {
-                <b class="live-line">{{
-                  'leagues.live' | transloco: { red: live.red, blue: live.blue, score: live.score }
-                }}</b>
-              } @else {
-                {{ 'count.players' | transloco: { n: league.players.length } }}
-                @if (league.games !== undefined) {
-                  · {{ 'count.games' | transloco: { n: league.games } }}
-                }
-                @if (league.lastGame) {
-                  ·
-                  {{
-                    'leagues.lastGame'
-                      | transloco
-                        : { date: (league.lastGame | translocoDate: { dateStyle: 'medium' }) }
-                  }}
-                }
-              }
-            </span>
-            <mat-icon aria-hidden="true">chevron_right</mat-icon>
-          </a>
-        </li>
+        @if (!league.archived) {
+          <ng-container *ngTemplateOutlet="row; context: { $implicit: league }" />
+        }
       }
     </ul>
+    @if (archivedCount(leagues); as n) {
+      <details class="fl-fold archived">
+        <summary>{{ 'leagues.archived' | transloco: { n } }}</summary>
+        <ul class="leagues">
+          @for (league of leagues; track league.id) {
+            @if (league.archived) {
+              <ng-container *ngTemplateOutlet="row; context: { $implicit: league }" />
+            }
+          }
+        </ul>
+      </details>
+    }
+    <ng-template #row let-league>
+    <li>
+      <a [routerLink]="['/l', league.id]" class="league" [class.live]="!!league.live">
+        <span class="crest" aria-hidden="true">{{ league.crest }}</span>
+        <span class="name">
+          {{ league.name }}
+          @if (league.archived) {
+            <em class="tag">{{ 'leagues.archive' | transloco }}</em>
+          }
+        </span>
+        <span class="meta">
+          @if (league.live; as live) {
+            <b class="live-line">{{
+              'leagues.live' | transloco: { red: live.red, blue: live.blue, score: live.score }
+            }}</b>
+          } @else {
+            {{ 'count.players' | transloco: { n: league.players.length } }}
+            @if (league.games !== undefined) {
+              · {{ 'count.games' | transloco: { n: league.games } }}
+            }
+            @if (league.lastGame) {
+              ·
+              {{
+                'leagues.lastGame'
+                  | transloco
+                    : { date: (league.lastGame | translocoDate: { dateStyle: 'medium' }) }
+              }}
+            }
+          }
+        </span>
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </a>
+    </li>
+    </ng-template>
   } @else {
     <div class="loader"><mat-spinner [diameter]="40" /></div>
   }
@@ -101,4 +119,10 @@
     <mat-icon aria-hidden="true">chevron_right</mat-icon>
   </a>
 
+  <!-- Deleted leagues, out of the way (owner, 25 Oct 2026): a quiet link to their own page. -->
+  @if (deletedCount(); as n) {
+    <a routerLink="/leagues/deleted" class="deleted-link">{{
+      'leagues.deletedLink' | transloco: { n }
+    }}</a>
+  }
 </main>

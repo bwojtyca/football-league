@@ -20,6 +20,11 @@ export const routes: Routes = [
       import('./league/leagues/leagues.component').then((m) => m.LeaguesComponent),
   },
   {
+    path: 'leagues/deleted',
+    loadComponent: () =>
+      import('./league/deleted-leagues.component').then((m) => m.DeletedLeaguesComponent),
+  },
+  {
     // A league's pages share the bottom navigation.
     path: 'l/:leagueId',
     loadComponent: () =>

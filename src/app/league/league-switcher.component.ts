@@ -4,16 +4,16 @@ import {
   MatBottomSheet,
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 import { GameService } from '../game/game.service';
 import { crestOf } from './league';
 import { LeagueService } from './league.service';
 import { SheetCloseComponent } from '../shared/sheet-close.component';
-import { Notifier } from '../notifier';
+import { openInviteDialog } from './invite-dialog.component';
 
 export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string | null) {
   return sheet.open(LeagueSwitcherComponent, { data: currentLeague });
@@ -24,22 +24,6 @@ export function openLeagueSwitcher(sheet: MatBottomSheet, currentLeague: string 
  * inviting by its link, and the leagues of this device to switch to (its settings are behind
  * the gear).
  */
-/** Invites by a league's link: the phone's share sheet, or the clipboard (then `copied`). */
-export async function inviteToLeague(
-  league: { id: string; name: string },
-  code: string,
-  copied: () => void,
-): Promise<void> {
-  // A private league opens only with an invitation code (`LeagueService.invite`).
-  const url = `${location.origin}${location.pathname}#/l/${league.id}?invite=${code}`;
-  if (navigator.share) {
-    await navigator.share({ title: league.name, url }).catch(() => undefined);
-    return;
-  }
-  await navigator.clipboard?.writeText(url).catch(() => undefined);
-  copied();
-}
-
 @Component({
   selector: 'fl-league-switcher',
   imports: [SheetCloseComponent, MatIconModule, RouterLink, TranslocoPipe],
@@ -249,8 +233,6 @@ export class LeagueSwitcherComponent {
   private readonly _gameService = inject(GameService);
   private readonly _ref = inject(MatBottomSheetRef<LeagueSwitcherComponent>);
 
-  private readonly _snackBar = inject(MatSnackBar);
-  private readonly _transloco = inject(TranslocoService);
 
   protected readonly current = inject<string | null>(MAT_BOTTOM_SHEET_DATA);
 
@@ -263,22 +245,14 @@ export class LeagueSwitcherComponent {
   protected readonly league = computed(() => this.leagues().find((l) => l.id === this.current));
   protected readonly crest = computed(() => crestOf(this.league()?.name ?? ''));
   protected readonly crestFor = crestOf;
-  private readonly _notifier = inject(Notifier);
+  private readonly _dialog = inject(MatDialog);
 
-  /** Invites by the league's link: the phone's share sheet, or the clipboard. */
-  protected async share(): Promise<void> {
+  /** Invites with a link and its QR code (a new invitation code each time). */
+  protected share(): void {
     const league = this.league();
     if (league) {
-      try {
-        const code = await this._leagueService.invite(league.id);
-        await inviteToLeague(league, code, () =>
-          this._snackBar.open(this._transloco.translate('hub.copied'), undefined, {
-            duration: 2500,
-          }),
-        );
-      } catch (error) {
-        this._notifier.error('error.league', error);
-      }
+      this.close();
+      openInviteDialog(this._dialog, { league: { id: league.id, name: league.name } });
     }
   }
 

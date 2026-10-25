@@ -16,6 +16,8 @@ export interface League {
   gamesDeleted?: boolean;
   /** The Google account that owns the league: its settings are theirs (Oct 2026). */
   owner?: string;
+  /** Co-owners (uids, members): the same rights as the owner, for when they are away. */
+  admins?: string[];
   /** Accounts (uids) the league is private to; none on leagues from before (open). */
   members?: string[];
 }
@@ -34,6 +36,11 @@ export function leagueOf(game: Pick<Game, 'league'>): string {
  */
 export function currentLeagueId(id: string): string {
   return id === 'legacy' ? 'TPaiV5gUYtE68s5MFQsD' : id;
+}
+
+/** Whether `uid` runs the league: its owner or a co-owner, or anyone while it has no owner. */
+export function manages(league: Pick<League, 'owner' | 'admins'>, uid: string | null): boolean {
+  return !league.owner || (!!uid && (league.owner === uid || !!league.admins?.includes(uid)));
 }
 
 /** Two initials of a league's name, as its crest until leagues get one (three overflowed). */
