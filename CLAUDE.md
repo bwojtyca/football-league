@@ -1,7 +1,8 @@
 # Football League
 
 Office foosball league app, written in 2017 and revived in October 2026: Angular 22, Angular
-Material 22 and the Firebase JS SDK 12 (Firestore only: no backend, no sign-in). Live at
+Material 22 and the Firebase JS SDK 12 (Firestore and Auth, no backend; anonymous accounts for
+everyone, Google sign-in optional). Live at
 https://bwojtyca.github.io/football-league/. The owner writes in Polish; answer in Polish.
 
 ## Principles from the owner
@@ -222,7 +223,7 @@ every increment (what is done, what comes next).
 
 ## Plan (October 2026)
 
-Handover of 19 Oct 2026 (state, next steps, the sign-in plan, ideas left): 
+Handover (updated 4 Nov 2026: state, what the owner still has to do, ideas left):
 `docs/superpowers/plans/2026-10-19-handover.md` — read it first.
 
 Analysis of the 2017 games, other foosball formats and the first mockups:
@@ -236,8 +237,8 @@ Decisions by the owner:
   trip. Many leagues can run at once, each with its own ranking and stats; players are global
   and can join several leagues. The 2017 games form the league "Najdroższa Liga Świata" (at first
   the id `legacy` for games without a `league` field; since 19 Oct 2026 a regular league).
-- For now every league is visible to everyone (simplest). Later: Google sign-in with a guest
-  mode that joins leagues by link.
+- (Done, Oct 2026) Leagues are private to their members; guests (anonymous accounts) join by an
+  invitation link or QR code; Google sign-in keeps your player on every device.
 - Inside a league people can play any game mode; tournaments (round robin, group stage with
   knockout, draws / draw your partner, king of the table) come later inside leagues.
 
@@ -389,7 +390,8 @@ Owner feedback, round G (4 October 2026):
 - (Done, e2e) More achievements (first win, big comeback, 3/5/10 in a row, David and Goliath,
   hat-trick, solo, goalkeeper goal, golden goal, never give up, sweet revenge, 10/50/100/250
   games) and mishaps (under the table, own goal, 5 losses in a row); league titles.
-- Sign-in later.
+- (Done, 24–25 Oct 2026) Sign-in, league owners and co-owners, private leagues: see the data
+  section and the handover.
 
 Owner feedback, round F (October 2026). Status is kept here after every commit, so a new
 session can pick up where the last one stopped:
